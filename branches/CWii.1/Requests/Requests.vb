@@ -82,6 +82,7 @@ Module Requests
                     UrlEncode(Data.Page.Name.Replace(" ", "_")) & "&action=edit"
                 If Rev IsNot Nothing Then GetString &= "&oldid=" & Rev
                 If Section IsNot Nothing Then GetString &= "&section=" & Section
+				GetString &= "&assert=user"
 
                 Try
                     Result = UTF8.GetString(Client.DownloadData(GetString))
@@ -89,7 +90,7 @@ Module Requests
                     Callback(AddressOf GetEditException, CObj(Data))
                 End Try
 
-                If Result.Contains("<li id=""pt-login"">") Then
+                If Result.Contains("<li id=""pt-login"">") Or Result.Contains("The specified assertion (user) failed.") Then
                     If Retries = 0 Then Exit Do
                     Callback(AddressOf LoginNeeded)
 
@@ -205,7 +206,7 @@ Module Requests
                 'Special:Mypage doesnt work in postbacks
                 Result = UTF8.GetString(Client.UploadData(SitePath & _
                     "w/index.php?title=" & UrlEncode(Data.Page.Name.Replace("Special:Mypage", "User:" + Username).Replace(" ", "_")) & _
-                    "&action=submit", "POST", UTF8.GetBytes(PostString)))
+                    "&action=submit&assert=user", "POST", UTF8.GetBytes(PostString)))
             Catch ex As Exception
                 Callback(AddressOf PostEditException, CObj(Data))
             End Try
@@ -220,7 +221,7 @@ Module Requests
             Callback(AddressOf Blocked)
             Data.Error = True
 
-        ElseIf Result.Contains("<div class='previewnote'>") Then
+        ElseIf Result.Contains("<div class='previewnote'>") Or Result.Contains("The specified assertion (user) failed.") Then
             Callback(AddressOf LoggedOut)
             Data.Error = True
         End If
