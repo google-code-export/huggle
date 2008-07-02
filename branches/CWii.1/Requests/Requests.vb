@@ -50,7 +50,12 @@ Module Requests
         Loop Until (TextNeeded Is Nothing OrElse (Result IsNot Nothing AndAlso Result.Contains(TextNeeded))) _
             OrElse Retries = 0
 
-        If Retries = 0 Then Return Nothing Else Return Result
+        If Retries = 0 Then
+            ConnectionErr()
+            Return Nothing
+        Else
+            Return Result
+        End If
     End Function
 
     Private Sub GetTextException(ByVal UrlObject As Object)

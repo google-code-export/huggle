@@ -27,6 +27,10 @@ Module ReadRequests
                 "w/api.php?format=xml&action=query&list=logevents&letype=block&letitle=User:" & _
                 UrlEncode(ThisUser.Name) & "&lelimit=50", "<logevents").Replace(vbLf, "")
 
+            If Result Is Nothing Then
+                Exit Sub
+            End If
+
             LogMatches = New Regex("<item logid=""[0-9]+"" pageid=""[0-9]+"" ns=""2"" title=""User:[^""]+"" " & _
                 "type=""block"" action=""(block|unblock)"" user=""([^""]+)"" timestamp=""([^""]+)"" " & _
                 "comment=""([^""]+)""[^<]*(<block flags=""([^""]*)"" duration=""([^""]*)"")?", _
