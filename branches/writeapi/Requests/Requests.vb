@@ -571,9 +571,77 @@ Namespace Requests
             Return Result
         End Function
 
+        Protected Function PostApi(ByVal QueryString As String, ByVal Data As String) As ApiResult
+            Dim Url As String = Config.SitePath & "w/api.php?" & QueryString
+            Query = QueryString
+            Mode = Modes.Post
+            Callback(AddressOf UpdateForm)
+
+            Dim Client As New WebClient, Retries As Integer = 3, Result As String = ""
+
+            Do
+                Client.Headers.Add(HttpRequestHeader.UserAgent, Config.UserAgent)
+                Client.Headers.Add(HttpRequestHeader.Cookie, Cookie)
+                Client.Headers.Add(HttpRequestHeader.ContentType, "application/x-www-form-urlencoded")
+                Client.Proxy = Login.Proxy
+
+                If Retries < 3 Then Thread.Sleep(1000)
+                Retries -= 1
+
+                Try
+                    Result = UTF8.GetString(Client.UploadData(Url, UTF8.GetBytes(Data)))
+                Catch ex As WebException
+                    Callback(AddressOf PostDataException, CObj(QueryString))
+                End Try
+
+            Loop Until Result <> "" OrElse Retries = 0
+
+            If Result Is Nothing OrElse Result = "" Then Return New ApiResult(Nothing, "", "No response") _
+                Else Return New ApiResult(Result, FindString(Result, "<error", "code=""", """"), _
+                    FindString(Result, "<error", "info=""", """"))
+        End Function
+
         Private Sub PostDataException(ByVal RequestedItem As Object)
             Log("Error posting '" & CStr(RequestedItem) & "', retrying in 1 second.")
         End Sub
+
+        Class ApiResult
+
+            'Represents the result of a MediaWiki API request
+
+            Private _Text, _ErrorCode, _ErrorInfo As String
+
+            Public Sub New(ByVal Text As String, ByVal ErrorCode As String, ByVal ErrorInfo As String)
+                _Text = Text
+                _ErrorCode = ErrorCode
+                _ErrorInfo = ErrorInfo
+            End Sub
+
+            Public ReadOnly Property [Error]() As Boolean
+                Get
+                    Return (_ErrorCode IsNot Nothing)
+                End Get
+            End Property
+
+            Public ReadOnly Property Text() As String
+                Get
+                    Return _Text
+                End Get
+            End Property
+
+            Public ReadOnly Property ErrorCode() As String
+                Get
+                    Return _ErrorCode
+                End Get
+            End Property
+
+            Public ReadOnly Property ErrorInfo() As String
+                Get
+                    Return _ErrorInfo
+                End Get
+            End Property
+
+        End Class
 
         Class Output
 

@@ -171,9 +171,10 @@ Namespace Requests
 
     Class RollbackRequest : Inherits Request
 
-        'Much easier than reverting
+        'Reverts revisions using rollback function
 
-        Public Edit As Edit, Summary As String, Minor As Boolean = Config.MinorReverts
+        Private Shadows Result As ApiResult
+        Public Edit As Edit, Summary As String
 
         Sub Start()
             LogProgress("Reverting edit to '" & Edit.Page.Name & "'...")
@@ -185,80 +186,32 @@ Namespace Requests
 
         Sub Process()
             If Summary Is Nothing Then Summary = Config.RollbackSummary
+            If Config.Summary IsNot Nothing Then Summary &= " " & Config.Summary
 
-            Dim QueryString As String = Edit.RollbackUrl
-            QueryString &= "&summary=" & UrlEncode(Summary)
-            If Config.Summary IsNot Nothing Then QueryString &= UrlEncode(" " & Config.Summary)
+            Dim QueryString As String = "action=rollback&format=xml&title=" & UrlEncode(Edit.Page.Name) & _
+                 "&user=" & UrlEncode(Edit.User.Name) & "&token=" & UrlEncode(Edit.RollbackToken) & _
+                 "&summary=" & UrlEncode(Summary)
 
-            Dim Result As String = GetText(QueryString)
+            Result = PostApi("", QueryString)
 
-            If Result Is Nothing Then
-                Callback(AddressOf Failed)
-
-            ElseIf Result.Contains("<h1 class=""firstHeading"">Action throttled</h1>") Then
-                Callback(AddressOf Throttled)
-
-            ElseIf Result.Contains("<h1 class=""firstHeading"">Error: unable to proceed</h1") _
-                AndAlso Result.Contains("contributor is the only author of this page") Then
-                Callback(AddressOf NoOtherEditors)
-
-            ElseIf Result.Contains("<h1 class=""firstHeading"">Error: unable to proceed</h1>") _
-                AndAlso Result.Contains("because someone else has edited the page") Then
-                Callback(AddressOf Beaten)
-
-            ElseIf Result.Contains("<h1 class=""firstHeading"">Error: unable to proceed</h1>") _
-                AndAlso Result.Contains("There seems to be a problem with your login session") Then
-                Callback(AddressOf WrongData)
-
-            ElseIf Result.Contains("<h1 class=""firstHeading"">Error: unable to proceed</h1>") Then
-                Callback(AddressOf Unauthorized)
-
-            Else
-                Callback(AddressOf Done)
-            End If
+            Callback(AddressOf Done)
         End Sub
 
         Sub Done()
-            If Config.WatchReverts AndAlso Not Watchlist.Contains(Edit.Page.SubjectPage) Then
-                Dim NewWatchPageRequest As New WatchRequest
-                NewWatchPageRequest.Page = Edit.Page
-                NewWatchPageRequest.Start()
+            If Result.Error Then
+                Log("Did not rollback '" & Edit.Page.Name & "' – " & HtmlDecode(Result.ErrorInfo))
+                Fail()
+
+            Else
+                If Config.WatchReverts AndAlso Not Watchlist.Contains(Edit.Page.SubjectPage) Then
+                    Dim NewRequest As New WatchRequest
+                    NewRequest.Page = Edit.Page
+                    NewRequest.Start()
+                End If
+
+                If State = States.Cancelled Then UndoEdit(Edit.Page) Else Complete()
             End If
-
-            If State = States.Cancelled Then UndoEdit(Edit.Page) Else Complete()
         End Sub
-
-        Private Sub WrongData()
-            Log("Did not rollback '" & Edit.Page.Name & "' – token or other data incorrect")
-            Fail()
-        End Sub
-
-        Private Sub Throttled()
-            Log("Did not rollback '" & Edit.Page.Name & "' – rate limit exceeded")
-            Fail()
-        End Sub
-
-        Private Sub Unauthorized()
-            Log("Did not rollback '" & Edit.Page.Name & "' – returned ""unauthorized""")
-            Fail()
-        End Sub
-
-        Private Sub Beaten()
-            Log("Did not rollback '" & Edit.Page.Name & "' - page was edited first")
-            Fail()
-        End Sub
-
-        Private Sub NoOtherEditors()
-            Log("Did not rollback '" & Edit.Page.Name & "' - only one user has edited the page")
-            Fail()
-        End Sub
-
-        Private Sub Failed()
-            Log("Failed to rollback '" & Edit.Page.Name & "', trying manual reversion")
-            DoRevert(Edit, Summary, Rollback:=False)
-            Fail()
-        End Sub
-
     End Class
 
     Class FakeRollbackRequest : Inherits Request

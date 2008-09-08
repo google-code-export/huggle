@@ -564,7 +564,7 @@ Module Processing
 
         'Use rollback if possible
         If Rollback AndAlso RollbackAvailable AndAlso Config.UseRollback AndAlso Not Undoing _
-            AndAlso (Edit Is Edit.Page.LastEdit) AndAlso (Edit.RollbackUrl IsNot Nothing) _
+            AndAlso (Edit Is Edit.Page.LastEdit) AndAlso (Edit.RollbackToken IsNot Nothing) _
             AndAlso Not (CurrentOnly AndAlso (Edit.Prev Is Nothing OrElse Edit.User Is Edit.Prev.User)) Then
 
             If Edit Is CurrentEdit Then MainForm.StartRevert()
@@ -734,11 +734,10 @@ Module Processing
 
         If Not Edit.Multiple Then
             If DiffText.Contains("<span class=""mw-rollback-link"">") Then
-                Dim RollbackUrl As String = DiffText.Substring(DiffText.IndexOf("<span class=""mw-rollback-link"">"))
-                RollbackUrl = FindString(RollbackUrl, "<a href=""", "?", """")
-                Edit.RollbackUrl = HtmlDecode(RollbackUrl)
+                Dim RollbackToken As String = DiffText.Substring(DiffText.IndexOf("<span class=""mw-rollback-link"">"))
+                Edit.RollbackToken = UrlDecode(FindString(RollbackToken, "<a href=""", "&amp;token=", """"))
             Else
-                Edit.RollbackUrl = Nothing
+                Edit.RollbackToken = Nothing
             End If
 
             If Edit.Id = "next" OrElse Edit.Id = "cur" AndAlso DiffText.Contains("'>undo</a>)") Then
