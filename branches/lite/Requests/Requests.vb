@@ -83,6 +83,7 @@ Namespace Requests
         End Sub
 
         Protected Function DoLogin() As LoginResult
+ServicePointManager.Expect100Continue = False
             Dim Client As New WebClient, Result As String = "", Retries As Integer = 3
 
             Mode = RequestMode.Get
