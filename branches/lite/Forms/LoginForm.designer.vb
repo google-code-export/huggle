@@ -25,6 +25,7 @@ Partial Class LoginForm
         Me.OK = New System.Windows.Forms.Button
         Me.Cancel = New System.Windows.Forms.Button
         Me.Options = New System.Windows.Forms.GroupBox
+        Me.ProxyEnabled = New System.Windows.Forms.CheckBox
         Me.ProxyDomain = New System.Windows.Forms.TextBox
         Me.Label6 = New System.Windows.Forms.Label
         Me.Label5 = New System.Windows.Forms.Label
@@ -43,13 +44,11 @@ Partial Class LoginForm
         Me.Password = New System.Windows.Forms.TextBox
         Me.Username = New System.Windows.Forms.TextBox
         Me.TitleLabel = New System.Windows.Forms.Label
-        Me.Credit = New System.Windows.Forms.LinkLabel
         Me.Version = New System.Windows.Forms.Label
         Me.Status = New System.Windows.Forms.Label
         Me.Progress = New System.Windows.Forms.ProgressBar
         Me.ShowProxySettings = New System.Windows.Forms.Button
         Me.HideProxySettings = New System.Windows.Forms.Button
-        Me.ProxyEnabled = New System.Windows.Forms.CheckBox
         Me.Options.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -102,6 +101,16 @@ Partial Class LoginForm
         Me.Options.Size = New System.Drawing.Size(312, 99)
         Me.Options.TabIndex = 0
         Me.Options.TabStop = False
+        '
+        'ProxyEnabled
+        '
+        Me.ProxyEnabled.AutoSize = True
+        Me.ProxyEnabled.Location = New System.Drawing.Point(70, 123)
+        Me.ProxyEnabled.Name = "ProxyEnabled"
+        Me.ProxyEnabled.Size = New System.Drawing.Size(100, 17)
+        Me.ProxyEnabled.TabIndex = 17
+        Me.ProxyEnabled.Text = "Proxy Enabled?"
+        Me.ProxyEnabled.UseVisualStyleBackColor = True
         '
         'ProxyDomain
         '
@@ -267,22 +276,8 @@ Partial Class LoginForm
         Me.TitleLabel.Name = "TitleLabel"
         Me.TitleLabel.Size = New System.Drawing.Size(312, 55)
         Me.TitleLabel.TabIndex = 7
-        Me.TitleLabel.Text = "huggle"
+        Me.TitleLabel.Text = "huggle lite"
         Me.TitleLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        '
-        'Credit
-        '
-        Me.Credit.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.Credit.AutoSize = True
-        Me.Credit.LinkArea = New System.Windows.Forms.LinkArea(13, 5)
-        Me.Credit.LinkBehavior = System.Windows.Forms.LinkBehavior.NeverUnderline
-        Me.Credit.Location = New System.Drawing.Point(215, 51)
-        Me.Credit.Name = "Credit"
-        Me.Credit.Size = New System.Drawing.Size(107, 17)
-        Me.Credit.TabIndex = 9
-        Me.Credit.TabStop = True
-        Me.Credit.Text = "Developed by Gurch"
-        Me.Credit.UseCompatibleTextRendering = True
         '
         'Version
         '
@@ -339,16 +334,6 @@ Partial Class LoginForm
         Me.HideProxySettings.UseVisualStyleBackColor = True
         Me.HideProxySettings.Visible = False
         '
-        'ProxyEnabled
-        '
-        Me.ProxyEnabled.AutoSize = True
-        Me.ProxyEnabled.Location = New System.Drawing.Point(70, 123)
-        Me.ProxyEnabled.Name = "ProxyEnabled"
-        Me.ProxyEnabled.Size = New System.Drawing.Size(100, 17)
-        Me.ProxyEnabled.TabIndex = 17
-        Me.ProxyEnabled.Text = "Proxy Enabled?"
-        Me.ProxyEnabled.UseVisualStyleBackColor = True
-        '
         'LoginForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -359,7 +344,6 @@ Partial Class LoginForm
         Me.Controls.Add(Me.Status)
         Me.Controls.Add(Me.Progress)
         Me.Controls.Add(Me.TitleLabel)
-        Me.Controls.Add(Me.Credit)
         Me.Controls.Add(Me.Version)
         Me.Controls.Add(Me.Options)
         Me.Controls.Add(Me.Cancel)
@@ -370,7 +354,7 @@ Partial Class LoginForm
         Me.MinimizeBox = False
         Me.Name = "LoginForm"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "Huggle"
+        Me.Text = "Huggle lite"
         Me.Options.ResumeLayout(False)
         Me.Options.PerformLayout()
         Me.ResumeLayout(False)
@@ -385,7 +369,6 @@ Partial Class LoginForm
     Friend WithEvents Password As System.Windows.Forms.TextBox
     Friend WithEvents Username As System.Windows.Forms.TextBox
     Friend WithEvents TitleLabel As System.Windows.Forms.Label
-    Friend WithEvents Credit As System.Windows.Forms.LinkLabel
     Friend WithEvents Version As System.Windows.Forms.Label
     Friend WithEvents Status As System.Windows.Forms.Label
     Friend WithEvents Progress As System.Windows.Forms.ProgressBar

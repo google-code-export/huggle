@@ -127,7 +127,7 @@ Partial Class StartupForm
         Me.MinimizeBox = False
         Me.Name = "StartupForm"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "Huggle"
+        Me.Text = "Huggle lite"
         Me.ResumeLayout(False)
 
     End Sub

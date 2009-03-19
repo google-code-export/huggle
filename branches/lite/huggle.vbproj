@@ -21,6 +21,7 @@
     <MyType>WindowsForms</MyType>
     <ApplicationIcon>Resources\icon_red_button.ico</ApplicationIcon>
     <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
+    <AssemblyName>huggle lite</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

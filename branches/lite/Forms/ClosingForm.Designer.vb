@@ -44,7 +44,7 @@ Partial Class ClosingForm
         Me.Logo.Name = "Logo"
         Me.Logo.Size = New System.Drawing.Size(271, 50)
         Me.Logo.TabIndex = 0
-        Me.Logo.Text = "huggle"
+        Me.Logo.Text = "huggle lite"
         Me.Logo.TextAlign = System.Drawing.ContentAlignment.TopCenter
         '
         'Progress
@@ -70,7 +70,7 @@ Partial Class ClosingForm
         Me.MinimizeBox = False
         Me.Name = "ClosingForm"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "Huggle"
+        Me.Text = "Huggle lite"
         Me.ResumeLayout(False)
 
     End Sub

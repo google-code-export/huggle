@@ -58,7 +58,7 @@ Partial Class AboutForm
         Me.Logo.Name = "Logo"
         Me.Logo.Size = New System.Drawing.Size(352, 50)
         Me.Logo.TabIndex = 0
-        Me.Logo.Text = "huggle"
+        Me.Logo.Text = "huggle lite"
         Me.Logo.TextAlign = System.Drawing.ContentAlignment.TopCenter
         '
         'Version
@@ -239,7 +239,7 @@ Partial Class AboutForm
         Me.Name = "AboutForm"
         Me.ShowInTaskbar = False
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
-        Me.Text = "About huggle"
+        Me.Text = "About huggle lite"
         Me.ContributorsLayoutPanel.ResumeLayout(False)
         Me.ContributorsLayoutPanel.PerformLayout()
         Me.ResumeLayout(False)

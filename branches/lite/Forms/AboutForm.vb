@@ -28,5 +28,4 @@ Class AboutForm
     Private Sub ContributorLinkClicked(ByVal sender As Object, ByVal e As LinkLabelLinkClickedEventArgs)
         OpenUrlInBrowser(CStr(CType(sender, LinkLabel).Tag))
     End Sub
-
 End Class

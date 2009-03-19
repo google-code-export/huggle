@@ -57,10 +57,6 @@ Class LoginForm
         OK.Enabled = (Username.Text <> "" AndAlso Password.Text <> "")
     End Sub
 
-    Private Sub Credit_LinkClicked() Handles Credit.LinkClicked
-        OpenUrlInBrowser("http://en.wikipedia.org/wiki/User:Gurch")
-    End Sub
-
     Private Sub OK_Click() Handles OK.Click
         LoggingIn = True
 

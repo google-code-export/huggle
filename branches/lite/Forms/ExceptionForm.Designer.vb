@@ -36,8 +36,8 @@ Partial Class ExceptionForm
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(470, 32)
         Me.Label1.TabIndex = 0
-        Me.Label1.Text = "Huggle has encountered an error, and may need to close." & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "If reporting this error," & _
-            " please include the following information:"
+        Me.Label1.Text = "Huggle lite has encountered an error, and may need to close." & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "If reporting this e" & _
+            "rror, please include the following information:"
         '
         'Details
         '
