@@ -1,0 +1,4 @@
+﻿revert-patterns:
+	Reverted edits by <rvd-user> (talk) to last version by <old-user>
+	Undid revision <rvd-rev> by <rvd-user> (talk)
+	Revert <rv-count> revisions.*?

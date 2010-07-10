@@ -1,0 +1,697 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{420818B9-6A08-4A98-8F71-EB3066A2E45E}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <StartupObject>Huggle.App</StartupObject>
+    <RootNamespace>
+    </RootNamespace>
+    <AssemblyName>Huggle</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <MyType>Console</MyType>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionCompare>Binary</OptionCompare>
+    <OptionStrict>On</OptionStrict>
+    <OptionInfer>On</OptionInfer>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>resources\HuggleIcon.ico</ApplicationIcon>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>false</DefineTrace>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <NoWarn>
+    </NoWarn>
+    <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
+    <CodeAnalysisRuleSet>analysis.ruleset</CodeAnalysisRuleSet>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>1</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
+    <DocumentationFile>Huggle.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DebugType>Full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
+    <NoWarn>
+    </NoWarn>
+    <CodeAnalysisRuleSet>analysis.ruleset</CodeAnalysisRuleSet>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>1</WarningLevel>
+    <DocumentationFile>Huggle.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <NoWarn>
+    </NoWarn>
+    <CodeAnalysisRuleSet>analysis.ruleset</CodeAnalysisRuleSet>
+    <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>1</WarningLevel>
+    <Optimize>true</Optimize>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <DocumentationFile>Huggle.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <CodeAnalysisRuleSet>analysis.ruleset</CodeAnalysisRuleSet>
+    <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>1</WarningLevel>
+    <DebugType>Full</DebugType>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <DocumentationFile>Huggle.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="actions\ChangePassword.vb" />
+    <Compile Include="actions\ResetPreferences.vb" />
+    <Compile Include="actions\Unblock.vb" />
+    <Compile Include="model\Preferences.vb" />
+    <Compile Include="queries\Query.vb" />
+    <Compile Include="queries\ExtraGlobaluserConfig.vb" />
+    <Compile Include="queries\LoadUserConfig.vb" />
+    <Compile Include="actions\EditAbuseFilter.vb" />
+    <Compile Include="queries\MediaQuery.vb" />
+    <Compile Include="queries\AbuseFilterDetailQuery.vb" />
+    <Compile Include="queries\PreCreateAccount.vb" />
+    <Compile Include="actions\Import.vb" />
+    <Compile Include="queries\LoadGlobalConfig.vb" />
+    <Compile Include="actions\Logout.vb" />
+    <Compile Include="queries\ExtraWikiConfig.vb" />
+    <Compile Include="actions\Review.vb" />
+    <Compile Include="actions\SetGlobalPreferences.vb" />
+    <Compile Include="actions\SetPreferences.vb" />
+    <Compile Include="actions\Process.vb" />
+    <Compile Include="actions\AddWiki.vb" />
+    <Compile Include="actions\Block.vb" />
+    <Compile Include="actions\CreateAccount.vb" />
+    <Compile Include="actions\Edit.vb" />
+    <Compile Include="actions\Login.vb" />
+    <Compile Include="actions\SaveConfig.vb" />
+    <Compile Include="actions\Stabilize.vb" />
+    <Compile Include="actions\Upload.vb" />
+    <Compile Include="actions\VandalReport.vb" />
+    <Compile Include="actions\RevertAndWarn.vb" />
+    <Compile Include="actions\Watch.vb" />
+    <Compile Include="ApiProcessing.vb" />
+    <Compile Include="config\FamilyConfig.vb" />
+    <Compile Include="config\GlobalUserConfig.vb" />
+    <Compile Include="config\InternalConfig.vb" />
+    <Compile Include="config\MessageConfig.vb" />
+    <Compile Include="FileRequest.vb" />
+    <Compile Include="data\Data.vb" />
+    <Compile Include="data\DataView.Designer.vb">
+      <DependentUpon>DataView.vb</DependentUpon>
+    </Compile>
+    <Compile Include="data\DataView.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="data\QueryPanel.Designer.vb">
+      <DependentUpon>QueryPanel.vb</DependentUpon>
+    </Compile>
+    <Compile Include="data\QueryPanel.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="model\Gadget.vb" />
+    <Compile Include="model\GlobalBlock.vb" />
+    <Compile Include="model\GlobalGroup.vb" />
+    <Compile Include="model\GlobalUser.vb" />
+    <Compile Include="model\ReviewFlag.vb" />
+    <Compile Include="actions\Revert.vb" />
+    <Compile Include="BatchQuery.vb" />
+    <Compile Include="config\GlobalConfig.vb" />
+    <Compile Include="config\LocalConfig.vb" />
+    <Compile Include="config\WikiConfig.vb" />
+    <Compile Include="config\UserConfig.vb" />
+    <Compile Include="model\Family.vb" />
+    <Compile Include="model\VisibilityChange.vb" />
+    <Compile Include="Application.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Application.myapp</DependentUpon>
+    </Compile>
+    <Compile Include="Resources.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="queries\AbuseFiltersQuery.vb" />
+    <Compile Include="queries_old\ThreadQuery.vb" />
+    <Compile Include="queries_old\UsernameCheckQuery.vb" />
+    <Compile Include="actions\Warning.vb" />
+    <Compile Include="QueryString.vb" />
+    <Compile Include="scripting\Model.vb" />
+    <Compile Include="scripting\Parser.vb" />
+    <Compile Include="Session.vb" />
+    <Compile Include="ui\forms\AboutForm.Designer.vb">
+      <DependentUpon>AboutForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\forms\AboutForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\forms\AbuseFilterEditForm.Designer.vb">
+      <DependentUpon>AbuseFilterEditForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\forms\AbuseFilterEditForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\forms\AbuseFiltersForm.Designer.vb">
+      <DependentUpon>AbuseFiltersForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\forms\AbuseFiltersForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\forms\UserRightsForm.Designer.vb">
+      <DependentUpon>UserRightsForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\forms\UserRightsForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\prompts\AccountAutoUnifiedForm.Designer.vb">
+      <DependentUpon>AccountAutoUnifiedForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\prompts\AccountAutoUnifiedForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\prompts\AccountCopyForm.Designer.vb">
+      <DependentUpon>AccountCopyForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\prompts\AccountCopyForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\prompts\AccountConfigForm.Designer.vb">
+      <DependentUpon>AccountConfigForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\prompts\AccountConfigForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\prompts\AccountCreateForm.Designer.vb">
+      <DependentUpon>AccountCreateForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\prompts\AccountCreateForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\prompts\AccountElevateForm.Designer.vb">
+      <DependentUpon>AccountElevateForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\prompts\AccountElevateForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\forms\AccountPreferencesForm.Designer.vb">
+      <DependentUpon>AccountPreferencesForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\forms\AccountPreferencesForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\forms\AccountPropertiesForm.Designer.vb">
+      <DependentUpon>AccountPropertiesForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\forms\AccountPropertiesForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\prompts\AccountUpgradeForm.Designer.vb">
+      <DependentUpon>AccountUpgradeForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\prompts\AccountUpgradeForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\forms\ChangePasswordForm.Designer.vb">
+      <DependentUpon>ChangePasswordForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\forms\ChangePasswordForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\prompts\ConfirmationForm.Designer.vb">
+      <DependentUpon>ConfirmationForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\prompts\ConfirmationForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\prompts\AccountLoginForm.Designer.vb">
+      <DependentUpon>AccountLoginForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\prompts\AccountLoginForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\forms\FamilyPropertiesForm.Designer.vb">
+      <DependentUpon>FamilyPropertiesForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\forms\FamilyPropertiesForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\forms\GlobalPreferencesForm.Designer.vb">
+      <DependentUpon>GlobalPreferencesForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\forms\GlobalPreferencesForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\forms\GlobalUserPropertiesForm.Designer.vb">
+      <DependentUpon>GlobalUserPropertiesForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\forms\GlobalUserPropertiesForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\ErrorForm.Designer.vb">
+      <DependentUpon>ErrorForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\ErrorForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\forms\ImportForm.Designer.vb">
+      <DependentUpon>ImportForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\forms\ImportForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\prompts\AccountSelectForm.Designer.vb">
+      <DependentUpon>AccountSelectForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\prompts\AccountSelectForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\ListViewEx.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ui\LogPanel.Designer.vb">
+      <DependentUpon>LogPanel.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\LogPanel.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ui\MainForm.Designer.vb">
+      <DependentUpon>MainForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\MainForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\forms\ReviewForm.Designer.vb">
+      <DependentUpon>ReviewForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\forms\ReviewForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\SplitContainerEx.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ui\WaitForm.Designer.vb">
+      <DependentUpon>WaitForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\WaitForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\forms\WikiAddForm.Designer.vb">
+      <DependentUpon>WikiAddForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\forms\WikiAddForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\forms\WikiConfigForm.Designer.vb">
+      <DependentUpon>WikiConfigForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\forms\WikiConfigForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\forms\WikiPropertiesForm.Designer.vb">
+      <DependentUpon>WikiPropertiesForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\forms\WikiPropertiesForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="wikitext\CategoryLink.vb" />
+    <Compile Include="wikitext\FileLink.vb" />
+    <Compile Include="wikitext\InterLangLink.vb" />
+    <Compile Include="wikitext\Link.vb" />
+    <Compile Include="wikitext\Parsing.vb" />
+    <Compile Include="wikitext\Reference.vb" />
+    <Compile Include="wikitext\Section.vb" />
+    <Compile Include="App.vb" />
+    <Compile Include="QueueSources.vb" />
+    <Compile Include="wikitext\Document.vb" />
+    <Compile Include="queries\AbuseDetailQuery.vb" />
+    <Compile Include="queries\AbuseInfoQuery.vb" />
+    <Compile Include="queries\ChangesQuery.vb" />
+    <Compile Include="queries_old\DiffQuery.vb" />
+    <Compile Include="queries_old\UserInfoQuery.vb" />
+    <Compile Include="queries_old\PageDetailQuery.vb" />
+    <Compile Include="queries_old\ExpandTemplatesQuery.vb" />
+    <Compile Include="queries_old\PageInfoQuery.vb" />
+    <Compile Include="queries\ParseRevisionQuery.vb" />
+    <Compile Include="queries_old\RedirectsQuery.vb" />
+    <Compile Include="queries_old\RevisionInfoQuery.vb" />
+    <Compile Include="queries_old\RevisionDetailQuery.vb" />
+    <Compile Include="queries_old\UserDetailQuery.vb" />
+    <Compile Include="scripting\Evaluator.vb" />
+    <Compile Include="ui\ActivityIndicator.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ui\prompts\FirstRunForm.Designer.vb">
+      <DependentUpon>FirstRunForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\prompts\FirstRunForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\forms\LoginForm.Designer.vb">
+      <DependentUpon>LoginForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\forms\LoginForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\Prompt.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="model\Abuse.vb" />
+    <Compile Include="model\AbuseFilter.vb" />
+    <Compile Include="model\Block.vb" />
+    <Compile Include="model\Category.vb" />
+    <Compile Include="model\ChangeTag.vb" />
+    <Compile Include="model\Extension.vb" />
+    <Compile Include="model\UserGroup.vb" />
+    <Compile Include="model\UserCreation.vb" />
+    <Compile Include="model\Deletion.vb" />
+    <Compile Include="model\Diff.vb" />
+    <Compile Include="Feature.vb" />
+    <Compile Include="Functions.vb" />
+    <Compile Include="Feed.vb" />
+    <Compile Include="Language.vb" />
+    <Compile Include="Log.vb" />
+    <Compile Include="model\LogItem.vb" />
+    <Compile Include="model\RightsChange.vb" />
+    <Compile Include="model\Media.vb" />
+    <Compile Include="model\Move.vb" />
+    <Compile Include="model\Page.vb" />
+    <Compile Include="model\Wiki.vb" />
+    <Compile Include="model\Protection.vb" />
+    <Compile Include="actions\Delete.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="actions\Email.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="queries_old\PatrolQuery.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="model\Protect.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="actions\Purge.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="queries_old\RestoreQuery.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="queries_old\ReviewQuery.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="actions\UserRights.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="queries_old\ProtectionReqQuery.vb" />
+    <Compile Include="queries_old\TagQuery.vb" />
+    <Compile Include="queries\TokenQuery.vb" />
+    <Compile Include="queries_old\UserMessageQuery.vb" />
+    <Compile Include="queries_old\XfdQuery.vb" />
+    <Compile Include="queries\Lists.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="queries_old\Query.vb" />
+    <Compile Include="queries_old\UpdateQuery.vb" />
+    <Compile Include="model\Queue.vb" />
+    <Compile Include="model\QueueItem.vb" />
+    <Compile Include="ApiRequest.vb" />
+    <Compile Include="Extensions.vb" />
+    <Compile Include="ui\Form1.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\Form1.Designer.vb">
+      <DependentUpon>Form1.vb</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="model\UserRename.vb" />
+    <Compile Include="queries\ListQuery.vb" />
+    <Compile Include="Result.vb" />
+    <Compile Include="Request.vb" />
+    <Compile Include="model\Review.vb" />
+    <Compile Include="model\Revision.vb" />
+    <Compile Include="model\Sanction.vb" />
+    <Compile Include="config\Config.vb" />
+    <Compile Include="scripting\ScriptActions.vb" />
+    <Compile Include="scripting\ScriptLists.vb" />
+    <Compile Include="scripting\ScriptMisc.vb" />
+    <Compile Include="scripting\ScriptSpecial.vb" />
+    <Compile Include="scripting\ScriptStandard.vb" />
+    <Compile Include="scripting\ScriptUser.vb" />
+    <Compile Include="scripting\ScriptWiki.vb" />
+    <Compile Include="Shortcut.vb" />
+    <Compile Include="SortedList.vb" />
+    <Compile Include="model\Space.vb" />
+    <Compile Include="model\Tool.vb" />
+    <Compile Include="Translation.vb" />
+    <Compile Include="UIRequest.vb" />
+    <Compile Include="model\Upload.vb" />
+    <Compile Include="model\User.vb" />
+    <Compile Include="ui\QueuePanel.Designer.vb">
+      <DependentUpon>QueuePanel.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\QueuePanel.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ui\forms\RunForm.Designer.vb">
+      <DependentUpon>RunForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\forms\RunForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\forms\ScriptsForm.Designer.vb">
+      <DependentUpon>ScriptsForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\forms\ScriptsForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\TutorialForm.Designer.vb">
+      <DependentUpon>TutorialForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\TutorialForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WikiFunctions.vb" />
+    <Compile Include="wikitext\Table.vb" />
+    <Compile Include="model\Comment.vb" />
+    <Compile Include="wikitext\Transclusion.vb" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources.resx">
+      <Generator>PublicVbMyResourcesResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="config\Defaults.txt" />
+    <EmbeddedResource Include="ui\forms\AboutForm.resx">
+      <DependentUpon>AboutForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\forms\AbuseFiltersForm.resx">
+      <DependentUpon>AbuseFiltersForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\forms\UserRightsForm.resx">
+      <DependentUpon>UserRightsForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\prompts\AccountAutoUnifiedForm.resx">
+      <DependentUpon>AccountAutoUnifiedForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\prompts\AccountCopyForm.resx">
+      <DependentUpon>AccountCopyForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\prompts\AccountCreateForm.resx">
+      <DependentUpon>AccountCreateForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\forms\AccountPreferencesForm.resx">
+      <DependentUpon>AccountPreferencesForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\forms\AccountPropertiesForm.resx">
+      <DependentUpon>AccountPropertiesForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\forms\ChangePasswordForm.resx">
+      <DependentUpon>ChangePasswordForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\prompts\AccountLoginForm.resx">
+      <DependentUpon>AccountLoginForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\ErrorForm.resx">
+      <DependentUpon>ErrorForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\forms\FamilyPropertiesForm.resx">
+      <DependentUpon>FamilyPropertiesForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\prompts\FirstRunForm.resx">
+      <DependentUpon>FirstRunForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\forms\GlobalPreferencesForm.resx">
+      <DependentUpon>GlobalPreferencesForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\forms\GlobalUserPropertiesForm.resx">
+      <DependentUpon>GlobalUserPropertiesForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\forms\LoginForm.resx">
+      <DependentUpon>LoginForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\LogPanel.resx">
+      <DependentUpon>LogPanel.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\MainForm.resx">
+      <DependentUpon>MainForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\WaitForm.resx">
+      <DependentUpon>WaitForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\forms\WikiAddForm.resx">
+      <DependentUpon>WikiAddForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\forms\WikiPropertiesForm.resx">
+      <DependentUpon>WikiPropertiesForm.vb</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="en.txt" />
+    <None Include="key.snk" />
+    <None Include="app.manifest" />
+    <None Include="Application.myapp">
+      <Generator>MyApplicationCodeGenerator</Generator>
+      <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="resources\BasicHtmlPage.txt" />
+    <Content Include="resources\blobs\blob-anon-filter.png" />
+    <Content Include="resources\blobs\blob-anon.png" />
+    <Content Include="resources\blobs\blob-blank.png" />
+    <Content Include="resources\blobs\blob-blanked.png" />
+    <Content Include="resources\blobs\blob-blocked.png" />
+    <Content Include="resources\blobs\blob-blocknote.png" />
+    <Content Include="resources\blobs\blob-bot.png" />
+    <Content Include="resources\blobs\blob-filter.png" />
+    <Content Include="resources\blobs\blob-ignored-assisted.png" />
+    <Content Include="resources\blobs\blob-ignored.png" />
+    <Content Include="resources\blobs\blob-log-block.png" />
+    <Content Include="resources\blobs\blob-log-delete.png" />
+    <Content Include="resources\blobs\blob-log-newuser.png" />
+    <Content Include="resources\blobs\blob-log-protect.png" />
+    <Content Include="resources\blobs\blob-log-unblock.png" />
+    <Content Include="resources\blobs\blob-log-undelete.png" />
+    <Content Include="resources\blobs\blob-log-unprotect.png" />
+    <Content Include="resources\blobs\blob-log.png" />
+    <Content Include="resources\blobs\blob-me.png" />
+    <Content Include="resources\blobs\blob-message.png" />
+    <Content Include="resources\blobs\blob-new.png" />
+    <Content Include="resources\blobs\blob-none-assisted.png" />
+    <Content Include="resources\blobs\blob-none-filter.png" />
+    <Content Include="resources\blobs\blob-none.png" />
+    <Content Include="resources\blobs\blob-redirect.png" />
+    <Content Include="resources\blobs\blob-replaced.png" />
+    <Content Include="resources\blobs\blob-report.png" />
+    <Content Include="resources\blobs\blob-reported.png" />
+    <Content Include="resources\blobs\blob-revert.png" />
+    <Content Include="resources\blobs\blob-reverted.png" />
+    <Content Include="resources\blobs\blob-tag.png" />
+    <Content Include="resources\blobs\blob-warn-1.png" />
+    <Content Include="resources\blobs\blob-warn-2.png" />
+    <Content Include="resources\blobs\blob-warn-3.png" />
+    <Content Include="resources\blobs\blob-warn-4.png" />
+    <Content Include="resources\blobs\blob-warning-1.png" />
+    <Content Include="resources\blobs\blob-warning-2.png" />
+    <Content Include="resources\blobs\blob-warning-3.png" />
+    <Content Include="resources\blobs\blob-warning-4.png" />
+    <Content Include="resources\blobs\blob-warning.png" />
+    <Content Include="resources\icons\family-icon.png" />
+    <Content Include="resources\icons\abuse-filter.png" />
+    <Content Include="resources\icons\data-chart.png" />
+    <Content Include="resources\icons\data-image.png" />
+    <Content Include="resources\icons\data-webpage.png" />
+    <Content Include="resources\HuggleIcon.ico" />
+    <Content Include="resources\HuggleLogo.png" />
+    <Content Include="resources\icons\globaluser-icon.png" />
+    <Content Include="resources\icons\mediawiki-extension.png" />
+    <Content Include="resources\icons\mediawiki-gadget.png" />
+    <Content Include="resources\icons\mediawiki-wiki.png" />
+    <Content Include="resources\icons\mini-no.png" />
+    <Content Include="resources\icons\mini-question.png" />
+    <Content Include="resources\icons\mini-yes.png" />
+    <Content Include="resources\icons\user-icon.png" />
+    <Content Include="resources\powered-by-mediawiki.png" />
+    <None Include="resources\messages.txt" />
+    <None Include="resources\icons\error-icon.png" />
+    <None Include="resources\icons\data-text.png" />
+    <None Include="resources\icons\data-wikitext.png" />
+    <None Include="resources\icons\data-table.png" />
+    <None Include="resources\icons\data-html.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
+</Project>
