@@ -315,13 +315,13 @@
     <Compile Include="ui\prompts\AccountSelectForm.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ui\ListViewEx.vb">
+    <Compile Include="ui\controls\ListViewEx.vb">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ui\LogPanel.Designer.vb">
+    <Compile Include="ui\controls\LogPanel.Designer.vb">
       <DependentUpon>LogPanel.vb</DependentUpon>
     </Compile>
-    <Compile Include="ui\LogPanel.vb">
+    <Compile Include="ui\controls\LogPanel.vb">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ui\MainForm.Designer.vb">
@@ -336,7 +336,7 @@
     <Compile Include="ui\forms\ReviewForm.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ui\SplitContainerEx.vb">
+    <Compile Include="ui\controls\SplitContainerEx.vb">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ui\WaitForm.Designer.vb">
@@ -387,7 +387,7 @@
     <Compile Include="queries_old\RevisionDetailQuery.vb" />
     <Compile Include="queries_old\UserDetailQuery.vb" />
     <Compile Include="scripting\Evaluator.vb" />
-    <Compile Include="ui\ActivityIndicator.vb">
+    <Compile Include="ui\controls\WaitControl.vb">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ui\prompts\FirstRunForm.Designer.vb">
@@ -495,10 +495,10 @@
     <Compile Include="UIRequest.vb" />
     <Compile Include="model\Upload.vb" />
     <Compile Include="model\User.vb" />
-    <Compile Include="ui\QueuePanel.Designer.vb">
+    <Compile Include="ui\controls\QueuePanel.Designer.vb">
       <DependentUpon>QueuePanel.vb</DependentUpon>
     </Compile>
-    <Compile Include="ui\QueuePanel.vb">
+    <Compile Include="ui\controls\QueuePanel.vb">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ui\forms\RunForm.Designer.vb">
@@ -531,6 +531,9 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="config\Defaults.txt" />
+    <EmbeddedResource Include="ui\controls\WaitControl.resx">
+      <DependentUpon>WaitControl.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ui\forms\AboutForm.resx">
       <DependentUpon>AboutForm.vb</DependentUpon>
     </EmbeddedResource>
@@ -579,7 +582,7 @@
     <EmbeddedResource Include="ui\forms\LoginForm.resx">
       <DependentUpon>LoginForm.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ui\LogPanel.resx">
+    <EmbeddedResource Include="ui\controls\LogPanel.resx">
       <DependentUpon>LogPanel.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ui\MainForm.resx">

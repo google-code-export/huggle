@@ -44,7 +44,7 @@ Partial Class AbuseFiltersForm
         Me.Actions = New System.Windows.Forms.Label
         Me.RateLimit = New System.Windows.Forms.Label
         Me.Progress = New System.Windows.Forms.Label
-        Me.Indicator = New Huggle.Controls.ActivityIndicator
+        Me.Indicator = New Huggle.Controls.WaitControl
         Me.PatternTab = New System.Windows.Forms.TabPage
         Me.Pattern = New System.Windows.Forms.TextBox
         Me.NotesTab = New System.Windows.Forms.TabPage
@@ -448,7 +448,7 @@ Partial Class AbuseFiltersForm
     Private WithEvents Modified As System.Windows.Forms.Label
     Private WithEvents Actions As System.Windows.Forms.Label
     Private WithEvents FilterImage As System.Windows.Forms.PictureBox
-    Friend WithEvents Indicator As Huggle.Controls.ActivityIndicator
+    Friend WithEvents Indicator As Huggle.Controls.WaitControl
     Friend WithEvents Progress As System.Windows.Forms.Label
     Private WithEvents Tabs As System.Windows.Forms.TabControl
     Private WithEvents DescriptionTab As System.Windows.Forms.TabPage

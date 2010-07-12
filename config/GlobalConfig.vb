@@ -280,18 +280,18 @@ Namespace Huggle
                         If wiki.Language IsNot Nothing AndAlso wiki.FileUrl.ToString = Config.Internal.WikimediaFilePath _
                             & wiki.Type & "/" & wiki.Language.Code & "/" Then wikiItems.Remove("files")
                         If wiki.Language IsNot Nothing AndAlso wiki.SecureUrl.ToString = Config.Internal.WikimediaSecurePath _
-                            & wiki.Type & "/" & wiki.Language.Code & "/w" Then wikiItems.Remove("secure")
+                            & wiki.Type & "/" & wiki.Language.Code & "/w/" Then wikiItems.Remove("secure")
                         If wiki.Name = Msg("login-langwikiname", UcFirst(wiki.Type), wiki.Language.Code, wiki.Language.Name) Then wikiItems.Remove("name")
                         If wiki.Type = wiki.Code.FromFirst(".") Then wikiItems.Remove("type")
-                        If wiki.Url.ToString = "http://" & wiki.Language.Code & "." & wiki.Type & ".org/w" Then wikiItems.Remove("url")
+                        If wiki.Url.ToString = "http://" & wiki.Language.Code & "." & wiki.Type & ".org/w/" Then wikiItems.Remove("url")
                     Else
                         If wiki.Channel = "#" & wiki.Code & ".wikimedia" Then wikiItems.Remove("channel")
                         If wiki.FileUrl.ToString = Config.Internal.WikimediaFilePath & "wikipedia/" & wiki.Code & "/" _
                             Then wikiItems.Remove("files")
-                        If wiki.SecureUrl.ToString = Config.Internal.WikimediaSecurePath & "wikipedia/" & wiki.Code & "/w" _
+                        If wiki.SecureUrl.ToString = Config.Internal.WikimediaSecurePath & "wikipedia/" & wiki.Code & "/w/" _
                             Then wikiItems.Remove("secure")
                         If wiki.Type = "special" Then wikiItems.Remove("type")
-                        If wiki.Url.ToString = "http://" & wiki.Code & ".wikimedia.org/w" Then wikiItems.Remove("url")
+                        If wiki.Url.ToString = "http://" & wiki.Code & ".wikimedia.org/w/" Then wikiItems.Remove("url")
                     End If
                 End If
 

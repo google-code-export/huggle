@@ -37,9 +37,10 @@ Namespace Huggle
 
         Public Event Action As EventHandler(Of QueueItem)
 
-        Public Sub New(ByVal family As Family, ByVal server As String)
+        Public Sub New(ByVal family As Family, ByVal server As String, ByVal port As Integer)
             _Family = family
-            Me.Server = server
+            _Port = port
+            _Server = server
         End Sub
 
         Public ReadOnly Property Available() As Boolean
@@ -70,22 +71,16 @@ Namespace Huggle
             End Get
         End Property
 
-        Public Property Port() As Integer
+        Public ReadOnly Property Port() As Integer
             Get
                 Return _Port
             End Get
-            Set(ByVal value As Integer)
-                _Port = value
-            End Set
         End Property
 
-        Public Property Server() As String
+        Public ReadOnly Property Server() As String
             Get
                 Return _Server
             End Get
-            Set(ByVal value As String)
-                _Server = value
-            End Set
         End Property
 
         Public ReadOnly Property Wikis() As List(Of Wiki)

@@ -22,7 +22,7 @@ Partial Class WaitForm
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Me.Indicator = New Huggle.Controls.ActivityIndicator
+        Me.Indicator = New Huggle.Controls.WaitControl
         Me.Label = New System.Windows.Forms.Label
         Me.Cancel = New System.Windows.Forms.Button
         Me.SuspendLayout()
@@ -82,6 +82,6 @@ Partial Class WaitForm
 
     End Sub
     Private WithEvents Cancel As System.Windows.Forms.Button
-    Private WithEvents Indicator As Huggle.Controls.ActivityIndicator
+    Private WithEvents Indicator As Huggle.Controls.WaitControl
     Private WithEvents Label As System.Windows.Forms.Label
 End Class

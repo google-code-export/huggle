@@ -77,7 +77,7 @@ Namespace Huggle.Actions
                 If form.ShowDialog = DialogResult.Cancel Then OnFail(Msg("error-cancelled")) : Return
             End If
 
-            App.Start(AddressOf Process, AddressOf UpdateConfig)
+            App.Start(AddressOf Process, AddressOf SaveConfig)
         End Sub
 
         Private Sub Process()
@@ -91,7 +91,7 @@ Namespace Huggle.Actions
                 OnProgress(Msg("userconfig-progress", Session.User.FullName))
                 Dim process As New LoadUserConfig(Session)
                 process.Start()
-                If process.IsFailed Then OnFail(process.Result.Message) : Return
+                If process.IsFailed Then OnFail(process.Result.Inner) : Return
             End If
 
             'Check if wiki is in read-only mode
@@ -160,7 +160,7 @@ Namespace Huggle.Actions
             If Wiki.Family IsNot Nothing Then Wiki.Family.ActiveGlobalUser = User.GlobalUser
         End Sub
 
-        Private Sub UpdateConfig()
+        Private Sub SaveConfig()
             If IsFailed Then Return
 
             If Not User.IsUsed Then

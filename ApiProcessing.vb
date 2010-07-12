@@ -146,7 +146,7 @@ Namespace Huggle
                     End Select
                 Next node
 
-            Catch ex As SystemException
+            Catch ex As Exception
                 OnFail(Result.FromException(ex).Wrap(Msg("error-apiresponse")))
             End Try
         End Sub
@@ -1345,8 +1345,8 @@ Namespace Huggle
 
                                         wiki.Name = Msg("login-langwikiname").FormatWith(UcFirst(type), language.Code, language.Name)
                                         wiki.FileUrl = New Uri(Config.Internal.WikimediaFilePath & type & "/" & language.Code & "/")
-                                        wiki.SecureUrl = New Uri(Config.Internal.WikimediaSecurePath & type & "/" & language.Code & "/w")
-                                        wiki.Url = New Uri(site.Attribute("url") & "/w")
+                                        wiki.SecureUrl = New Uri(Config.Internal.WikimediaSecurePath & type & "/" & language.Code & "/w/")
+                                        wiki.Url = New Uri(site.Attribute("url") & "/w/")
                                     End If
                                 Next site
                             End If
@@ -1509,7 +1509,7 @@ Namespace Huggle
                             prefKeys.Add(attr.Name)
                         Next attr
 
-                        User.Preferences.FromMwFormat(prefs)
+                        User.Preferences.LoadFromMwFormat(prefs)
                         prefKeys.Sort()
                         Wiki.Preferences = prefKeys
 
