@@ -188,7 +188,7 @@ Partial Class LoginForm
     Private WithEvents WikiSelector As System.Windows.Forms.ComboBox
     Private WithEvents WikiLabel As System.Windows.Forms.Label
     Private WithEvents Logo As System.Windows.Forms.PictureBox
-    Private WithEvents ActivityIndicator As Huggle.Controls.ActivityIndicator
+    Private WithEvents ActivityIndicator As Huggle.Controls.WaitControl
     Private WithEvents Username As System.Windows.Forms.ComboBox
     Private WithEvents Secure As System.Windows.Forms.CheckBox
     Private WithEvents RememberMe As System.Windows.Forms.CheckBox

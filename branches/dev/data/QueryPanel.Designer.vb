@@ -26,7 +26,7 @@ Partial Class QueryPanel
         Me.Query = New System.Windows.Forms.RichTextBox
         Me.Run = New System.Windows.Forms.Button
         Me.Progress = New System.Windows.Forms.Label
-        Me.Indicator = New Huggle.Controls.ActivityIndicator
+        Me.Indicator = New Huggle.Controls.WaitControl
         Me.SuspendLayout()
         '
         'Result
@@ -100,6 +100,6 @@ Partial Class QueryPanel
     Private WithEvents Result As DataView
     Private WithEvents Run As System.Windows.Forms.Button
     Private WithEvents Progress As System.Windows.Forms.Label
-    Friend WithEvents Indicator As Huggle.Controls.ActivityIndicator
+    Friend WithEvents Indicator As Huggle.Controls.WaitControl
 
 End Class

@@ -37,7 +37,7 @@ Partial Class AccountCreateForm
         Me.RetypePassword = New System.Windows.Forms.TextBox()
         Me.CheckStatusDisplay = New System.Windows.Forms.Label()
         Me.ConfirmRefresh = New System.Windows.Forms.LinkLabel()
-        Me.Indicator = New Huggle.Controls.ActivityIndicator()
+        Me.Indicator = New Huggle.Controls.WaitControl()
         CType(Me.ConfirmationImage, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -249,6 +249,6 @@ Partial Class AccountCreateForm
     Private WithEvents RetypePasswordLabel As System.Windows.Forms.Label
     Private WithEvents RetypePassword As System.Windows.Forms.TextBox
     Private WithEvents CheckStatusDisplay As System.Windows.Forms.Label
-    Private WithEvents Indicator As Huggle.Controls.ActivityIndicator
+    Private WithEvents Indicator As Huggle.Controls.WaitControl
     Private WithEvents ConfirmRefresh As System.Windows.Forms.LinkLabel
 End Class

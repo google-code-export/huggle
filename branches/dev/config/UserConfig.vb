@@ -183,7 +183,7 @@ Namespace Huggle
                             End If
 
                         Case "preferences"
-                            User.Preferences.FromMwFormat(Config.ParseConfig("user", key, value))
+                            User.Preferences.LoadFromMwFormat(Config.ParseConfig("user", key, value))
                             
                         Case "revert-alwaysblank" : RevertAlwaysBlank = value.ToBoolean
                         Case "revert-checkrollbacktarget" : RevertCheckRollbackTarget = value.ToBoolean

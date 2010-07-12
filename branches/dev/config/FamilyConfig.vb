@@ -74,7 +74,7 @@ Namespace Huggle
                         Case "default-globaluser-config" : Family.GlobalUsers.Default.Config.Load(value)
                         Case "default-user-config" : Family.Wikis.Default.Users.Default.Config.Load(value)
                         Case "default-wiki-config" : Family.Wikis.Default.Config.Load(value)
-                        Case "feed" : Family.Feed = New Feed(Family, value)
+                        Case "feed" : Family.Feed = New Feed(Family, value, 6667)
 
                         Case "file-wiki"
                             Family.FileWiki = App.Wikis(value)

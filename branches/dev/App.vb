@@ -120,7 +120,7 @@ Namespace Huggle
                     'Show login form
                     If user Is Nothing OrElse Not user.Session.IsActive Then
                         Dim loginForm As New LoginForm
-                        loginForm.ShowDialog()
+                        If loginForm.ShowDialog <> DialogResult.OK Then Exit While
                         user = loginForm.Session.User
                     End If
 
@@ -132,6 +132,8 @@ Namespace Huggle
             Catch ex As SystemException
                 ShowError(Result.FromException(ex).Wrap("Error loading {0}".FormatWith(Application.ProductName)))
 
+            Finally
+                Shutdown()
             End Try
         End Sub
 
@@ -166,7 +168,7 @@ Namespace Huggle
             commonsWiki.Url = New Uri("http://commons.wikimedia.org/w/")
 
             App.Families.Wikimedia.CentralWiki = metaWiki
-            App.Families.Wikimedia.Feed = New Feed(Families.Wikimedia, "irc.wikimedia.org")
+            App.Families.Wikimedia.Feed = New Feed(Families.Wikimedia, "irc.wikimedia.org", 6667)
             App.Families.Wikimedia.FileWiki = commonsWiki
             App.Families.Wikimedia.Name = "Wikimedia"
 

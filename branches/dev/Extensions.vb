@@ -267,19 +267,18 @@ Public Module Extensions
     End Function
 
     <Extension()> _
-    Function ToBoolean(ByVal Str As String) As Boolean
-        Dim Result As Boolean
-        If Str Is Nothing Then Return False
-        If Str = "" Then Return True
+    Function ToBoolean(ByVal str As String) As Boolean
+        If String.IsNullOrEmpty(str) Then Return False
 
-        If Boolean.TryParse(Str, Result) Then Return Result
+        Dim result As Boolean
+        If Boolean.TryParse(str, result) Then Return result
 
-        Select Case Str.ToLower
+        Select Case str.ToLower
             Case "yes", "y", Msg("yes").ToLower : Return True
             Case "no", "n", Msg("no").ToLower : Return False
         End Select
 
-        Return CBool(Str)
+        Return CBool(str)
     End Function
 
     <Extension()> _

@@ -1,4 +1,5 @@
-﻿Imports System.Collections.Generic
+﻿Imports System
+Imports System.Collections.Generic
 
 Namespace Huggle
 
@@ -95,79 +96,84 @@ Namespace Huggle
             Return result
         End Function
 
-        Public Sub FromMwFormat(ByVal prefs As Dictionary(Of String, String))
+        Public Sub LoadFromMwFormat(ByVal prefs As Dictionary(Of String, String))
             SearchNamespaces.Clear()
 
             For Each item As KeyValuePair(Of String, String) In prefs
-                Dim value As String = item.Value
+                Try
+                    Dim value As String = item.Value
 
-                Select Case item.Key
-                    Case "cols" : EditorColumns = CInt(value)
-                    Case "contextchars" : SearchContextChars = CInt(value)
-                    Case "contextlines" : SearchContextLines = CInt(value)
-                    Case "date" : DateFormat = value
-                    Case "diffonly" : DiffOnly = CBool(value)
-                    Case "disablesuggest" : SearchSuggestions = Not CBool(value)
-                    Case "editfont" : EditorFont = value
-                    Case "editondblclick" : EditOnDoubleClick = CBool(value)
-                    Case "editsection" : SectionEditLinks = CBool(value)
-                    Case "editsectiononrightclick" : SectionEditOnRightClick = CBool(value)
-                    Case "editwidth" : EditorFullWidth = CBool(value)
-                    Case "extendwatchlist" : WatchlistShowAllChanges = CBool(value)
-                    Case "externaldiff" : ExternalDiff = CBool(value)
-                    Case "externaleditor" : ExternalEditor = CBool(value)
-                    Case "fancysig" : RawSignature = CBool(value)
-                    Case "forceeditsummary" : ForceEditSummary = CBool(value)
-                    Case "gender" : Gender = value
-                    Case "hideminor" : RcHideMinor = CBool(value)
-                    Case "hidepatrolled" : RcHidePatrolled = CBool(value)
-                    Case "highlightbroken" : AlternateLinks = Not CBool(value)
-                    Case "imagesize" : ImageSize = CInt(value)
-                    Case "justify" : Justify = CBool(value)
-                    Case "language" : Language = value
-                    Case "math" : MathOption = CInt(value)
-                    Case "minordefault" : MinorDefault = CBool(value)
-                    Case "newpageshidepatrolled" : NewHidePatrolled = CBool(value)
-                    Case "nickname" : Signature = value
-                    Case "nocache" : DisableCaching = CBool(value)
-                    Case "norollbackdiff" : RollbackDiff = Not CBool(value)
-                    Case "numberheadings" : NumberHeadings = CBool(value)
-                    Case "previewonfirst" : PreviewFirstEdit = CBool(value)
-                    Case "previewontop" : PreviewAtTop = CBool(value)
-                    Case "rcdays" : RcDays = CInt(value)
-                    Case "rows" : EditorRows = CInt(value)
-                    Case "searchlimit" : SearchResults = CInt(value)
-                    Case "showhiddencats" : HiddenCategories = CBool(value)
-                    Case "showjumplinks" : JumpLinks = CBool(value)
-                    Case "showtoc" : Toc = CBool(value)
-                    Case "showtoolbar" : Toolbar = CBool(value)
-                    Case "skin" : Skin = value
-                    Case "stubthreshold" : StubThreshold = CInt(value)
-                    Case "thumbsize" : ThumbnailSize = CInt(value)
-                    Case "timecorrection" : TimeZone = value
-                    Case "underline" : UnderlineLinks = CInt(value)
-                    Case "useeditwarning" : EditWarning = CBool(value)
-                    Case "uselivepreview" : LivePreview = CBool(value)
-                    Case "usenewrc" : EnhancedRc = CBool(value)
-                    Case "watchcreations" : WatchCreations = CBool(value)
-                    Case "watchdefault" : WatchEdits = CBool(value)
-                    Case "watchdeletion" : WatchDeletions = CBool(value)
-                    Case "watchlistdays" : WatchlistAge = CInt(value)
-                    Case "watchlisthideanons" : WatchlistHideAnonymous = CBool(value)
-                    Case "watchlisthidebots" : WatchlistHideBots = CBool(value)
-                    Case "watchlisthideliu" : WatchlistHideUsers = CBool(value)
-                    Case "watchlisthideminor" : WatchlistHideMinor = CBool(value)
-                    Case "watchlisthideown" : WatchlistHideOwn = CBool(value)
-                    Case "watchlisthidepatrolled" : WatchlistHidePatrolled = CBool(value)
-                    Case "watchlisttoken" : WatchlistToken = value
-                    Case "watchmoves" : WatchMoves = CBool(value)
-                    Case "wllimit" : RcItems = CInt(value)
+                    Select Case item.Key
+                        Case "cols" : EditorColumns = CInt(value)
+                        Case "contextchars" : SearchContextChars = CInt(value)
+                        Case "contextlines" : SearchContextLines = value.ToInteger
+                        Case "date" : DateFormat = value
+                        Case "diffonly" : DiffOnly = value.ToBoolean
+                        Case "disablesuggest" : SearchSuggestions = Not value.ToBoolean
+                        Case "editfont" : EditorFont = value
+                        Case "editondblclick" : EditOnDoubleClick = value.ToBoolean
+                        Case "editsection" : SectionEditLinks = value.ToBoolean
+                        Case "editsectiononrightclick" : SectionEditOnRightClick = value.ToBoolean
+                        Case "editwidth" : EditorFullWidth = value.ToBoolean
+                        Case "extendwatchlist" : WatchlistShowAllChanges = value.ToBoolean
+                        Case "externaldiff" : ExternalDiff = value.ToBoolean
+                        Case "externaleditor" : ExternalEditor = value.ToBoolean
+                        Case "fancysig" : RawSignature = value.ToBoolean
+                        Case "forceeditsummary" : ForceEditSummary = value.ToBoolean
+                        Case "gender" : Gender = value
+                        Case "hideminor" : RcHideMinor = value.ToBoolean
+                        Case "hidepatrolled" : RcHidePatrolled = value.ToBoolean
+                        Case "highlightbroken" : AlternateLinks = Not value.ToBoolean
+                        Case "imagesize" : ImageSize = CInt(value)
+                        Case "justify" : Justify = value.ToBoolean
+                        Case "language" : Language = value
+                        Case "math" : MathOption = CInt(value)
+                        Case "minordefault" : MinorDefault = value.ToBoolean
+                        Case "newpageshidepatrolled" : NewHidePatrolled = value.ToBoolean
+                        Case "nickname" : Signature = value
+                        Case "nocache" : DisableCaching = value.ToBoolean
+                        Case "norollbackdiff" : RollbackDiff = Not value.ToBoolean
+                        Case "numberheadings" : NumberHeadings = value.ToBoolean
+                        Case "previewonfirst" : PreviewFirstEdit = value.ToBoolean
+                        Case "previewontop" : PreviewAtTop = value.ToBoolean
+                        Case "rcdays" : RcDays = CInt(value)
+                        Case "rows" : EditorRows = CInt(value)
+                        Case "searchlimit" : SearchResults = CInt(value)
+                        Case "showhiddencats" : HiddenCategories = value.ToBoolean
+                        Case "showjumplinks" : JumpLinks = value.ToBoolean
+                        Case "showtoc" : Toc = value.ToBoolean
+                        Case "showtoolbar" : Toolbar = value.ToBoolean
+                        Case "skin" : Skin = value
+                        Case "stubthreshold" : StubThreshold = CInt(value)
+                        Case "thumbsize" : ThumbnailSize = CInt(value)
+                        Case "timecorrection" : TimeZone = value
+                        Case "underline" : UnderlineLinks = CInt(value)
+                        Case "useeditwarning" : EditWarning = value.ToBoolean
+                        Case "uselivepreview" : LivePreview = value.ToBoolean
+                        Case "usenewrc" : EnhancedRc = value.ToBoolean
+                        Case "watchcreations" : WatchCreations = value.ToBoolean
+                        Case "watchdefault" : WatchEdits = value.ToBoolean
+                        Case "watchdeletion" : WatchDeletions = value.ToBoolean
+                        Case "watchlistdays" : WatchlistAge = CInt(value)
+                        Case "watchlisthideanons" : WatchlistHideAnonymous = value.ToBoolean
+                        Case "watchlisthidebots" : WatchlistHideBots = value.ToBoolean
+                        Case "watchlisthideliu" : WatchlistHideUsers = value.ToBoolean
+                        Case "watchlisthideminor" : WatchlistHideMinor = value.ToBoolean
+                        Case "watchlisthideown" : WatchlistHideOwn = value.ToBoolean
+                        Case "watchlisthidepatrolled" : WatchlistHidePatrolled = value.ToBoolean
+                        Case "watchlisttoken" : WatchlistToken = value
+                        Case "watchmoves" : WatchMoves = value.ToBoolean
+                        Case "wllimit" : RcItems = CInt(value)
 
-                    Case Else
-                        If item.Key.StartsWith("searchNs") AndAlso value <> "" _
-                            Then SearchNamespaces.Merge(item.Key.FromFirst("searchNs")) _
-                            Else Other.Merge(item.Key, value)
-                End Select
+                        Case Else
+                            If item.Key.StartsWith("searchNs") AndAlso value <> "" _
+                                Then SearchNamespaces.Merge(item.Key.FromFirst("searchNs")) _
+                                Else Other.Merge(item.Key, value)
+                    End Select
+
+                Catch ex As SystemException
+                    Log.Debug("Error parsing value for MediaWiki preference '{0}'".FormatWith(item.Key))
+                End Try
             Next item
         End Sub
 
