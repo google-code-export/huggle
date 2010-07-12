@@ -59,7 +59,7 @@ Namespace Huggle.Actions
                 If wiki.Url = siteUrl Then OnFail(Msg("addwiki-alreadyadded", wiki.Name)) : Return
             Next wiki
 
-            _Wiki = App.Wikis(siteUrl.ToString.Remove("http://").TrimEnd(CChar("/")))
+            _Wiki = App.Wikis(siteUrl.ToString.Remove("http://").TrimEnd("/"c))
             Wiki.IsCustom = True
             Wiki.Url = siteUrl
 

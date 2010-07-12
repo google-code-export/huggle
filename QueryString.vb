@@ -66,8 +66,9 @@ Namespace Huggle
                 If TypeOf value Is IList(Of String) Then value = CType(value, IList(Of String)).Join("|")
                 If TypeOf value Is Boolean Then value = If(CBool(value), 1, 0)
 
-                'Hide any passwords in debug log
-                If {"lgpassword", "wpPassword", "wpNewPassword", "wpRetype"}.Contains(key) Then value = "********"
+                'Hide passwords/tokens in debug log
+                If key.ToLower.EndsWith("password") OrElse key.ToLower.EndsWith("retype") _
+                    OrElse key.ToLower.EndsWith("token") Then value = "******"
 
                 If value.ToString = "" Then items.Add(key) Else items.Add(key & "=" & value.ToString)
             Next key

@@ -1302,8 +1302,8 @@ Namespace Huggle
 
                             wiki.Name = UcFirst(wiki.Code)
                             wiki.FileUrl = New Uri(Config.Internal.WikimediaFilePath & "wikipedia/" & wiki.Code & "/")
-                            wiki.SecureUrl = New Uri(Config.Internal.WikimediaSecurePath & "wikipedia/" & wiki.Code & "/w")
-                            wiki.Url = New Uri(special.Attribute("url") & "/w")
+                            wiki.SecureUrl = New Uri(Config.Internal.WikimediaSecurePath & "wikipedia/" & wiki.Code & "/w/")
+                            wiki.Url = New Uri(special.Attribute("url") & "/w/")
 
                             If special.HasAttribute("private") Then
                                 wiki.IsPublicEditable = False

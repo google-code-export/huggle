@@ -20,7 +20,7 @@ Public Class LogPanel
     End Sub
 
     Private Sub _Resize() Handles Me.Resize
-        LogList.Columns(1).Width = LogList.Width - LogList.Columns(0).Width - 24
+        If LogList.Columns.Count > 0 Then LogList.Columns(1).Width = LogList.Width - LogList.Columns(0).Width - 24
     End Sub
 
     Private Sub LogList_SelectedIndexChanged() Handles LogList.SelectedIndexChanged

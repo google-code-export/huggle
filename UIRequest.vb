@@ -62,7 +62,7 @@ Namespace Huggle
         End Property
 
         Public Overrides Sub Start()
-            Url = New Uri(If(Session.IsSecure, Wiki.SecureUrl, Wiki.Url).ToString & "/index.php?" & Query.ToUrlString)
+            Url = New Uri(If(Session.IsSecure, Wiki.SecureUrl, Wiki.Url).ToString & "index.php?" & Query.ToUrlString)
             Cookies = Session.Cookies
             MyBase.Start()
             If IsCancelled Then OnFail(Msg("error-cancelled")) : Return

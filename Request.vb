@@ -140,7 +140,7 @@ Namespace Huggle
             Loop Until Result.IsError
         End Sub
 
-        Private Sub FixCookieContainer(ByVal cookies As CookieContainer, ByVal url As Uri)
+        Private Shared Sub FixCookieContainer(ByVal cookies As CookieContainer, ByVal url As Uri)
             'CookieContainer has a bug in its domain handling (not fixed until .NET 4),
             'here we use reflection to poke the necessary values. Using something else
             'to handle cookies isn't an option as HttpWebRequest requires a CookieContainer
@@ -151,7 +151,7 @@ Namespace Huggle
                 BindingFlags.NonPublic Or BindingFlags.GetField Or BindingFlags.Instance,
                 Nothing, cookies, Nothing), Hashtable)
 
-            For Each key As String In domainTable.Keys
+            For Each key As String In New ArrayList(domainTable.Keys)
                 If key.StartsWith(".") Then domainTable(key.Substring(1)) = domainTable(key)
             Next key
 

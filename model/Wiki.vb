@@ -104,7 +104,7 @@ Namespace Huggle
             End Set
         End Property
 
-        Public Property CreationCheck As PreCreateAccount
+        Public Property CurrentConfirmation As Confirmation
 
         Public ReadOnly Property Diffs() As DiffCollection
             Get
@@ -166,7 +166,7 @@ Namespace Huggle
         Public ReadOnly Property HomeUrl() As Uri
             Get
                 If ShortUrl IsNot Nothing Then Return ShortUrl
-                Return New Uri(Url.ToString & "/index.php")
+                Return New Uri(Url.ToString & "index.php")
             End Get
         End Property
 

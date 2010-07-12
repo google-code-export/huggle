@@ -660,7 +660,7 @@ Namespace Huggle
         Public ReadOnly Property Url() As Uri
             Get
                 If Wiki.ShortUrl IsNot Nothing Then Return New Uri(Wiki.ShortUrl.ToString & UrlEncode(Title))
-                Return New Uri(Wiki.Url.ToString & "/index.php?title=" & UrlEncode(Title))
+                Return New Uri(Wiki.Url.ToString & "index.php?title=" & UrlEncode(Title))
             End Get
         End Property
 

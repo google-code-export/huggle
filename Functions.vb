@@ -175,12 +175,14 @@ Namespace Huggle
             algo.Key = key
 
             Dim inputStream As New MemoryStream(value)
-            Dim output(value.Length) As Byte
+            Dim output(value.Length - 1) As Byte
             Dim cryptoStream As New CryptoStream(inputStream, algo.CreateDecryptor, CryptoStreamMode.Read)
             cryptoStream.Read(output, 0, CInt(inputStream.Length))
             cryptoStream.Close()
 
-            Return Encoding.UTF8.GetString(output)
+            Dim result As String = Encoding.UTF8.GetString(output)
+            If result.Contains(Convert.ToChar(0)) Then result = result.ToFirst(Convert.ToChar(0))
+            Return result
         End Function
 
         Public Function WikiUrl(ByVal wiki As Wiki, ByVal title As String, ByVal ParamArray params As String()) As Uri
@@ -199,7 +201,7 @@ Namespace Huggle
             title = title.Replace(" ", "_")
 
             If wiki.ShortUrl Is Nothing _
-                Then Return New Uri(wiki.Url.ToString & "/index.php?title=" & title & paramString) _
+                Then Return New Uri(wiki.Url.ToString & "index.php?title=" & title & paramString) _
                 Else Return New Uri(wiki.ShortUrl.ToString & title & "?" & paramString.Substring(1))
         End Function
 

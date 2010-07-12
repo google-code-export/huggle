@@ -33,6 +33,8 @@ Namespace Huggle
         Private Shared _Sessions As SessionCollection
         Private Shared _Wikis As WikiCollection
 
+        Private Shared Handle As Form
+
         Public Shared Property Context() As SynchronizationContext
 
         Public Shared ReadOnly Property Families() As FamilyCollection
@@ -41,8 +43,6 @@ Namespace Huggle
                 Return _Families
             End Get
         End Property
-
-        Public Shared Property Handle() As Control
 
         Public Shared ReadOnly Property IsMono() As Boolean
             Get
@@ -101,36 +101,37 @@ Namespace Huggle
                 'Wikimedia wiki, and try to make the feed available as soon as possible
                 If Config.Local.RcFeeds AndAlso Families.Wikimedia.Feed IsNot Nothing Then Families.Wikimedia.Feed.Connect()
 
+                Dim user As User = Config.Local.LastLogin
+
                 'Login automatically if configured to do so
-                If Config.Local.AutoLogin AndAlso Config.Local.LastLogin IsNot Nothing Then
-                    Config.Local.LastLogin.Config.LoadLocal()
+                If Config.Local.AutoLogin AndAlso user IsNot Nothing Then
+                    user.Config.LoadLocal()
 
-                    Dim login As New Login(Config.Local.LastLogin.Session, "Automatic login")
-                    UserWaitForProcess(login)
-                    If login.IsFailed Then ShowError(login.Result.Wrap(Msg("login-error-auto")))
+                    If user.IsAnonymous OrElse user.Password IsNot Nothing Then
+                        Dim login As New Login(user.Session, "Automatic login")
+                        UserWaitForProcess(login)
+
+                        If login.IsFailed Then user.Session.IsActive = False
+                        If login.IsErrored Then ShowError(login.Result.Wrap(Msg("login-error-auto")))
+                    End If
                 End If
-
-                Dim session As Session = Nothing
-                If Config.Local.LastLogin IsNot Nothing Then session = Config.Local.LastLogin.Session
 
                 While True
                     'Show login form
-                    If session Is Nothing OrElse Not session.IsActive Then
+                    If user Is Nothing OrElse Not user.Session.IsActive Then
                         Dim loginForm As New LoginForm
-                        If loginForm.ShowDialog <> DialogResult.OK Then Exit While
-                        session = loginForm.Session
+                        loginForm.ShowDialog()
+                        user = loginForm.Session.User
                     End If
 
                     'Show main form
-                    Dim mainForm As New MainForm(session)
+                    Dim mainForm As New MainForm(user.Session)
                     If mainForm.ShowDialog() <> DialogResult.OK Then Exit While
                 End While
 
             Catch ex As SystemException
                 ShowError(Result.FromException(ex).Wrap("Error loading {0}".FormatWith(Application.ProductName)))
 
-            Finally
-                Shutdown()
             End Try
         End Sub
 
@@ -143,7 +144,7 @@ Namespace Huggle
             Application.SetCompatibleTextRenderingDefault(False)
 
             'Create a dummy form we can call Invoke on from other threads to manipulate the UI
-            'Access window handle to force it to be created without actually displaying the form
+            'Access window handle to force creation without actually displaying the form
             Handle = New Form
             Dim ptr As IntPtr = Handle.Handle
 
@@ -158,11 +159,11 @@ Namespace Huggle
 
             Dim metaWiki As Wiki = Wikis("meta")
             metaWiki.Family = App.Families.Wikimedia
-            metaWiki.Url = New Uri("http://meta.wikimedia.org/w")
+            metaWiki.Url = New Uri("http://meta.wikimedia.org/w/")
 
             Dim commonsWiki As Wiki = Wikis("commons")
             commonsWiki.Family = App.Families.Wikimedia
-            commonsWiki.Url = New Uri("http://commons.wikimedia.org/w")
+            commonsWiki.Url = New Uri("http://commons.wikimedia.org/w/")
 
             App.Families.Wikimedia.CentralWiki = metaWiki
             App.Families.Wikimedia.Feed = New Feed(Families.Wikimedia, "irc.wikimedia.org")
@@ -211,6 +212,7 @@ Namespace Huggle
         Public Shared Sub ShowError(ByVal message As String)
             ShowError(New Result(message))
         End Sub
+
         Public Shared Sub Start(ByVal method As Action, Optional ByVal callback As Action = Nothing)
             If SynchronizationContext.Current Is Nothing _
                 Then SynchronizationContext.SetSynchronizationContext(New SynchronizationContext)
@@ -219,8 +221,8 @@ Namespace Huggle
             ThreadPool.QueueUserWorkItem(AddressOf InvokeMethod, state)
         End Sub
 
-        'Display a cancellable progress dialog while executing an action on another thread
         Public Shared Sub UserWaitForProcess(ByVal process As Process)
+            'Display a cancellable progress dialog while executing an action on another thread
             Dim waitForm As New WaitForm(Msg("wait-generic"))
             AddHandler process.Progress, AddressOf waitForm.UpdateByProcess
             AddHandler process.Complete, AddressOf waitForm.CloseByProcess
@@ -255,7 +257,6 @@ Namespace Huggle
             Config.Local.IsFirstRun = False
         End Sub
 
-        ''' <summary>Terminate the application</summary>
         Public Shared Sub Shutdown()
             Config.Local.Save()
             Log.Debug("Session ended")

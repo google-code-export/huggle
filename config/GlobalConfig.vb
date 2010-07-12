@@ -171,8 +171,8 @@ Namespace Huggle
 
                         wiki.Name = Msg("login-langwikiname", UcFirst(wiki.Type), wiki.Language.Code, wiki.Language.Name)
                         wiki.FileUrl = New Uri(Config.Internal.WikimediaFilePath & wiki.Type & "/" & wiki.Language.Code & "/")
-                        wiki.SecureUrl = New Uri(Config.Internal.WikimediaSecurePath & wiki.Type & "/" & wiki.Language.Code & "/w")
-                        wiki.Url = New Uri("http://" & wiki.Code & ".org/w")
+                        wiki.SecureUrl = New Uri(Config.Internal.WikimediaSecurePath & wiki.Type & "/" & wiki.Language.Code & "/w/")
+                        wiki.Url = New Uri("http://" & wiki.Code & ".org/w/")
                     Else
                         wiki.Channel = "#" & wiki.Code & ".wikimedia"
                         wiki.InternalCode = wiki.Code
@@ -180,8 +180,8 @@ Namespace Huggle
 
                         wiki.Name = UcFirst(wiki.Code)
                         wiki.FileUrl = New Uri(Config.Internal.WikimediaFilePath & "wikipedia/" & wiki.Code & "/")
-                        wiki.SecureUrl = New Uri(Config.Internal.WikimediaSecurePath & "wikipedia/" & wiki.Code & "/w")
-                        wiki.Url = New Uri("http://" & wiki.Code & ".wikimedia.org/w")
+                        wiki.SecureUrl = New Uri(Config.Internal.WikimediaSecurePath & "wikipedia/" & wiki.Code & "/w/")
+                        wiki.Url = New Uri("http://" & wiki.Code & ".wikimedia.org/w/")
                     End If
                 End If
 

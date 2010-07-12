@@ -6,11 +6,21 @@ Imports System.Windows.Forms
 Public Class WaitForm
 
     Private _Cancelled As Boolean
+
+    Private Available As Boolean
     Private Message As String
 
     Public Sub New(ByVal message As String)
         InitializeComponent()
         Me.Message = message
+    End Sub
+
+    Private Sub _HandleCreated() Handles Me.HandleCreated
+        Available = True
+    End Sub
+
+    Private Sub _HandleDestroyed() Handles Me.HandleDestroyed
+        Available = False
     End Sub
 
     Private Sub _Load() Handles Me.Load
@@ -40,6 +50,8 @@ Public Class WaitForm
     End Sub
 
     Public Sub SetMessage(ByVal message As String)
+        If Not Available Then Return
+
         Label.Text = message
 
         'Resize to accommodate message
