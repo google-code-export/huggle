@@ -18,7 +18,7 @@ Namespace Huggle
             _User = user
         End Sub
 
-        Public Property Cookies() As CookieContainer
+        Public Property Cookies() As New CookieContainer
 
         Public ReadOnly Property Description() As String
             Get

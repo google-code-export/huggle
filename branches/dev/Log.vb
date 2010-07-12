@@ -78,7 +78,8 @@ Namespace Huggle
             If Config.Local.LogToFile AndAlso Path IsNot Nothing Then
                 Try
                     File.AppendAllText(Path, _
-                        CRLF & message.Time.ToShortDateString & " " & message.Time.ToLongTimeString & " - " & message.Message)
+                        CRLF & message.Time.ToShortDateString & " " & message.Time.ToLongTimeString _
+                        & "." & message.Time.Millisecond.ToString.PadLeft(3, "0"c) & " - " & message.Message)
 
                 Catch ex As IOException
                     HandleFileLogError(ex)

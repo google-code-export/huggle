@@ -42,7 +42,7 @@ Partial Class LoginForm
         Me.Login.Location = New System.Drawing.Point(77, 217)
         Me.Login.Name = "Login"
         Me.Login.Size = New System.Drawing.Size(80, 23)
-        Me.Login.TabIndex = 6
+        Me.Login.TabIndex = 8
         Me.Login.Text = "Login"
         '
         'Cancel
@@ -52,7 +52,7 @@ Partial Class LoginForm
         Me.Cancel.Location = New System.Drawing.Point(163, 217)
         Me.Cancel.Name = "Cancel"
         Me.Cancel.Size = New System.Drawing.Size(80, 23)
-        Me.Cancel.TabIndex = 7
+        Me.Cancel.TabIndex = 9
         Me.Cancel.Text = "Cancel"
         Me.Cancel.UseVisualStyleBackColor = True
         '
@@ -139,7 +139,7 @@ Partial Class LoginForm
         Me.Secure.Location = New System.Drawing.Point(80, 169)
         Me.Secure.Name = "Secure"
         Me.Secure.Size = New System.Drawing.Size(142, 17)
-        Me.Secure.TabIndex = 8
+        Me.Secure.TabIndex = 6
         Me.Secure.Text = "Use secure server (slow)"
         Me.Secure.UseVisualStyleBackColor = True
         '
@@ -149,7 +149,7 @@ Partial Class LoginForm
         Me.RememberMe.Location = New System.Drawing.Point(80, 192)
         Me.RememberMe.Name = "RememberMe"
         Me.RememberMe.Size = New System.Drawing.Size(94, 17)
-        Me.RememberMe.TabIndex = 9
+        Me.RememberMe.TabIndex = 7
         Me.RememberMe.Text = "Remember me"
         Me.RememberMe.UseVisualStyleBackColor = True
         '

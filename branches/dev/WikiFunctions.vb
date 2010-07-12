@@ -2,6 +2,7 @@
 Imports System
 Imports System.Collections
 Imports System.Collections.Generic
+Imports System.Drawing
 Imports System.Text
 Imports System.Text.RegularExpressions
 Imports System.Web.HttpUtility
@@ -234,4 +235,32 @@ Namespace Huggle
         End Function
 
     End Class
+
+    Public Class Confirmation
+
+        Private _Id As String
+        Private _Image As Image
+
+        Public Sub New(ByVal id As String, ByVal image As Image)
+            _Id = id
+            _Image = image
+        End Sub
+
+        Public Property Answer As String
+
+        Public ReadOnly Property Id As String
+            Get
+                Return _Id
+            End Get
+        End Property
+
+        Public ReadOnly Property Image As Image
+            Get
+                Return _Image
+            End Get
+        End Property
+
+    End Class
+
+
 End Namespace

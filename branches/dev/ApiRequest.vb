@@ -13,6 +13,7 @@ Namespace Huggle
 
         Private _Continues As New Dictionary(Of String, Object)
         Private _Items As New List(Of QueueItem)
+        Private _NewItems As New List(Of QueueItem)
         Private _LoginResponse As LoginResponse
         Private _LoginToken As String
         Private _Query As QueryString
@@ -63,7 +64,11 @@ Namespace Huggle
             End Get
         End Property
 
-        Public Property NewItems() As List(Of QueueItem)
+        Public ReadOnly Property NewItems() As List(Of QueueItem)
+            Get
+                Return _NewItems
+            End Get
+        End Property
 
         Public Property Processing() As Boolean
 
@@ -106,7 +111,7 @@ Namespace Huggle
         Public Overrides Sub Start()
             Url = If(Session.IsSecure, Wiki.SecureUrl, Wiki.Url)
             If Url Is Nothing Then OnFail(Msg("error-wikibadurl", Wiki)) : Return
-            Url = New Uri(Url.ToString & "/api.php")
+            Url = New Uri(Url.ToString & "api.php")
 
             Query.Merge(Continues)
             Query.Add("format", "xml")

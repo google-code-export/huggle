@@ -27,7 +27,7 @@ Class QueuePanel
         Queues.Items.AddRange(wiki.Queues.All.ToArray)
 
         If wiki.Queues.Default IsNot Nothing AndAlso Queues.Items.Contains(wiki.Queues.Default) _
-            Then Queues.SelectedItem = wiki.Queues.Default Else Queues.SelectedIndex = 0
+            Then Queues.SelectedItem = wiki.Queues.Default Else If Queues.Items.Count > 0 Then Queues.SelectedIndex = 0
 
         If App.Languages.Current IsNot Nothing Then App.Languages.Current.LocalizeControl(Me)
     End Sub

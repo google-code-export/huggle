@@ -82,18 +82,9 @@ Public Class LoginForm
         End Try
     End Sub
 
-    Private Sub _FormClosing(ByVal s As Object, ByVal e As FormClosingEventArgs) Handles Me.FormClosing
-        If e.CloseReason = CloseReason.UserClosing Then Config.Local.Save() : End
-    End Sub
-
     Private Sub _Shown() Handles Me.Shown
         If Username.Text = "" Then Username.Focus() Else If Password.Text = "" Then Password.Focus() Else Login.Focus()
         Credentials_TextChanged()
-    End Sub
-
-    Private Sub Cancel_Click() Handles Cancel.Click
-        DialogResult = DialogResult.Cancel
-        Close()
     End Sub
 
     Private Sub Credentials_TextChanged() Handles Password.TextChanged, Username.TextChanged
@@ -159,15 +150,16 @@ Public Class LoginForm
         ElseIf Username.SelectedItem IsNot Nothing _
             AndAlso Username.SelectedItem.ToString = Msg("login-createaccount") Then
 
-            Dim createForm As New AccountCreateForm(Wiki.Users.Anonymous.Session, Wiki.CreationCheck.ConfirmImage)
+            Dim createForm As New AccountCreateForm(Wiki.Users.Anonymous.Session)
 
             If createForm.ShowDialog = DialogResult.Cancel Then
-                If User Is Nothing Then
-                    Username.SelectedItem = Nothing
-                Else
+                Username.SelectedItem = Nothing
+
+                'Restore previous selection
+                If User IsNot Nothing Then _
                     If User.IsAnonymous Then Username.SelectedIndex = 0 Else Username.Text = User.Name
-                End If
             Else
+                'Add new account to list
                 If Not Username.Items.Contains(createForm.NewUser) Then Username.Items.Add(createForm.NewUser)
                 Username.SelectedItem = createForm.NewUser
                 Password.Text = "********"
@@ -250,12 +242,14 @@ Public Class LoginForm
 
     Private Function CompareWikis(ByVal x As Wiki, ByVal y As Wiki) As Integer
         If x.Type <> y.Type Then Return String.Compare(x.Type, y.Type)
-        If x.Language IsNot Nothing AndAlso y.Language IsNot Nothing Then Return String.Compare(x.Language.Code, y.Language.Code)
+        If x.Language IsNot Nothing AndAlso y.Language IsNot Nothing _
+            Then Return String.Compare(x.Language.Code, y.Language.Code)
         Return String.Compare(x.Name, y.Name)
     End Function
 
     Private Function DoLogin(ByVal user As User) As Boolean
-        If user Is Nothing Then App.ShowError(New Result({Msg("login-fail", Msg("login-error-badusername"))})) : Return False
+        If user Is Nothing Then App.ShowError _
+            (New Result({Msg("login-fail", Msg("login-error-badusername"))})) : Return False
 
         If user.DisplayName = user.Name Then user.DisplayName = Username.Text
         If Not FakePassword Then user.Password = Scramble(Password.Text, Hash(user))
@@ -271,7 +265,6 @@ Public Class LoginForm
         App.UserWaitForProcess(loginAction)
 
         If loginAction.IsErrored Then App.ShowError(loginAction.Result)
-
         Return loginAction.IsSuccess
     End Function
 

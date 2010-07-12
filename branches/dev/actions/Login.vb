@@ -29,6 +29,35 @@ Namespace Huggle.Actions
         Public Overrides Sub Start()
             If Session.IsActive Then OnSuccess() : Return
 
+            'Let global config finish preloading. If it wasn't preloading, load it.
+            Config.Global.Loader.Interactive = False
+            If Config.Global.IsDefault Then Config.Global.Loader.Start()
+
+            If Config.Global.Loader.IsRunning Then
+                OnProgress(Msg("config-progress"))
+                App.WaitFor(Function() Config.Global.Loader.IsComplete)
+            End If
+
+            If Config.Global.Loader.IsFailed Then OnFail(Config.Global.Loader.Result)
+
+            'Connect to recent changes feed
+            If Wiki.Family IsNot Nothing AndAlso Wiki.Family.Feed IsNot Nothing _
+                AndAlso Not Wiki.Family.Feed.ConnectionAttempted Then Wiki.Family.Feed.Connect()
+
+            If Not ForceAnonymous AndAlso Session.User.IsAnonymous Then
+                If Not Interactive Then OnFail(Msg("login-noaccount", Wiki)) : Return
+
+                'Prompt the user to select an account to use
+                Dim form As New AccountSelectForm(Requester, Wiki)
+                If form.ShowDialog = DialogResult.Cancel Then OnFail(Msg("error-cancelled")) : Return
+
+                Session = form.User.Session
+            End If
+
+            'Load cached config
+            If Wiki.Config.IsDefault Then Wiki.Config.LoadLocal()
+            If User.Config.IsDefault Then User.Config.LoadLocal()
+
             'Automatically select a unified account where possible
             If Not Session.User.IsAnonymous AndAlso Session.User.GlobalUser IsNot Nothing _
                 AndAlso Session.User.GlobalUser.IsActive Then
@@ -46,40 +75,12 @@ Namespace Huggle.Actions
                 'Prompt for account password
                 Dim form As New AccountLoginForm(User, Requester)
                 If form.ShowDialog = DialogResult.Cancel Then OnFail(Msg("error-cancelled")) : Return
-
-            ElseIf Not ForceAnonymous AndAlso Session.User.IsAnonymous Then
-                If Not Interactive Then OnFail(Msg("login-noaccount", Wiki)) : Return
-
-                'Prompt the user to select an account to use
-                Dim form As New AccountSelectForm(Requester, Wiki)
-                If form.ShowDialog = DialogResult.Cancel Then OnFail(Msg("error-cancelled")) : Return
-
-                Session = form.User.Session
             End If
 
             App.Start(AddressOf Process, AddressOf UpdateConfig)
         End Sub
 
         Private Sub Process()
-            'Let global config finish preloading. If it wasn't preloading, load it.
-            Config.Global.Loader.Interactive = False
-            If Config.Global.IsDefault Then Config.Global.Loader.Start()
-
-            If Config.Global.Loader.IsRunning Then
-                OnProgress(Msg("config-progress"))
-                App.WaitFor(Function() Config.Global.Loader.IsComplete)
-            End If
-
-            If Config.Global.Loader.IsFailed Then OnFail(Config.Global.Loader.Result)
-
-            'Connect to recent changes feed
-            If Wiki.Family IsNot Nothing AndAlso Wiki.Family.Feed IsNot Nothing _
-                AndAlso Not Wiki.Family.Feed.ConnectionAttempted Then Wiki.Family.Feed.Connect()
-
-            'Load cached config
-            If Wiki.Config.IsDefault Then Wiki.Config.LoadLocal()
-            If User.Config.IsDefault Then User.Config.LoadLocal()
-
             If Not User.IsAnonymous AndAlso Not Session.IsActive Then DoLogin()
             If IsFailed Then Return
 
@@ -184,6 +185,8 @@ Namespace Huggle.Actions
             User.IsLoaded = True
             Wiki.IsLoaded = True
             Config.Local.Save()
+            User.Config.SaveLocal()
+            Wiki.Config.SaveLocal()
             Wiki.Rc.Enabled = True
             Wiki.Rc.ForceUpdate()
             If Wiki.Family IsNot Nothing AndAlso Wiki.Family.Feed IsNot Nothing Then Wiki.Family.Feed.AddWiki(Wiki)

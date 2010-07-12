@@ -1,8 +1,7 @@
 ﻿Imports Huggle
 Imports Huggle.Actions
+Imports System
 Imports System.Collections.Generic
-Imports System.Drawing
-Imports System.IO
 Imports System.Windows.Forms
 
 Public Class AccountCreateForm
@@ -11,15 +10,14 @@ Public Class AccountCreateForm
     Private _Session As Session
 
     Private CheckResults As New Dictionary(Of String, CheckStatus)
-    Private Confirmation As Image
+    Private Confirmation As Confirmation
     Private CurrentQuery As UsernameCheckQuery
     Private Status As CheckStatus
 
     Private WithEvents CheckTimer As New Timer With {.Interval = 800}
 
-    Public Sub New(ByVal session As Session, ByVal confirmation As Image)
+    Public Sub New(ByVal session As Session)
         InitializeComponent()
-        Me.Confirmation = confirmation
         _Session = session
     End Sub
 
@@ -35,70 +33,47 @@ Public Class AccountCreateForm
         End Get
     End Property
 
-    Public ReadOnly Property Wiki() As Wiki
-        Get
-            Return Session.Wiki
-        End Get
-    End Property
-
     Private Sub _Load() Handles Me.Load
-        Icon = Resources.Icon
-        WikiDisplay.Text = Wiki.Name
+        Try
+            Icon = Resources.Icon
+            WikiDisplay.Text = Session.Wiki.Name
+            GetConfirmation()
 
-        If Wiki.CreationCheck Is Nothing Then Wiki.CreationCheck = New PreCreateAccount(Wiki)
-
-        If Wiki.AccountConfirmation Then
-            App.UserWaitForProcess(Wiki.CreationCheck)
-
-            If Wiki.CreationCheck.IsErrored Then App.ShowError(Wiki.CreationCheck.Result)
-
-            If Wiki.CreationCheck.IsFailed Then
-                Wiki.CreationCheck = Nothing
-                DialogResult = DialogResult.Cancel
-                Close()
-                Return
-            End If
-        End If
-
-        If confirmation Is Nothing Then
-            ConfirmationImage.Visible = False
-            ConfirmationInput.Visible = False
-            ConfirmationLabel.Visible = False
-            Height -= (OK.Top - CheckStatusDisplay.Bottom - 6)
-        Else
-            ConfirmationImage.Image = confirmation
-            If ConfirmationImage.Width < ConfirmationImage.Image.Width _
-                Then Width += (ConfirmationImage.Image.Width - ConfirmationImage.Width)
-        End If
-
-        CheckStatusDisplay.Text = ""
+        Catch ex As SystemException
+            App.ShowError(Result.FromException(ex))
+            DialogResult = DialogResult.Abort
+            Close()
+        End Try
     End Sub
 
-    Private Sub Cancel_Click() Handles Cancel.Click
-        DialogResult = DialogResult.Cancel
-        Close()
+    Private Sub ConfirmRefresh_LinkClicked() Handles ConfirmRefresh.LinkClicked
+        Session.Wiki.CurrentConfirmation = Nothing
+        GetConfirmation()
     End Sub
 
     Private Sub OK_Click() Handles OK.Click
-        _NewUser = Session.Wiki.Users.FromString(UsernameInput.Text)
-        NewUser.Password = Scramble(PasswordInput.Text, Hash(NewUser))
-        Wiki.CreationCheck.ConfirmAnswer = ConfirmationInput.Text
+        _NewUser = Session.Wiki.Users.FromString(Username.Text)
 
-        Dim create As New CreateAccount(Session, newUser)
+        NewUser.Password = Scramble(Password.Text, Hash(NewUser))
+        If Confirmation IsNot Nothing Then Confirmation.Answer = ConfirmationInput.Text
+        Session.Wiki.CurrentConfirmation = Nothing
+
+        Dim create As New CreateAccount(Session, NewUser, Confirmation)
+
         App.UserWaitForProcess(create)
         If create.IsErrored Then App.ShowError(create.Result)
-        If create.IsCancelled Then Return
+        If create.IsFailed Then Return
 
         DialogResult = DialogResult.OK
         Close()
     End Sub
 
-    Private Sub Username_TextChanged() Handles UsernameInput.TextChanged
+    Private Sub Username_TextChanged() Handles Username.TextChanged
         CheckTimer.Stop()
         Status = CheckStatus.None
 
-        If UsernameInput.Text.Length > 0 Then
-            Dim name As String = UserCollection.SanitizeName(UsernameInput.Text)
+        If Username.Text.Length > 0 Then
+            Dim name As String = UserCollection.SanitizeName(Username.Text)
 
             If name Is Nothing Then
                 Status = CheckStatus.Invalid
@@ -112,9 +87,9 @@ Public Class AccountCreateForm
         UpdateStatus()
     End Sub
 
-    Private Sub Username_LostFocus() Handles UsernameInput.LostFocus
-        If UsernameInput.Text.Length > 0 Then
-            Dim name As String = UserCollection.SanitizeName(UsernameInput.Text)
+    Private Sub Username_LostFocus() Handles Username.LostFocus
+        If Username.Text.Length > 0 Then
+            Dim name As String = UserCollection.SanitizeName(Username.Text)
 
             If name Is Nothing Then
                 Status = CheckStatus.Invalid
@@ -130,9 +105,9 @@ Public Class AccountCreateForm
         CheckTimer.Stop()
         Status = CheckStatus.Checking
         Indicator.Start()
-        CurrentQuery = New UsernameCheckQuery(Session, UsernameInput.Text)
+        CurrentQuery = New UsernameCheckQuery(Session, Username.Text)
         AddHandler CurrentQuery.Complete, AddressOf CheckDone
-        CurrentQuery.Start()
+        App.Start(AddressOf CurrentQuery.Start)
         UpdateStatus()
     End Sub
 
@@ -142,7 +117,7 @@ Public Class AccountCreateForm
         If sender Is CurrentQuery Then
             Status = CType(sender, UsernameCheckQuery).Status
             UpdateStatus()
-            If Status <> CheckStatus.Error Then CheckResults.Merge(UserCollection.SanitizeName(UsernameInput.Text), Status)
+            If Status <> CheckStatus.Error Then CheckResults.Merge(UserCollection.SanitizeName(Username.Text), Status)
             InputChanged()
         End If
     End Sub
@@ -168,13 +143,54 @@ Public Class AccountCreateForm
                 CheckStatusDisplay.Text = ""
                 Indicator.BackgroundImage = Nothing
         End Select
+
+        InputChanged()
     End Sub
 
-    Private Sub InputChanged() Handles ConfirmationInput.TextChanged, PasswordInput.TextChanged, RetypePassword.TextChanged
+    Private Sub InputChanged() Handles ConfirmationInput.TextChanged, Password.TextChanged, RetypePassword.TextChanged
         OK.Enabled = (Status = CheckStatus.None OrElse Status = CheckStatus.OK OrElse Status = CheckStatus.Checking) _
-            AndAlso UsernameInput.Text.Length > 0 AndAlso PasswordInput.Text.Length > 0 _
-            AndAlso RetypePassword.Text = PasswordInput.Text _
+            AndAlso Username.Text.Length > 0 AndAlso Password.Text.Length > 0 _
+            AndAlso RetypePassword.Text = Password.Text _
             AndAlso (Not ConfirmationInput.Visible OrElse ConfirmationInput.Text.Length > 0)
+    End Sub
+
+    Private Sub GetConfirmation()
+        If Session.Wiki.AccountConfirmation Then
+            If Session.Wiki.CurrentConfirmation Is Nothing Then
+                Dim creationCheck As New PreCreateAccount(Session.Wiki)
+
+                App.UserWaitForProcess(creationCheck)
+
+                If creationCheck.IsErrored Then App.ShowError(creationCheck.Result)
+
+                If creationCheck.IsFailed Then
+                    DialogResult = DialogResult.Cancel
+                    Close()
+                    Return
+                End If
+
+                Session.Wiki.CurrentConfirmation = creationCheck.Confirmation
+            End If
+        End If
+
+        Confirmation = Session.Wiki.CurrentConfirmation
+
+        If Confirmation Is Nothing OrElse Confirmation.Answer IsNot Nothing Then
+            'Hide confirmation controls and resize/reposition form
+            ConfirmationImage.Visible = False
+            ConfirmationInput.Visible = False
+            ConfirmationLabel.Visible = False
+            ConfirmRefresh.Visible = False
+
+            Dim delta As Integer = (OK.Top - CheckStatusDisplay.Bottom - 6)
+            Height -= delta
+            Top += delta \ 2
+        Else
+            ConfirmationImage.Image = Confirmation.Image
+            Width = 300 + Math.Max(0, ConfirmationImage.Image.Width - ConfirmationImage.Width)
+            ConfirmRefresh.Left = ConfirmationImage.Left + (ConfirmationImage.Width \ 2) _
+                + (ConfirmationImage.Image.Width \ 2) - ConfirmRefresh.Width
+        End If
     End Sub
 
 End Class

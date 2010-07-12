@@ -88,7 +88,7 @@ Namespace Huggle
 
             ElseIf TypeOf item Is Revision Then
                 Dim rev As Revision = CType(item, Revision)
-                Return New Html("<a href=""" & rev.Wiki.Url.ToString & "/?oldid=" & CStr(rev.Id) & """>Revision " & CStr(rev.Id) & "</a>")
+                Return New Html("<a href=""" & rev.Wiki.Url.ToString & "?oldid=" & CStr(rev.Id) & """>Revision " & CStr(rev.Id) & "</a>")
             End If
 
             Return New Html(HtmlEncode(Data.AsString(item)))
@@ -166,7 +166,7 @@ Namespace Huggle
             ElseIf TypeOf item Is Revision Then
                 Dim rev As Revision = CType(item, Revision)
 
-                Return New Wikistring("[" & rev.Wiki.Url.ToString & "/?oldid=" & CStr(rev.Id) & " Revision " & CStr(rev.Id) & "]")
+                Return New Wikistring("[" & rev.Wiki.Url.ToString & "?oldid=" & CStr(rev.Id) & " Revision " & CStr(rev.Id) & "]")
             End If
 
             Return New Wikistring(EscapeWikitext(item.ToString))

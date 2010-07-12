@@ -22,21 +22,22 @@ Partial Class AccountCreateForm
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Me.Label1 = New System.Windows.Forms.Label
-        Me.Label2 = New System.Windows.Forms.Label
-        Me.UsernameInput = New System.Windows.Forms.TextBox
-        Me.PasswordInput = New System.Windows.Forms.TextBox
-        Me.OK = New System.Windows.Forms.Button
-        Me.Cancel = New System.Windows.Forms.Button
-        Me.ConfirmationImage = New System.Windows.Forms.PictureBox
-        Me.ConfirmationInput = New System.Windows.Forms.TextBox
-        Me.ConfirmationLabel = New System.Windows.Forms.Label
-        Me.WikiLabel = New System.Windows.Forms.Label
-        Me.WikiDisplay = New System.Windows.Forms.Label
-        Me.RetypePasswordLabel = New System.Windows.Forms.Label
-        Me.RetypePassword = New System.Windows.Forms.TextBox
-        Me.CheckStatusDisplay = New System.Windows.Forms.Label
-        Me.Indicator = New Huggle.Controls.ActivityIndicator
+        Me.Label1 = New System.Windows.Forms.Label()
+        Me.Label2 = New System.Windows.Forms.Label()
+        Me.Username = New System.Windows.Forms.TextBox()
+        Me.Password = New System.Windows.Forms.TextBox()
+        Me.OK = New System.Windows.Forms.Button()
+        Me.Cancel = New System.Windows.Forms.Button()
+        Me.ConfirmationImage = New System.Windows.Forms.PictureBox()
+        Me.ConfirmationInput = New System.Windows.Forms.TextBox()
+        Me.ConfirmationLabel = New System.Windows.Forms.Label()
+        Me.WikiLabel = New System.Windows.Forms.Label()
+        Me.WikiDisplay = New System.Windows.Forms.Label()
+        Me.RetypePasswordLabel = New System.Windows.Forms.Label()
+        Me.RetypePassword = New System.Windows.Forms.TextBox()
+        Me.CheckStatusDisplay = New System.Windows.Forms.Label()
+        Me.ConfirmRefresh = New System.Windows.Forms.LinkLabel()
+        Me.Indicator = New Huggle.Controls.ActivityIndicator()
         CType(Me.ConfirmationImage, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -58,30 +59,30 @@ Partial Class AccountCreateForm
         Me.Label2.TabIndex = 4
         Me.Label2.Text = "Password:"
         '
-        'UsernameInput
+        'Username
         '
-        Me.UsernameInput.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+        Me.Username.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
                     Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.UsernameInput.Location = New System.Drawing.Point(108, 31)
-        Me.UsernameInput.Name = "UsernameInput"
-        Me.UsernameInput.Size = New System.Drawing.Size(174, 20)
-        Me.UsernameInput.TabIndex = 3
+        Me.Username.Location = New System.Drawing.Point(108, 31)
+        Me.Username.Name = "Username"
+        Me.Username.Size = New System.Drawing.Size(174, 20)
+        Me.Username.TabIndex = 3
         '
-        'PasswordInput
+        'Password
         '
-        Me.PasswordInput.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+        Me.Password.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
                     Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.PasswordInput.Location = New System.Drawing.Point(108, 57)
-        Me.PasswordInput.Name = "PasswordInput"
-        Me.PasswordInput.PasswordChar = Global.Microsoft.VisualBasic.ChrW(9679)
-        Me.PasswordInput.Size = New System.Drawing.Size(174, 20)
-        Me.PasswordInput.TabIndex = 5
+        Me.Password.Location = New System.Drawing.Point(108, 57)
+        Me.Password.Name = "Password"
+        Me.Password.PasswordChar = Global.Microsoft.VisualBasic.ChrW(9679)
+        Me.Password.Size = New System.Drawing.Size(174, 20)
+        Me.Password.TabIndex = 5
         '
         'OK
         '
         Me.OK.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.OK.Enabled = False
-        Me.OK.Location = New System.Drawing.Point(126, 221)
+        Me.OK.Location = New System.Drawing.Point(126, 230)
         Me.OK.Name = "OK"
         Me.OK.Size = New System.Drawing.Size(75, 23)
         Me.OK.TabIndex = 12
@@ -92,7 +93,7 @@ Partial Class AccountCreateForm
         '
         Me.Cancel.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.Cancel.Location = New System.Drawing.Point(207, 221)
+        Me.Cancel.Location = New System.Drawing.Point(207, 230)
         Me.Cancel.Name = "Cancel"
         Me.Cancel.Size = New System.Drawing.Size(75, 23)
         Me.Cancel.TabIndex = 13
@@ -107,7 +108,7 @@ Partial Class AccountCreateForm
         Me.ConfirmationImage.BackColor = System.Drawing.SystemColors.Control
         Me.ConfirmationImage.Location = New System.Drawing.Point(12, 128)
         Me.ConfirmationImage.Name = "ConfirmationImage"
-        Me.ConfirmationImage.Size = New System.Drawing.Size(270, 61)
+        Me.ConfirmationImage.Size = New System.Drawing.Size(270, 70)
         Me.ConfirmationImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage
         Me.ConfirmationImage.TabIndex = 3
         Me.ConfirmationImage.TabStop = False
@@ -116,7 +117,7 @@ Partial Class AccountCreateForm
         '
         Me.ConfirmationInput.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
                     Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.ConfirmationInput.Location = New System.Drawing.Point(108, 195)
+        Me.ConfirmationInput.Location = New System.Drawing.Point(108, 204)
         Me.ConfirmationInput.Name = "ConfirmationInput"
         Me.ConfirmationInput.Size = New System.Drawing.Size(174, 20)
         Me.ConfirmationInput.TabIndex = 11
@@ -125,7 +126,7 @@ Partial Class AccountCreateForm
         '
         Me.ConfirmationLabel.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.ConfirmationLabel.AutoSize = True
-        Me.ConfirmationLabel.Location = New System.Drawing.Point(12, 198)
+        Me.ConfirmationLabel.Location = New System.Drawing.Point(12, 207)
         Me.ConfirmationLabel.Name = "ConfirmationLabel"
         Me.ConfirmationLabel.Size = New System.Drawing.Size(95, 13)
         Me.ConfirmationLabel.TabIndex = 10
@@ -173,9 +174,22 @@ Partial Class AccountCreateForm
         Me.CheckStatusDisplay.AutoSize = True
         Me.CheckStatusDisplay.Location = New System.Drawing.Point(126, 107)
         Me.CheckStatusDisplay.Name = "CheckStatusDisplay"
-        Me.CheckStatusDisplay.Size = New System.Drawing.Size(123, 13)
+        Me.CheckStatusDisplay.Size = New System.Drawing.Size(0, 13)
         Me.CheckStatusDisplay.TabIndex = 9
-        Me.CheckStatusDisplay.Text = "Username already in use"
+        '
+        'ConfirmRefresh
+        '
+        Me.ConfirmRefresh.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.ConfirmRefresh.AutoSize = True
+        Me.ConfirmRefresh.BackColor = System.Drawing.Color.White
+        Me.ConfirmRefresh.LinkBehavior = System.Windows.Forms.LinkBehavior.HoverUnderline
+        Me.ConfirmRefresh.LinkColor = System.Drawing.SystemColors.HotTrack
+        Me.ConfirmRefresh.Location = New System.Drawing.Point(238, 183)
+        Me.ConfirmRefresh.Name = "ConfirmRefresh"
+        Me.ConfirmRefresh.Size = New System.Drawing.Size(44, 13)
+        Me.ConfirmRefresh.TabIndex = 14
+        Me.ConfirmRefresh.TabStop = True
+        Me.ConfirmRefresh.Text = "Refresh"
         '
         'Indicator
         '
@@ -194,7 +208,8 @@ Partial Class AccountCreateForm
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.CancelButton = Me.Cancel
-        Me.ClientSize = New System.Drawing.Size(294, 256)
+        Me.ClientSize = New System.Drawing.Size(294, 265)
+        Me.Controls.Add(Me.ConfirmRefresh)
         Me.Controls.Add(Me.Indicator)
         Me.Controls.Add(Me.CheckStatusDisplay)
         Me.Controls.Add(Me.WikiDisplay)
@@ -204,9 +219,9 @@ Partial Class AccountCreateForm
         Me.Controls.Add(Me.Cancel)
         Me.Controls.Add(Me.OK)
         Me.Controls.Add(Me.RetypePassword)
-        Me.Controls.Add(Me.PasswordInput)
+        Me.Controls.Add(Me.Password)
         Me.Controls.Add(Me.RetypePasswordLabel)
-        Me.Controls.Add(Me.UsernameInput)
+        Me.Controls.Add(Me.Username)
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.WikiLabel)
         Me.Controls.Add(Me.Label1)
@@ -224,8 +239,8 @@ Partial Class AccountCreateForm
     Private WithEvents Cancel As System.Windows.Forms.Button
     Private WithEvents Label1 As System.Windows.Forms.Label
     Private WithEvents Label2 As System.Windows.Forms.Label
-    Private WithEvents UsernameInput As System.Windows.Forms.TextBox
-    Private WithEvents PasswordInput As System.Windows.Forms.TextBox
+    Private WithEvents Username As System.Windows.Forms.TextBox
+    Private WithEvents Password As System.Windows.Forms.TextBox
     Private WithEvents ConfirmationImage As System.Windows.Forms.PictureBox
     Private WithEvents ConfirmationInput As System.Windows.Forms.TextBox
     Private WithEvents ConfirmationLabel As System.Windows.Forms.Label
@@ -235,4 +250,5 @@ Partial Class AccountCreateForm
     Private WithEvents RetypePassword As System.Windows.Forms.TextBox
     Private WithEvents CheckStatusDisplay As System.Windows.Forms.Label
     Private WithEvents Indicator As Huggle.Controls.ActivityIndicator
+    Private WithEvents ConfirmRefresh As System.Windows.Forms.LinkLabel
 End Class
