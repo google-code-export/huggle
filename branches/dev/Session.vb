@@ -30,6 +30,8 @@ Namespace Huggle
 
         Public Property IsActive() As Boolean
 
+        Public Property IsAutoconfirmed As Boolean
+
         Public Property IsSecure() As Boolean
 
         Public ReadOnly Property RightsTokens() As Dictionary(Of User, String)

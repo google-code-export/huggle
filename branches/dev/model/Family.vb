@@ -3,8 +3,6 @@ Imports System.Collections.Generic
 
 Namespace Huggle
 
-    'TODO: Actually expose this stuff via the MediaWiki API
-
     <Diagnostics.DebuggerDisplay("{Name}")> _
     Public Class Family
 
@@ -59,6 +57,8 @@ Namespace Huggle
             End Get
         End Property
 
+        Public Property GlobalTitleBlacklist As TitleBlacklist
+
         Public ReadOnly Property GlobalUsers() As GlobalUserCollection
             Get
                 If _GlobalUsers Is Nothing Then _GlobalUsers = New GlobalUserCollection(Me)
@@ -68,7 +68,7 @@ Namespace Huggle
 
         Public ReadOnly Property IsDefault() As Boolean
             Get
-                Return (Code = "default")
+                Return (App.Families.Default Is Me)
             End Get
         End Property
 
@@ -94,8 +94,8 @@ Namespace Huggle
         Private ReadOnly _Wikimedia As Family
 
         Public Sub New()
-            _Default = New Family("Default")
-            _Wikimedia = New Family("Wikimedia")
+            _Default = Item("default")
+            _Wikimedia = Item("wikimedia")
         End Sub
 
         Public ReadOnly Property All() As IList(Of Family)

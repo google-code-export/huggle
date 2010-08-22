@@ -77,7 +77,7 @@ Namespace Huggle.Actions
                 If form.ShowDialog = DialogResult.Cancel Then OnFail(Msg("error-cancelled")) : Return
             End If
 
-            App.Start(AddressOf Process, AddressOf SaveConfig)
+            CreateThread(AddressOf Process, AddressOf SaveConfig)
         End Sub
 
         Private Sub Process()

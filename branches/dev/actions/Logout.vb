@@ -3,7 +3,7 @@
     Public Class Logout : Inherits Query
 
         Public Sub New(ByVal session As Session)
-            MyBase.New(session, Msg("logout-desc"))
+            MyBase.New(session, Msg("logout-desc", session.User.FullName))
         End Sub
 
         Public Overrides Sub Start()
@@ -11,6 +11,8 @@
             '*all* an account's login sessions, not just the active one. So logging out your primary 
             'account in Huggle would also destroy your browser's session, which is undesirable.
             If Not Session.User.IsUnified Then
+                OnProgress(Msg("logout-progress", Session.User.FullName))
+
                 Dim req As New ApiRequest(Session, Description, New QueryString("action", "logout"))
                 req.Start()
                 If req.IsFailed Then OnFail(req.Result) : Return

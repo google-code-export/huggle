@@ -8,9 +8,9 @@ Namespace Huggle
     Public Class Result : Inherits EventArgs
 
         Private _Inner As Result
-        Private _Message As String = Msg("error-unknown")
+        Private _Message As String = "Unknown error"
 
-        Private Shared ReadOnly _Success As New Result(Msg("error-success"))
+        Private Shared ReadOnly _Success As New Result("No error")
 
         Public Sub New(ByVal messages As String(), Optional ByVal errorCode As String = Nothing)
             If messages.Length = 0 Then Return
@@ -42,7 +42,7 @@ Namespace Huggle
         End Function
 
         Private Function GenerateMessage(ByVal linebreaks As Boolean) As String
-            If Not IsError Then Return Msg("query-success")
+            If Not IsError Then Return "No error"
 
             Dim result As String = If(linebreaks, Message, Message.Replace(CRLF, " "))
             Dim item As Result = Inner
@@ -125,14 +125,14 @@ Namespace Huggle
                 'Alternative hardcoded error messages in case an unhandled exception
                 'occurs before we've loaded the message files
                 If Not inner Then
-                    If App.Languages.Current IsNot Nothing AndAlso _
+                    If App IsNot Nothing AndAlso App.Languages.Current IsNot Nothing AndAlso _
                         App.Languages.Current.Messages.ContainsKey("error-exception") _
                         Then message = Msg("error-exception") Else message = "An unexpected error occured."
                 End If
 
                 If ex.StackTrace IsNot Nothing Then
                     If Not inner Then
-                        If App.Languages.Current IsNot Nothing AndAlso _
+                        If App IsNot Nothing AndAlso App.Languages.Current IsNot Nothing AndAlso _
                             App.Languages.Current.Messages.ContainsKey("error-info") _
                             Then message &= CRLF & CRLF & Msg("error-info") _
                             Else message &= CRLF & CRLF & "If reporting this error, please include the following information:"

@@ -1,4 +1,6 @@
 ﻿Imports Huggle
+Imports System
+Imports System.Windows.Forms
 
 Public Class AccountPropertiesForm
 
@@ -16,15 +18,22 @@ Public Class AccountPropertiesForm
     End Property
 
     Private Sub _Load() Handles Me.Load
+        Try
+            'Finish loading extra config
+            If Not User.Wiki.Config.ExtraConfigLoaded Then
+                App.UserWaitForProcess(User.Wiki.Config.ExtraLoader)
+                If User.Wiki.Config.ExtraLoader.IsFailed Then App.ShowError(User.Wiki.Config.ExtraLoader.Result) : Close() : Return
+            End If
 
-        'Finish loading extra config
-        If Not User.Wiki.Config.ExtraConfigLoaded Then
-            App.UserWaitForProcess(User.Wiki.Config.ExtraLoader)
-            If User.Wiki.Config.ExtraLoader.IsFailed Then App.ShowError(User.Wiki.Config.ExtraLoader.Result) : Close() : Return
-        End If
+            Icon = Resources.Icon
+            Text = Msg("accountprop-title", User.Name)
+            LoadData()
 
-        Icon = Resources.Icon
-        Text = Msg("accountprop-title", User.Name)
+        Catch ex As SystemException
+            App.ShowError(Result.FromException(ex))
+            DialogResult = DialogResult.Abort
+            Close()
+        End Try
     End Sub
 
     Private Function FuzzyContribCount(ByVal contribs As Integer) As String
@@ -54,6 +63,8 @@ Public Class AccountPropertiesForm
         AccountID.Text = Msg("accountprop-id", CStr(User.Id))
         AccountName.Text = User.Name
         AccountWiki.Text = Msg("accountprop-wiki", User.Wiki.Name)
+
+        AccountGlobal.Visible = (User.Wiki.Family IsNot Nothing)
     End Sub
 
     Private Sub SetPreferences_LinkClicked() Handles SetPreferences.LinkClicked
@@ -62,7 +73,7 @@ Public Class AccountPropertiesForm
     End Sub
 
     Private Sub ChangeGroups_LinkClicked() Handles ChangeGroups.LinkClicked
-        Dim form As New UserRightsForm(User.Session, User)
+        Dim form As New UserGroupsForm(User.Session, User)
         form.ShowDialog()
     End Sub
 

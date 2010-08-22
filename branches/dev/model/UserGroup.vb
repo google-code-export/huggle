@@ -60,8 +60,7 @@ Namespace Huggle
 
         Public Sub New(ByVal wiki As Wiki)
             Me.Wiki = wiki
-            Item("*").Count = -1
-            Item("users").Count = -1
+            Reset()
         End Sub
 
         Public ReadOnly Property All() As IList(Of UserGroup)
@@ -80,7 +79,7 @@ Namespace Huggle
         Public Sub Reset()
             _All.Clear()
             Item("*").Count = -1
-            Item("users").Count = -1
+            Item("user").Count = -1
         End Sub
 
     End Class

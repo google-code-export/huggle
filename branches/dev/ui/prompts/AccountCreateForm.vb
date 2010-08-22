@@ -55,7 +55,7 @@ Public Class AccountCreateForm
         _NewUser = Session.Wiki.Users.FromString(Username.Text)
 
         NewUser.Password = Scramble(Password.Text, Hash(NewUser))
-        If Confirmation IsNot Nothing Then Confirmation.Answer = ConfirmationInput.Text
+        If Confirmation IsNot Nothing Then Confirmation.Answer = ConfirmInput.Text
         Session.Wiki.CurrentConfirmation = Nothing
 
         Dim create As New CreateAccount(Session, NewUser, Confirmation)
@@ -80,7 +80,21 @@ Public Class AccountCreateForm
             ElseIf CheckResults.ContainsKey(name) Then
                 Status = CheckResults(name)
             Else
-                CheckTimer.Start()
+                'Check title blacklists
+                If Session.Wiki.Family.GlobalTitleBlacklist IsNot Nothing _
+                    AndAlso Session.Wiki.Family.GlobalTitleBlacklist.IsMatch _
+                    (Session, name, BlacklistAction.CreateAccount) Then
+
+                    Status = CheckStatus.GlobalBlacklisted
+
+                ElseIf Session.Wiki.TitleBlacklist IsNot Nothing _
+                    AndAlso Session.Wiki.TitleBlacklist.IsMatch _
+                    (Session, name, BlacklistAction.CreateAccount) Then
+
+                    Status = CheckStatus.LocalBlacklisted
+                End If
+
+                If Status = CheckStatus.None Then CheckTimer.Start()
             End If
         End If
 
@@ -107,7 +121,7 @@ Public Class AccountCreateForm
         Indicator.Start()
         CurrentQuery = New UsernameCheckQuery(Session, Username.Text)
         AddHandler CurrentQuery.Complete, AddressOf CheckDone
-        App.Start(AddressOf CurrentQuery.Start)
+        CreateThread(AddressOf CurrentQuery.Start)
         UpdateStatus()
     End Sub
 
@@ -127,18 +141,31 @@ Public Class AccountCreateForm
             Case CheckStatus.Invalid
                 CheckStatusDisplay.Text = Msg("usernamecheck-invalid")
                 Indicator.BackgroundImage = Resources.mini_no
+
+            Case CheckStatus.LocalBlacklisted
+                CheckStatusDisplay.Text = Msg("usernamecheck-localblacklisted")
+                Indicator.BackgroundImage = Resources.mini_no
+
+            Case CheckStatus.GlobalBlacklisted
+                CheckStatusDisplay.Text = Msg("usernamecheck-globalblacklisted")
+                Indicator.BackgroundImage = Resources.mini_no
+
             Case CheckStatus.OK
                 CheckStatusDisplay.Text = Msg("usernamecheck-ok")
                 Indicator.BackgroundImage = Resources.mini_yes
+
             Case CheckStatus.Used
                 CheckStatusDisplay.Text = Msg("usernamecheck-used")
                 Indicator.BackgroundImage = Resources.mini_no
+
             Case CheckStatus.Error
                 CheckStatusDisplay.Text = Msg("usernamecheck-error")
                 Indicator.BackgroundImage = Resources.mini_question
+
             Case CheckStatus.Checking
                 CheckStatusDisplay.Text = Msg("usernamecheck-progress")
                 Indicator.BackgroundImage = Nothing
+
             Case CheckStatus.None
                 CheckStatusDisplay.Text = ""
                 Indicator.BackgroundImage = Nothing
@@ -147,11 +174,11 @@ Public Class AccountCreateForm
         InputChanged()
     End Sub
 
-    Private Sub InputChanged() Handles ConfirmationInput.TextChanged, Password.TextChanged, RetypePassword.TextChanged
+    Private Sub InputChanged() Handles ConfirmInput.TextChanged, Password.TextChanged, RetypePassword.TextChanged
         OK.Enabled = (Status = CheckStatus.None OrElse Status = CheckStatus.OK OrElse Status = CheckStatus.Checking) _
             AndAlso Username.Text.Length > 0 AndAlso Password.Text.Length > 0 _
             AndAlso RetypePassword.Text = Password.Text _
-            AndAlso (Not ConfirmationInput.Visible OrElse ConfirmationInput.Text.Length > 0)
+            AndAlso (Not ConfirmInput.Visible OrElse ConfirmInput.Text.Length > 0)
     End Sub
 
     Private Sub GetConfirmation()
@@ -177,19 +204,21 @@ Public Class AccountCreateForm
 
         If Confirmation Is Nothing OrElse Confirmation.Answer IsNot Nothing Then
             'Hide confirmation controls and resize/reposition form
-            ConfirmationImage.Visible = False
-            ConfirmationInput.Visible = False
-            ConfirmationLabel.Visible = False
+            ConfirmImage.Visible = False
+            ConfirmInput.Visible = False
+            ConfirmLabel.Visible = False
             ConfirmRefresh.Visible = False
 
             Dim delta As Integer = (OK.Top - CheckStatusDisplay.Bottom - 6)
             Height -= delta
             Top += delta \ 2
+
         Else
-            ConfirmationImage.Image = Confirmation.Image
-            Width = 300 + Math.Max(0, ConfirmationImage.Image.Width - ConfirmationImage.Width)
-            ConfirmRefresh.Left = ConfirmationImage.Left + (ConfirmationImage.Width \ 2) _
-                + (ConfirmationImage.Image.Width \ 2) - ConfirmRefresh.Width
+            'Fit confirmation code to form
+            ConfirmImage.Image = Confirmation.Image
+            Width = 300 + Math.Max(0, ConfirmImage.Image.Width - ConfirmImage.Width)
+            ConfirmRefresh.Left = ConfirmImage.Left + (ConfirmImage.Width \ 2) _
+                + (ConfirmImage.Image.Width \ 2) - ConfirmRefresh.Width
         End If
     End Sub
 

@@ -38,77 +38,77 @@ Partial Class WikiAddForm
         '
         Me.Explanation.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
                     Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.Explanation.Location = New System.Drawing.Point(12, 9)
+        Me.Explanation.Location = New System.Drawing.Point(8, 9)
         Me.Explanation.Name = "Explanation"
-        Me.Explanation.Size = New System.Drawing.Size(322, 30)
+        Me.Explanation.Size = New System.Drawing.Size(332, 30)
         Me.Explanation.TabIndex = 0
-        Me.Explanation.Text = "Use this form to add a wiki to the wiki list. Wikis must be running a recent vers" & _
-            "ion of MediaWiki and have the MediaWiki API enabled." & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10)
+        Me.Explanation.Text = "Use this form to add a wiki to the wiki list." & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "Wikis must be running MediaWiki 1." & _
+            "15 or later with the API enabled." & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10)
         '
         'Url
         '
         Me.Url.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
                     Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.Url.Location = New System.Drawing.Point(74, 51)
+        Me.Url.Location = New System.Drawing.Point(72, 43)
         Me.Url.Name = "Url"
-        Me.Url.Size = New System.Drawing.Size(260, 20)
-        Me.Url.TabIndex = 3
+        Me.Url.Size = New System.Drawing.Size(268, 20)
+        Me.Url.TabIndex = 2
         '
         'AccountLabel
         '
         Me.AccountLabel.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
                     Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.AccountLabel.Location = New System.Drawing.Point(12, 87)
+        Me.AccountLabel.Location = New System.Drawing.Point(8, 79)
         Me.AccountLabel.Name = "AccountLabel"
-        Me.AccountLabel.Size = New System.Drawing.Size(322, 18)
-        Me.AccountLabel.TabIndex = 4
+        Me.AccountLabel.Size = New System.Drawing.Size(332, 18)
+        Me.AccountLabel.TabIndex = 3
         Me.AccountLabel.Text = "If an account is required to read the wiki, enter details here:"
         '
         'UsernameLabel
         '
-        Me.UsernameLabel.AutoSize = True
-        Me.UsernameLabel.Location = New System.Drawing.Point(15, 111)
+        Me.UsernameLabel.Location = New System.Drawing.Point(-3, 103)
         Me.UsernameLabel.Name = "UsernameLabel"
-        Me.UsernameLabel.Size = New System.Drawing.Size(58, 13)
-        Me.UsernameLabel.TabIndex = 5
+        Me.UsernameLabel.Size = New System.Drawing.Size(74, 13)
+        Me.UsernameLabel.TabIndex = 4
         Me.UsernameLabel.Text = "Username:"
+        Me.UsernameLabel.TextAlign = System.Drawing.ContentAlignment.TopRight
         '
         'PasswordLabel
         '
-        Me.PasswordLabel.AutoSize = True
-        Me.PasswordLabel.Location = New System.Drawing.Point(17, 136)
+        Me.PasswordLabel.Location = New System.Drawing.Point(-3, 128)
         Me.PasswordLabel.Name = "PasswordLabel"
-        Me.PasswordLabel.Size = New System.Drawing.Size(56, 13)
-        Me.PasswordLabel.TabIndex = 7
+        Me.PasswordLabel.Size = New System.Drawing.Size(74, 13)
+        Me.PasswordLabel.TabIndex = 6
         Me.PasswordLabel.Text = "Password:"
+        Me.PasswordLabel.TextAlign = System.Drawing.ContentAlignment.TopRight
         '
         'Password
         '
         Me.Password.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
                     Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.Password.Location = New System.Drawing.Point(74, 133)
+        Me.Password.Location = New System.Drawing.Point(72, 125)
         Me.Password.Name = "Password"
         Me.Password.PasswordChar = Global.Microsoft.VisualBasic.ChrW(9679)
-        Me.Password.Size = New System.Drawing.Size(195, 20)
-        Me.Password.TabIndex = 8
+        Me.Password.Size = New System.Drawing.Size(177, 20)
+        Me.Password.TabIndex = 7
         '
         'Username
         '
         Me.Username.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
                     Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.Username.Location = New System.Drawing.Point(74, 108)
+        Me.Username.Location = New System.Drawing.Point(72, 100)
         Me.Username.Name = "Username"
-        Me.Username.Size = New System.Drawing.Size(195, 20)
-        Me.Username.TabIndex = 6
+        Me.Username.Size = New System.Drawing.Size(177, 20)
+        Me.Username.TabIndex = 5
         '
         'Cancel
         '
         Me.Cancel.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel
-        Me.Cancel.Location = New System.Drawing.Point(259, 162)
+        Me.Cancel.Location = New System.Drawing.Point(265, 156)
         Me.Cancel.Name = "Cancel"
         Me.Cancel.Size = New System.Drawing.Size(75, 23)
-        Me.Cancel.TabIndex = 10
+        Me.Cancel.TabIndex = 9
         Me.Cancel.Text = "Cancel"
         Me.Cancel.UseVisualStyleBackColor = True
         '
@@ -116,21 +116,21 @@ Partial Class WikiAddForm
         '
         Me.OK.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.OK.Enabled = False
-        Me.OK.Location = New System.Drawing.Point(178, 162)
+        Me.OK.Location = New System.Drawing.Point(184, 156)
         Me.OK.Name = "OK"
         Me.OK.Size = New System.Drawing.Size(75, 23)
-        Me.OK.TabIndex = 9
+        Me.OK.TabIndex = 8
         Me.OK.Text = "Continue"
         Me.OK.UseVisualStyleBackColor = True
         '
         'UrlLabel
         '
-        Me.UrlLabel.AutoSize = True
-        Me.UrlLabel.Location = New System.Drawing.Point(8, 54)
+        Me.UrlLabel.Location = New System.Drawing.Point(-3, 46)
         Me.UrlLabel.Name = "UrlLabel"
-        Me.UrlLabel.Size = New System.Drawing.Size(65, 13)
-        Me.UrlLabel.TabIndex = 2
+        Me.UrlLabel.Size = New System.Drawing.Size(74, 13)
+        Me.UrlLabel.TabIndex = 1
         Me.UrlLabel.Text = "URL of wiki:"
+        Me.UrlLabel.TextAlign = System.Drawing.ContentAlignment.TopRight
         '
         'WikiAddForm
         '
@@ -138,7 +138,7 @@ Partial Class WikiAddForm
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.CancelButton = Me.Cancel
-        Me.ClientSize = New System.Drawing.Size(346, 197)
+        Me.ClientSize = New System.Drawing.Size(352, 191)
         Me.Controls.Add(Me.OK)
         Me.Controls.Add(Me.Cancel)
         Me.Controls.Add(Me.Username)

@@ -91,12 +91,12 @@ Namespace Huggle.Actions
                 Return
             End If
 
-            If History Then App.Start(AddressOf DoCopy) Else App.Start(AddressOf DoImport)
+            If History Then CreateThread(AddressOf DoCopy) Else CreateThread(AddressOf DoImport)
         End Sub
 
         Private Sub LoginAction_Done() Handles Login.Complete
             If Login.IsFailed Then OnFail(Login.Result)
-            If History Then App.Start(AddressOf DoCopy) Else App.Start(AddressOf DoImport)
+            If History Then CreateThread(AddressOf DoCopy) Else CreateThread(AddressOf DoImport)
         End Sub
 
         Private Sub DoCopy()

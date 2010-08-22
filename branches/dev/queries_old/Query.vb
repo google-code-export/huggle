@@ -109,7 +109,7 @@ Namespace Huggle.Queries
             State = QueryState.Active
             Result = Process()
             State = QueryState.Done
-            App.Invoke(AddressOf OnDone)
+            CallOnMainThread(AddressOf OnDone)
             Return Result
         End Function
 

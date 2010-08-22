@@ -113,7 +113,7 @@ Namespace Huggle.Actions
             'Disallow self blocks
             If User Is Target Then OnFail(Msg("block-selfblock")) : Return
 
-            App.Start(AddressOf GetDetails, AddressOf GetConfirmation)
+            CreateThread(AddressOf GetDetails, AddressOf GetConfirmation)
         End Sub
 
         Private Sub GetDetails()
@@ -171,7 +171,7 @@ Namespace Huggle.Actions
                 'TODO: Show block form
             End If
 
-            App.Start(AddressOf DoBlock)
+            CreateThread(AddressOf DoBlock)
         End Sub
 
         Private Sub DoBlock()

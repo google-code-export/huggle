@@ -8,6 +8,7 @@ Class FirstRunForm
     Public Sub _Load() Handles Me.Load
         Try
             Icon = Resources.Icon
+            Text = Windows.Forms.Application.ProductName
 
             For Each language As Language In App.Languages.All
                 If Not language.IsHidden AndAlso language.IsLocalized Then LanguageSelector.Items.Add(language)

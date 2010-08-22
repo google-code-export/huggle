@@ -178,7 +178,7 @@ Namespace Huggle
                             Reader.Close()
                             Writer.Close()
                             Stream.Close()
-                            App.Invoke(AddressOf Connect)
+                            CallOnMainThread(AddressOf Connect)
                             Exit Try
 
                         ElseIf message.StartsWith("ERROR ") Then
@@ -228,7 +228,7 @@ Namespace Huggle
             Catch ex As IOException
                 'Feed was disconnected; retry
                 Log.Write(Msg("feed-disconnected"))
-                App.Invoke(AddressOf Connect)
+                CallOnMainThread(AddressOf Connect)
             End Try
         End Sub
 

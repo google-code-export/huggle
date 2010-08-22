@@ -16,52 +16,19 @@ Namespace Huggle
         Private IsProcessed As Boolean
         Private TextProcessed As Boolean
 
-        Private _Abuse As Abuse
         Private _ApproxTime As Date
-        Private _Bytes As Integer
         Private _Change As Integer
-        Private _DetailsKnown As Boolean
-        Private _Exists As TS
-        Private _Html As String
-        Private _HtmlCacheState As CacheState
         Private _Id As Integer
         Private _InHistory As Boolean
-        Private _IsBot As Boolean
-        Private _IsDeleted As Boolean
-        Private _IsMinor As Boolean
-        Private _IsRedirect As Boolean
-        Private _IsTag As Boolean
-        Private _IsReplace As Boolean
-        Private _IsReport As Boolean
-        Private _IsRevert As Boolean
-        Private _IsReviewable As Boolean
         Private _IsReviewed As Boolean
-        Private _IsSanction As Boolean
         Private _IsSanctioned As Boolean
         Private _Length As Integer
         Private WithEvents _Page As Page
-        Private _Prev As Revision
-        Private _PrevByUser As Revision
-        Private _Next As Revision
-        Private _NextByUser As Revision
-        Private _Rcid As Integer
-        Private _RevertedBy As Revision
-        Private _RevertOf As List(Of Revision)
-        Private _RevertTo As Revision
         Private _Review As Review
-        Private _Sanction As Sanction
-        Private _StartTime As Date
-        Private _Summary As String
-        Private _SummaryHidden As Boolean
         Private _Tags As List(Of ChangeTag)
         Private _Text As String
-        Private _TextCacheState As CacheState
-        Private _TextHidden As Boolean
-        Private _Time As Date
-        Private _Tool As Tool
         Private WithEvents _User As User
         Private _UserHidden As Boolean
-        Private _WarnedForBy As Revision
         Private _Wiki As Wiki
 
         Private Shared ReadOnly InfoboxPattern As New Regex( _
@@ -95,14 +62,6 @@ Namespace Huggle
         End Sub
 
         Public Property Abuse() As Abuse
-            Get
-                Return _Abuse
-            End Get
-            Set(ByVal value As Abuse)
-                _Abuse = value
-                App.Post(AddressOf OnStateChanged, Nothing)
-            End Set
-        End Property
 
         Public Property ApproxTime() As Date
             Get
@@ -114,13 +73,6 @@ Namespace Huggle
         End Property
 
         Public Property Bytes() As Integer
-            Get
-                Return _Bytes
-            End Get
-            Set(ByVal value As Integer)
-                _Bytes = value
-            End Set
-        End Property
 
         Public ReadOnly Property CanRollback() As Boolean
             Get
@@ -155,40 +107,12 @@ Namespace Huggle
         End Property
 
         Public Property DetailsKnown() As Boolean
-            Get
-                Return _DetailsKnown
-            End Get
-            Set(ByVal value As Boolean)
-                _DetailsKnown = value
-            End Set
-        End Property
 
         Public Property Exists() As TS
-            Get
-                Return _Exists
-            End Get
-            Set(ByVal value As TS)
-                _Exists = value
-            End Set
-        End Property
 
         Public Property Html() As String
-            Get
-                Return _Html
-            End Get
-            Set(ByVal value As String)
-                _Html = value
-            End Set
-        End Property
 
         Public Property HtmlCacheState() As CacheState
-            Get
-                Return _HtmlCacheState
-            End Get
-            Set(ByVal value As CacheState)
-                _HtmlCacheState = value
-            End Set
-        End Property
 
         Public Overrides ReadOnly Property Icon() As Image
             Get
@@ -266,13 +190,6 @@ Namespace Huggle
         End Property
 
         Public Property IsBot() As Boolean
-            Get
-                Return _IsBot
-            End Get
-            Set(ByVal value As Boolean)
-                _IsBot = value
-            End Set
-        End Property
 
         Public Property IsCreation() As Boolean
             Get
@@ -284,13 +201,6 @@ Namespace Huggle
         End Property
 
         Public Property IsDeleted() As Boolean
-            Get
-                Return _IsDeleted
-            End Get
-            Set(ByVal value As Boolean)
-                _IsDeleted = value
-            End Set
-        End Property
 
         Public ReadOnly Property IsHidden() As Boolean
             Get
@@ -299,13 +209,6 @@ Namespace Huggle
         End Property
 
         Public Property IsMinor() As Boolean
-            Get
-                Return _IsMinor
-            End Get
-            Set(ByVal value As Boolean)
-                _IsMinor = value
-            End Set
-        End Property
 
         Public ReadOnly Property IsOwnUserspace() As Boolean
             Get
@@ -314,31 +217,10 @@ Namespace Huggle
         End Property
 
         Public Property IsReplace() As Boolean
-            Get
-                Return _IsReplace
-            End Get
-            Set(ByVal value As Boolean)
-                _IsReplace = value
-            End Set
-        End Property
 
         Public Property IsReport() As Boolean
-            Get
-                Return _IsReport
-            End Get
-            Set(ByVal value As Boolean)
-                _IsReport = value
-            End Set
-        End Property
 
         Public Property IsRevert() As Boolean
-            Get
-                Return _IsRevert
-            End Get
-            Set(ByVal value As Boolean)
-                _IsRevert = value
-            End Set
-        End Property
 
         Public ReadOnly Property IsReverted() As Boolean
             Get
@@ -347,13 +229,6 @@ Namespace Huggle
         End Property
 
         Public Property IsReviewable() As Boolean
-            Get
-                Return _IsReviewable
-            End Get
-            Set(ByVal value As Boolean)
-                _IsReviewable = value
-            End Set
-        End Property
 
         Public Property IsReviewed() As Boolean
             Get
@@ -366,22 +241,8 @@ Namespace Huggle
         End Property
 
         Public Property IsRedirect() As Boolean
-            Get
-                Return _IsRedirect
-            End Get
-            Set(ByVal value As Boolean)
-                _IsRedirect = value
-            End Set
-        End Property
 
         Public Property IsSanction() As Boolean
-            Get
-                Return _IsSanction
-            End Get
-            Set(ByVal value As Boolean)
-                _IsSanction = value
-            End Set
-        End Property
 
         Public ReadOnly Property IsSanctioned() As Boolean
             Get
@@ -396,13 +257,6 @@ Namespace Huggle
         End Property
 
         Public Property IsTag() As Boolean
-            Get
-                Return _IsTag
-            End Get
-            Private Set(ByVal value As Boolean)
-                _IsTag = value
-            End Set
-        End Property
 
         Public ReadOnly Property IsTop() As Boolean
             Get
@@ -429,22 +283,8 @@ Namespace Huggle
         End Property
 
         Public Property [Next]() As Revision
-            Get
-                Return _Next
-            End Get
-            Set(ByVal value As Revision)
-                _Next = value
-            End Set
-        End Property
 
         Public Property NextByUser() As Revision
-            Get
-                Return _NextByUser
-            End Get
-            Set(ByVal value As Revision)
-                _NextByUser = value
-            End Set
-        End Property
 
         Public Property Page() As Page
             Get
@@ -456,22 +296,8 @@ Namespace Huggle
         End Property
 
         Public Property Prev() As Revision
-            Get
-                Return _Prev
-            End Get
-            Set(ByVal value As Revision)
-                _Prev = value
-            End Set
-        End Property
 
         Public Property PrevByUser() As Revision
-            Get
-                Return _PrevByUser
-            End Get
-            Set(ByVal value As Revision)
-                _PrevByUser = value
-            End Set
-        End Property
 
         Public Overrides ReadOnly Property Label() As String
             Get
@@ -480,40 +306,12 @@ Namespace Huggle
         End Property
 
         Public Property Rcid() As Integer
-            Get
-                Return _Rcid
-            End Get
-            Set(ByVal value As Integer)
-                _Rcid = value
-            End Set
-        End Property
 
         Public Property RevertedBy() As Revision
-            Get
-                Return _RevertedBy
-            End Get
-            Set(ByVal value As Revision)
-                _RevertedBy = value
-            End Set
-        End Property
 
         Public Property RevertOf() As List(Of Revision)
-            Get
-                Return _RevertOf
-            End Get
-            Set(ByVal value As List(Of Revision))
-                _RevertOf = value
-            End Set
-        End Property
 
         Public Property RevertTo() As Revision
-            Get
-                Return _RevertTo
-            End Get
-            Set(ByVal value As Revision)
-                _RevertTo = value
-            End Set
-        End Property
 
         Public Property Review() As Review
             Get
@@ -532,22 +330,8 @@ Namespace Huggle
         End Property
 
         Public Property Sanction() As Sanction
-            Get
-                Return _Sanction
-            End Get
-            Private Set(ByVal value As Sanction)
-                _Sanction = value
-            End Set
-        End Property
 
         Public Property WarnedForBy() As Revision
-            Get
-                Return _WarnedForBy
-            End Get
-            Set(ByVal value As Revision)
-                _WarnedForBy = value
-            End Set
-        End Property
 
         Public ReadOnly Property Section() As String
             Get
@@ -558,31 +342,10 @@ Namespace Huggle
         End Property
 
         Public Property StartTime() As Date
-            Get
-                Return _StartTime
-            End Get
-            Set(ByVal value As Date)
-                _StartTime = value
-            End Set
-        End Property
 
         Public Property Summary() As String
-            Get
-                Return _Summary
-            End Get
-            Set(ByVal value As String)
-                _Summary = value
-            End Set
-        End Property
 
         Public Property SummaryHidden() As Boolean
-            Get
-                Return _SummaryHidden
-            End Get
-            Set(ByVal value As Boolean)
-                _SummaryHidden = value
-            End Set
-        End Property
 
         Public ReadOnly Property Tags() As List(Of ChangeTag)
             Get
@@ -598,45 +361,16 @@ Namespace Huggle
                 _Text = value
                 ProcessText(value)
                 If Page IsNot Nothing AndAlso Page.Space Is Wiki.Spaces.UserTalk Then ProcessUserTalk()
-                App.Post(AddressOf OnStateChanged, Nothing)
             End Set
         End Property
 
         Public Property TextCacheState() As CacheState
-            Get
-                Return _TextCacheState
-            End Get
-            Set(ByVal value As CacheState)
-                _TextCacheState = value
-            End Set
-        End Property
 
         Public Property TextHidden() As Boolean
-            Get
-                Return _TextHidden
-            End Get
-            Set(ByVal value As Boolean)
-                _TextHidden = value
-            End Set
-        End Property
 
         Public Property Time() As Date
-            Get
-                Return _Time
-            End Get
-            Set(ByVal value As Date)
-                _Time = value
-            End Set
-        End Property
 
         Public Property Tool() As Tool
-            Get
-                Return _Tool
-            End Get
-            Private Set(ByVal value As Tool)
-                _Tool = value
-            End Set
-        End Property
 
         Public Property User() As User
             Get

@@ -6,7 +6,6 @@ Namespace Huggle.Actions
     Public MustInherit Class Process
 
         Private _Description As String
-        Private _Interactive As Boolean
         Private _Message As String
         Private _Result As Result
 
@@ -34,13 +33,6 @@ Namespace Huggle.Actions
         End Property
 
         Public Property Interactive() As Boolean
-            Get
-                Return _Interactive
-            End Get
-            Set(ByVal value As Boolean)
-                _Interactive = value
-            End Set
-        End Property
 
         Public ReadOnly Property IsCancelled() As Boolean
             Get
@@ -99,6 +91,11 @@ Namespace Huggle.Actions
             State = ProcessState.Cancelled
         End Sub
 
+        Public Sub Reset()
+            OnProgress(Nothing)
+            State = ProcessState.None
+        End Sub
+
         Protected Sub FailUndefined(ByVal key As String)
             OnFail(Msg("error-undefined", key))
         End Sub
@@ -130,7 +127,7 @@ Namespace Huggle.Actions
                 _Message = Nothing
                 State = ProcessState.Errored
                 Log.Debug(Result.LogMessage)
-                App.Invoke(AddressOf _OnFail)
+                CallOnMainThread(AddressOf _OnFail)
             End If
         End Sub
 
@@ -149,7 +146,7 @@ Namespace Huggle.Actions
 
         Protected Sub OnProgress(ByVal message As String)
             _Message = message & "..."
-            App.Invoke(AddressOf _OnProgress)
+            CallOnMainThread(AddressOf _OnProgress)
         End Sub
 
         Private Sub _OnProgress()
@@ -158,7 +155,7 @@ Namespace Huggle.Actions
 
         Protected Sub OnStarted()
             State = ProcessState.Running
-            App.Invoke(AddressOf _OnStarted)
+            CallOnMainThread(AddressOf _OnStarted)
         End Sub
 
         Private Sub _OnStarted()
@@ -167,7 +164,7 @@ Namespace Huggle.Actions
 
         Protected Sub OnSuccess()
             State = ProcessState.Success
-            App.Invoke(AddressOf _OnSuccess)
+            CallOnMainThread(AddressOf _OnSuccess)
         End Sub
 
         Private Sub _OnSuccess()

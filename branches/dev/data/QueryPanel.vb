@@ -38,7 +38,7 @@ Public Class QueryPanel
             Progress.Show()
             Indicator.Start()
             AddHandler Evaluator.Progress, AddressOf Evaluator_Progress
-            App.Start(AddressOf Evaluator.Start, AddressOf Evaluator_Done)
+            CreateThread(AddressOf Evaluator.Start, AddressOf Evaluator_Done)
 
             Result.UnsetAll()
         End If

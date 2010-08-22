@@ -53,13 +53,15 @@ Namespace Huggle.Actions
                 If var.Contains("=") Then vars.Add(var.ToFirst("=").Trim, var.FromFirst("=").Trim(","c, """"c))
             Next var
 
-            Dim siteUrl As New Uri(vars("wgServer") & vars("wgScriptPath"))
+            Dim siteUrl As New Uri(vars("wgServer") & vars("wgScriptPath") & "/")
 
+            'Check if the wiki is already in the list
             For Each wiki As Wiki In App.Wikis.All
-                If wiki.Url = siteUrl Then OnFail(Msg("addwiki-alreadyadded", wiki.Name)) : Return
+                If wiki.Url = siteUrl OrElse wiki.SecureUrl = siteUrl _
+                    Then OnFail(Msg("addwiki-alreadyadded", wiki.Name)) : Return
             Next wiki
 
-            _Wiki = App.Wikis(siteUrl.ToString.Remove("http://").TrimEnd("/"c))
+            _Wiki = App.Wikis(siteUrl.Host & siteUrl.AbsolutePath.TrimEnd("/"c))
             Wiki.IsCustom = True
             Wiki.Url = siteUrl
 

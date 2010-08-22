@@ -134,7 +134,7 @@ Namespace Huggle
                             TimeZones.Clear()
 
                             For Each zone As KeyValuePair(Of String, String) In Config.ParseConfig("global", key, value)
-                                TimeZones.Merge(item.Key, CInt(item.Value))
+                                TimeZones.Merge(zone.Key, CInt(zone.Value))
                             Next zone
 
                         Case "top-wiki" : TopWiki = App.Wikis(value)
@@ -164,18 +164,15 @@ Namespace Huggle
 
                     If wiki.Code.Contains(".") Then
                         wiki.Channel = "#" & wiki.Code
-                        wiki.InternalCode = wiki.Code.ToFirst(".") & _
-                            If(wiki.Code.FromFirst(".") = "wikipedia", "wiki", wiki.Code.FromFirst("."))
                         wiki.Language = App.Languages(wiki.Code.ToFirst("."))
                         wiki.Type = wiki.Code.FromFirst(".")
 
-                        wiki.Name = Msg("login-langwikiname", UcFirst(wiki.Type), wiki.Language.Code, wiki.Language.Name)
+                        wiki.Name = Msg("login-langwikiname", wiki.Code, UcFirst(wiki.Type), wiki.Language.Code, wiki.Language.Name)
                         wiki.FileUrl = New Uri(Config.Internal.WikimediaFilePath & wiki.Type & "/" & wiki.Language.Code & "/")
                         wiki.SecureUrl = New Uri(Config.Internal.WikimediaSecurePath & wiki.Type & "/" & wiki.Language.Code & "/w/")
                         wiki.Url = New Uri("http://" & wiki.Code & ".org/w/")
                     Else
                         wiki.Channel = "#" & wiki.Code & ".wikimedia"
-                        wiki.InternalCode = wiki.Code
                         wiki.Type = "special"
 
                         wiki.Name = UcFirst(wiki.Code)
@@ -281,7 +278,7 @@ Namespace Huggle
                             & wiki.Type & "/" & wiki.Language.Code & "/" Then wikiItems.Remove("files")
                         If wiki.Language IsNot Nothing AndAlso wiki.SecureUrl.ToString = Config.Internal.WikimediaSecurePath _
                             & wiki.Type & "/" & wiki.Language.Code & "/w/" Then wikiItems.Remove("secure")
-                        If wiki.Name = Msg("login-langwikiname", UcFirst(wiki.Type), wiki.Language.Code, wiki.Language.Name) Then wikiItems.Remove("name")
+                        If wiki.Name = Msg("login-langwikiname", wiki.Code, UcFirst(wiki.Type), wiki.Language.Code, wiki.Language.Name) Then wikiItems.Remove("name")
                         If wiki.Type = wiki.Code.FromFirst(".") Then wikiItems.Remove("type")
                         If wiki.Url.ToString = "http://" & wiki.Language.Code & "." & wiki.Type & ".org/w/" Then wikiItems.Remove("url")
                     Else

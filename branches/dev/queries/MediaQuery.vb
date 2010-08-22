@@ -36,21 +36,23 @@ Namespace Huggle.Actions
             OnProgress(Msg("media-progress", Media))
             OnStarted()
 
-            'Upload location is determined by MD5 hash of file name
-            Dim hash As String = BitConverter.ToString(MD5.Create.ComputeHash _
-                (Encoding.UTF8.GetBytes(Media.Name))).Remove("-").ToLower
-            Dim url As Uri
+            If Wiki.FileUrl IsNot Nothing Then
+                'Upload location is determined by MD5 hash of file name
+                Dim hash As String = BitConverter.ToString(MD5.Create.ComputeHash _
+                    (Encoding.UTF8.GetBytes(Media.Name))).Remove("-").ToLower
+                Dim url As Uri
 
-            If ThumbSize > 0 Then url = New Uri(Wiki.FileUrl.ToString & "thumb/" & hash(0) & "/" & _
-                hash(0) & hash(1) & "/" & Media.Name & "/" & Media.ThumbName(ThumbSize)) _
-                Else url = New Uri(Wiki.FileUrl.ToString & hash(0) & "/" & hash(0) & hash(1) & "/" & Media.Name)
+                If ThumbSize > 0 Then url = New Uri(Wiki.FileUrl.ToString & "thumb/" & hash(0) & "/" & _
+                    hash(0) & hash(1) & "/" & Media.Name & "/" & Media.ThumbName(ThumbSize)) _
+                    Else url = New Uri(Wiki.FileUrl.ToString & hash(0) & "/" & hash(0) & hash(1) & "/" & Media.Name)
 
-            Dim req As New FileRequest(Session, url)
-            req.Start()
-            If req.IsFailed Then OnFail(req.Result)
+                Dim req As New FileRequest(Session, url)
+                req.Start()
+                If req.IsFailed Then OnFail(req.Result)
 
-            If req.File IsNot Nothing Then
-                If ThumbSize = 0 Then Media.Content = req.File Else Media.Thumb(ThumbSize) = req.File
+                If req.File IsNot Nothing Then
+                    If ThumbSize = 0 Then Media.Content = req.File Else Media.Thumb(ThumbSize) = req.File
+                End If
             End If
 
             OnSuccess()

@@ -259,7 +259,7 @@ Namespace Huggle
         Public Sub Clear()
             Items.Clear()
             If Source IsNot Nothing Then Source.Reset()
-            App.Start(AddressOf OnItemsChanged)
+            CreateThread(AddressOf OnItemsChanged)
         End Sub
 
         Private Sub EditStateChanged(ByVal rev As Revision, ByVal e As EventArgs)
@@ -338,11 +338,11 @@ Namespace Huggle
 
         Private Sub Source_Resetting() Handles _Source.Resetting
             Items.Clear()
-            App.Start(AddressOf OnItemsChanged)
+            CreateThread(AddressOf OnItemsChanged)
         End Sub
 
         Private Sub Source_Update() Handles _Source.Update
-            App.Start(AddressOf OnItemsChanged)
+            CreateThread(AddressOf OnItemsChanged)
         End Sub
 
         Private Sub OnItemsChanged()
@@ -359,7 +359,7 @@ Namespace Huggle
 
                 If RemoveViewed Then
                     Items.Remove(Item)
-                    App.Start(AddressOf OnItemsChanged)
+                    CreateThread(AddressOf OnItemsChanged)
                 End If
             End If
         End Sub
