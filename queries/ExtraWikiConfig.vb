@@ -36,7 +36,7 @@ Namespace Huggle.Actions
 
             If reqs.Count > 0 Then
                 For Each query As Process In reqs
-                    App.Start(AddressOf query.Start)
+                    CreateThread(AddressOf query.Start)
                 Next query
 
                 'Wait for queries

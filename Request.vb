@@ -53,7 +53,15 @@ Namespace Huggle
                 retries -= 1
 
                 Try
-                    Dim request As HttpWebRequest = CType(HttpWebRequest.Create(Url), HttpWebRequest)
+                    Dim request As HttpWebRequest
+
+                    Try
+                        request = CType(WebRequest.Create(Url), HttpWebRequest)
+
+                    Catch ex As SystemException
+                        Result = New Result(Msg("error-badurl"), "badurl")
+                        Return
+                    End Try
 
                     request.AutomaticDecompression = DecompressionMethods.GZip
                     request.CookieContainer = Cookies
@@ -129,9 +137,6 @@ Namespace Huggle
                             'Some other web exception
                             Result = New Result(Msg("error-webexception", ex.Status.ToString), "webexception")
                     End Select
-
-                Catch ex As UriFormatException
-                    Result = New Result(Msg("error-badurl"), "badurl")
                 End Try
 
                 'Maximum retries exceeded

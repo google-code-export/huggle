@@ -25,7 +25,7 @@
 '        End Property
 
 '        Public Overrides Sub Start()
-'            App.Start(AddressOf GetDetails, AddressOf GetConfirmation)
+'            CreateThread(AddressOf GetDetails, AddressOf GetConfirmation)
 '        End Sub
 
 '        Private Sub GetDetails()
@@ -75,7 +75,7 @@
 '                End Select
 '            End If
 
-'            App.Start(AddressOf DoReport)
+'            CreateThread(AddressOf DoReport)
 '        End Sub
 
 '        Private Sub DoReport()

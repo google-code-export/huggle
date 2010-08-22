@@ -61,7 +61,7 @@ Namespace Huggle
         Public Property IsDefault As Boolean
 
         Public Sub Load(ByVal text As String)
-            For Each item As KeyValuePair(Of String, String) In Config.ParseConfig("globaluser", Nothing, text)
+            For Each item As KeyValuePair(Of String, String) In Config.ParseConfig("family", Nothing, text)
                 Dim key As String = item.Key
                 Dim value As String = item.Value
 
@@ -83,14 +83,21 @@ Namespace Huggle
                         Case "logo" : Logo = value
                         Case "name" : Family.Name = value
 
-                        Case "wikis"
-                            For Each code As String In value.ToList.Trim
-                                App.Wikis(code).Family = Family
-                            Next code
+                        Case "title-blacklist"
+                            Family.GlobalTitleBlacklist = New TitleBlacklist(Family.CentralWiki.Pages.FromString(value))
+
+                        Case "title-blacklist-entries"
+                            Dim entries As New List(Of String)
+
+                            For Each entry As KeyValuePair(Of String, String) In Config.ParseConfig("family", key, value)
+                                entries.Add(entry.Value)
+                            Next entry
+
+                            Family.GlobalTitleBlacklist.Text = entries.Join(LF)
                     End Select
 
                 Catch ex As SystemException
-                    Log.Write(Msg("error-configvalue", item.Key, "globaluser"))
+                    Log.Write(Msg("error-configvalue", item.Key, "family"))
                 End Try
             Next item
 
@@ -113,7 +120,11 @@ Namespace Huggle
                 If Not Directory.Exists(path) Then Directory.CreateDirectory(path)
                 File.WriteAllText(LocalPath, Config.MakeConfig(WriteConfig(True)), Encoding.UTF8)
 
-                Log.Debug("Saved family config for {0} [L]".FormatWith(Family.Name))
+                If Family.IsDefault Then
+                    Log.Debug("Saved default family config [L]")
+                Else
+                    Log.Debug("Saved family config for {0} [L]".FormatWith(Family.Name))
+                End If
 
             Catch ex As IOException
                 Log.Write(Msg("globalconfig-savefail", ex.Message))
@@ -129,21 +140,22 @@ Namespace Huggle
             If Logo IsNot Nothing Then items.Add("logo", Logo)
             If Family.Name <> Family.Code Then items.Add("name", Family.Name)
 
+            If Family.GlobalTitleBlacklist IsNot Nothing Then
+                items.Add("title-blacklist", Family.GlobalTitleBlacklist.Location.Title)
+
+                Dim entries As New Dictionary(Of String, Object)
+
+                For i As Integer = 0 To Family.GlobalTitleBlacklist.Entries.Count - 1
+                    entries.Add(CStr(i).PadLeft(4, "0"c), Family.GlobalTitleBlacklist.Entries(i))
+                Next i
+
+                items.Add("title-blacklist-entries", entries)
+            End If
+
             If local Then
                 items.Add("default-globaluser-config", Family.GlobalUsers.Default.Config.WriteConfig(True))
                 items.Add("default-user-config", Family.Wikis.Default.Users.Default.Config.WriteConfig(True))
                 items.Add("default-wiki-config", Family.Wikis.Default.Config.WriteConfig(True))
-
-                If Family.Wikis.All.Count > 0 Then
-                    Dim wikiCodes As New List(Of String)
-
-                    For Each wiki As Wiki In Family.Wikis.All
-                        wikiCodes.Add(wiki.Code)
-                    Next wiki
-
-                    wikiCodes.Sort()
-                    items.Add("wikis", wikiCodes)
-                End If
             End If
 
             Return items

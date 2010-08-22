@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{420818B9-6A08-4A98-8F71-EB3066A2E45E}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <StartupObject>Huggle.App</StartupObject>
+    <StartupObject>Sub Main</StartupObject>
     <RootNamespace>
     </RootNamespace>
     <AssemblyName>Huggle</AssemblyName>
@@ -113,7 +113,9 @@
     <Compile Include="actions\ChangePassword.vb" />
     <Compile Include="actions\ResetPreferences.vb" />
     <Compile Include="actions\Unblock.vb" />
+    <Compile Include="Main.vb" />
     <Compile Include="model\Preferences.vb" />
+    <Compile Include="model\TitleBlacklist.vb" />
     <Compile Include="queries\Query.vb" />
     <Compile Include="queries\ExtraGlobaluserConfig.vb" />
     <Compile Include="queries\LoadUserConfig.vb" />
@@ -207,10 +209,16 @@
     <Compile Include="ui\forms\AbuseFiltersForm.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ui\forms\UserRightsForm.Designer.vb">
-      <DependentUpon>UserRightsForm.vb</DependentUpon>
+    <Compile Include="ui\forms\Copy of LoginForm.Designer.vb">
+      <DependentUpon>Copy of LoginForm.vb</DependentUpon>
     </Compile>
-    <Compile Include="ui\forms\UserRightsForm.vb">
+    <Compile Include="ui\forms\Copy of LoginForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\forms\UserGroupsForm.Designer.vb">
+      <DependentUpon>UserGroupsForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\forms\UserGroupsForm.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ui\prompts\AccountAutoUnifiedForm.Designer.vb">
@@ -370,7 +378,7 @@
     <Compile Include="wikitext\Parsing.vb" />
     <Compile Include="wikitext\Reference.vb" />
     <Compile Include="wikitext\Section.vb" />
-    <Compile Include="App.vb" />
+    <Compile Include="Application.vb" />
     <Compile Include="QueueSources.vb" />
     <Compile Include="wikitext\Document.vb" />
     <Compile Include="queries\AbuseDetailQuery.vb" />
@@ -540,8 +548,11 @@
     <EmbeddedResource Include="ui\forms\AbuseFiltersForm.resx">
       <DependentUpon>AbuseFiltersForm.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ui\forms\UserRightsForm.resx">
-      <DependentUpon>UserRightsForm.vb</DependentUpon>
+    <EmbeddedResource Include="ui\forms\Copy of LoginForm.resx">
+      <DependentUpon>Copy of LoginForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\forms\UserGroupsForm.resx">
+      <DependentUpon>UserGroupsForm.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ui\prompts\AccountAutoUnifiedForm.resx">
       <DependentUpon>AccountAutoUnifiedForm.vb</DependentUpon>
@@ -569,6 +580,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ui\forms\FamilyPropertiesForm.resx">
       <DependentUpon>FamilyPropertiesForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\prompts\ConfirmationForm.resx">
+      <DependentUpon>ConfirmationForm.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ui\prompts\FirstRunForm.resx">
       <DependentUpon>FirstRunForm.vb</DependentUpon>

@@ -171,6 +171,26 @@ Namespace Huggle
                                 User.Groups.Merge(User.Wiki.UserGroups(group))
                             Next group
 
+                        Case "groups-add"
+                            For Each group As String In value.ToList
+                                User.GroupChanges(User.Wiki.UserGroups(group)).CanAdd = True
+                            Next group
+
+                        Case "groups-add-self"
+                            For Each group As String In value.ToList
+                                User.GroupChanges(User.Wiki.UserGroups(group)).CanAddSelf = True
+                            Next group
+
+                        Case "groups-remove"
+                            For Each group As String In value.ToList
+                                User.GroupChanges(User.Wiki.UserGroups(group)).CanRemove = True
+                            Next group
+
+                        Case "groups-remove-self"
+                            For Each group As String In value.ToList
+                                User.GroupChanges(User.Wiki.UserGroups(group)).CanRemoveSelf = True
+                            Next group
+
                         Case "id" : User.Id = value.ToInteger
                         Case "minor"
                         Case "password"
@@ -245,6 +265,24 @@ Namespace Huggle
                     Then items.Add("password", Convert.ToBase64String(User.Password.ToArray))
 
                 If User.Groups.Count > 0 Then items.Add("groups", User.Groups.Join(","))
+
+                Dim canAdd As New List(Of UserGroup)
+                Dim canAddSelf As New List(Of UserGroup)
+                Dim canRemove As New List(Of UserGroup)
+                Dim canRemoveSelf As New List(Of UserGroup)
+
+                For Each groupChange As UserGroupChange In User.GroupChanges.All
+                    If groupChange.CanAdd Then canAdd.Add(groupChange.Group)
+                    If groupChange.CanAddSelf Then canAddSelf.Add(groupChange.Group)
+                    If groupChange.CanRemove Then canRemove.Add(groupChange.Group)
+                    If groupChange.CanRemoveSelf Then canRemoveSelf.Add(groupChange.Group)
+                Next groupChange
+
+                If canAdd.Count > 0 Then items.Add("groups-add", canAdd.Join(","))
+                If canAddSelf.Count > 0 Then items.Add("groups-add-self", canAddSelf.Join(","))
+                If canRemove.Count > 0 Then items.Add("groups-remove", canRemove.Join(","))
+                If canRemoveSelf.Count > 0 Then items.Add("groups-remove-self", canRemoveSelf.Join(","))
+
                 items.Add("preferences", User.Preferences.ToMwFormat.ToDictionary(Of String, Object))
 
                 If User.UnificationDate > Date.MinValue Then items.Add("unification-date", User.UnificationDate)

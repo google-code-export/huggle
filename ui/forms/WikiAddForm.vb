@@ -39,7 +39,7 @@ Public Class WikiAddForm
             newUrl = New Uri(urlText)
 
         Catch ex As UriFormatException
-            App.ShowError(Msg("addwiki-badurl"))
+            App.ShowError(New Result({Msg("addwiki-fail"), Msg("error-badurl")}))
             Return
         End Try
 
@@ -49,7 +49,7 @@ Public Class WikiAddForm
         App.UserWaitForProcess(addWiki)
 
         If addWiki.IsFailed Then
-            App.ShowError(addWiki.Result)
+            App.ShowError(addwiki.Result)
         Else
             _Wiki = addWiki.Wiki
             Config.Global.SaveLocal()

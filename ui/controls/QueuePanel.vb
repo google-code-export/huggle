@@ -179,7 +179,7 @@ Class QueuePanel
             Next i
         End If
 
-        App.Invoke(AddressOf UpdateItems)
+        CallOnMainThread(AddressOf UpdateItems)
     End Sub
 
     Private Sub Queues_SelectedIndexChanged() Handles Queues.SelectedIndexChanged

@@ -6,8 +6,6 @@ Imports System.Windows.Forms
 
 Public Class MainForm
 
-    Private ShutdownOnClose As Boolean = True
-
     Private Session As Session
 
     Public Sub New(ByVal session As Session)
@@ -16,18 +14,28 @@ Public Class MainForm
     End Sub
 
     Private Sub _FormClosed() Handles Me.FormClosed
-        If ShutdownOnClose Then App.Shutdown()
+        If DialogResult <> DialogResult.OK Then
+            DialogResult = DialogResult.Abort
+            App.Shutdown()
+        End If
     End Sub
 
     Private Sub _Load() Handles Me.Load
-        Icon = Resources.Icon
-        Text = Application.ProductName
-        If Config.Local.WindowLocation <> Point.Empty Then Location = Config.Local.WindowLocation
-        If Config.Local.WindowSize <> Size.Empty Then Size = Config.Local.WindowSize
-        WindowState = If(Config.Local.WindowMaximized, FormWindowState.Maximized, FormWindowState.Normal)
+        Try
+            Icon = Resources.Icon
+            Text = Windows.Forms.Application.ProductName
+            If Config.Local.WindowLocation <> Point.Empty Then Location = Config.Local.WindowLocation
+            If Config.Local.WindowSize <> Size.Empty Then Size = Config.Local.WindowSize
+            WindowState = If(Config.Local.WindowMaximized, FormWindowState.Maximized, FormWindowState.Normal)
 
-        QueueSplit.Panel1.Controls.Add(New QueuePanel(Session.Wiki) With {.Dock = DockStyle.Fill})
-        LogSplit.Panel2.Controls.Add(New LogPanel With {.Dock = DockStyle.Fill})
+            QueueSplit.Panel1.Controls.Add(New QueuePanel(Session.Wiki) With {.Dock = DockStyle.Fill})
+            LogSplit.Panel2.Controls.Add(New LogPanel With {.Dock = DockStyle.Fill})
+
+        Catch ex As SystemException
+            App.ShowError(Result.FromException(ex))
+            DialogResult = DialogResult.Abort
+            Close()
+        End Try
     End Sub
 
     Private Sub SystemExit_Click() Handles SystemExit.Click
@@ -39,9 +47,7 @@ Public Class MainForm
         App.UserWaitForProcess(logout)
         If logout.IsFailed Then App.ShowError(logout.Result)
 
-        Dim loginForm As New LoginForm
-        loginForm.Show()
-        ShutdownOnClose = False
+        DialogResult = DialogResult.OK
         Close()
     End Sub
 
@@ -75,7 +81,7 @@ Public Class MainForm
     End Sub
 
     Private Sub UserChangeGroups_Click() Handles UserChangeGroups.Click
-        Dim form As New UserRightsForm(Session, Nothing)
+        Dim form As New UserGroupsForm(Session, Nothing)
         form.Show()
     End Sub
 

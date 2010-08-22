@@ -50,14 +50,15 @@ Namespace Huggle
         End Property
 
         Public Sub ResizeDropDown(ByVal control As ComboBox)
-            Dim maxWidth As Integer = control.Width
+            'Adjust the width of a ComboBox drop-down to match the widest text it contains
+            Dim width As Integer = control.Width
             Dim graphics As Graphics = control.CreateGraphics
 
             For Each item As Object In control.Items
-                maxWidth = Math.Max(maxWidth, CInt(graphics.MeasureString(item.ToString, control.Font).Width) + 8)
+                width = Math.Max(width, CInt(graphics.MeasureString(item.ToString, control.Font).Width) + 8)
             Next item
 
-            control.DropDownWidth = maxWidth
+            control.DropDownWidth = width
         End Sub
 
         Public Function ImageToIcon(ByVal Image As Image) As Drawing.Icon
@@ -134,7 +135,8 @@ Namespace Huggle
                 'server (which is most of them) are sending their password across the Web
                 'in plaintext every time they log in to a MediaWiki wiki.
                 Return MD5.Create.ComputeHash(Encoding.UTF8.GetBytes _
-                    (Application.ProductName & user.FullName & My.Computer.Info.OSFullName & Config.Local.Uid & "fnord"))
+                    (Windows.Forms.Application.ProductName & user.Name & user.Wiki.Code & _
+                     My.Computer.Info.OSFullName & Config.Local.Uid & "fnord"))
             End Get
         End Property
 

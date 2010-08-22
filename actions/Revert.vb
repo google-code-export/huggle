@@ -55,7 +55,7 @@ Namespace Huggle.Actions
             If User.Wiki IsNot Rev.Wiki OrElse Not User.HasRight("edit") _
                 OrElse Not User.Can("revert") Then OnFail(Msg("error-account")) : Return
 
-            App.Start(AddressOf GetRevisionInfo, AddressOf CheckRevision)
+            CreateThread(AddressOf GetRevisionInfo, AddressOf CheckRevision)
         End Sub
 
         Private Sub GetRevisionInfo()
@@ -246,7 +246,7 @@ Namespace Huggle.Actions
                 AndAlso Not (Rev.CanRollback AndAlso User.HasRight("rollback") _
                 AndAlso Not User.Config.RevertCheckRollbackTarget) Then
 
-                App.Start(AddressOf GetTargetRevision, AddressOf CheckTarget)
+                CreateThread(AddressOf GetTargetRevision, AddressOf CheckTarget)
             Else
                 'Construct summary if none is supplied
                 If Summary Is Nothing Then Summary = GetSummary()
@@ -381,7 +381,7 @@ Namespace Huggle.Actions
             If Summary Is Nothing Then Summary = GetSummary()
 
             'If we made it this far, go ahead and revert
-            App.Start(AddressOf DoRevert)
+            CreateThread(AddressOf DoRevert)
         End Sub
 
         Private Function GetSummary() As String

@@ -44,26 +44,26 @@ Namespace Huggle
             End If
         End Sub
 
-        Public Shared Sub Debug(ByVal message As String)
-            Dim lmsg As New LogMessage(message, True)
+        Public Shared Sub AttachProcess(ByVal process As Process)
+            CallOnMainThread(AddressOf _AttachProcess, process)
+        End Sub
 
-            If Threading.SynchronizationContext.Current Is App.Context _
-                Then Write(lmsg) Else App.Post(AddressOf Write, lmsg)
+        Public Shared Sub Debug(ByVal message As String)
+            CallOnMainThread(AddressOf Write, New LogMessage(message, True))
         End Sub
 
         Public Shared Sub Write(ByVal message As String)
-            Dim lmsg As New LogMessage(message, False)
-
-            If Threading.SynchronizationContext.Current Is App.Context _
-                Then Write(lmsg) Else App.Post(AddressOf Write, lmsg)
-        End Sub
-
-        Public Shared Sub AttachProcess(ByVal process As Process)
-            App.Post(AddressOf _AttachProcess, process)
+            CallOnMainThread(AddressOf Write, New LogMessage(message, False))
         End Sub
 
         Private Shared Sub _AttachProcess(ByVal actionObj As Object)
             AddHandler CType(actionObj, Process).Progress, AddressOf OnUpdateProcess
+        End Sub
+
+        Private Shared Sub HandleFileLogError(ByVal ex As Exception)
+            'Turn off logging to file so we don't try to log our logging to file error to file
+            Config.Local.LogToFile = False
+            Write(Msg("log-error", ex.Message))
         End Sub
 
         Private Shared Sub OnUpdateProcess(ByVal process As Process)
@@ -89,12 +89,6 @@ Namespace Huggle
             End If
 
             RaiseEvent Written(message)
-        End Sub
-
-        Private Shared Sub HandleFileLogError(ByVal ex As Exception)
-            'Turn off logging to file so we don't try to log our logging to file error to file
-            Config.Local.LogToFile = False
-            Write(Msg("log-error", ex.Message))
         End Sub
 
     End Class

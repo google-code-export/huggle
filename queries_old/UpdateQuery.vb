@@ -38,7 +38,7 @@
 '                    S = ResponseStream.Read(Buffer, 0, Buffer.Length)
 '                    MemoryStream.Write(Buffer, 0, S)
 '                    Complete += S
-'                    App.Start(AddressOf OnUpdateProgress)
+'                    CreateThread(AddressOf OnUpdateProgress)
 '                Loop While S > 0 AndAlso State <> QueryState.Cancelled
 
 '                File.WriteAllBytes(Filename, MemoryStream.ToArray)

@@ -23,11 +23,11 @@ Public Class AccountLoginForm
     Private Sub _Load() Handles Me.Load
         Try
             Icon = Resources.Icon
-            Text = Application.ProductName
+            Text = Windows.Forms.Application.ProductName
             Request.Text = Request.Text.FormatWith(Requester, User.FullName)
 
         Catch ex As SystemException
-            App.ShowError(ex)
+            App.ShowError(Result.FromException(ex))
             Close()
         End Try
     End Sub

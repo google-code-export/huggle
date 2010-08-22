@@ -180,7 +180,7 @@ Partial Class GlobalPreferencesForm
         Me.PrefsNote.Name = "PrefsNote"
         Me.PrefsNote.Size = New System.Drawing.Size(242, 44)
         Me.PrefsNote.TabIndex = 19
-        Me.PrefsNote.Text = "Some preferences (for example, gadgets) do not exist on all App.Wikis. If selected, t" & _
+        Me.PrefsNote.Text = "Some preferences (for example, gadgets) do not exist on all wikis. If selected, t" & _
             "hey will be copied only to wikis on which they exist."
         '
         'Cancel

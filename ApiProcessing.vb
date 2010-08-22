@@ -471,6 +471,8 @@ Namespace Huggle
                                     Next permission
                                 End If
                             Next rights
+
+                            group.Rights.Sort()
                         Next groupNode
 
                     Case "userinfo" : ProcessUserInfo(node)
@@ -553,6 +555,12 @@ Namespace Huggle
                         globalUser.Wikis.Clear()
 
                         For Each mergedNode As XmlNode In subNode.ChildNodes
+                            Dim wiki As Wiki = App.Wikis.FromInternalCode(mergedNode.Attribute("wiki"))
+
+                            'MediaWiki keeps accounts on the list of unified accounts
+                            'even when a wiki is deleted; we don't want these
+                            If wiki Is Nothing Then Continue For
+                            
                             Dim user As User = App.Wikis.FromInternalCode(mergedNode.Attribute("wiki")).Users(globalUser.Name)
                             globalUser.Users.Add(user)
                             globalUser.Wikis.Add(user.Wiki)
@@ -1284,9 +1292,18 @@ Namespace Huggle
             Wiki.Config.ReadOnly = node.HasAttribute("readonly")
             If node.HasAttribute("readonlyreason") Then Wiki.Config.ReadOnlyReason = node.Attribute("readonlyreason")
             If node.HasAttribute("rights") Then Wiki.License = node.Attribute("rights")
-            If node.HasAttribute("sitename") AndAlso Wiki.IsCustom Then Wiki.Name = node.Attribute("sitename")
+
+            If node.HasAttribute("sitename") AndAlso Wiki.IsCustom Then
+                Wiki.Name = node.Attribute("sitename")
+
+                'Handle two wikis having the same sitename
+                For Each otherWiki As Wiki In App.Wikis.All
+                    If otherWiki IsNot Wiki AndAlso otherWiki.Name = Wiki.Name _
+                        Then Wiki.Name &= " (" & Wiki.Url.Host & ")"
+                Next otherWiki
+            End If
+
             If node.HasAttribute("time") Then Wiki.Config.ServerTimeOffset = Date.UtcNow - CDate(node.Attribute("time"))
-            If node.HasAttribute("wikiid") Then Wiki.InternalCode = node.Attribute("wikiid")
         End Sub
 
         Private Sub ProcessSiteMatrix(ByVal sitematrixNode As XmlNode)
@@ -1339,11 +1356,10 @@ Namespace Huggle
                                         Dim wiki As Wiki = App.Wikis(node.Attribute("code") & "." & type)
                                         wiki.Channel = "#" & site.Attribute("url").FromFirst("http://").ToFirst(".org")
                                         wiki.Family = App.Families.Wikimedia
-                                        wiki.InternalCode = node.Attribute("code") & code
                                         wiki.Language = language
                                         wiki.Type = type
 
-                                        wiki.Name = Msg("login-langwikiname").FormatWith(UcFirst(type), language.Code, language.Name)
+                                        wiki.Name = Msg("login-langwikiname").FormatWith(wiki.Code, UcFirst(type), language.Code, language.Name)
                                         wiki.FileUrl = New Uri(Config.Internal.WikimediaFilePath & type & "/" & language.Code & "/")
                                         wiki.SecureUrl = New Uri(Config.Internal.WikimediaSecurePath & type & "/" & language.Code & "/w/")
                                         wiki.Url = New Uri(site.Attribute("url") & "/w/")
@@ -1474,14 +1490,13 @@ Namespace Huggle
 
             For Each node As XmlNode In infoNode.ChildNodes
                 Select Case node.Name
-
                     Case "changeablegroups"
                         User.GroupChanges.Reset()
 
                         For Each subNode As XmlNode In node.ChildNodes
                             For Each g As XmlNode In subNode.ChildNodes
                                 If g.Name = "g" Then
-                                    Dim group As UserGroup = Wiki.UserGroups(g.Name)
+                                    Dim group As UserGroup = Wiki.UserGroups(g.FirstChild.Value)
 
                                     Select Case subNode.Name
                                         Case "add" : User.GroupChanges(group).CanAdd = True

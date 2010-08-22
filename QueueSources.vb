@@ -109,7 +109,7 @@ Namespace Huggle
                         FirstQuery = False
                     End If
 
-                    App.Start(AddressOf RcQuery.Start)
+                    CreateThread(AddressOf RcQuery.Start)
                 End If
             End Sub
 

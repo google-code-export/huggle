@@ -7,11 +7,12 @@ Namespace Huggle.Actions
 
     Class PageInfoQuery : Inherits Query
 
-        Private Pages As IList(Of Page)
+        Public Property Pages As List(Of Page)
+
         Private Categories, Content, Diffs, Externals, LangLinks, Links As Boolean
         Private Media, OldRevision, Revision, Transclusions As Boolean
 
-        Public Sub New(ByVal session As Session, ByVal Pages As IList(Of Page), _
+        Public Sub New(ByVal session As Session, ByVal Pages As List(Of Page), _
             Optional ByVal Categories As Boolean = False, Optional ByVal Content As Boolean = False, _
             Optional ByVal Diffs As Boolean = False, Optional ByVal Externals As Boolean = False, _
             Optional ByVal LangLinks As Boolean = False, Optional ByVal Links As Boolean = False, _

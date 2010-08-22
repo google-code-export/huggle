@@ -1,4 +1,9 @@
-﻿userrights-title:                User rights for {0}
+﻿wikiadd-explanation:             Use this form to add a wiki to the wiki list.\nWikis must be running MediaWiki 1.15 or later with the API enabled.
+
+logout-desc:                     Log out {0}
+logout-progress:                 Logging out {0}
+
+usergroups-title:                User groups for {0}
 
 changepassword-error:            The old password was incorrect, or there was an error submitting the request
 
@@ -31,7 +36,7 @@ extraconfig-priority:            Updating priority list
 abusefilteredit-title:           Edit abuse filter {0}
 abusefilteredit-newtitle:        Create abuse filter
 
-wait-generic:                    Working...
+wait-generic:                    Working
 
 familyprop-title:                Family properties
 familyprop-centralwiki:          Central wiki: {0}
@@ -60,7 +65,7 @@ abusefilterprop-limitdetail:     {0} matching actions within {1} seconds grouped
 abusefilterprop-notes:           Notes:
 abusefilterprop-pattern:         Pattern:
 abusefilterprop-private:         private
-abusefilterprop-progress:        Loading filter details...
+abusefilterprop-progress:        Loading filter details
 abusefilterprop-public:          public
 abusefilterprop-ratelimit:       Rate limit: {0}
 abusefilterprop-restricted:      User right 'abusefilter-private' required to view filter details
@@ -103,9 +108,9 @@ wikiprop-gadget-type:            Type: {0}
 eval-start:                  Start
 eval-stop:                   Cancel
 eval-fail:                   Query failed
-eval-progress:               Running query...
-eval-queries:                Retrieving additional information...
-eval-stream:                 Running query: {0}...
+eval-progress:               Running query
+eval-queries:                Retrieving additional information
+eval-stream:                 Running query: {0}
 
 language-loadfail:           Failed to load messages for {0}: {1}
 
@@ -113,17 +118,19 @@ queue-action:                [{0}]
 
 === Account creation ===
 
-createaccount-confirm:       Fetching confirmation code for '{0}'...
+createaccount-confirm:       Fetching confirmation code for '{0}'
 createaccount-fail:          Failed to create account '{0}'
 createaccount-disabled:      Account creation is disabled on this wiki
 createaccount-brokenconfirm: Missing or broken confirmation code
-createaccount-progress:      Creating account '{0}'...
+createaccount-progress:      Creating account '{0}'
 
-usernamecheck-progress:      Checking username...
+usernamecheck-progress:      Checking username
 usernamecheck-ok:            Username OK
 usernamecheck-invalid:       Username not valid
 usernamecheck-used:          Username already in use
 usernamecheck-error:         Error checking username
+usernamecheck-globalblacklisted: Disallowed by global blacklist
+usernamecheck-localblacklisted: Disallowed by local blacklist
 
 === Data view ===
 
@@ -134,7 +141,7 @@ dataview-viewtext
 dataview-viewwebpage
 dataview-viewwikitext
 
-wait-title:                 Please wait...
+wait-title:                 Please wait
 
 == Add wiki form ==
 
@@ -142,7 +149,7 @@ addwiki-badurl:             The URL entered is not recognized as a MediaWiki pag
 addwiki-connection:         Could not load the URL specified. The URL is incorrect, or the website is unavailable
 addwiki-fail:               Failed to add the wiki
 addwiki-alreadyadded:       The specified wiki is already in the wiki list as '{0}'
-addwiki-progress:           Retrieving wiki details...
+addwiki-progress:           Retrieving wiki details
 
 == Review form ==
 
@@ -157,7 +164,7 @@ diff-filterstopped:         Action prevented by filter
 chart-save:                 Save chart
 
 query-ok:					Expression OK
-query-cancelling:			Cancelling...
+query-cancelling:			Cancelling
 query-count:				{0} results returned
 query-evaluate:				Evaluate
 query-errorformat:			{0}, at {1}
@@ -168,8 +175,8 @@ query-identifier:			Undefined identifier: '{0}'
 query-listempty:			List empty in '{0}'
 query-nofunction:			No matching function for argument token
 query-parentheses:			Unmatched parentheses
-query-progress:				Evaluating...
-query-rendering:            Rendering...
+query-progress:				Evaluating
+query-rendering:            Rendering
 query-requesterror:			Request returned an error: {0}
 query-retrieval:			Data retrieval error: Same request attempted more than once
 query-sorterror:			Cannot sort list, elements are not all of the same type
@@ -205,7 +212,7 @@ a-remove:                   Remove
 a-rename:                   Rename
 a-restorewindow:            Restore
 a-save:                     Save
-a-selectfile:               Browse...
+a-selectfile:               Browse
 a-startup:                  Session started
 a-unknown:                  unknown
 a-yes:                      Yes
@@ -333,7 +340,7 @@ warningtype-vandalism:     Vandalism
 === Recent changes feed ===
 <pre>
 feed-connected:             Connected to recent changes feed
-feed-disconnected:          Connection to recent changes feed lost; reconnecting...
+feed-disconnected:          Connection to recent changes feed lost; reconnecting
 feed-error:                 Error connecting to recent changes feed
 feed-socketerror:           Socket error {0}: {1}
 feed-nochannel:             Recent changes feed channel '{0}' not found
@@ -353,7 +360,7 @@ translation-commit:        Commit changes
 translation-fail:          Failed to update message files
 translation-modified:      Modified messages
 translation-none:          <no translation yet>
-translation-progress:      Updating message file for {0}...
+translation-progress:      Updating message file for {0}
 translation-title:         Translation
 translation-undo:          Undo changes
 translation-untranslated:  Untranslated messages
@@ -417,8 +424,8 @@ block-rangeblockwarning:   {0} is already affected by a rangeblock on {1}.\nThis
 
 === Closing form ===
 <pre>
-closing-whitelist:         Updating user whitelist...
-closing-config:            Updating configuration subpage...
+closing-whitelist:         Updating user whitelist
+closing-config:            Updating configuration subpage
 </pre>
 
 === Configuration form ===
@@ -501,7 +508,7 @@ edit-watch:                Watch this page
 edit-page:                 Page
 edit-edit:                 Edit
 edit-view:                 View
-edit-page-savetofile:      Save to file...
+edit-page-savetofile:      Save to file
 edit-page-save:            Save
 edit-page-cancel:          Cancel
 edit-edit-undo:            Undo
@@ -538,7 +545,7 @@ email-send:                Send
 
 === List form ===
 <pre>
-list-actions:              Actions and Filters...
+list-actions:              Actions and Filters
 list-browsetitle:          Add text file to list
 list-combine:              Combine
 list-copyto:               Copy to:
@@ -552,7 +559,7 @@ list-nolists:              No lists defined\nClick "Add" to create one
 list-query-cancelled:      Cancelled.
 list-query-fail:           Query failed.
 list-query-noresults:      Query returned no results.
-list-query-progress:       Running query...
+list-query-progress:       Running query
 list-query-results:        {0} results returned.
 list-renameprompt:         Enter new name:
 list-replace:              Replace
@@ -568,9 +575,9 @@ list-title:                List Builder
 <pre>
 login-language:            Language:
 login-project:             Project:
-login-addwiki:             (Add new wiki...)
+login-addwiki:             (Add new wiki)
 login-anonymous:           (Anonymous login)
-login-createaccount:       (Create new account...)
+login-createaccount:       (Create new account)
 login-username:            Username:
 login-password:            Password:
 login-proxygroup:          Proxy settings
@@ -579,9 +586,9 @@ login-proxyaddress:        Address:
 login-proxyport:           Port:
 login-proxydomain:         Domain:
 login-start:               Login
-login-translate:           Translate...
+login-translate:           Translate
 login-captchatitle:        Captcha required to log in
-login-langwikiname:        {0} - {1} - {2}
+login-langwikiname:        {0}
 
 login-error-admin:         Use of Huggle on this project requires an administrator account.
 login-error-age:           Use of Huggle on this project requires an account at least {0} days old.
@@ -627,14 +634,14 @@ main-new-messages:         You have new messages; select System -> Show new mess
 main-system:               System
 main-system-messages:      Show new messages
 main-system-reconnectfeed: Reconnect RC feed
-main-system-savelog:       Save log...
-main-system-lists:         List Builder...
-main-system-requests:      Requests...
-main-system-statistics:    Statistics...
+main-system-savelog:       Save log
+main-system-lists:         List Builder
+main-system-requests:      Requests
+main-system-statistics:    Statistics
 main-system-showlog:       Show log
 main-system-showqueue:     Show queue
 main-system-showtwoqueues: Show two queues
-main-system-options:       Options...
+main-system-options:       Options
 main-system-logout:        Log out
 main-system-exit:          Exit
 main-queue:                Queue
@@ -642,10 +649,10 @@ main-queue-next:           Next
 main-queue-trim:           Trim
 main-queue-clear:          Clear current
 main-queue-count:          {0} items
-main-queue-query:          Running query...
+main-queue-query:          Running query
 main-queue-reset:          Reset
 main-queue-clearall:       Clear all
-main-queue-options:        Manage Queues...
+main-queue-options:        Manage Queues
 main-goto:                 Go to
 main-goto-mytalk:          My talk page
 main-goto-mycontribs:      My contributions
@@ -670,19 +677,19 @@ main-page-watch:           Watch
 main-page-unwatch:         Unwatch
 main-page-purge:           Purge
 main-page-patrol:          Mark patrolled
-main-page-move:            Move...
-main-page-protect:         Protect...
-main-page-delete:          Delete...
+main-page-move:            Move
+main-page-protect:         Protect
+main-page-delete:          Delete
 main-user-info:            Show user info
 main-user-ignore:          Ignore
 main-user-unignore:        Unignore
 main-user-contribs:        Retrieve contributions
 main-user-talk:            View talk page
-main-user-message:         Message...
-main-user-email:           E-mail...
-main-user-warn:            Warn...
+main-user-message:         Message
+main-user-email:           E-mail
+main-user-warn:            Warn
 main-user-report:          Report
-main-user-block:           Block...
+main-user-block:           Block
 main-browser:              Browser
 main-browser-newtab:       New tab
 main-browser-closetab:     Close tab
@@ -695,11 +702,11 @@ main-browser-newcontribs:  Show new contributions by user
 main-help:                 Help
 main-help-documentation:   Documentation
 main-help-feedback:        Feedback
-main-help-about:           About Huggle...
-main-addqueue:             Add...
+main-help-about:           About Huggle
+main-addqueue:             Add
 main-savelogtitle:         Save log
-main-usermessageother:     Other message...
-main-advanced:             Advanced...
+main-usermessageother:     Other message
+main-advanced:             Advanced
 main-stats:                {0} edits per minute, {1} reverts per minute
 
 main-tip-revertwarn:       Revert this revision, and issue a user warning
@@ -782,7 +789,7 @@ queue-title:               Queues
 queue-queues:              Queues:
 queue-typegroup:           Queue type
 queue-listselector:        List:
-queue-listbuilder:         List Builder...
+queue-listbuilder:         List Builder
 queue-sortorder:           Sort order:
 queue-removeviewed:        Remove edits when viewed
 queue-removeold:           Remove old edits to the same page
@@ -946,7 +953,7 @@ update-required:           You must update to the latest version, {0}.
 update-optional:           Updating to the latest version, {0}, is recommended, and may be required in future.
 update-prompt:             Download and run the latest version now?
 update-download:           Update
-update-progress:           Downloading new version...
+update-progress:           Downloading new version
 update-error:              Failed to download new version
 update-fileerror:          Error updating application: {0}
 </pre>
@@ -992,18 +999,18 @@ issuereport-autogen:	The following information will be included automatically wi
 issuereport-type:		Issue type:
 
 
-retrying:                  Retrying...
+retrying:                  Retrying
 
 block-done:                Blocked '{0}'
 block-fail:                Did not block '{0}'
-block-progress:            Blocking '{0}'...
+block-progress:            Blocking '{0}'
 
 blocklog-fail:             Failed to retrieve block log for '{0}'
 blocklog-none:             No block log for '{0}'
-blocklog-progress:         Retrieving block log for '{0}'...
+blocklog-progress:         Retrieving block log for '{0}'
 
 blocknotify-fail:          Did not notify '{0}' of block
-blocknotify-progress:      Notifying '{0}' of block...
+blocknotify-progress:      Notifying '{0}' of block
 
 config-fail:               Failed to load configuration
 config-noprojectconfig:    Project configuration page not found
@@ -1011,29 +1018,29 @@ config-nouserconfig:       User configuration page not found
 
 delete-done:               Deleted '{0}'
 delete-fail:               Did not delete '{0}'
-delete-progress:           Deleting '{0}'...
+delete-progress:           Deleting '{0}'
 
 deletelog-fail:            Failed to retrieve deletion log for '{0}'
 deletelog-none:            No deletion log for '{0}'
-deletelog-progress:        Retrieving deletion log for '{0}'...
+deletelog-progress:        Retrieving deletion log for '{0}'
 
 diff-deleted:              This revision has been deleted.
 diff-fail:                 Failed to retrieve diff of '{0}'
 diff-notfound:             This revision has been deleted, or the page does not exist.
-diff-scary:                This article is scary... be careful!
+diff-scary:                This article is scary be careful!
 
 reqdelete-duplicate:       The page is already tagged
 reqdelete-tagfail:         Did not tag '{0}' for deletion discussion
 reqdelete-redirectfail:    The page is a redirect and no redirect discussion process is defined
-reqdelete-tagprogress:     Tagging '{0}' for deletion discussion...
+reqdelete-tagprogress:     Tagging '{0}' for deletion discussion
 
-reqdelete-subpageprogress: Creating deletion discussion subpage for '{0}'...
+reqdelete-subpageprogress: Creating deletion discussion subpage for '{0}'
 reqdelete-subpagefail:     Did not create deletion discussion subpage for '{0}'
-reqdelete-logprogress:     Adding '{0}' to deletion discussion log...
+reqdelete-logprogress:     Adding '{0}' to deletion discussion log
 reqdelete-logfail:         Did not add '{0}' to deletion discussion log
 
 edit-fail:                 Did not edit '{0}'
-edit-progress:             Editing '{0}'...
+edit-progress:             Editing '{0}'
 edit-conflict:             Edit conflict
 edit-conflictdetail:       Conflict while editing '{0}'
 edit-retry:                Retry edit with new version
@@ -1041,27 +1048,27 @@ edit-ignore:               Ignore and overwrite new version
 
 email-done:                Sent e-mail to '{0}'
 email-fail:                Failed to send e-mail to '{0}'
-email-progress:            Sending e-mail to '{0}'...
+email-progress:            Sending e-mail to '{0}'
 
-globalconfig-progress:     Updating configuration...
-globalconfig-proxy:        Detecting proxy settings...
+globalconfig-progress:     Updating configuration
+globalconfig-proxy:        Detecting proxy settings
 globalconfig-fail:         Failed to load global configuration
 globalconfig-savefail:     Failed to save local cache of global configuration: {0}
 globalconfig-notfound:     Global configuration page '{0}' on wiki '{1}' not found
 
 history-fail:              Failed to retrieve history of '{0}'
-history-progress:          Retrieving history of '{0}' ({1})...
+history-progress:          Retrieving history of '{0}' ({1})
 
 localconfig-loadfail:      Error loading local configuration file: {0}
 localconfig-savefail:      Error saving local configuration file: {0}
 
-login-progress:            Logging in {0}...
-login-config:              Loading configuration for {0}...
+login-progress:            Logging in {0}
+login-config:              Loading configuration for {0}
 login-fail:                Login failed
 
 move-done:                 Moved '{0}' to '{1}'
 move-fail:                 Did not move '{0}' to '{1}'
-move-progress:             Moving '{0}' to '{1}'...
+move-progress:             Moving '{0}' to '{1}'
 
 notify-fail:               Did not notify the creator of '{0}'
 notify-unknowncreator:     Cannot find page creator
@@ -1070,15 +1077,15 @@ patrol-duplicate:          The page is already patrolled
 patrol-done:               Marked '{0}' as patrolled
 patrol-fail:               Did not mark '{0}' as patrolled
 patrol-notfound:           Cannot find recent-changes id, page is too old
-patrol-progress:           Marking '{0}' as patrolled...
+patrol-progress:           Marking '{0}' as patrolled
 
 protect-done:              Changed protection level for '{0}'
 protect-fail:              Did not change protection level for '{0}'
-protect-progress:          Changing protection level for '{0}'...
+protect-progress:          Changing protection level for '{0}'
 
 protectlog-fail:           Failed to retrieve protection log for '{0}'
 protectlog-none:           No protection log for '{0}'
-protectlog-progress:       Retrieving protection log for '{0}'...
+protectlog-progress:       Retrieving protection log for '{0}'
 
 purge-done:                Purged '{0}'
 purge-fail:                Failed to purge '{0}'
@@ -1088,56 +1095,56 @@ queue-refresh-fail:        Error refreshing queue '{0}'
 
 report-duplicate:          The user has already been reported
 report-fail:               Did not report '{0}'
-report-progress:           Reporting '{0}'...
+report-progress:           Reporting '{0}'
 
 saveuserconfig-done:       Updated user configuration page
 saveuserconfig-fail:       Did not update user configuration page
-saveuserconfig-progress:   Updating user configuration page...
+saveuserconfig-progress:   Updating user configuration page
 
 reqprotection-badformat:   Format of request page unknown
 reqprotection-duplicate:   Protection has already been requested
 reqprotection-fail:        Did not request protection of '{0}'
-reqprotection-progress:    Requesting protection of '{0}'...
+reqprotection-progress:    Requesting protection of '{0}'
 
 revert-cannotundo:         Cannot undo due to conflicting intermediate edits
 revert-conflict:           The page was edited by ignored user '{0}'
 revert-fail:               Did not revert '{0}'
 revert-nochange:           The content of the target revision is identical to that of the current revision
 revert-nootheruser:        No other user has edited the page
-revert-progress:           Reverting '{0}'...
+revert-progress:           Reverting '{0}'
 
 tag-alreadytagged:         The page has already been tagged
 tag-deleted:               The page has been deleted
 tag-fail:                  Did not tag '{0}'
-tag-progress:              Tagging '{0}'...
+tag-progress:              Tagging '{0}'
 
 sight-done:                Marked revision {0} of '{1}' as sighted
 sight-fail:                Failed to sight revision {0} of '{1}'
 sight-progress:            Marking revision {0} of '{1}' as sighted
 
 speedy-fail:               Did not tag '{0}' for speedy deletion
-speedy-progress:           Tagging '{0}' for speedy deletion...
+speedy-progress:           Tagging '{0}' for speedy deletion
 
 warnlog-fail:              Failed to retrieve warning log for '{0}'
 warnlog-none:              '{0}' has not been warned
-warnlog-progress:          Retrieving warning log for '{0}'...
+warnlog-progress:          Retrieving warning log for '{0}'
 
 wikiconfig-localloadfail:  Failed to load wiki config for '{0}' [L]: {1}
 wikiconfig-localsavefail:  Failed to save wiki config for '{0}' [L]: {1}
 
 unwatch-done:              Removed '{0}' from watchlist
 unwatch-fail:              Failed to remove '{0}' from watchlist
-unwatch-progress:          Removing '{0}' from watchlist...
+unwatch-progress:          Removing '{0}' from watchlist
 
 update-fail:               Error updating Huggle
 
 usermessage-duplicate:     A message about the same thing was already present
 usermessage-fail:          Did not message '{0}'
-usermessage-progress:      Messaging '{0}'...
+usermessage-progress:      Messaging '{0}'
 
 watch-done:                Added '{0}' to watchlist
 watch-fail:                Failed to add '{0}' to watchlist
-watch-progress:            Adding '{0}' to watchlist...
+watch-progress:            Adding '{0}' to watchlist
 
 warn-alreadyfinal:         The user already has a final warning
 warn-alreadyblocked:       The user has already been blocked
@@ -1146,9 +1153,9 @@ warn-ignored:              Cannot warn an ignored user
 warn-oldedit:              The user has not edited since their latest warning
 warn-recent:               The user was warned less than {0} seconds ago
 warn-fail:                 Did not warn '{0}'
-warn-progress:             Warning '{0}'...
+warn-progress:             Warning '{0}'
 
-recursivecat-progress:     Getting '{0}'...
+recursivecat-progress:     Getting '{0}'
 </pre>
 
 === API ===

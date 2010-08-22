@@ -20,7 +20,7 @@ Namespace Huggle
 
         Public Property SourceUrl As New Uri("http://huggle.googlecode.com/")
         Public Property TranslationUrl As New Uri("http://meta.wikimedia.org/wiki/Huggle")
-        Public Property UserAgent As String = "Huggle/" & Application.ProductVersion
+        Public Property UserAgent As String = "Huggle/" & Windows.Forms.Application.ProductVersion
         Public Property WikimediaFilePath As String = "http://upload.wikimedia.org/"
         Public Property WikimediaSecurePath As String = "https://secure.wikimedia.org/"
         Public Property WikimediaClosedWikisPath As New Uri("http://noc.wikimedia.org/conf/closed.dblist")

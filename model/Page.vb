@@ -187,6 +187,12 @@ Namespace Huggle
             End Set
         End Property
 
+        Public ReadOnly Property FullTitle As String
+            Get
+                Return Wiki.Code & ":" & Title
+            End Get
+        End Property
+
         Public Property HasDeletedEdits() As Boolean
             Get
                 Return _HasDeletedEdits

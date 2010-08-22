@@ -35,7 +35,7 @@ Public Class GlobalPreferencesForm
             CopyFrom.SelectedItem = Session.Wiki
 
         Catch ex As SystemException
-            App.ShowError(ex)
+            App.ShowError(Result.FromException(ex))
             Close()
         End Try
     End Sub

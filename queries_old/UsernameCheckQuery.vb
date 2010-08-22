@@ -26,6 +26,22 @@ Namespace Huggle.Actions
 
         Public Overrides Sub Start()
 
+            'Check title blacklists
+            If Wiki.Family.GlobalTitleBlacklist IsNot Nothing _
+                AndAlso Wiki.Family.GlobalTitleBlacklist.IsMatch(Session, Name, BlacklistAction.CreateAccount) Then
+
+                _Status = CheckStatus.GlobalBlacklisted
+                OnSuccess() : Return
+            End If
+
+            If Wiki.TitleBlacklist IsNot Nothing _
+                AndAlso Wiki.TitleBlacklist.IsMatch(Session, Name, BlacklistAction.CreateAccount) Then
+
+                _Status = CheckStatus.LocalBlacklisted
+                OnSuccess() : Return
+            End If
+
+            'Check validity and existence
             Dim req As New ApiRequest(Session, Description, New QueryString( _
                 "action", "query", _
                 "list", "users", _
@@ -54,7 +70,7 @@ Namespace Huggle.Actions
     End Class
 
     Public Enum CheckStatus As Integer
-        : None : Checking : Invalid : Used : OK : [Error]
+        : None : Checking : GlobalBlacklisted : Invalid : LocalBlacklisted : Used : OK : [Error]
     End Enum
 
 End Namespace

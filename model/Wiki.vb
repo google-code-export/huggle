@@ -170,7 +170,16 @@ Namespace Huggle
             End Get
         End Property
 
-        Public Property InternalCode As String
+        Public ReadOnly Property InternalCode As String
+            Get
+                If Not IsWikimedia Then Return Nothing
+
+                Dim result As String = Code.Replace("-", "_")
+                If Type = "wikipedia" Then result = result.Remove("wikipedia") & "wiki"
+                If Type = "special" Then result &= "wiki"
+                Return result.Remove(".")
+            End Get
+        End Property
 
         Public ReadOnly Property Interwikis() As Dictionary(Of String, Wiki)
             Get
@@ -325,6 +334,7 @@ Namespace Huggle
             End Get
         End Property
 
+        Public Property TitleBlacklist As TitleBlacklist
         Public Property Type As String
         Public Property Url As Uri
 
@@ -428,11 +438,9 @@ Namespace Huggle
 
         Public ReadOnly Property FromInternalCode(ByVal code As String) As Wiki
             Get
-                'Wikimedia setup seems to have two internal names for the same wiki
-                If code = "metawiki" Then code = "meta"
-
                 For Each wiki As Wiki In All
-                    If wiki.InternalCode = code Then Return wiki
+                    'Wikimedia setup variously uses "foo" and "foowiki" as internal names for the same wiki
+                    If code = wiki.InternalCode OrElse code = wiki.InternalCode.ToLast("wiki") Then Return wiki
                 Next wiki
 
                 Return Nothing

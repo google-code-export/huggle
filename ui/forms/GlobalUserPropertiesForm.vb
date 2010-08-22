@@ -76,7 +76,7 @@ Public Class GlobalUserPropertiesForm
             WikiCount.Text = Msg("globaluserprop-wikis", GlobalUser.Users.Count)
 
         Catch ex As SystemException
-            App.ShowError(ex)
+            App.ShowError(Result.FromException(ex))
             Close()
         End Try
     End Sub

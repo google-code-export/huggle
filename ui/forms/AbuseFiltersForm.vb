@@ -48,7 +48,7 @@ Public Class AbuseFiltersForm
                     Indicator.BackgroundImage = Resources.mini_no
                 Else
                     DetailQuery = New AbuseFilterDetail(abfPrivateSession.Wiki, CurrentFilter)
-                    App.Start(AddressOf DetailQuery.Start)
+                    CreateThread(AddressOf DetailQuery.Start)
                     Progress.Text = Msg("abusefilterprop-progress")
                     Indicator.BackgroundImage = Nothing
                     Indicator.Start()

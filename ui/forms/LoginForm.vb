@@ -27,7 +27,7 @@ Public Class LoginForm
         Try
             Logo.Image = Resources.HuggleLogo
             Icon = Resources.Icon
-            Text = "{0} {1}".FormatWith(Application.ProductName, Application.ProductVersion)
+            Text = "{0} {1}".FormatWith(Windows.Forms.Application.ProductName, Windows.Forms.Application.ProductVersion)
 
             Dim topWiki As Wiki = App.Wikis.Global
             If Config.Global.TopWiki IsNot Nothing Then topWiki = Config.Global.TopWiki
@@ -52,7 +52,6 @@ Public Class LoginForm
 
             WikiSelector.Items.Add(topWiki)
             WikiSelector.Items.AddRange(popularWikis.ToArray)
-            WikiSelector.Items.Add(Msg("login-addwiki"))
             WikiSelector.Items.Add(Separator)
             WikiSelector.Items.AddRange(otherWikis.ToArray)
             WikiSelector.Items.Add(Separator)
@@ -62,10 +61,10 @@ Public Class LoginForm
 
             If Config.Local.LastLogin IsNot Nothing Then
                 If Config.Local.LastLogin.IsAnonymous Then
-                    If Wiki.AnonymousLogin Then Username.SelectedIndex = 0
+                    If Wiki.AnonymousLogin Then Account.SelectedIndex = 0
                 Else
-                    If Not Username.Items.Contains(Config.Local.LastLogin) Then Username.Items.Add(Config.Local.LastLogin)
-                    Username.SelectedItem = Config.Local.LastLogin
+                    If Not Account.Items.Contains(Config.Local.LastLogin) Then Account.Items.Add(Config.Local.LastLogin)
+                    Account.SelectedItem = Config.Local.LastLogin
                 End If
             End If
 
@@ -83,15 +82,15 @@ Public Class LoginForm
     End Sub
 
     Private Sub _Shown() Handles Me.Shown
-        If Username.Text = "" Then Username.Focus() Else If Password.Text = "" Then Password.Focus() Else Login.Focus()
+        If Account.Text = "" Then Account.Focus() Else If Password.Text = "" Then Password.Focus() Else Login.Focus()
         Credentials_TextChanged()
     End Sub
 
-    Private Sub Credentials_TextChanged() Handles Password.TextChanged, Username.TextChanged
-        Password.Enabled = (Username.Text <> Msg("login-anonymous"))
-        Login.Enabled = (Username.Text = Msg("login-anonymous") OrElse (Username.Text <> "" AndAlso Password.Text <> ""))
-        If (Username.SelectedIndex = -1 OrElse Username.SelectedIndex >= 2) AndAlso Username.Text.Length > 0 _
-            Then User = Wiki.Users.FromString(Username.Text)
+    Private Sub Credentials_TextChanged() Handles Password.TextChanged, Account.TextChanged
+        Password.Enabled = (Account.Text <> Msg("login-anonymous"))
+        Login.Enabled = (Account.Text = Msg("login-anonymous") OrElse (Account.Text <> "" AndAlso Password.Text <> ""))
+        If (Account.SelectedIndex = -1 OrElse Account.SelectedIndex >= 2) AndAlso Account.Text.Length > 0 _
+            Then User = Wiki.Users.FromString(Account.Text)
     End Sub
 
     Private Sub Login_Click() Handles Login.Click
@@ -122,55 +121,33 @@ Public Class LoginForm
         Config.Local.AutoLogin = RememberMe.Checked
     End Sub
 
-    Private Sub Username_GotFocus() Handles Username.GotFocus
-        If Username.SelectedItem IsNot Nothing AndAlso Username.SelectedItem.ToString = Msg("login-anonymous") Then
-            Username.ForeColor = SystemColors.ControlText
-            Username.SelectedItem = Nothing
+    Private Sub Username_GotFocus() Handles Account.GotFocus
+        If Account.SelectedItem IsNot Nothing AndAlso Account.SelectedItem.ToString = Msg("login-anonymous") Then
+            Account.ForeColor = SystemColors.ControlText
+            Account.SelectedItem = Nothing
         End If
     End Sub
 
-    Private Sub Username_KeyDown(ByVal s As Object, ByVal e As KeyEventArgs) Handles Username.KeyDown
+    Private Sub Username_KeyDown(ByVal s As Object, ByVal e As KeyEventArgs) Handles Account.KeyDown
         If e.KeyCode = Keys.Enter Then
             e.SuppressKeyPress = True
-            If Username.Text.Length > 0 Then Password.Focus()
+            If Account.Text.Length > 0 Then Password.Focus()
         End If
     End Sub
 
-    Private Sub Username_SelectedIndexChanged() Handles Username.SelectedIndexChanged
+    Private Sub Username_SelectedIndexChanged() Handles Account.SelectedIndexChanged
         Password.Clear()
 
-        If Username.SelectedItem IsNot Nothing _
-            AndAlso Username.SelectedItem.ToString = Msg("login-anonymous") Then
+        If Account.SelectedItem IsNot Nothing _
+            AndAlso Account.SelectedItem.ToString = Msg("login-anonymous") Then
 
             User = Wiki.Users.Anonymous
-            Username.ForeColor = Color.Gray
+            Account.ForeColor = Color.Gray
             Password.Enabled = False
             Login.Focus()
 
-        ElseIf Username.SelectedItem IsNot Nothing _
-            AndAlso Username.SelectedItem.ToString = Msg("login-createaccount") Then
-
-            Dim createForm As New AccountCreateForm(Wiki.Users.Anonymous.Session)
-
-            If createForm.ShowDialog = DialogResult.Cancel Then
-                Username.SelectedItem = Nothing
-
-                'Restore previous selection
-                If User IsNot Nothing Then _
-                    If User.IsAnonymous Then Username.SelectedIndex = 0 Else Username.Text = User.Name
-            Else
-                'Add new account to list
-                If Not Username.Items.Contains(createForm.NewUser) Then Username.Items.Add(createForm.NewUser)
-                Username.SelectedItem = createForm.NewUser
-                Password.Text = "********"
-                FakePassword = True
-                Login.Focus()
-            End If
-
-            If Not Wiki.IsPublicEditable Then Wikis_SelectedIndexChanged()
-
-        ElseIf Username.Text.Length > 0 Then
-            User = Wiki.Users.FromString(Username.Text)
+        ElseIf Account.Text.Length > 0 Then
+            User = Wiki.Users.FromString(Account.Text)
 
             If User IsNot Nothing Then
                 If User.Config.IsDefault Then User.Config.LoadLocal()
@@ -183,7 +160,7 @@ Public Class LoginForm
                     Password.Focus()
                 End If
 
-                Username.ForeColor = SystemColors.ControlText
+                Account.ForeColor = SystemColors.ControlText
                 Password.Enabled = True
             End If
         End If
@@ -192,48 +169,28 @@ Public Class LoginForm
     Private Sub Wikis_SelectedIndexChanged() Handles WikiSelector.SelectedIndexChanged
         If WikiSelector.SelectedItem Is Nothing Then
             Wiki = Nothing
-            Username.Items.Clear()
+            Account.Items.Clear()
 
         ElseIf WikiSelector.SelectedItem.ToString = Separator Then
             WikiSelector.SelectedItem = LastSelectedWiki
 
-        ElseIf WikiSelector.SelectedItem.ToString = Msg("login-addwiki") Then
-            Dim form As New WikiAddForm
-            form.ShowDialog()
-
-            If form.Wiki Is Nothing Then
-                WikiSelector.SelectedItem = LastSelectedWiki
-            Else
-                If Not WikiSelector.Items.Contains(form.Wiki) Then WikiSelector.Items.Insert(2, form.Wiki)
-                WikiSelector.SelectedItem = form.Wiki
-
-                If form.User Is Nothing Then
-                    Username.Focus()
-                Else
-                    Username.Text = form.User.Name
-                    Password.Text = "********"
-                    FakePassword = True
-                    Login.Focus()
-                End If
-            End If
-
         Else
             Wiki = CType(WikiSelector.SelectedItem, Wiki)
             Wiki.Config.LoadLocal()
-            Username.Items.Clear()
+            Account.Items.Clear()
 
             For Each user As User In Wiki.Users.All
                 If Not user.IsAnonymous AndAlso Not user.IsDefault Then
                     user.Config.LoadLocal()
-                    If Not user.Config.IsDefault Then Username.Items.Add(user)
+                    If Not user.Config.IsDefault Then Account.Items.Add(user)
                 End If
             Next user
 
-            If Wiki.IsPublicEditable Then Username.Items.Insert(0, Msg("login-createaccount"))
-            If Wiki.AnonymousLogin Then Username.Items.Insert(0, Msg("login-anonymous"))
+            CreateAccount.Visible = Wiki.IsPublicEditable
+            If Wiki.AnonymousLogin Then Account.Items.Insert(0, Msg("login-anonymous"))
 
-            ResizeDropDown(Username)
-            User = Wiki.Users.FromString(Username.Text)
+            ResizeDropDown(Account)
+            User = Wiki.Users.FromString(Account.Text)
             LastSelectedWiki = CType(WikiSelector.SelectedItem, Wiki)
         End If
 
@@ -251,7 +208,7 @@ Public Class LoginForm
         If user Is Nothing Then App.ShowError _
             (New Result({Msg("login-fail", Msg("login-error-badusername"))})) : Return False
 
-        If user.DisplayName = user.Name Then user.DisplayName = Username.Text
+        If user.DisplayName = user.Name Then user.DisplayName = Account.Text
         If Not FakePassword Then user.Password = Scramble(Password.Text, Hash(user))
 
         Dim session As Session = App.Sessions(user)
@@ -267,5 +224,47 @@ Public Class LoginForm
         If loginAction.IsErrored Then App.ShowError(loginAction.Result)
         Return loginAction.IsSuccess
     End Function
+
+    Private Sub AddWiki_LinkClicked() Handles AddWiki.LinkClicked
+        Dim form As New WikiAddForm()
+        form.ShowDialog()
+
+        If form.Wiki Is Nothing Then
+            WikiSelector.SelectedItem = LastSelectedWiki
+        Else
+            If Not WikiSelector.Items.Contains(form.Wiki) Then WikiSelector.Items.Insert(1, form.Wiki)
+            WikiSelector.SelectedItem = form.Wiki
+
+            If form.User Is Nothing Then
+                Account.Focus()
+            Else
+                Account.Text = form.User.Name
+                Password.Text = "********"
+                FakePassword = True
+                Login.Focus()
+            End If
+        End If
+    End Sub
+
+    Private Sub CreateAccount_LinkClicked() Handles CreateAccount.LinkClicked
+        Dim createForm As New AccountCreateForm(Wiki.Users.Anonymous.Session)
+
+        If createForm.ShowDialog = DialogResult.Cancel Then
+            Account.SelectedItem = Nothing
+
+            'Restore previous selection
+            If User IsNot Nothing Then _
+                If User.IsAnonymous Then Account.SelectedIndex = 0 Else Account.Text = User.Name
+        Else
+            'Add new account to list
+            If Not Account.Items.Contains(createForm.NewUser) Then Account.Items.Add(createForm.NewUser)
+            Account.SelectedItem = createForm.NewUser
+            Password.Text = "********"
+            FakePassword = True
+            Login.Focus()
+        End If
+
+        If Not Wiki.IsPublicEditable Then Wikis_SelectedIndexChanged()
+    End Sub
 
 End Class

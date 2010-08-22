@@ -21,21 +21,26 @@ Namespace Huggle.Actions
             Dim configPage As Page = Wiki.Pages(Config.Global.PageTitle)
             Dim languagePage As Page = Wiki.Pages(Config.Global.LocalizationPageName(App.Languages.Current.Code))
 
-            'Three parts to global configuration:
+            'Parts to global configuration:
             '* the configuration page itself
             '* action=sitematrix through the API
             '* closed.dblist because sitematrix extension is broken and doesn't indicate closed wikis
+            '* the global title blacklist
 
-            Dim configRequest As New PageInfoQuery(Session, New Page() {configPage, languagePage}, Content:=True)
+            Dim configRequest As New PageInfoQuery(Session, New Page() {configPage, languagePage}.ToList, Content:=True)
+
+            If Wiki.Family.GlobalTitleBlacklist IsNot Nothing _
+                Then configRequest.Pages.Merge(Wiki.Family.GlobalTitleBlacklist.Location)
+
             Dim wikiRequest As New ApiRequest _
                 (App.Wikis("meta").Users.Anonymous.Session, Description, New QueryString("action", "sitematrix"))
             Dim closedRequest As New FileRequest _
                 (App.Wikis("meta").Users.Anonymous.Session, Config.Internal.WikimediaClosedWikisPath)
 
             'Run requests in parallel
-            App.Start(AddressOf configRequest.Start)
-            App.Start(AddressOf wikiRequest.Start)
-            App.Start(AddressOf closedRequest.Start)
+            CreateThread(AddressOf configRequest.Start)
+            CreateThread(AddressOf wikiRequest.Start)
+            CreateThread(AddressOf closedRequest.Start)
             App.WaitFor(Function() configRequest.IsComplete AndAlso wikiRequest.IsComplete AndAlso closedRequest.IsComplete)
 
             If configRequest.Result.IsError Then OnFail(configRequest.Result) : Return
@@ -75,6 +80,9 @@ Namespace Huggle.Actions
             Else
                 Log.Debug("Error loading closed wiki list: {0}".FormatWith(closedRequest.Result.LogMessage))
             End If
+
+            If Wiki.Family.GlobalTitleBlacklist IsNot Nothing _
+                Then Wiki.Family.GlobalTitleBlacklist.Text = Wiki.Family.GlobalTitleBlacklist.Location.Text
 
             'Save configuration
             Config.Global.SaveLocal()
