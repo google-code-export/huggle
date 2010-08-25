@@ -254,6 +254,7 @@ Namespace Huggle.Scripting
 
     End Class
 
+    <Serializable()>
     Public Class ScriptException : Inherits ApplicationException
 
         'Represents an error raised during parsing or evaluation of a script
@@ -264,13 +265,12 @@ Namespace Huggle.Scripting
 
     End Class
 
+    <Serializable()>
     Public Class TaskCancelledException : Inherits ApplicationException
 
-        Public Overrides ReadOnly Property Message() As String
-            Get
-                Return Msg("script-usercancelled")
-            End Get
-        End Property
+        Public Sub New()
+            MyBase.New(Msg("script-usercancelled"))
+        End Sub
 
     End Class
 
@@ -364,7 +364,7 @@ Namespace Huggle.Scripting
 
     End Class
 
-    Public MustInherit Class PipeEnumerator : Implements IEnumerator(Of Object)
+    Public MustInherit Class StreamEnumerator : Implements IEnumerator(Of Object)
 
         Protected Sub New()
         End Sub
@@ -373,17 +373,12 @@ Namespace Huggle.Scripting
         Public MustOverride Function MoveNext() As Boolean Implements IEnumerator.MoveNext
         Public MustOverride Sub Reset() Implements IEnumerator.Reset
 
-        Protected Overridable Sub SubclassDispose()
+        Public Sub Dispose() Implements IDisposable.Dispose
+            Dispose(True)
+            GC.SuppressFinalize(Me)
         End Sub
 
-        Public Sub Dispose() Implements IDisposable.Dispose
-            Static Dim disposed As Boolean
-
-            If Not disposed Then
-                SubclassDispose()
-                GC.SuppressFinalize(Me)
-                disposed = True
-            End If
+        Private Sub Dispose(ByVal disposing As Boolean)
         End Sub
 
     End Class
@@ -403,7 +398,7 @@ Namespace Huggle.Scripting
 
     End Class
 
-    Public Class QueryPipeEnumerator : Inherits PipeEnumerator
+    Public Class QueryPipeEnumerator : Inherits StreamEnumerator
 
         Private _Current As Object
         Private Index As Integer
@@ -456,7 +451,7 @@ Namespace Huggle.Scripting
 
     End Class
 
-    Public Class TransformPipeEnumerator : Inherits PipeEnumerator
+    Public Class TransformPipeEnumerator : Inherits StreamEnumerator
 
         Private _Current As Object
 
@@ -509,7 +504,7 @@ Namespace Huggle.Scripting
 
     End Class
 
-    Public Class FilterPipeEnumerator : Inherits PipeEnumerator
+    Public Class FilterPipeEnumerator : Inherits StreamEnumerator
 
         Private _Current As Object
 

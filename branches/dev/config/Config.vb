@@ -158,6 +158,7 @@ Namespace Huggle
 
     End Class
 
+    <Serializable()>
     Public Class ConfigException : Inherits ApplicationException
 
         Public Sub New(ByVal message As String, ByVal innerException As Exception)

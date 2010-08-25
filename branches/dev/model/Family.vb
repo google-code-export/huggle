@@ -37,11 +37,8 @@ Namespace Huggle
 
         Public ReadOnly Property Config() As FamilyConfig
             Get
-                If _Config Is Nothing Then
-                    _Config = New FamilyConfig(Me)
-                    If IsDefault Then _Config.IsDefault = True
-                End If
-                
+                If _Config Is Nothing Then _Config = New FamilyConfig(Me)
+
                 Return _Config
             End Get
         End Property
@@ -66,16 +63,11 @@ Namespace Huggle
             End Get
         End Property
 
-        Public ReadOnly Property IsDefault() As Boolean
-            Get
-                Return (App.Families.Default Is Me)
-            End Get
-        End Property
-
         Public Property Name() As String
 
         Public ReadOnly Property Wikis() As FamilyWikiCollection
             Get
+
                 If _Wikis Is Nothing Then _Wikis = New FamilyWikiCollection(Me)
                 Return _Wikis
             End Get
@@ -90,23 +82,15 @@ Namespace Huggle
     Public Class FamilyCollection
 
         Private ReadOnly _All As New Dictionary(Of String, Family)
-        Private ReadOnly _Default As Family
         Private ReadOnly _Wikimedia As Family
 
         Public Sub New()
-            _Default = Item("default")
             _Wikimedia = Item("wikimedia")
         End Sub
 
         Public ReadOnly Property All() As IList(Of Family)
             Get
                 Return _All.Values.ToList.AsReadOnly
-            End Get
-        End Property
-
-        Public ReadOnly Property [Default]() As Family
-            Get
-                Return _Default
             End Get
         End Property
 
@@ -127,19 +111,24 @@ Namespace Huggle
 
     Public Class FamilyWikiCollection
 
-        Private ReadOnly _All As New Dictionary(Of String, Wiki)
         Private _Default As Wiki
         Private Family As Family
 
         Public Sub New(ByVal family As Family)
-            Me.Family = family
-            _Default = New Wiki(family.Code & "-default")
+            _Default = App.Wikis(family.Code & "-default")
+            _Default.Family = family
             _Default.IsDefault = True
         End Sub
 
         Public ReadOnly Property All() As IList(Of Wiki)
             Get
-                Return _All.Values.ToList.AsReadOnly
+                Dim result As New List(Of Wiki)
+
+                For Each wiki As Wiki In App.Wikis.All
+                    If wiki.Family Is Family Then result.Add(wiki)
+                Next wiki
+
+                Return result.AsReadOnly
             End Get
         End Property
 
@@ -148,14 +137,6 @@ Namespace Huggle
                 Return _Default
             End Get
         End Property
-
-        Public Sub Add(ByVal wiki As Wiki)
-            If Not _All.ContainsKey(wiki.Code) Then _All.Add(wiki.Code, wiki)
-        End Sub
-
-        Public Sub Remove(ByVal wiki As Wiki)
-            If _All.ContainsKey(wiki.Code) Then _All.Remove(wiki.Code)
-        End Sub
 
     End Class
 

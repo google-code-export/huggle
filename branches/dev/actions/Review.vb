@@ -58,10 +58,11 @@ Namespace Huggle.Actions
 
                 If Levels Is Nothing Then
                     If Interactive Then
-                        Dim reviewform As New ReviewForm(Rev)
-                        If reviewform.ShowDialog = DialogResult.Cancel Then OnFail(Msg("error-cancelled")) : Return
-                        Levels = reviewform.Levels
-                        Summary = reviewform.Comment
+                        Using reviewform As New ReviewForm(Rev)
+                            If reviewform.ShowDialog = DialogResult.Cancel Then OnFail(Msg("error-cancelled")) : Return
+                            Levels = reviewform.Levels
+                            Summary = reviewform.Comment
+                        End Using
                     Else
                         OnFail(Msg("review-quickunavailable")) : Return
                     End If

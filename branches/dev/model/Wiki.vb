@@ -19,7 +19,6 @@ Namespace Huggle
         Private _Diffs As DiffCollection
         Private _ExpansionCache As Dictionary(Of String, String)
         Private _Extensions As ExtensionCollection
-        Private _Family As Family
         Private _FeedPatterns As Dictionary(Of String, Regex)
         Private _FileExtensions As List(Of String)
         Private _Gadgets As GadgetCollection
@@ -130,15 +129,6 @@ Namespace Huggle
         End Property
 
         Public Property Family() As Family
-            Get
-                Return _Family
-            End Get
-            Set(ByVal value As Family)
-                If Family IsNot Nothing Then Family.Wikis.Remove(Me)
-                _Family = value
-                If Family IsNot Nothing Then Family.Wikis.Add(Me)
-            End Set
-        End Property
 
         Public ReadOnly Property FeedPatterns() As Dictionary(Of String, Regex)
             Get

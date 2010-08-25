@@ -96,8 +96,6 @@ Namespace Huggle
                             size = responseStream.Read(buffer, 0, buffer.Length)
                             Response.Write(buffer, 0, size)
                         Loop While size > 0
-
-                        responseStream.Close()
                     End Using
 
                     ResponseTime = (Date.Now - startTime)

@@ -14,10 +14,7 @@ Public Class MainForm
     End Sub
 
     Private Sub _FormClosed() Handles Me.FormClosed
-        If DialogResult <> DialogResult.OK Then
-            DialogResult = DialogResult.Abort
-            App.Shutdown()
-        End If
+        If DialogResult <> DialogResult.OK Then DialogResult = DialogResult.Abort
     End Sub
 
     Private Sub _Load() Handles Me.Load
