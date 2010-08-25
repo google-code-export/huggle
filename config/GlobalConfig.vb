@@ -227,8 +227,6 @@ Namespace Huggle
             If TopWiki IsNot Nothing Then items.Add("top-wiki", TopWiki.Code)
             items.Add("version", LatestVersion)
             items.Add("wikiconfig-page", WikiConfigPageName)
-
-            items.Add("default-family-config", App.Families.Default.Config.WriteConfig(True))
             items.Add("default-user-config", App.Wikis.Default.Users.Default.Config.WriteConfig(True))
             items.Add("default-wiki-config", App.Wikis.Default.Config.WriteConfig(True))
 
@@ -249,6 +247,8 @@ Namespace Huggle
             Dim wikiConfigs As New Dictionary(Of String, Object)
 
             For Each wiki As Wiki In App.Wikis.All
+                If wiki.IsDefault Then Continue For
+
                 Dim wikiItems As New Dictionary(Of String, Object)
 
                 If Not wiki.AccountConfirmation Then wikiItems.Add("account-confirmation", False)

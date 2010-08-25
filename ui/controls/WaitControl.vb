@@ -28,8 +28,9 @@ Namespace Huggle.Controls
             Timer.Interval = 80
 
             For i As Integer = 0 To Frames - 1
-                Dim color As Color = color.FromArgb(Math.Max(80, 255 - CInt(255 * i / Frames)), 0, 0, 0)
-                Brushes.Add(New Pen(color).Brush)
+                Using pen As New Pen(Color.FromArgb(Math.Max(80, 255 - CInt(255 * i / Frames)), 0, 0, 0))
+                    Brushes.Add(pen.Brush)
+                End Using
             Next i
 
             Gfx = BufferedGraphicsManager.Current.Allocate(CreateGraphics, DisplayRectangle)

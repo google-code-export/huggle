@@ -20,11 +20,22 @@ Namespace Huggle.Actions
 
         Public Overrides Sub Start()
             OnProgress(Msg("createaccount-confirm", Wiki))
+
+            'Load title blacklist
+            If Not Wiki.IsLoaded AndAlso Wiki.TitleBlacklist Is Nothing Then
+                Wiki.TitleBlacklist = New TitleBlacklist(Wiki.Pages("MediaWiki:Titleblacklist"))
+
+                Dim titleReq As New PageDetailQuery(Session, Wiki.TitleBlacklist.Location)
+                titleReq.Start()
+
+                Wiki.TitleBlacklist.Text = Wiki.TitleBlacklist.Location.Text
+            End If
+
             Dim req As New UIRequest(Session, Description, New QueryString("title", "Special:UserLogin/signup"), Nothing)
             req.Start()
 
             If req.Result.IsError Then OnFail(req.Result.Message) : Return
-            
+
             If req.Response.Contains("?title=Special:Captcha/image") Then
                 'Image captcha, find the image and fetch it
                 Wiki.AccountConfirmation = True

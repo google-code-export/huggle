@@ -61,9 +61,11 @@ Namespace Huggle
             control.DropDownWidth = width
         End Sub
 
-        Public Function ImageToIcon(ByVal Image As Image) As Drawing.Icon
+        Public Function ImageToIcon(ByVal image As Image) As Drawing.Icon
             'Have to pass a handle to achieve this
-            Return Icon.FromHandle(New Bitmap(Image).GetHicon)
+            Using bitmap As New Bitmap(image)
+                Return Icon.FromHandle(bitmap.GetHicon)
+            End Using
         End Function
 
         Public Function MakeWebPage(ByVal Html As String, Optional ByVal Title As String = "") As String
@@ -134,9 +136,12 @@ Namespace Huggle
                 'But they probably wouldn't go to such trouble, as users not using the secure
                 'server (which is most of them) are sending their password across the Web
                 'in plaintext every time they log in to a MediaWiki wiki.
-                Return MD5.Create.ComputeHash(Encoding.UTF8.GetBytes _
-                    (Windows.Forms.Application.ProductName & user.Name & user.Wiki.Code & _
-                     My.Computer.Info.OSFullName & Config.Local.Uid & "fnord"))
+
+                Using MD5 As MD5 = MD5.Create
+                    Return MD5.ComputeHash(Encoding.UTF8.GetBytes _
+                        (Windows.Forms.Application.ProductName & user.Name & user.Wiki.Code & _
+                        My.Computer.Info.OSFullName & Config.Local.Uid & "fnord"))
+                End Using
             End Get
         End Property
 
@@ -514,24 +519,16 @@ Namespace Huggle
 
     End Module
 
-    <Diagnostics.DebuggerDisplay("{Format}")> _
-    Public Class QueryException : Inherits ApplicationException
+    <Diagnostics.DebuggerDisplay("{Format}"), Serializable()>
+    Public Class QueryException : Inherits Exception
 
-        Private _Code As String
-
-        Public Sub New(ByVal Message As String)
-            MyBase.New(Message)
+        Public Sub New(ByVal message As String)
+            MyBase.New(message)
         End Sub
 
-        Public Sub New(ByVal Message As String, ByVal InnerException As QueryException)
-            MyBase.New(Message, InnerException)
+        Public Sub New(ByVal message As String, ByVal innerException As QueryException)
+            MyBase.New(message, innerException)
         End Sub
-
-        Public ReadOnly Property Code() As String
-            Get
-                Return _Code
-            End Get
-        End Property
 
         Public Overrides Function ToString() As String
             Return Format

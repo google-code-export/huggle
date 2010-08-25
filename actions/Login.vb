@@ -144,20 +144,22 @@ Namespace Huggle.Actions
             Session.IsActive = True
 
             'Check cookies for unified account
-            For Each cookie As Cookie In Session.Cookies.GetCookies(Wiki.Url)
-                If cookie.Name.StartsWith("centralauth") Then
-                    Dim globalUser As GlobalUser = Wiki.Family.GlobalUsers(User.Name)
-                    User.GlobalUser = globalUser
+            If Wiki.Family IsNot Nothing Then
+                For Each cookie As Cookie In Session.Cookies.GetCookies(Wiki.Url)
+                    If cookie.Name.StartsWith("centralauth") Then
+                        Dim globalUser As GlobalUser = Wiki.Family.GlobalUsers(User.Name)
+                        User.GlobalUser = globalUser
 
-                    If globalUser.Config.IsDefault Then globalUser.Config.LoadLocal()
-                    globalUser.Cookies.Add(cookie)
-                    globalUser.IsActive = True
-                    globalUser.Users.Merge(User)
-                    globalUser.Wikis.Merge(User.Wiki)
-                End If
-            Next cookie
+                        If globalUser.Config.IsDefault Then globalUser.Config.LoadLocal()
+                        globalUser.Cookies.Add(cookie)
+                        globalUser.IsActive = True
+                        globalUser.Users.Merge(User)
+                        globalUser.Wikis.Merge(User.Wiki)
 
-            If Wiki.Family IsNot Nothing Then Wiki.Family.ActiveGlobalUser = User.GlobalUser
+                        Wiki.Family.ActiveGlobalUser = User.GlobalUser
+                    End If
+                Next cookie
+            End If
         End Sub
 
         Private Sub SaveConfig()

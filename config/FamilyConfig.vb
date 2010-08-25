@@ -16,7 +16,6 @@ Namespace Huggle
 
         Public Sub New(ByVal family As Family)
             Me.Family = family
-            IsDefault = True
             LocalPath = Path & Slash & GetValidFileName(family.Code) & ".txt"
         End Sub
 
@@ -47,7 +46,7 @@ Namespace Huggle
                     Load(File.ReadAllText(LocalPath, Encoding.UTF8))
                     Log.Debug("Loaded family config for {0} [L]".FormatWith(Family.Name))
                 Else
-                    If IsDefault Then Config.Global.NeedsUpdate = True
+                    Config.Global.NeedsUpdate = True
                 End If
 
             Catch ex As ConfigException
@@ -57,8 +56,6 @@ Namespace Huggle
                 Log.Write(Result.FromException(ex).LogMessage)
             End Try
         End Sub
-
-        Public Property IsDefault As Boolean
 
         Public Sub Load(ByVal text As String)
             For Each item As KeyValuePair(Of String, String) In Config.ParseConfig("family", Nothing, text)
@@ -100,8 +97,6 @@ Namespace Huggle
                     Log.Write(Msg("error-configvalue", item.Key, "family"))
                 End Try
             Next item
-
-            IsDefault = False
         End Sub
 
         Public ReadOnly Property NeedsUpdate() As Boolean
@@ -119,12 +114,7 @@ Namespace Huggle
                 Dim path As String = IO.Path.GetDirectoryName(LocalPath)
                 If Not Directory.Exists(path) Then Directory.CreateDirectory(path)
                 File.WriteAllText(LocalPath, Config.MakeConfig(WriteConfig(True)), Encoding.UTF8)
-
-                If Family.IsDefault Then
-                    Log.Debug("Saved default family config [L]")
-                Else
-                    Log.Debug("Saved family config for {0} [L]".FormatWith(Family.Name))
-                End If
+                Log.Debug("Saved family config for {0} [L]".FormatWith(Family.Name))
 
             Catch ex As IOException
                 Log.Write(Msg("globalconfig-savefail", ex.Message))
@@ -164,7 +154,6 @@ Namespace Huggle
         Public Function Copy(ByVal family As Family) As FamilyConfig
             Dim result As New FamilyConfig(family)
             result.Load(Config.MakeConfig(WriteConfig(True)))
-            result.IsDefault = IsDefault
             Return result
         End Function
 

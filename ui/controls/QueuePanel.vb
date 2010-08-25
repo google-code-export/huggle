@@ -11,9 +11,9 @@ Class QueuePanel
     Private _Mode As QueueMode
     Private _Wiki As Wiki
 
-    Private WithEvents _Queue As Queue
+    Private ReadOnly StringFormat As New StringFormat With {.Trimming = StringTrimming.EllipsisCharacter}
 
-    Private Shared ReadOnly StringFormat As New StringFormat With {.Trimming = StringTrimming.EllipsisCharacter}
+    Private WithEvents _Queue As Queue
 
     Public Event ItemsChanged As EventHandler(Of Queue, EventArgs)
     Public Event ItemSelected As EventHandler(Of Queue, QueuePanelItemSelectedEventArgs)
@@ -23,7 +23,6 @@ Class QueuePanel
     Public Sub New(ByVal wiki As Wiki)
         InitializeComponent()
         _Wiki = wiki
-
         Queues.Items.AddRange(wiki.Queues.All.ToArray)
 
         If wiki.Queues.Default IsNot Nothing AndAlso Queues.Items.Contains(wiki.Queues.Default) _
@@ -74,6 +73,7 @@ Class QueuePanel
 
     Private Sub _HandleDestroyed() Handles Me.HandleDestroyed
         CanRender = False
+        StringFormat.Dispose()
     End Sub
 
     Private Sub _MouseDown(ByVal s As Object, ByVal e As MouseEventArgs) Handles Me.MouseDown
@@ -86,7 +86,6 @@ Class QueuePanel
     End Sub
 
     Private Sub _Paint() Handles Me.Paint, Scrollbar.Scroll
-
         If Queue Is Nothing Then Return
         If Gfx Is Nothing Then Gfx = BufferedGraphicsManager.Current.Allocate(CreateGraphics, DisplayRectangle)
         Dim X, Y As Integer
@@ -108,12 +107,16 @@ Class QueuePanel
             Y = (i * 20) + Count.Bottom + 4
 
             Gfx.Graphics.FillRectangle(Brushes.DarkGray, 2, Y - 1, Scrollbar.Left - 5, 18)
-            Gfx.Graphics.FillRectangle(New Pen(Item.LabelBackColor).Brush, 3, Y, Scrollbar.Left - 7, 16)
 
-            Dim PageFont As Font = New Font(Font, Item.LabelStyle)
+            Using backgroundPen As New Pen(Item.LabelBackColor)
+                Gfx.Graphics.FillRectangle(backgroundPen.Brush, 3, Y, Scrollbar.Left - 7, 16)
+            End Using
 
-            Gfx.Graphics.DrawString(Item.Label, PageFont, Brushes.Black, _
-                New Rectangle(4, Y + 1, X - 3, 14), StringFormat)
+            Using labelFont As New Font(Font, Item.LabelStyle)
+                Gfx.Graphics.DrawString(Item.Label, labelFont, Brushes.Black, _
+                    New Rectangle(4, Y + 1, X - 3, 14), StringFormat)
+            End Using
+
             If Item.Icon IsNot Nothing Then Gfx.Graphics.DrawImageUnscaled(Item.Icon, X, Y)
         Next i
 
