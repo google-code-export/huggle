@@ -376,19 +376,8 @@ Public Module Extensions
     End Function
 
     <Extension()> _
-    Function ToList(Of T)(ByVal array As T()) As List(Of T)
-        Return New List(Of T)(array)
-    End Function
-
-    <Extension()> _
     Function ToList(Of T)(ByVal items As IEnumerable(Of T)) As List(Of T)
-        Dim result As New List(Of T)
-
-        For Each item As T In items
-            result.Add(item)
-        Next item
-
-        Return result
+        Return New List(Of T)(items)
     End Function
 
     <Extension()> _

@@ -9,13 +9,6 @@ Namespace Huggle
         'Represents a MediaWiki namespace
 
         Private _Aliases As New List(Of String)
-        Private _CanonicalName As String
-        Private _HasSubpages As Boolean
-        Private _IsContent As Boolean
-        Private _IsEditRestricted As Boolean
-        Private _IsMovable As Boolean
-        Private _IsMoveRestricted As Boolean
-        Private _IsSpecial As Boolean
         Private _Number As Integer
         Private _Name As String
         Private _Wiki As Wiki
@@ -35,22 +28,7 @@ Namespace Huggle
         End Property
 
         Public Property CanonicalName() As String
-            Get
-                Return _CanonicalName
-            End Get
-            Set(ByVal value As String)
-                _CanonicalName = value
-            End Set
-        End Property
-
         Public Property HasSubpages() As Boolean
-            Get
-                Return _HasSubpages
-            End Get
-            Set(ByVal value As Boolean)
-                _HasSubpages = value
-            End Set
-        End Property
 
         Public ReadOnly Property IsArticleSpace() As Boolean
             Get
@@ -59,13 +37,6 @@ Namespace Huggle
         End Property
 
         Public Property IsContent() As Boolean
-            Get
-                Return _IsContent
-            End Get
-            Set(ByVal value As Boolean)
-                _IsContent = value
-            End Set
-        End Property
 
         Public ReadOnly Property IsCustom() As Boolean
             Get
@@ -74,40 +45,9 @@ Namespace Huggle
         End Property
 
         Public Property IsEditRestricted() As Boolean
-            Get
-                Return _IsEditRestricted
-            End Get
-            Set(ByVal value As Boolean)
-                _IsEditRestricted = value
-            End Set
-        End Property
-
         Public Property IsMovable() As Boolean
-            Get
-                Return _IsMovable
-            End Get
-            Set(ByVal value As Boolean)
-                _IsMovable = value
-            End Set
-        End Property
-
         Public Property IsMoveRestricted() As Boolean
-            Get
-                Return _IsMoveRestricted
-            End Get
-            Set(ByVal value As Boolean)
-                _IsMoveRestricted = value
-            End Set
-        End Property
-
         Public Property IsSpecial() As Boolean
-            Get
-                Return _IsSpecial
-            End Get
-            Set(ByVal value As Boolean)
-                _IsSpecial = value
-            End Set
-        End Property
 
         Public ReadOnly Property IsSubjectSpace() As Boolean
             Get
@@ -251,15 +191,6 @@ Namespace Huggle
             Get
                 Return _All.Values
             End Get
-        End Property
-
-        Public Property IsDefault() As Boolean
-            Get
-                Return _IsDefault
-            End Get
-            Set(ByVal value As Boolean)
-                _IsDefault = value
-            End Set
         End Property
 
         Default Public ReadOnly Property Item(ByVal number As Integer) As Space

@@ -382,8 +382,6 @@ Namespace Huggle
                             space.Aliases.Merge(space.CanonicalName)
                         Next ns
 
-                        Wiki.Spaces.IsDefault = False
-
                     Case "namespacealiases"
                         For Each ns As XmlNode In node.ChildNodes
                             Wiki.Spaces(CInt(ns.Attribute("id"))).Aliases.Merge(ns.Value)

@@ -26,12 +26,9 @@ Namespace Huggle
         End Property
 
         Public Shared Sub LoadAll()
-            If Directory.Exists(Path) Then
-                For Each familyPath As String In Directory.GetFiles(Path)
-                    Dim family As Family = App.Families(IO.Path.GetFileNameWithoutExtension(familyPath))
-                    family.Config.LoadLocal()
-                Next familyPath
-            End If
+            For Each family As Family In App.Families.All
+                family.Config.LoadLocal()
+            Next family
         End Sub
 
         Public Shared Sub SaveAll()
