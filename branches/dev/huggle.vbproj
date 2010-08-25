@@ -638,7 +638,6 @@
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
     </None>
     <None Include="huggle.snk" />
-    <None Include="huggle_TemporaryKey.pfx" />
     <None Include="resources\BasicHtmlPage.txt" />
     <Content Include="resources\blobs\blob-anon-filter.png" />
     <Content Include="resources\blobs\blob-anon.png" />

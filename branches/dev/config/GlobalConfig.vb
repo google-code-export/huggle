@@ -230,6 +230,16 @@ Namespace Huggle
             items.Add("default-user-config", App.Wikis.Default.Users.Default.Config.WriteConfig(True))
             items.Add("default-wiki-config", App.Wikis.Default.Config.WriteConfig(True))
 
+            Dim familyConfigs As New Dictionary(Of String, Object)
+
+            For Each family As Family In App.Families.All
+                Dim config As New Dictionary(Of String, Object)
+
+                familyConfigs.Add(family.Name, config)
+            Next family
+
+            items.Add("families", familyConfigs)
+
             Dim languageConfigs As New Dictionary(Of String, Object)
 
             For Each language As Language In App.Languages.All
