@@ -76,7 +76,7 @@
     <OutputPath>bin\Release\</OutputPath>
     <NoWarn>
     </NoWarn>
-    <CodeAnalysisRuleSet>analysis.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningLevel>1</WarningLevel>
@@ -85,6 +85,7 @@
     <DebugType>pdbonly</DebugType>
     <DocumentationFile>
     </DocumentationFile>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <CodeAnalysisRuleSet>analysis.ruleset</CodeAnalysisRuleSet>

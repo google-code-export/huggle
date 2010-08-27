@@ -101,41 +101,40 @@ Namespace Huggle
         Public Shared Function ParseConfig(ByVal source As String, ByVal context As String, ByVal text As String) _
             As Dictionary(Of String, String)
 
-            If text.Contains("aa.wikibooks") Then
-                Dim a As Long = 0
-            End If
-
             Dim result As New Dictionary(Of String, String)
             If text Is Nothing Then Return result
 
             Try
-                Dim lines As List(Of String) = text.Replace(Tab, " ").Remove(CR).ToList(LF)
+                Dim reader As New StringReader(text)
+                Dim line As String = reader.ReadLine
+                Dim currentItem As New StringBuilder
                 Dim items As New List(Of String)
                 Dim indent As Integer
-                Dim currentItem As New StringBuilder
 
-                For i As Integer = 0 To lines.Count - 1
-                    Dim firstNonSpace As Integer = lines(i).Length
+                While line IsNot Nothing
+                    Dim firstNonSpace As Integer = line.Length
 
-                    For j As Integer = 0 To lines(i).Length - 1
-                        If lines(i)(j) <> " "c Then firstNonSpace = j : Exit For
+                    For j As Integer = 0 To line.Length - 1
+                        If Not Char.IsWhiteSpace(line(j)) Then firstNonSpace = j : Exit For
                     Next j
 
-                    If Not (firstNonSpace = lines(i).Length OrElse lines(i)(firstNonSpace) = "#") Then
-                        Dim commentTest As Integer = lines(i).Remove("\#").IndexOf("#")
-                        If commentTest > -1 Then lines(i) = lines(i).Substring(0, commentTest)
+                    If Not (firstNonSpace = line.Length OrElse line(firstNonSpace) = "#") Then
+                        Dim commentTest As Integer = line.Remove("\#").IndexOf("#")
+                        If commentTest > -1 Then line = line.Substring(0, commentTest)
 
-                        If lines(i).StartsWith(" ") AndAlso firstNonSpace >= indent Then
+                        If Char.IsWhiteSpace(line(0)) AndAlso firstNonSpace >= indent Then
                             If indent = 0 Then indent = firstNonSpace
-                            currentItem.Append(LF & lines(i).Substring(indent))
+                            currentItem.Append(LF & line.Substring(indent))
 
-                        ElseIf lines(i).Contains(":") Then
+                        ElseIf line.Contains(":") Then
                             indent = 0
                             If currentItem.Length > 0 Then items.Add(currentItem.ToString)
-                            currentItem = New StringBuilder(lines(i).Trim)
+                            currentItem = New StringBuilder(line.Trim)
                         End If
                     End If
-                Next i
+
+                    line = reader.ReadLine
+                End While
 
                 If currentItem.Length > 0 Then items.Add(currentItem.ToString)
 

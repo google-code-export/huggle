@@ -5,31 +5,29 @@ Imports System.IO
 
 Namespace Huggle
 
-    Public NotInheritable Class Log
+    Public Class LogClass : Implements IDisposable
 
-        Private Shared _Items As New List(Of LogMessage)
+        Private _Items As New List(Of LogMessage)
+        Private Writer As StreamWriter
 
         Private Delegate Sub LogDelegate(ByVal message As LogMessage)
 
-        Public Shared Event UpdateProcess(ByVal process As Process)
-        Public Shared Event Written(ByVal message As LogMessage)
+        Public Event UpdateProcess(ByVal process As Process)
+        Public Event Written(ByVal message As LogMessage)
 
-        Private Sub New()
-        End Sub
-
-        Public Shared ReadOnly Property Items() As List(Of LogMessage)
+        Public ReadOnly Property Items() As List(Of LogMessage)
             Get
                 Return _Items
             End Get
         End Property
 
-        Private Shared ReadOnly Property Path() As String
+        Private ReadOnly Property Path() As String
             Get
                 Return Environment.CurrentDirectory & Slash & "log.txt"
             End Get
         End Property
 
-        Public Shared Sub Reset()
+        Public Sub Initialize()
             _Items.Clear()
 
             If File.Exists(Path) Then
@@ -44,51 +42,59 @@ Namespace Huggle
             End If
         End Sub
 
-        Public Shared Sub AttachProcess(ByVal process As Process)
+        Public Sub AttachProcess(ByVal process As Process)
             CallOnMainThread(AddressOf _AttachProcess, process)
         End Sub
 
-        Public Shared Sub Debug(ByVal message As String)
+        Public Sub Debug(ByVal message As String)
             CallOnMainThread(AddressOf Write, New LogMessage(message, True))
         End Sub
 
-        Public Shared Sub Write(ByVal message As String)
+        Public Sub Write(ByVal message As String)
             CallOnMainThread(AddressOf Write, New LogMessage(message, False))
         End Sub
 
-        Private Shared Sub _AttachProcess(ByVal actionObj As Object)
+        Private Sub _AttachProcess(ByVal actionObj As Object)
             AddHandler CType(actionObj, Process).Progress, AddressOf OnUpdateProcess
         End Sub
 
-        Private Shared Sub HandleFileLogError(ByVal ex As Exception)
+        Private Sub HandleFileLogError(ByVal ex As Exception)
             'Turn off logging to file so we don't try to log our logging to file error to file
             Config.Local.LogToFile = False
             Write(Msg("log-error", ex.Message))
         End Sub
 
-        Private Shared Sub OnUpdateProcess(ByVal process As Process)
+        Private Sub OnUpdateProcess(ByVal process As Process)
             If process.IsComplete Then RemoveHandler process.Progress, AddressOf OnUpdateProcess
             RaiseEvent UpdateProcess(process)
         End Sub
 
-        Private Shared Sub Write(ByVal messageObject As Object)
+        Private Sub Write(ByVal messageObject As Object)
             Dim message As LogMessage = CType(messageObject, LogMessage)
             Items.Add(message)
 
             If Config.Local.LogToFile AndAlso Path IsNot Nothing Then
                 Try
-                    File.AppendAllText(Path, _
-                        CRLF & message.Time.ToShortDateString & " " & message.Time.ToLongTimeString _
+                    If Writer Is Nothing Then Writer = New StreamWriter(Path, True, Text.Encoding.UTF8)
+
+                    Writer.WriteLine(message.Time.ToShortDateString & " " & message.Time.ToLongTimeString _
                         & "." & message.Time.Millisecond.ToString.PadLeft(3, "0"c) & " - " & message.Message)
 
-                Catch ex As IOException
-                    HandleFileLogError(ex)
-                Catch ex As UnauthorizedAccessException
+                Catch ex As SystemException
                     HandleFileLogError(ex)
                 End Try
             End If
 
             RaiseEvent Written(message)
+        End Sub
+
+        Public Sub Dispose() Implements IDisposable.Dispose
+            If Writer IsNot Nothing Then
+                Writer.Flush()
+                Writer.Close()
+                Writer.Dispose()
+                Writer = Nothing
+            End If
         End Sub
 
     End Class
