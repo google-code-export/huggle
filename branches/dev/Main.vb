@@ -23,6 +23,7 @@ Namespace Huggle
     Public Module Main
 
         Private _App As Application
+        Private _Log As LogClass
 
         Public ReadOnly Property App As Application
             Get
@@ -32,13 +33,21 @@ Namespace Huggle
 
         Public Property Handle As Form
 
+        Public ReadOnly Property Log As LogClass
+            Get
+                Return _Log
+            End Get
+        End Property
+
         Public Sub Main()
             Try
                 AddHandler AppDomain.CurrentDomain.UnhandledException, AddressOf UnhandledException
                 AddHandler Windows.Forms.Application.ThreadException, AddressOf ThreadException
 
                 Thread.CurrentThread.Name = "Main"
-                Log.Reset()
+
+                _Log = New LogClass
+                Log.Initialize()
                 Log.Debug("Session started")
 
                 _App = New Application
@@ -53,7 +62,8 @@ Namespace Huggle
                 HandleException(ex)
 #End If
             Finally
-                Handle.Dispose()
+                If Handle IsNot Nothing Then Handle.Dispose()
+                If Log IsNot Nothing Then Log.Dispose()
                 End
             End Try
         End Sub
@@ -69,7 +79,7 @@ Namespace Huggle
         Private Sub HandleException(ByVal ex As Exception)
             Dim result As Result = result.FromException(ex)
             If App IsNot Nothing Then App.ShowError(result)
-            Log.Write(result.LogMessage)
+            If Log IsNot Nothing Then Log.Write(result.LogMessage)
         End Sub
 
         Public Sub CallOnMainThread(ByVal method As Action)

@@ -62,14 +62,16 @@ Namespace Huggle
             While True
                 'Show login form
                 If user Is Nothing OrElse Not user.Session.IsActive Then
-                    Dim loginForm As New LoginForm
-                    If loginForm.ShowDialog <> DialogResult.OK Then Exit While
-                    user = loginForm.Session.User
+                    Using loginForm As New LoginForm
+                        If loginForm.ShowDialog <> DialogResult.OK Then Exit While
+                        user = loginForm.Session.User
+                    End Using
                 End If
 
                 'Show main form
-                Dim mainForm As New MainForm(user.Session)
-                If mainForm.ShowDialog() <> DialogResult.OK Then Exit While
+                Using mainForm As New MainForm(user.Session)
+                    If mainForm.ShowDialog() <> DialogResult.OK Then Exit While
+                End Using
             End While
         End Sub
 

@@ -234,8 +234,9 @@ Namespace Huggle
 
             For Each family As Family In App.Families.All
                 Dim config As New Dictionary(Of String, Object)
+                config.Add("name", family.Name)
 
-                familyConfigs.Add(family.Name, config)
+                familyConfigs.Add(family.Code, config)
             Next family
 
             items.Add("families", familyConfigs)
