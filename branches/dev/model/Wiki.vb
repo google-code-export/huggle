@@ -12,6 +12,7 @@ Namespace Huggle
         'Represents a MediaWiki wiki
 
         Private _AbuseFilters As AbuseFilterCollection
+        Private _ApiModules As ApiModuleCollection
         Private _Categories As CategoryCollection
         Private _ChangeTags As ChangeTagCollection
         Private _Code As String
@@ -21,12 +22,12 @@ Namespace Huggle
         Private _Extensions As ExtensionCollection
         Private _FeedPatterns As Dictionary(Of String, Regex)
         Private _FileExtensions As List(Of String)
+        Private _Files As FileCollection
         Private _Gadgets As GadgetCollection
         Private _Interwikis As Dictionary(Of String, Wiki)
         Private _Logs As LogsCollection
         Private _MagicWordAliases As Dictionary(Of String, String)
         Private _MagicWords As Dictionary(Of String, String)
-        Private _Media As MediaCollection
         Private _Messages As Dictionary(Of String, String)
         Private _Pages As PageCollection
         Private _Preferences As List(Of String)
@@ -37,6 +38,7 @@ Namespace Huggle
         Private _Revisions As RevisionCollection
         Private _Skins As Dictionary(Of String, WikiSkin)
         Private _Spaces As SpaceCollection
+        Private _SpamLists As SpamListCollection
         Private _Threads As CommentCollection
         Private _UserGroups As UserGroupCollection
         Private _Users As UserCollection
@@ -57,10 +59,16 @@ Namespace Huggle
         End Property
 
         Public Property AccountConfirmation As Boolean = True
-        Public Property ActiveUsers As Integer
+        Public Property ActiveUsers As Integer = -1
         Public Property Administrators As Integer
         Public Property AnonymousLogin As Boolean = True
-        Public Property Articles As Integer
+
+        Public ReadOnly Property ApiModules As ApiModuleCollection
+            Get
+                If _ApiModules Is Nothing Then _ApiModules = New ApiModuleCollection(Me)
+                Return _ApiModules
+            End Get
+        End Property
 
         Public ReadOnly Property Categories() As CategoryCollection
             Get
@@ -103,6 +111,7 @@ Namespace Huggle
             End Set
         End Property
 
+        Public Property ContentPages As Integer = -1
         Public Property CurrentConfirmation As Confirmation
 
         Public ReadOnly Property Diffs() As DiffCollection
@@ -220,10 +229,10 @@ Namespace Huggle
 
         Public Property MainPage As Page
 
-        Public ReadOnly Property Media() As MediaCollection
+        Public ReadOnly Property Files() As FileCollection
             Get
-                If _Media Is Nothing Then _Media = New MediaCollection(Me)
-                Return _Media
+                If _Files Is Nothing Then _Files = New FileCollection(Me)
+                Return _Files
             End Get
         End Property
 
@@ -317,6 +326,13 @@ Namespace Huggle
             End Get
         End Property
 
+        Public ReadOnly Property SpamLists As SpamListCollection
+            Get
+                If _SpamLists Is Nothing Then _SpamLists = New SpamListCollection(Me)
+                Return _SpamLists
+            End Get
+        End Property
+
         Public ReadOnly Property Threads() As CommentCollection
             Get
                 If _Threads Is Nothing Then _Threads = New CommentCollection(Me)
@@ -324,7 +340,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Public Property TitleBlacklist As TitleBlacklist
+        Public Property TitleBlacklist As TitleList
         Public Property Type As String
         Public Property Url As Uri
 
@@ -332,6 +348,20 @@ Namespace Huggle
             Get
                 If _UserGroups Is Nothing Then _UserGroups = New UserGroupCollection(Me)
                 Return _UserGroups
+            End Get
+        End Property
+
+        Public ReadOnly Property UserRights As List(Of String)
+            Get
+                Dim result As New List(Of String)
+
+                For Each group As UserGroup In UserGroups.All
+                    For Each right As String In group.Rights
+                        result.Merge(right)
+                    Next right
+                Next group
+
+                Return result
             End Get
         End Property
 

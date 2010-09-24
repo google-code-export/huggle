@@ -29,7 +29,21 @@ Namespace Huggle.Actions
                 "prop", "revisions", _
                 "rvprop", "ids|content")))
 
-            If Wiki.Config.Logo IsNot Nothing Then reqs.Add(New MediaQuery(Session, Wiki.Media.FromString(Wiki.Config.Logo), 96))
+            Dim pageReq As New PageInfoQuery(Session)
+            pageReq.Content = True
+
+            If Wiki.Extensions.Contains(Extension.SpamList) Then
+                Dim list As SpamList = Wiki.SpamLists.FromPage(Wiki.Pages("MediaWiki:Spam-blacklist"))
+                If Not list.IsLoaded Then pageReq.Pages.Add(list.Page)
+            End If
+
+            If Wiki.Extensions.Contains(Extension.TitleList) Then
+                If Wiki.TitleBlacklist Is Nothing _
+                    Then Wiki.TitleBlacklist = New TitleList(Wiki.Pages("MediaWiki:Titleblacklist"))
+                If Not Wiki.TitleBlacklist.IsLoaded Then pageReq.Pages.Add(Wiki.TitleBlacklist.Location)
+            End If
+
+            If Wiki.Config.Logo IsNot Nothing Then reqs.Add(New MediaQuery(Session, Wiki.Files.FromString(Wiki.Config.Logo), 128))
 
             Dim prefsReq As New UIRequest(Session, Description, New QueryString("title", "Special:Preferences"), Nothing)
             reqs.Add(prefsReq)
@@ -43,42 +57,44 @@ Namespace Huggle.Actions
                 App.WaitFor(New Expression(Function() reqs.TrueForAll(Function(query As Process) query.IsComplete)))
             End If
 
-            'Time zone options
-            If Config.Global.TimeZones.Count = 0 Then
-                If Not (prefsReq.Response.Contains("id=""mw-input-timecorrection""") _
-                    AndAlso prefsReq.Response.Contains("</select>")) Then OnFail(Msg("error-scrape")) : Return
+            If Not Session.User.IsAnonymous Then
+                'Time zone options
+                If Config.Global.TimeZones.Count = 0 Then
+                    If Not (prefsReq.Response.Contains("id=""mw-input-timecorrection""") _
+                        AndAlso prefsReq.Response.Contains("</select>")) Then OnFail(Msg("error-scrape")) : Return
 
-                Dim zoneTable As String = prefsReq.Response.FromFirst("id=""mw-input-timecorrection""") _
-                    .FromFirst(">").ToFirst("</select>")
+                    Dim zoneTable As String = prefsReq.Response.FromFirst("id=""mw-input-timecorrection""") _
+                        .FromFirst(">").ToFirst("</select>")
 
-                For Each item As String In zoneTable.Split("<option ")
-                    If item.Contains("value=""") Then
-                        item = item.FromFirst("value=""").ToFirst("""")
+                    For Each item As String In zoneTable.Split("<option ")
+                        If item.Contains("value=""") Then
+                            item = item.FromFirst("value=""").ToFirst("""")
 
-                        If item.StartsWith("ZoneInfo|") Then
-                            item = item.FromFirst("|")
-                            Config.Global.TimeZones.Merge(item.FromFirst("|"), CInt(item.ToFirst("|")))
+                            If item.StartsWith("ZoneInfo|") Then
+                                item = item.FromFirst("|")
+                                Config.Global.TimeZones.Merge(item.FromFirst("|"), CInt(item.ToFirst("|")))
+                            End If
                         End If
-                    End If
-                Next item
-            End If
+                    Next item
+                End If
 
-            'Skins
-            If Wiki.Skins.Count = 0 Then
-                If Not (prefsReq.Response.Contains("id=""mw-htmlform-skin""") _
-                    AndAlso prefsReq.Response.Contains("</table>")) Then OnFail(Msg("error-scrape")) : Return
+                'Skins
+                If Wiki.Skins.Count = 0 Then
+                    If Not (prefsReq.Response.Contains("id=""mw-htmlform-skin""") _
+                        AndAlso prefsReq.Response.Contains("</table>")) Then OnFail(Msg("error-scrape")) : Return
 
-                Dim skinsTable As String = prefsReq.Response.FromFirst("id=""mw-htmlform-skin""") _
-                    .FromFirst(">").ToFirst("</table>")
+                    Dim skinsTable As String = prefsReq.Response.FromFirst("id=""mw-htmlform-skin""") _
+                        .FromFirst(">").ToFirst("</table>")
 
-                For Each item As String In skinsTable.Split("<input ")
-                    If item.Contains("value=""") Then
-                        Dim code As String = item.FromFirst("value=""").ToFirst("""")
-                        Dim name As String = item.FromFirst("for=""mw-input-skin-").FromFirst(">").ToFirst(" (")
-                        Wiki.Skins.Add(code, New WikiSkin(Wiki, code, name))
-                        If item.Contains(" (default") Then Wiki.Config.DefaultSkin = code
-                    End If
-                Next item
+                    For Each item As String In skinsTable.Split("<input ")
+                        If item.Contains("value=""") Then
+                            Dim code As String = item.FromFirst("value=""").ToFirst("""")
+                            Dim name As String = item.FromFirst("for=""mw-input-skin-").FromFirst(">").ToFirst(" (")
+                            Wiki.Skins.Add(code, New WikiSkin(Wiki, code, name))
+                            If item.Contains(" (default") Then Wiki.Config.DefaultSkin = code
+                        End If
+                    Next item
+                End If
             End If
 
             'Gadgets
@@ -97,7 +113,7 @@ Namespace Huggle.Actions
                                 gadget.Type = type
 
                                 Dim pages As New List(Of String)(line.FromFirst("|").Split("|"))
-                                gadget.Pages.Clear()
+                                gadget.Pages = New List(Of Page)
 
                                 For Each pageName As String In pages
                                     gadget.Pages.Merge(Wiki.Pages("MediaWiki:Gadget-" & pageName))
@@ -125,7 +141,7 @@ Namespace Huggle.Actions
                             gadget.Description = gadget.Description.Substring(match.Groups(0).Length)
                         End If
 
-                        gadget.Name = name.Replace("_", " ")
+                        gadget.Name = UcFirst(name).Replace("_", " ").Replace("-", " ")
                     Next gadget
                 End If
             End If

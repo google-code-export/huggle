@@ -121,7 +121,7 @@ Namespace Huggle
             Next item
 
             If IsMultipart Then
-                Boundary = "----------" & CStr((New Random).Next)
+                Boundary = "----------" & App.Randomness.Next.ToString
                 Data = Query.ToMultipart(Filename, Boundary)
             Else
                 Data = Encoding.UTF8.GetBytes(Query.ToUrlString)

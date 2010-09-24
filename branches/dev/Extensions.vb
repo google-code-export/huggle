@@ -85,7 +85,7 @@ Public Module Extensions
     End Function
 
     <Extension()> _
-    Function First(Of TList, TType As Class)(ByVal Items As List(Of TList)) As TType
+    Function FirstInstance(Of TList, TType As Class)(ByVal Items As List(Of TList)) As TType
         For Each Item As TList In Items
             If TypeOf Item Is TType Then Return TryCast(Item, TType)
         Next Item

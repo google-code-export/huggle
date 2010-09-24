@@ -23,12 +23,10 @@ Namespace Huggle.Actions
 
             'Load title blacklist
             If Not Wiki.IsLoaded AndAlso Wiki.TitleBlacklist Is Nothing Then
-                Wiki.TitleBlacklist = New TitleBlacklist(Wiki.Pages("MediaWiki:Titleblacklist"))
+                Wiki.TitleBlacklist = New TitleList(Wiki.Pages("MediaWiki:Titleblacklist"))
 
                 Dim titleReq As New PageDetailQuery(Session, Wiki.TitleBlacklist.Location)
                 titleReq.Start()
-
-                Wiki.TitleBlacklist.Text = Wiki.TitleBlacklist.Location.Text
             End If
 
             Dim req As New UIRequest(Session, Description, New QueryString("title", "Special:UserLogin/signup"), Nothing)

@@ -300,7 +300,7 @@ Namespace Huggle.Actions
             If request.Result.IsError Then OnFail(request.Result.Message) : Return
             If Not Rev.Page.Exists Then OnFail(Msg("error-pagemissing")) : Return
 
-            Target = request.Items.First(Of Revision)()
+            Target = request.Items.FirstInstance(Of Revision)()
         End Sub
 
         Private Sub CheckTarget()

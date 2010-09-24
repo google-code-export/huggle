@@ -145,7 +145,7 @@ Namespace Huggle
             State = FeedState.Connecting
 
             'Username in RC feed channels is "h_" followed by random 6-digit number
-            Username = "h_" & New Random(Date.Now.Millisecond).NextDouble.ToString.Substring(2, 6)
+            Username = "h_" & (App.Randomness.Next Mod 1000000).ToString
 
             Try
                 Stream = New TcpClient(Server, Port).GetStream

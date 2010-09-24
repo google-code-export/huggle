@@ -37,9 +37,9 @@ Namespace Huggle
 
         Public Sub LoadLocal()
             Try
-                If File.Exists(Path) Then
-                    If File.GetLastWriteTime(Path).Add(Config.Global.CacheTime) < Date.Now Then NeedsUpdate = True
-                    Config.Global.Load(File.ReadAllText(Path, Encoding.UTF8))
+                If IO.File.Exists(Path) Then
+                    If IO.File.GetLastWriteTime(Path).Add(Config.Global.CacheTime) < Date.Now Then NeedsUpdate = True
+                    Config.Global.Load(IO.File.ReadAllText(Path, Encoding.UTF8))
                     Log.Debug("Loaded global config [L]")
                 Else
                     NeedsUpdate = True
@@ -205,7 +205,7 @@ Namespace Huggle
 
         Public Sub SaveLocal()
             Try
-                File.WriteAllText(Path, Config.MakeConfig(WriteConfig(True)), Encoding.UTF8)
+                IO.File.WriteAllText(Path, Config.MakeConfig(WriteConfig(True)), Encoding.UTF8)
                 Config.Global.NeedsUpdate = False
                 Log.Debug("Saved global config [L]")
 

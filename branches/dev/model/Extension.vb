@@ -11,6 +11,16 @@ Namespace Huggle
         Private ReadOnly _Name As String
         Private ReadOnly _Wiki As Wiki
 
+        Public Const AbuseFilter As String = "Abuse Filter"
+        Public Const Gadgets As String = "Gadgets"
+        Public Const GlobalBlocking As String = "GlobalBlocking"
+        Public Const Moderation As String = "Flagged Revisions"
+        Public Const OpenSearch As String = "OpenSearchXml"
+        Public Const SiteMatrix As String = "SiteMatrix"
+        Public Const SpamList As String = "SpamBlacklist"
+        Public Const TitleList As String = "Title Blacklist"
+        Public Const UnifiedLogin As String = "Central Auth"
+
         Public Sub New(ByVal wiki As Wiki, ByVal name As String)
             _Name = name
             _Wiki = wiki

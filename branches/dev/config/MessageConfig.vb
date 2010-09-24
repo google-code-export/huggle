@@ -31,7 +31,7 @@ Namespace Huggle
                         lang.IsLocalized = True
 
                         For Each msg As KeyValuePair(Of String, String) In _
-                            Config.ParseConfig("messages-" & code, Nothing, File.ReadAllText(item))
+                            Config.ParseConfig("messages-" & code, Nothing, IO.File.ReadAllText(item))
 
                             lang.Messages.Merge(msg.Key, msg.Value)
                         Next msg
@@ -60,7 +60,7 @@ Namespace Huggle
                 For Each language As Language In App.Languages.All
                     Dim path As String = LocalPath & GetValidFileName(language.Code) & ".txt"
 
-                    If language.Messages.Count > 0 Then File.WriteAllText(path, _
+                    If language.Messages.Count > 0 Then IO.File.WriteAllText(path, _
                         Config.MakeConfig(language.Messages.ToDictionary(Of String, Object)))
                 Next language
 

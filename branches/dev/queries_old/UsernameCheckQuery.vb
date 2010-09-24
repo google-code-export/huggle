@@ -28,14 +28,14 @@ Namespace Huggle.Actions
 
             'Check title blacklists
             If Wiki.Family.GlobalTitleBlacklist IsNot Nothing _
-                AndAlso Wiki.Family.GlobalTitleBlacklist.IsMatch(Session, Name, BlacklistAction.CreateAccount) Then
+                AndAlso Wiki.Family.GlobalTitleBlacklist.IsMatch(Session, Name, TitleListAction.CreateAccount) Then
 
                 _Status = CheckStatus.GlobalBlacklisted
                 OnSuccess() : Return
             End If
 
             If Wiki.TitleBlacklist IsNot Nothing _
-                AndAlso Wiki.TitleBlacklist.IsMatch(Session, Name, BlacklistAction.CreateAccount) Then
+                AndAlso Wiki.TitleBlacklist.IsMatch(Session, Name, TitleListAction.CreateAccount) Then
 
                 _Status = CheckStatus.LocalBlacklisted
                 OnSuccess() : Return

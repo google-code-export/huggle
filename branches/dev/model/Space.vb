@@ -113,7 +113,7 @@ Namespace Huggle
         End Function
 
         Public Overrides Function ToString() As String
-            If _Name IsNot Nothing Then Return _Name Else Return CStr(_Number)
+            If _Name IsNot Nothing Then Return _Name Else Return _Number.ToString
         End Function
 
     End Class
@@ -125,6 +125,7 @@ Namespace Huggle
 
         Private ReadOnly _All As New Dictionary(Of Integer, Space)
 
+        'Built-in namespaces
         Public Media, Special, Article, Talk, User, UserTalk, Project, ProjectTalk, File, FileTalk, _
             MediaWiki, MediaWikiTalk, Template, TemplateTalk, Help, HelpTalk, Category, CategoryTalk As Space
 
@@ -179,6 +180,7 @@ Namespace Huggle
                 Next space
             End If
 
+            'Default namespace attributes
             MediaWiki.IsEditRestricted = True
             MediaWiki.IsMoveRestricted = True
             Category.IsMovable = False

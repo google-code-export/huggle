@@ -22,8 +22,8 @@ Namespace Huggle.Scripting
                 Case "range" : Return New Token(New Range(arg(0).Number, arg(1).Number))
 
                 Case "media" : If arg(0).ValueType = "Page" _
-                    Then Return New Token(Wiki.Media(arg(0).Page)) _
-                    Else Return New Token(Wiki.Media(arg(0).String))
+                    Then Return New Token(Wiki.Files(arg(0).Page)) _
+                    Else Return New Token(Wiki.Files(arg(0).String))
 
                 Case "cat" : If arg(0).ValueType = "Page" _
                     Then Return New Token(Wiki.Categories(arg(0).Page)) _

@@ -63,9 +63,9 @@ Namespace Huggle.Scripting
             End Get
         End Property
 
-        Public ReadOnly Property Media() As Media
+        Public ReadOnly Property Media() As File
             Get
-                If TypeOf Value Is Media Then Return CType(Value, Media)
+                If TypeOf Value Is File Then Return CType(Value, File)
                 Throw New ScriptException(Msg("query-typemismatch", "Page", ValueType.ToString))
             End Get
         End Property

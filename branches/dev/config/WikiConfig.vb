@@ -32,6 +32,7 @@ Namespace Huggle
         Public Property BlockTimeAnon As String
         Public Property BlpTalkTag As String
         Public Property ChangeTagIdentifier As String
+        Public Property CustomSpamBlacklists As New List(Of Page)
         Public Property Database As String
         Public Property DatabaseVersion As String
         Public Property DefaultSkin As String
@@ -40,8 +41,6 @@ Namespace Huggle
         Public Property EstablishedUsers As Page
         Public Property FirstLetterCaseSensitive As Boolean
         Public Property GadgetIdentifierPattern As Regex = New Regex("''([^']+)(?::''|'':)\ ")
-        Public Property LanguageName As String
-        Public Property LanguageVersion As String
         Public Property Logo As String = "Wiki.png"
         Public Property MessageSummary As String
         Public Property Minor As New List(Of String)
@@ -50,6 +49,8 @@ Namespace Huggle
         Public Property QuickReviewLevels As Dictionary(Of ReviewFlag, Integer)
         Public Property PageSizeTransition As Integer
         Public Property ParamNorm As Dictionary(Of String, List(Of String))
+        Public Property PlatformName As String
+        Public Property PlatformVersion As String
         Public Property PriorityQuery As String
         Public Property PriorityCacheTime As TimeSpan
         Public Property [ReadOnly] As Boolean
@@ -137,7 +138,7 @@ Namespace Huggle
                 If IsDefault Then Return True
 
                 Try
-                    If File.Exists(LocalPath) Then Return File.GetLastWriteTime(LocalPath).Add(CacheTime) < Date.Now
+                    If IO.File.Exists(LocalPath) Then Return IO.File.GetLastWriteTime(LocalPath).Add(CacheTime) < Date.Now
                 Catch ex As IOException
                 End Try
 
@@ -150,7 +151,8 @@ Namespace Huggle
                 If IsDefault Then Return True
 
                 Try
-                    If File.Exists(PriorityPath) Then Return File.GetLastWriteTime(PriorityPath).add(PriorityCacheTime) < Date.Now
+                    If IO.File.Exists(PriorityPath) _
+                        Then Return IO.File.GetLastWriteTime(PriorityPath).Add(PriorityCacheTime) < Date.Now
                 Catch ex As IOException
                 End Try
 
@@ -206,8 +208,8 @@ Namespace Huggle
 
         Public Sub LoadLocal()
             Try
-                If File.Exists(LocalPath) Then
-                    Load(File.ReadAllText(LocalPath, Encoding.UTF8))
+                If IO.File.Exists(LocalPath) Then
+                    Load(IO.File.ReadAllText(LocalPath, Encoding.UTF8))
                     _IsDefault = False
                     IsLocalCopy = True
                     Log.Debug("Loaded wiki config for {0} [L]".FormatWith(Wiki.Code))
@@ -228,12 +230,12 @@ Namespace Huggle
             Try
                 Dim path As String = IO.Path.GetDirectoryName(LocalPath)
                 If Not Directory.Exists(path) Then Directory.CreateDirectory(path)
-                File.WriteAllText(LocalPath, Config.MakeConfig(WriteConfig(True)), Encoding.UTF8)
+                IO.File.WriteAllText(LocalPath, Config.MakeConfig(WriteConfig(True)), Encoding.UTF8)
 
                 If Wiki.Pages.Priority IsNot Nothing AndAlso Wiki.Pages.Priority.Count > 0 Then
                     path = IO.Path.GetDirectoryName(PriorityPath)
                     If Not Directory.Exists(path) Then Directory.CreateDirectory(path)
-                    File.WriteAllText(PriorityPath, Wiki.Pages.Priority.Join(LF), Encoding.UTF8)
+                    IO.File.WriteAllText(PriorityPath, Wiki.Pages.Priority.Join(LF), Encoding.UTF8)
                 End If
 
                 If Wiki Is App.Wikis.Default Then
@@ -346,15 +348,19 @@ Namespace Huggle
                         Case "groups"
                             For Each item As KeyValuePair(Of String, String) In Config.ParseConfig(source, key, value)
                                 For Each prop As KeyValuePair(Of String, String) In Config.ParseConfig(source, key & ":" & item.Key, item.Value)
+                                    Dim group As UserGroup = Wiki.UserGroups(item.Key)
+
                                     Select Case prop.Key
-                                        Case "rights" : Wiki.UserGroups(item.Key).Rights.AddRange(prop.Value.ToList(","))
+                                        Case "count" : group.Count = CInt(prop.Value)
+                                        Case "implicit" : group.IsImplicit = prop.Value.ToBoolean
+                                        Case "rights" : group.Rights.AddRange(prop.Value.ToList(","))
                                     End Select
                                 Next prop
                             Next item
 
                         Case "language" : Wiki.Language = App.Languages(value)
-                        Case "language" : LanguageName = value
-                        Case "language-version" : LanguageVersion = value
+                        Case "platform" : PlatformName = value
+                        Case "platform-version" : PlatformVersion = value
                         Case "license" : Wiki.License = value
                         Case "license-url" : Wiki.LicenseUrl = New Uri(value)
                         Case "logo" : Logo = value
@@ -433,6 +439,15 @@ Namespace Huggle
                             For Each item As KeyValuePair(Of String, String) In Config.ParseConfig(source, key, value)
 
                             Next item
+
+                        Case "spam-list" : ConfigRead.ReadSpamLists(Wiki.SpamLists, source, value)
+
+                        Case "activeusers" : Wiki.ActiveUsers = CInt(value)
+                        Case "files" : Wiki.Files.Count = CInt(value)
+                        Case "pages" : Wiki.Pages.Count = CInt(value)
+                        Case "revisions" : Wiki.Revisions.Count = CInt(value)
+                        Case "users" : Wiki.Users.Count = CInt(value)
+
                     End Select
 
                 Catch ex As SystemException
@@ -555,7 +570,8 @@ Namespace Huggle
                 For Each group As UserGroup In Wiki.UserGroups.All
                     Dim item As New Dictionary(Of String, Object)
 
-                    If group.Count > 0 Then item.Add("count", group.Count)
+                    If group.Count >= 0 Then item.Add("count", group.Count)
+                    If group.IsImplicit Then item.Add("implicit", True)
                     item.Add("rights", group.Rights.Join(","))
 
                     groups.Add(group.Name, item)
@@ -656,8 +672,8 @@ Namespace Huggle
                     Then items.Add("first-letter-case-sensitive", FirstLetterCaseSensitive)
                 If GadgetIdentifierPattern IsNot def.GadgetIdentifierPattern _
                     Then items.Add("gadget-identifier-pattern", Config.EscapeWs(GadgetIdentifierPattern.ToString))
-                If LanguageName <> def.LanguageName Then items.Add("language", LanguageName)
-                If LanguageVersion <> def.LanguageVersion Then items.Add("language-version", LanguageVersion)
+                If PlatformName <> def.PlatformName Then items.Add("platform", PlatformName)
+                If PlatformVersion <> def.PlatformVersion Then items.Add("platform-version", PlatformVersion)
                 If Logo <> def.Logo Then items.Add("logo", Logo)
                 If Wiki.License <> def.Wiki.License Then items.Add("license", Wiki.License)
                 If Wiki.LicenseUrl <> def.Wiki.LicenseUrl Then items.Add("license-url", Wiki.LicenseUrl)

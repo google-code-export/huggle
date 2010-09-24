@@ -81,9 +81,6 @@ Namespace Huggle.Actions
                 Log.Debug("Error loading closed wiki list: {0}".FormatWith(closedRequest.Result.LogMessage))
             End If
 
-            If Wiki.Family.GlobalTitleBlacklist IsNot Nothing _
-                Then Wiki.Family.GlobalTitleBlacklist.Text = Wiki.Family.GlobalTitleBlacklist.Location.Text
-
             'Save configuration
             Config.Global.SaveLocal()
             Config.Messages.SaveLocal()

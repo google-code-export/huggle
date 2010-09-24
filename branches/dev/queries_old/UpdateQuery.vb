@@ -48,7 +48,7 @@
 '            End Try
 
 '            If State = QueryState.Cancelled Then
-'                If File.Exists(Filename) Then File.Delete(Filename)
+'                IfIO.File.Exists(Filename) Then File.Delete(Filename)
 '                Return Result.Fail("", "")
 '            End If
 

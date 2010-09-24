@@ -8,7 +8,6 @@ Namespace Huggle
 
         'Represents a MediaWiki user group
 
-        Private _Count As Integer
         Private _Name As String
         Private _Rights As New List(Of String)
         Private _Wiki As Wiki
@@ -16,17 +15,10 @@ Namespace Huggle
         Public Sub New(ByVal wiki As Wiki, ByVal name As String)
             _Name = name
             _Wiki = wiki
-            _Count = -1
         End Sub
 
-        Public Property Count() As Integer
-            Get
-                Return _Count
-            End Get
-            Set(ByVal value As Integer)
-                _Count = value
-            End Set
-        End Property
+        Public Property Count() As Integer = -1
+        Public Property IsImplicit As Boolean
 
         Public ReadOnly Property Name() As String
             Get
@@ -78,8 +70,9 @@ Namespace Huggle
 
         Public Sub Reset()
             _All.Clear()
-            Item("*").Count = -1
-            Item("user").Count = -1
+
+            Item("*").IsImplicit = True
+            Item("user").IsImplicit = True
         End Sub
 
     End Class

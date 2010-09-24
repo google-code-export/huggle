@@ -34,7 +34,6 @@ Namespace Huggle
         Private Shared ReadOnly InfoboxPattern As New Regex( _
             "\{\{ ?([Ii]nfobox|[Tt]axobox)", RegexOptions.Compiled)
 
-        Private Shared ReadOnly Randomizer As New Random(Date.Now.Millisecond)
         Private Shared ReadOnly TrimInterval As Integer = 60000
 
         Private Shared WithEvents Timer As New Windows.Forms.Timer
@@ -52,10 +51,10 @@ Namespace Huggle
             Timer.Start()
         End Sub
 
-        Public Sub New(ByVal wiki As Wiki, ByVal Id As Integer)
-            Random = Randomizer.Next
+        Public Sub New(ByVal wiki As Wiki, ByVal id As Integer)
+            Random = App.Randomness.Next
             _Wiki = wiki
-            _Id = Id
+            _Id = id
             _IsReviewable = True
             _Change = Integer.MinValue
             _Bytes = Integer.MinValue
@@ -542,81 +541,80 @@ Namespace Huggle
 
             For Each pattern As Regex In Wiki.Config.RevertPatterns
                 Dim match As Match = pattern.Match(plainSummary)
+                If Not match.Success Then Continue For
 
-                If match.Success Then
-                    IsRevert = True
-                    Page.Reverted = True
+                IsRevert = True
+                Page.Reverted = True
 
-                    Dim oldId, rvdId, count As Integer
+                Dim oldId, rvdId, count As Integer
 
-                    Dim oldRev As Revision = If(Integer.TryParse(match.Groups("oldrev").Value, oldId), Wiki.Revisions(oldId), Nothing)
-                    Dim rvdRev As Revision = If(Integer.TryParse(match.Groups("rvdrev").Value, rvdId), Wiki.Revisions(rvdId), Nothing)
-                    Integer.TryParse(match.Groups("rvcount").Value, count)
+                Dim oldRev As Revision = If(Integer.TryParse(match.Groups("oldrev").Value, oldId), Wiki.Revisions(oldId), Nothing)
+                Dim rvdRev As Revision = If(Integer.TryParse(match.Groups("rvdrev").Value, rvdId), Wiki.Revisions(rvdId), Nothing)
+                Integer.TryParse(match.Groups("rvcount").Value, count)
 
-                    Dim oldUser As User = Wiki.Users.FromString(match.Groups("olduser").Value)
-                    Dim rvdUser As User = Wiki.Users.FromString(match.Groups("rvduser").Value)
+                Dim oldUser As User = Wiki.Users.FromString(match.Groups("olduser").Value)
+                Dim rvdUser As User = Wiki.Users.FromString(match.Groups("rvduser").Value)
 
-                    'Various ways in which the old revision of the revert
-                    'might be specified, in order of preference:
+                'Various ways in which the old revision of the revert
+                'might be specified, in order of preference:
 
-                    If IsKnown(oldRev) Then
-                        'Old revision
-                        RevertTo = oldRev
-                        If IsKnown(Prev) AndAlso oldRev Is Prev.Prev Then Prev.RevertedBy = Me
+                If IsKnown(oldRev) Then
+                    'Old revision
+                    RevertTo = oldRev
+                    If IsKnown(Prev) AndAlso oldRev Is Prev.Prev Then Prev.RevertedBy = Me
 
-                    ElseIf IsKnown(rvdRev) Then
-                        'Reverted revision
-                        rvdRev.RevertedBy = Me
-                        If rvdRev Is Prev AndAlso IsKnown(rvdRev.Prev) Then RevertTo = rvdRev.Prev
+                ElseIf IsKnown(rvdRev) Then
+                    'Reverted revision
+                    rvdRev.RevertedBy = Me
+                    If rvdRev Is Prev AndAlso IsKnown(rvdRev.Prev) Then RevertTo = rvdRev.Prev
 
-                    ElseIf count > 0 Then
-                        'Number of reverted revisions
-                        Dim rev As Revision = Me
-                        Dim ok As Boolean = True
+                ElseIf count > 0 Then
+                    'Number of reverted revisions
+                    Dim rev As Revision = Me
+                    Dim ok As Boolean = True
+
+                    For i As Integer = 1 To count
+                        If Not IsKnown(rev.Prev) Then ok = False Else rev = rev.Prev
+                    Next i
+
+                    If ok Then
+                        RevertTo = rev
+                        rev = Me
 
                         For i As Integer = 1 To count
-                            If Not IsKnown(rev.Prev) Then ok = False Else rev = rev.Prev
+                            rev = rev.Prev
+                            If rev.RevertedBy Is Nothing Then rev.RevertedBy = Me
                         Next i
+                    End If
 
-                        If ok Then
-                            RevertTo = rev
-                            rev = Me
+                ElseIf oldUser IsNot Nothing OrElse rvdUser IsNot Nothing Then
+                    'Old user and/or reverted user
+                    Dim rev As Revision = Prev
 
-                            For i As Integer = 1 To count
-                                rev = rev.Prev
-                                If rev.RevertedBy Is Nothing Then rev.RevertedBy = Me
-                            Next i
-                        End If
+                    While IsKnown(rev) AndAlso _
+                        (rvdUser Is Nothing AndAlso oldUser IsNot rev.User OrElse rvdUser Is rev.User)
 
-                    ElseIf oldUser IsNot Nothing OrElse rvdUser IsNot Nothing Then
-                        'Old user and/or reverted user
-                        Dim rev As Revision = Prev
+                        rev = rev.Prev
+                    End While
+
+                    If IsKnown(rev) AndAlso (oldUser Is Nothing OrElse oldUser Is rev.User) Then
+                        RevertTo = rev
+                        rev = Prev
 
                         While IsKnown(rev) AndAlso _
                             (rvdUser Is Nothing AndAlso oldUser IsNot rev.User OrElse rvdUser Is rev.User)
 
-                            rev = rev.Prev
+                            If rev.RevertedBy Is Nothing Then rev.RevertedBy = Me
                         End While
-
-                        If IsKnown(rev) AndAlso (oldUser Is Nothing OrElse oldUser Is rev.User) Then
-                            RevertTo = rev
-                            rev = Prev
-
-                            While IsKnown(rev) AndAlso _
-                                (rvdUser Is Nothing AndAlso oldUser IsNot rev.User OrElse rvdUser Is rev.User)
-
-                                If rev.RevertedBy Is Nothing Then rev.RevertedBy = Me
-                            End While
-                        End If
-
-                    ElseIf IsKnown(Prev) Then
-                        'No information, assume only previous revision was reverted
-                        Prev.RevertedBy = Me
-                        If IsKnown(Prev.Prev) Then RevertTo = Prev
                     End If
 
-                    Exit For
+                ElseIf IsKnown(Prev) Then
+                    'No information, assume only previous revision was reverted
+                    Prev.RevertedBy = Me
+                    If IsKnown(Prev.Prev) Then RevertTo = Prev
                 End If
+
+                Exit For
             Next pattern
         End Sub
 
@@ -676,7 +674,7 @@ Namespace Huggle
         End Sub
 
         Public Sub ProcessHtml()
-            If Html Is Nothing Then Exit Sub
+            If Html Is Nothing Then Return
 
             'Rcid
             If Html.Contains("<div class='patrollink'>") Then
@@ -717,18 +715,18 @@ Namespace Huggle
             End If
         End Sub
 
-        Private Sub ProcessText(ByVal Text As String)
-            If Text Is Nothing Then Exit Sub
+        Private Sub ProcessText(ByVal text As String)
+            If text Is Nothing Then Return
 
             If Not TextProcessed Then
-                Bytes = Encoding.UTF8.GetByteCount(Text)
+                Bytes = Encoding.UTF8.GetByteCount(text)
 
                 If Page IsNot Nothing AndAlso Page.LastRev Is Me Then
                     'Redirect
                     If Not Page.TargetKnown Then
-                        Static RedirectRegex As New Regex("#redirect:? *\[\[([^\]]+)\]\].*", RegexOptions.IgnoreCase)
+                        Static redirectRegex As New Regex("#redirect:? *\[\[([^\]]+)\]\].*", RegexOptions.IgnoreCase)
 
-                        Dim match As Match = RedirectRegex.Match(Text)
+                        Dim match As Match = redirectRegex.Match(text)
 
                         Page.IsRedirect = match.Success
                         Page.Target = If(match.Success, Wiki.Pages.FromString(match.Groups(1).Value), Nothing)
@@ -736,9 +734,9 @@ Namespace Huggle
 
                     'Sections
                     If Not Page.SectionsKnown Then
-                        Static SectionsRegex As New Regex("(^|\n)=+(.+?)=+($|\n)")
+                        Static sectionsRegex As New Regex("(^|\n)=+(.+?)=+($|\n)")
 
-                        Dim sections As MatchCollection = SectionsRegex.Matches(Text)
+                        Dim sections As MatchCollection = sectionsRegex.Matches(text)
 
                         For Each match As Match In sections
                             Dim name As String = match.Groups(2).Value.Trim
@@ -847,8 +845,8 @@ Namespace Huggle
             Return Date.Compare(x._Time, y._Time)
         End Function
 
-        Public Shared Function IsKnown(ByVal Rev As Revision) As Boolean
-            Return (Rev IsNot Nothing AndAlso Rev IsNot Revision.Null)
+        Public Shared Function IsKnown(ByVal rev As Revision) As Boolean
+            Return (rev IsNot Nothing AndAlso rev IsNot Revision.Null)
         End Function
 
         Public Overrides ReadOnly Property LabelBackColor() As Color
@@ -865,13 +863,13 @@ Namespace Huggle
 
         Public Overrides ReadOnly Property FilterVars() As Dictionary(Of String, Object)
             Get
-                Return New Object() { _
-                    "type", "edit", _
-                    "page", Page, _
-                    "user", User, _
-                    "summary", Summary, _
-                    "section", If(Section, ""), _
-                    "change", If(Change = Integer.MinValue, Nothing, Change) _
+                Return New Object() {
+                    "type", "edit",
+                    "page", Page,
+                    "user", User,
+                    "summary", Summary,
+                    "section", If(Section, ""),
+                    "change", If(Change = Integer.MinValue, Nothing, Change)
                     }.ToDictionary(Of String, Object)()
             End Get
         End Property
@@ -880,23 +878,21 @@ Namespace Huggle
 
     Public Class EditEventArgs : Inherits EventArgs
 
-        Private _Edit As Revision
+        Private _Rev As Revision
 
-        Public Sub New(ByVal Edit As Revision)
-            _Edit = Edit
+        Public Sub New(ByVal rev As Revision)
+            _Rev = rev
         End Sub
 
-        Public ReadOnly Property Edit() As Revision
+        Public ReadOnly Property Rev() As Revision
             Get
-                Return _Edit
+                Return _Rev
             End Get
         End Property
 
     End Class
 
     Public Class RevisionCollection
-
-        Private _Total As Integer
 
         Private Wiki As Wiki
         Private ReadOnly _All As New Dictionary(Of Integer, Revision)
@@ -911,20 +907,13 @@ Namespace Huggle
             End Get
         End Property
 
-        Default Public ReadOnly Property Item(ByVal Id As Integer) As Revision
-            Get
-                If Not All.ContainsKey(Id) Then All.Add(Id, New Revision(Wiki, Id))
-                Return All(Id)
-            End Get
-        End Property
+        Public Property Count() As Integer = -1
 
-        Public Property Total() As Integer
+        Default Public ReadOnly Property Item(ByVal id As Integer) As Revision
             Get
-                Return _Total
+                If Not All.ContainsKey(id) Then All.Add(id, New Revision(Wiki, id))
+                Return All(id)
             End Get
-            Set(ByVal value As Integer)
-                _Total = value
-            End Set
         End Property
 
     End Class

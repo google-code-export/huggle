@@ -109,17 +109,17 @@ Namespace Huggle.Scripting
                     End If
 
                     'Media revision properties
-                Case "comment" : Return New Token(CType(arg(0).Value, MediaRevision).Comment)
-                Case "depth" : Return New Token(CType(arg(0).Value, MediaRevision).Depth)
-                Case "hash" : Return New Token(CType(arg(0).Value, MediaRevision).Hash)
-                Case "height" : Return New Token(CType(arg(0).Value, MediaRevision).Height)
-                Case "type" : Return New Token(CType(arg(0).Value, MediaRevision).Type)
-                Case "uploader" : Return New Token(CType(arg(0).Value, MediaRevision).User)
-                Case "url" : Return New Token(CType(arg(0).Value, MediaRevision).Url)
-                Case "width" : Return New Token(CType(arg(0).Value, MediaRevision).Width)
+                Case "comment" : Return New Token(CType(arg(0).Value, FileRevision).Comment)
+                Case "depth" : Return New Token(CType(arg(0).Value, FileRevision).Depth)
+                Case "hash" : Return New Token(CType(arg(0).Value, FileRevision).Hash)
+                Case "height" : Return New Token(CType(arg(0).Value, FileRevision).Height)
+                Case "type" : Return New Token(CType(arg(0).Value, FileRevision).Type)
+                Case "uploader" : Return New Token(CType(arg(0).Value, FileRevision).User)
+                Case "url" : Return New Token(CType(arg(0).Value, FileRevision).Url)
+                Case "width" : Return New Token(CType(arg(0).Value, FileRevision).Width)
 
                 Case "metadata"
-                    Dim Rev As MediaRevision = CType(arg(0).Value, MediaRevision)
+                    Dim Rev As FileRevision = CType(arg(0).Value, FileRevision)
                     Dim Result As New ScriptTable
                     Result.Columns = New List(Of String)
                     Result.Columns.Add("Name")
@@ -414,7 +414,7 @@ Namespace Huggle.Scripting
                 Case "externallinkusage" : Return ListQuery(context, New Lists.ExternalLinkUsageQuery(Session, arg(0).String), original)
                 Case "history" : Return ListQuery(context, New Lists.HistoryQuery(Session, Wiki.Pages.FromString(arg(0).String)), original)
                 Case "logs" : Return ListQuery(context, New Lists.LogsQuery(Session), original)
-                Case "mediausage" : Return ListQuery(context, New Lists.MediaUsageQuery(Session, Wiki.Media(arg(0).String)), original)
+                Case "mediausage" : Return ListQuery(context, New Lists.MediaUsageQuery(Session, Wiki.Files(arg(0).String)), original)
                 Case "links" : Return ListQuery(context, New Lists.LinksQuery(Session, Wiki.Pages.FromString(arg(0).String)), original)
                 Case "prefix" : Return ListQuery(context, New Lists.PrefixQuery(Session, Wiki.Pages.FromString(arg(0).String).Space, Wiki.Pages.FromString(arg(0).String).Name), original)
                 Case "redirects" : Return ListQuery(context, New Lists.RedirectsQuery(Session, Wiki.Pages.FromString(arg(0).String)), original)
@@ -432,27 +432,27 @@ Namespace Huggle.Scripting
                 Case "ignoredusers" : Return New Token(New ArrayList(Wiki.Users.Ignored))
 
                 Case "pagecount"
-                    If Wiki.Pages.Total = -1 Then
+                    If Wiki.Pages.Count = -1 Then
                         RequestInfo("stats")
                         Return Undefined
                     Else
-                        Return New Token(Wiki.Pages.Total)
+                        Return New Token(Wiki.Pages.Count)
                     End If
 
                 Case "articlecount"
-                    If Wiki.Articles = -1 Then
+                    If Wiki.ContentPages = -1 Then
                         RequestInfo("stats")
                         Return Undefined
                     Else
-                        Return New Token(Wiki.Articles)
+                        Return New Token(Wiki.ContentPages)
                     End If
 
                 Case "usercount"
-                    If Wiki.Users.Total = -1 Then
+                    If Wiki.Users.Count = -1 Then
                         RequestInfo("stats")
                         Return Undefined
                     Else
-                        Return New Token(Wiki.Users.Total)
+                        Return New Token(Wiki.Users.Count)
                     End If
 
                 Case "admincount"
@@ -472,19 +472,19 @@ Namespace Huggle.Scripting
                     End If
 
                 Case "mediacount"
-                    If Wiki.Media.Total = -1 Then
+                    If Wiki.Files.Count = -1 Then
                         RequestInfo("stats")
                         Return Undefined
                     Else
-                        Return New Token(Wiki.Media.Total)
+                        Return New Token(Wiki.Files.Count)
                     End If
 
                 Case "revisioncount"
-                    If Wiki.Revisions.Total = -1 Then
+                    If Wiki.Revisions.Count = -1 Then
                         RequestInfo("stats")
                         Return Undefined
                     Else
-                        Return New Token(Wiki.Revisions.Total)
+                        Return New Token(Wiki.Revisions.Count)
                     End If
 
                 Case "categorycount"
