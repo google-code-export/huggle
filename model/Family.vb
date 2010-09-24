@@ -11,6 +11,7 @@ Namespace Huggle
         Private _Blocks As New Dictionary(Of Integer, GlobalBlock)
         Private _Config As FamilyConfig
         Private _GlobalGroups As GlobalGroupCollection
+        Private _GlobalSpamLists As SpamListCollection
         Private _GlobalUsers As GlobalUserCollection
         Private _Wikis As FamilyWikiCollection
 
@@ -54,7 +55,14 @@ Namespace Huggle
             End Get
         End Property
 
-        Public Property GlobalTitleBlacklist As TitleBlacklist
+        Public ReadOnly Property GlobalSpamLists As SpamListCollection
+            Get
+                If _GlobalSpamLists Is Nothing Then _GlobalSpamLists = New SpamListCollection(CentralWiki)
+                Return _GlobalSpamLists
+            End Get
+        End Property
+
+        Public Property GlobalTitleBlacklist As TitleList
 
         Public ReadOnly Property GlobalUsers() As GlobalUserCollection
             Get

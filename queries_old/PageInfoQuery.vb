@@ -7,10 +7,23 @@ Namespace Huggle.Actions
 
     Class PageInfoQuery : Inherits Query
 
-        Public Property Pages As List(Of Page)
+        Private _Pages As List(Of Page)
 
-        Private Categories, Content, Diffs, Externals, LangLinks, Links As Boolean
+        Private Categories, Diffs, Externals, LangLinks, Links As Boolean
         Private Media, OldRevision, Revision, Transclusions As Boolean
+
+        Public Sub New(ByVal session As Session)
+            MyBase.New(session, Msg("pageinfo-desc"))
+            _Pages = New List(Of Page)
+        End Sub
+
+        Public Property Content As Boolean
+
+        Public ReadOnly Property Pages As List(Of Page)
+            Get
+                Return _Pages
+            End Get
+        End Property
 
         Public Sub New(ByVal session As Session, ByVal Pages As List(Of Page), _
             Optional ByVal Categories As Boolean = False, Optional ByVal Content As Boolean = False, _
@@ -26,7 +39,7 @@ Namespace Huggle.Actions
             Me.LangLinks = LangLinks
             Me.Links = Links
             Me.Media = Media
-            Me.Pages = Pages
+            _Pages = Pages
             Me.Transclusions = Transclusions
             Me.OldRevision = OldRevision
             Me.Revision = Revision

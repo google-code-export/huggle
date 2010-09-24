@@ -22,13 +22,9 @@ Namespace Huggle
         End Property
 
         Public Property Description() As String
-
         Public Property Name() As String
-
         Public Property Pages() As List(Of Page)
-
         Public Property Type() As String
-
         Public Property TypeDesc() As String
 
         Public ReadOnly Property Wiki() As Wiki
@@ -38,7 +34,7 @@ Namespace Huggle
         End Property
 
         Public Overrides Function ToString() As String
-            Return _Name
+            Return Name
         End Function
 
     End Class
@@ -64,6 +60,14 @@ Namespace Huggle
                 Return _All(code)
             End Get
         End Property
+
+        Public Function FromName(ByVal name As String) As Gadget
+            For Each item As Gadget In All
+                If item.Code = name OrElse item.Name = name Then Return item
+            Next item
+
+            Return Nothing
+        End Function
 
         Public Sub Clear()
             _All.Clear()

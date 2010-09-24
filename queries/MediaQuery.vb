@@ -6,21 +6,21 @@ Namespace Huggle.Actions
 
     Public Class MediaQuery : Inherits Query
 
-        Private _Media As Media
+        Private _Media As File
         Private _ThumbSize As Integer
 
-        Public Sub New(ByVal session As Session, ByVal media As Media)
+        Public Sub New(ByVal session As Session, ByVal media As File)
             MyBase.New(session, Msg("media-desc", media))
             _Media = media
         End Sub
 
-        Public Sub New(ByVal session As Session, ByVal media As Media, ByVal thumbSize As Integer)
+        Public Sub New(ByVal session As Session, ByVal media As File, ByVal thumbSize As Integer)
             MyBase.New(session, Msg("mediathumb-desc", media, thumbSize))
             _Media = media
             _ThumbSize = thumbSize
         End Sub
 
-        Public ReadOnly Property Media() As Media
+        Public ReadOnly Property Media() As File
             Get
                 Return _Media
             End Get

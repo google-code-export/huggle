@@ -11,7 +11,6 @@ Namespace Huggle
 
     Class UIRequest : Inherits Request
 
-        Private _Processing As Boolean
         Private _Query As QueryString
         Private _Response As String
 
@@ -25,17 +24,7 @@ Namespace Huggle
 
             MyBase.Description = description
             If data IsNot Nothing Then Me.Data = Encoding.UTF8.GetBytes(data.ToUrlString)
-            Processing = True
         End Sub
-
-        Public Property Processing() As Boolean
-            Get
-                Return _Processing
-            End Get
-            Set(ByVal value As Boolean)
-                _Processing = value
-            End Set
-        End Property
 
         Public ReadOnly Property Query() As QueryString
             Get

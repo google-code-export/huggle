@@ -45,7 +45,7 @@ Namespace Huggle
         Private _ExternalLinks As New List(Of String)
         Private _LangLinks As New List(Of String)
         Private _Links As New List(Of Page)
-        Private _Media As New List(Of Media)
+        Private _Media As New List(Of File)
         Private _Redirects As New List(Of Page)
         Private _Sections As New List(Of String)
         Private _TranscludedBy As New List(Of Page)
@@ -482,7 +482,7 @@ Namespace Huggle
             End Set
         End Property
 
-        Public ReadOnly Property Media() As List(Of Media)
+        Public ReadOnly Property Media() As List(Of File)
             Get
                 Return _Media
             End Get
@@ -798,8 +798,6 @@ Namespace Huggle
         Private ReadOnly _Ignored As New List(Of Page)
         Private ReadOnly _Priority As New List(Of String)
 
-        Private _Total As Integer = -1
-
         Public Sub New(ByVal Wiki As Wiki)
             Me.Wiki = Wiki
         End Sub
@@ -809,6 +807,8 @@ Namespace Huggle
                 Return _All
             End Get
         End Property
+
+        Public Property Count() As Integer = -1
 
         Public ReadOnly Property Ignored() As List(Of Page)
             Get
@@ -820,15 +820,6 @@ Namespace Huggle
             Get
                 Return _Priority
             End Get
-        End Property
-
-        Public Property Total() As Integer
-            Get
-                Return _Total
-            End Get
-            Set(ByVal value As Integer)
-                _Total = value
-            End Set
         End Property
 
         Default Public ReadOnly Property Item(ByVal title As String) As Page

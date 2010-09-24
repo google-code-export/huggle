@@ -5,7 +5,7 @@ Imports System.Web.HttpUtility
 Namespace Huggle.Actions
 
     'Load essential wiki and user configuration only --
-    'non-essential configuration is loaded later by LoadExtraWikiConfig
+    'non-essential configuration is loaded later by ExtraWikiConfig
 
     Public Class LoadUserConfig : Inherits Query
 
@@ -40,11 +40,12 @@ Namespace Huggle.Actions
                 meta.Add("siteinfo", "allmessages")
                 query.Add("ammessages", Config.Internal.WikiMessages)
                 query.Add("siprop", "general|namespaces|namespacealiases|extensions|rightsinfo|usergroups")
+                query.Add("sinumberingroup", True)
                 query.Add("tgprop", "name|displayname|description|hitcount")
                 query.Add("tglimit", "max")
                 titles.Add(Config.Global.WikiConfigPageName)
 
-                If Wiki.Extensions.All.Count = 0 OrElse Wiki.Extensions.Contains("AbuseFilter") Then
+                If Wiki.Extensions.All.Count = 0 OrElse Wiki.Extensions.Contains(Extension.AbuseFilter) Then
                     list.Add("abusefilters")
                     query.Add("abflimit", "max")
                     query.Add("abfprop", "id|description|actions|hits|lasteditor|lastedittime|status|private")
@@ -83,6 +84,10 @@ Namespace Huggle.Actions
                 User.GlobalUser.Config.IsLocalCopy = False
                 Log.Debug("Loaded global user details for {0} [R]".FormatWith(User.GlobalUser.FullName))
             End If
+
+            Dim moduleReq As New ApiModuleQuery(Session)
+            moduleReq.Start()
+            If moduleReq.IsFailed Then OnFail(moduleReq.Result)
 
             OnSuccess()
         End Sub

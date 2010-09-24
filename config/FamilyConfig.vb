@@ -39,8 +39,8 @@ Namespace Huggle
 
         Public Sub LoadLocal()
             Try
-                If File.Exists(LocalPath) Then
-                    Load(File.ReadAllText(LocalPath, Encoding.UTF8))
+                If IO.File.Exists(LocalPath) Then
+                    Load(IO.File.ReadAllText(LocalPath, Encoding.UTF8))
                     Log.Debug("Loaded family config for {0} [L]".FormatWith(Family.Name))
                 Else
                     Config.Global.NeedsUpdate = True
@@ -76,9 +76,10 @@ Namespace Huggle
 
                         Case "logo" : Logo = value
                         Case "name" : Family.Name = value
+                        Case "spam-list" : ConfigRead.ReadSpamLists(Family.GlobalSpamLists, "family", value)
 
                         Case "title-blacklist"
-                            Family.GlobalTitleBlacklist = New TitleBlacklist(Family.CentralWiki.Pages.FromString(value))
+                            Family.GlobalTitleBlacklist = New TitleList(Family.CentralWiki.Pages.FromString(value))
 
                         Case "title-blacklist-entries"
                             Dim entries As New List(Of String)
@@ -87,7 +88,7 @@ Namespace Huggle
                                 entries.Add(entry.Value)
                             Next entry
 
-                            Family.GlobalTitleBlacklist.Text = entries.Join(LF)
+                            'Family.GlobalTitleBlacklist.Location.Text = entries.Join(LF)
                     End Select
 
                 Catch ex As SystemException
@@ -99,7 +100,7 @@ Namespace Huggle
         Public ReadOnly Property NeedsUpdate() As Boolean
             Get
                 Try
-                    Return File.GetLastWriteTime(LocalPath).Add(CacheTime) < Date.Now
+                    Return IO.File.GetLastWriteTime(LocalPath).Add(CacheTime) < Date.Now
                 Catch ex As IOException
                     Return True
                 End Try
@@ -110,7 +111,7 @@ Namespace Huggle
             Try
                 Dim path As String = IO.Path.GetDirectoryName(LocalPath)
                 If Not Directory.Exists(path) Then Directory.CreateDirectory(path)
-                File.WriteAllText(LocalPath, Config.MakeConfig(WriteConfig(True)), Encoding.UTF8)
+                IO.File.WriteAllText(LocalPath, Config.MakeConfig(WriteConfig(True)), Encoding.UTF8)
                 Log.Debug("Saved family config for {0} [L]".FormatWith(Family.Name))
 
             Catch ex As IOException
@@ -130,13 +131,15 @@ Namespace Huggle
             If Family.GlobalTitleBlacklist IsNot Nothing Then
                 items.Add("title-blacklist", Family.GlobalTitleBlacklist.Location.Title)
 
-                Dim entries As New Dictionary(Of String, Object)
+                If Family.GlobalTitleBlacklist.IsLoaded Then
+                    Dim entries As New Dictionary(Of String, Object)
 
-                For i As Integer = 0 To Family.GlobalTitleBlacklist.Entries.Count - 1
-                    entries.Add(CStr(i).PadLeft(4, "0"c), Family.GlobalTitleBlacklist.Entries(i))
-                Next i
+                    For i As Integer = 0 To Family.GlobalTitleBlacklist.Entries.Count - 1
+                        entries.Add(i.ToString.PadLeft(4, "0"c), Family.GlobalTitleBlacklist.Entries(i))
+                    Next i
 
-                items.Add("title-blacklist-entries", entries)
+                    items.Add("title-blacklist-entries", entries)
+                End If
             End If
 
             If local Then

@@ -78,7 +78,7 @@ Namespace Huggle
                 If IsDefault Then Return True
 
                 Try
-                    If File.Exists(LocalPath) Then Return File.GetLastWriteTime(LocalPath).Add(CacheTime) < Date.Now
+                    If IO.File.Exists(LocalPath) Then Return IO.File.GetLastWriteTime(LocalPath).Add(CacheTime) < Date.Now
                 Catch ex As IOException
                 End Try
 
@@ -98,8 +98,8 @@ Namespace Huggle
 
         Public Sub LoadLocal()
             Try
-                If File.Exists(LocalPath) Then
-                    Dim text As String = File.ReadAllText(LocalPath, Encoding.UTF8)
+                If IO.File.Exists(LocalPath) Then
+                    Dim text As String = IO.File.ReadAllText(LocalPath, Encoding.UTF8)
                     Load(text)
                     _IsDefault = False
                     _IsLocalCopy = True
@@ -117,7 +117,7 @@ Namespace Huggle
             Try
                 Dim path As String = IO.Path.GetDirectoryName(LocalPath)
                 If Not Directory.Exists(path) Then Directory.CreateDirectory(path)
-                File.WriteAllText(LocalPath, Config.MakeConfig(WriteConfig(True)), Encoding.UTF8)
+                IO.File.WriteAllText(LocalPath, Config.MakeConfig(WriteConfig(True)), Encoding.UTF8)
                 Log.Debug("Saved user config for {0} [L]".FormatWith(User.FullName))
 
             Catch ex As IOException

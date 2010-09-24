@@ -7,17 +7,12 @@ Imports System.Text.RegularExpressions
 Namespace Huggle
 
     <Diagnostics.DebuggerDisplay("{Name}")> _
-    Public Class Media
+    Public Class File
 
-        Private _DetailsKnown As Boolean
-        Private _Duplicates As New List(Of Media)
-        Private _Exists As Boolean
-        Private _FirstRevision As MediaRevision
+        Private _Duplicates As New List(Of File)
         Private _GlobalUses As New List(Of Page)
-        Private _IsShared As Boolean
-        Private _LastRevision As MediaRevision
         Private _Page As Page
-        Private _Revisions As New List(Of MediaRevision)
+        Private _Revisions As New List(Of FileRevision)
         Private _Uses As New List(Of Page)
         Private _Wiki As Wiki
 
@@ -30,7 +25,7 @@ Namespace Huggle
         Public Property Content() As Stream
             Get
                 Try
-                    If File.Exists(FilePath) Then Return New MemoryStream(File.ReadAllBytes(FilePath))
+                    If IO.File.Exists(FilePath) Then Return New MemoryStream(IO.File.ReadAllBytes(FilePath))
                 Catch ex As IOException
                     Log.Write("Failed to load file '{0}'".FormatWith(Name))
                 End Try
@@ -48,33 +43,19 @@ Namespace Huggle
 
         Public ReadOnly Property ContentKnown() As Boolean
             Get
-                Return File.Exists(FilePath)
+                Return IO.File.Exists(FilePath)
             End Get
         End Property
 
         Public Property DetailsKnown() As Boolean
-            Get
-                Return _DetailsKnown
-            End Get
-            Set(ByVal value As Boolean)
-                _DetailsKnown = value
-            End Set
-        End Property
 
-        Public ReadOnly Property Duplicates() As List(Of Media)
+        Public ReadOnly Property Duplicates() As List(Of File)
             Get
                 Return _Duplicates
             End Get
         End Property
 
         Public Property Exists() As Boolean
-            Get
-                Return _Exists
-            End Get
-            Set(ByVal value As Boolean)
-                _Exists = value
-            End Set
-        End Property
 
         Private ReadOnly Property FilePath() As String
             Get
@@ -82,14 +63,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Public Property FirstRevision() As MediaRevision
-            Get
-                Return _FirstRevision
-            End Get
-            Set(ByVal value As MediaRevision)
-                _FirstRevision = value
-            End Set
-        End Property
+        Public Property FirstRevision() As FileRevision
 
         Public ReadOnly Property GlobalUses() As List(Of Page)
             Get
@@ -98,22 +72,7 @@ Namespace Huggle
         End Property
 
         Public Property IsShared() As Boolean
-            Get
-                Return _IsShared
-            End Get
-            Set(ByVal value As Boolean)
-                _IsShared = value
-            End Set
-        End Property
-
-        Public Property LastRevision() As MediaRevision
-            Get
-                Return _LastRevision
-            End Get
-            Set(ByVal value As MediaRevision)
-                _LastRevision = value
-            End Set
-        End Property
+        Public Property LastRevision() As FileRevision
 
         Public ReadOnly Property Name() As String
             Get
@@ -127,7 +86,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Public ReadOnly Property Revisions() As List(Of MediaRevision)
+        Public ReadOnly Property Revisions() As List(Of FileRevision)
             Get
                 Return _Revisions
             End Get
@@ -136,7 +95,7 @@ Namespace Huggle
         Public Property Thumb(ByVal size As Integer) As Stream
             Get
                 Try
-                    If File.Exists(ThumbPath(size)) Then Return New MemoryStream(File.ReadAllBytes(ThumbPath(size)))
+                    If IO.File.Exists(ThumbPath(size)) Then Return New MemoryStream(IO.File.ReadAllBytes(ThumbPath(size)))
                 Catch ex As IOException
                     Log.Write("Failed to load file '{0}'".FormatWith(Name))
                 End Try
@@ -154,7 +113,7 @@ Namespace Huggle
 
         Public ReadOnly Property ThumbKnown(ByVal size As Integer) As Boolean
             Get
-                Return (File.Exists(ThumbPath(size)))
+                Return (IO.File.Exists(ThumbPath(size)))
             End Get
         End Property
 
@@ -204,7 +163,7 @@ Namespace Huggle
             If Not Directory.Exists(Path.GetDirectoryName(fileName)) _
                 Then Directory.CreateDirectory(Path.GetDirectoryName(fileName))
 
-            Dim fileStream As FileStream = File.OpenWrite(fileName)
+            Dim fileStream As FileStream = IO.File.OpenWrite(fileName)
             Dim buffer(255) As Byte, size As Integer
             stream.Seek(0, SeekOrigin.Begin)
 
@@ -218,62 +177,22 @@ Namespace Huggle
 
     End Class
 
-    Public Class MediaRevision
+    Public Class FileRevision
 
-        Private _Comment As String
-        Private _Depth As Integer
-        Private _Hash As String
-        Private _Height As Integer
+        Private _File As File
         Private _IsRevert As Boolean
-        Private _Media As Media
         Private _Metadata As New Dictionary(Of String, String)
-        Private _Size As Integer
         Private _Time As Date
-        Private _Type As String
-        Private _Url As Uri
-        Private _User As User
-        Private _Width As Integer
 
-        Public Sub New(ByVal media As Media, ByVal time As Date)
-            _Media = media
+        Public Sub New(ByVal file As File, ByVal time As Date)
+            _File = file
             _Time = time
         End Sub
 
         Public Property Comment() As String
-            Get
-                Return _Comment
-            End Get
-            Set(ByVal value As String)
-                _Comment = value
-            End Set
-        End Property
-
         Public Property Depth() As Integer
-            Get
-                Return _Depth
-            End Get
-            Set(ByVal value As Integer)
-                _Depth = value
-            End Set
-        End Property
-
         Public Property Hash() As String
-            Get
-                Return _Hash
-            End Get
-            Set(ByVal value As String)
-                _Hash = value
-            End Set
-        End Property
-
         Public Property Height() As Integer
-            Get
-                Return _Height
-            End Get
-            Set(ByVal value As Integer)
-                _Height = value
-            End Set
-        End Property
 
         Public ReadOnly Property IsRevert() As Boolean
             Get
@@ -281,9 +200,9 @@ Namespace Huggle
             End Get
         End Property
 
-        Public ReadOnly Property Media() As Media
+        Public ReadOnly Property Media() As File
             Get
-                Return _Media
+                Return _File
             End Get
         End Property
 
@@ -294,13 +213,6 @@ Namespace Huggle
         End Property
 
         Public Property Size() As Integer
-            Get
-                Return _Size
-            End Get
-            Set(ByVal value As Integer)
-                _Size = value
-            End Set
-        End Property
 
         Public ReadOnly Property Time() As Date
             Get
@@ -309,40 +221,9 @@ Namespace Huggle
         End Property
 
         Public Property Type() As String
-            Get
-                Return _Type
-            End Get
-            Set(ByVal value As String)
-                _Type = value
-            End Set
-        End Property
-
         Public Property Url() As Uri
-            Get
-                Return _Url
-            End Get
-            Set(ByVal value As Uri)
-                _Url = value
-            End Set
-        End Property
-
         Public Property User() As User
-            Get
-                Return _User
-            End Get
-            Set(ByVal value As User)
-                _User = value
-            End Set
-        End Property
-
         Public Property Width() As Integer
-            Get
-                Return _Width
-            End Get
-            Set(ByVal value As Integer)
-                _Width = value
-            End Set
-        End Property
 
         Public Overrides Function ToString() As String
             Return Media.Name & ", " & Time.ToLongDateString & " " & Time.ToLongTimeString
@@ -363,48 +244,39 @@ Namespace Huggle
 
     End Class
 
-    Public Class MediaCollection
+    Public Class FileCollection
 
         Private Wiki As Wiki
-        Private ReadOnly _All As New Dictionary(Of Page, Media)
+        Private ReadOnly _All As New Dictionary(Of Page, File)
 
-        Private _Total As Integer = -1
-
-        Public Sub New(ByVal Wiki As Wiki)
-            Me.Wiki = Wiki
+        Public Sub New(ByVal wiki As Wiki)
+            Me.Wiki = wiki
         End Sub
 
-        Public ReadOnly Property All() As Dictionary(Of Page, Media)
+        Public ReadOnly Property All() As Dictionary(Of Page, File)
             Get
                 Return _All
             End Get
         End Property
 
-        Public Property Total() As Integer
-            Get
-                Return _Total
-            End Get
-            Set(ByVal value As Integer)
-                _Total = value
-            End Set
-        End Property
+        Public Property Count() As Integer = -1
 
-        Public Function FromString(ByVal name As String) As Media
+        Public Function FromString(ByVal name As String) As File
             name = Wiki.Pages.SanitizeTitle(name)
             If name Is Nothing Then Return Nothing
             Return Item(Wiki.Pages.FromNsAndName(Wiki.Spaces.File, name))
         End Function
 
-        Default Public ReadOnly Property Item(ByVal name As String) As Media
+        Default Public ReadOnly Property Item(ByVal name As String) As File
             Get
                 Return Item(Wiki.Pages.FromNsAndName(Wiki.Spaces.File, name))
             End Get
         End Property
 
-        Default Public ReadOnly Property Item(ByVal page As Page) As Media
+        Default Public ReadOnly Property Item(ByVal page As Page) As File
             Get
                 If page Is Nothing OrElse page.Space IsNot Wiki.Spaces.File Then Return Nothing
-                If Not All.ContainsKey(page) Then All.Add(page, New Media(Wiki, page))
+                If Not All.ContainsKey(page) Then All.Add(page, New File(Wiki, page))
                 Return All(page)
             End Get
         End Property

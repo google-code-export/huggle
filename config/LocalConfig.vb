@@ -29,13 +29,13 @@ Namespace Huggle
         Public Sub Load()
             Dim configFile As String = ConfigPath & "config.txt"
 
-            If Not File.Exists(configFile) Then
+            If Not IO.File.Exists(configFile) Then
                 Config.Local.IsFirstRun = True
             Else
                 Dim Text As String = ""
 
                 Try
-                    If File.Exists(configFile) Then Text = File.ReadAllText(configFile, Encoding.UTF8)
+                    If IO.File.Exists(configFile) Then Text = IO.File.ReadAllText(configFile, Encoding.UTF8)
                 Catch ex As IOException
                     Log.Write(Msg("config-loadfail", ex.Message))
                 End Try
@@ -122,7 +122,7 @@ Namespace Huggle
             Dim Text As String = Config.MakeConfig(items)
 
             Try
-                File.WriteAllText(ConfigPath & "config.txt", Text, encoding.UTF8)
+                IO.File.WriteAllText(ConfigPath & "config.txt", Text, Encoding.UTF8)
                 Log.Debug("Saved local config")
 
             Catch ex As UnauthorizedAccessException

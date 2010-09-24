@@ -13,12 +13,9 @@ Namespace Huggle
 
         Private _Families As FamilyCollection
         Private _Languages As LanguageCollection
+        Private _Randomness As New Random
         Private _Sessions As SessionCollection
         Private _Wikis As WikiCollection
-
-        Public Sub New()
-
-        End Sub
 
         Public Sub Run()
             'Show first-time preferences form
@@ -95,6 +92,12 @@ Namespace Huggle
             End Get
         End Property
 
+        Public ReadOnly Property Randomness As Random
+            Get
+                Return _Randomness
+            End Get
+        End Property
+
         Public ReadOnly Property Sessions() As SessionCollection
             Get
                 If _Sessions Is Nothing Then _Sessions = New SessionCollection
@@ -139,7 +142,7 @@ Namespace Huggle
             Families.Wikimedia.Feed = New Feed(Families.Wikimedia, "irc.wikimedia.org", 6667)
             Families.Wikimedia.FileWiki = commonsWiki
             Families.Wikimedia.Name = "Wikimedia"
-            Families.Wikimedia.GlobalTitleBlacklist = New TitleBlacklist(metaWiki.Pages("Title blacklist"))
+            Families.Wikimedia.GlobalTitleBlacklist = New TitleList(metaWiki.Pages("Title blacklist"))
 
             Wikis.Global = metaWiki
 

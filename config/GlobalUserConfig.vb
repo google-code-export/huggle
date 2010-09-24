@@ -30,8 +30,8 @@ Namespace Huggle
 
         Public Sub LoadLocal()
             Try
-                If File.Exists(LocalPath) Then
-                    Load(File.ReadAllText(LocalPath, Encoding.UTF8))
+                If IO.File.Exists(LocalPath) Then
+                    Load(IO.File.ReadAllText(LocalPath, Encoding.UTF8))
                     Log.Debug("Loaded global user config for {0} [L]".FormatWith(GlobalUser.FullName))
                 Else
                     If IsDefault Then Config.Global.NeedsUpdate = True
@@ -112,7 +112,7 @@ Namespace Huggle
         Public ReadOnly Property NeedsUpdate() As Boolean
             Get
                 Try
-                    Return (File.GetLastWriteTime(LocalPath).Add(CacheTime) < Date.Now)
+                    Return (IO.File.GetLastWriteTime(LocalPath).Add(CacheTime) < Date.Now)
                 Catch ex As IOException
                     Return True
                 End Try
@@ -123,7 +123,7 @@ Namespace Huggle
             Try
                 Dim path As String = IO.Path.GetDirectoryName(LocalPath)
                 If Not Directory.Exists(path) Then Directory.CreateDirectory(path)
-                File.WriteAllText(LocalPath, Config.MakeConfig(WriteConfig(True)), Encoding.UTF8)
+                IO.File.WriteAllText(LocalPath, Config.MakeConfig(WriteConfig(True)), Encoding.UTF8)
                 Log.Debug("Saved global user config for {0} [L]".FormatWith(GlobalUser.FullName))
 
             Catch ex As IOException

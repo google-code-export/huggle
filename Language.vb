@@ -74,45 +74,50 @@ Namespace Huggle
             Next item
         End Sub
 
-        Public Sub LocalizeControl(ByVal Control As Control, Optional ByVal Tip As ToolTip = Nothing)
-            LocalizeControl(Control, Control.Name.Replace("Form", "").Replace("Tab", "").ToLower, Tip)
+        Public Sub Localize(ByVal control As Control)
+            Dim prefix As String = control.Name.ToLower
+            If control.Name.EndsWith("View") Then prefix = "view-" & control.Name.Remove("View").ToLower
+            Localize(control, prefix, Nothing)
         End Sub
 
         'Localize text of controls where needed; recurse through all child controls
-        Private Sub LocalizeControl(ByVal Control As Control, ByVal Prefix As String, ByVal Tip As ToolTip)
-            For Each Item As Control In Control.Controls
-                If TypeOf Item Is Label OrElse TypeOf Item Is CheckBox OrElse TypeOf Item Is RadioButton OrElse _
-                    TypeOf Item Is Button OrElse TypeOf Item Is GroupBox Then
+        Private Sub Localize(ByVal control As Control, ByVal prefix As String, Optional ByVal tip As ToolTip = Nothing)
+            If TypeOf control Is Form AndAlso Messages.ContainsKey(prefix & "-title") _
+                Then control.Text = Msg(prefix & "-title")
 
-                    Dim ItemMsg As String = Item.Name.Replace("Label", "").Replace("Button", "").ToLower
-                    Dim PrefixedMsg As String = Prefix & "-" & ItemMsg
+            For Each child As Control In control.Controls
+                If TypeOf child Is Label OrElse TypeOf child Is CheckBox OrElse TypeOf child Is RadioButton OrElse _
+                    TypeOf child Is Button OrElse TypeOf child Is GroupBox Then
 
-                    If Item.Text <> "" Then
+                    Dim ItemMsg As String = child.Name.Replace("Label", "").Replace("Button", "").ToLower
+                    Dim PrefixedMsg As String = prefix & "-" & ItemMsg
+
+                    If child.Text <> "" Then
                         If Messages.ContainsKey(PrefixedMsg) Then
-                            Item.Text = Msg(PrefixedMsg)
+                            child.Text = Msg(PrefixedMsg)
                         ElseIf Messages.ContainsKey("a-" & ItemMsg) Then
-                            Item.Text = Msg("" & ItemMsg)
+                            child.Text = Msg("" & ItemMsg)
                         End If
                     End If
 
                     'Tooltips
-                    If TypeOf Item Is Button AndAlso Tip IsNot Nothing _
+                    If TypeOf child Is Button AndAlso tip IsNot Nothing _
                         AndAlso Messages.ContainsKey(PrefixedMsg & "-tip") Then
 
                         Dim ToolTip As String = Msg(PrefixedMsg & "-tip")
                         If Shortcut.All.ContainsKey(PrefixedMsg) _
                             Then ToolTip &= " [" & Shortcut.All(PrefixedMsg).ToString & "]"
-                        Tip.SetToolTip(Item, ToolTip)
+                        tip.SetToolTip(child, ToolTip)
                     End If
 
-                ElseIf TypeOf Item Is ToolStrip Then
-                    For Each ToolItem As ToolStripItem In CType(Item, ToolStrip).Items
-                        LocalizeToolStripItem(ToolItem, Prefix)
+                ElseIf TypeOf child Is ToolStrip Then
+                    For Each ToolItem As ToolStripItem In CType(child, ToolStrip).Items
+                        LocalizeToolStripItem(ToolItem, prefix)
                     Next ToolItem
                 End If
 
-                LocalizeControl(Item, Prefix, Tip)
-            Next Item
+                Localize(child, prefix, tip)
+            Next child
         End Sub
 
         Private Sub LocalizeToolStripItem(ByVal Item As ToolStripItem, ByVal Prefix As String)

@@ -30,9 +30,9 @@ Namespace Huggle
         Public Sub Initialize()
             _Items.Clear()
 
-            If File.Exists(Path) Then
+            If IO.File.Exists(Path) Then
                 Try
-                    File.Delete(Path)
+                    IO.File.Delete(Path)
 
                 Catch ex As IOException
                     Debug("Could not delete log file: " & ex.Message)

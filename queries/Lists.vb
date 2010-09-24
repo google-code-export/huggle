@@ -143,7 +143,7 @@ Namespace Huggle.Actions
                 Dim data As String()
 
                 Try
-                    data = File.ReadAllLines(Filename)
+                    data = IO.File.ReadAllLines(Filename)
 
                 Catch ex As SystemException
                     OnFail(New Result(ex.Message, "ioerror")) : Return
@@ -151,7 +151,7 @@ Namespace Huggle.Actions
 
                 Items.Clear()
 
-                For Each title As String In File.ReadAllLines(Filename)
+                For Each title As String In IO.File.ReadAllLines(Filename)
                     If title.StartsWith("*[[") OrElse title.StartsWith("* [[") Then title = title.Substring(1)
                     title = Wiki.Pages.SanitizeTitle(title)
                     If title IsNot Nothing Then Items.Add(Wiki.Pages(title))
@@ -181,7 +181,7 @@ Namespace Huggle.Actions
 
             'Get global media usage
 
-            Sub New(ByVal session As Session, ByVal media As Media)
+            Sub New(ByVal session As Session, ByVal media As File)
                 MyBase.New(session, "prop", "globalusage", "gu", Nothing, Msg("listdesc-globalmediausage", media.Name))
             End Sub
 
@@ -299,7 +299,7 @@ Namespace Huggle.Actions
 
             'Get pages that include a file
 
-            Sub New(ByVal session As Session, ByVal media As Media)
+            Sub New(ByVal session As Session, ByVal media As File)
                 MyBase.New(session, "list", "imageusage", "iu", _
                     New QueryString("iutitle", Media), Msg("listdesc-mediausage", Media.Name))
             End Sub

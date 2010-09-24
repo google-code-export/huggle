@@ -2,6 +2,7 @@
 Imports System.Collections.Generic
 Imports System.IO
 Imports System.Text
+Imports System.Text.RegularExpressions
 
 Namespace Huggle.Actions
 
@@ -13,6 +14,11 @@ Namespace Huggle.Actions
         Private Password As String
         Private Url As Uri
         Private Username As String
+
+        Private Shared ReadOnly oldUrlRegex As New Regex _
+            ("< *script[^>]*>.*wgScriptPath *= *""([^""]*)""", RegexOptions.Compiled Or RegexOptions.Singleline)
+        Private Shared ReadOnly newUrlRegex As New Regex _
+            ("< *script[^>]*src *= *""([^""]*)/load.php", RegexOptions.Compiled Or RegexOptions.Singleline)
 
         Public Sub New(ByVal url As Uri)
             Me.New(url, Nothing, Nothing)
@@ -44,16 +50,18 @@ Namespace Huggle.Actions
             If testReq.IsFailed Then OnFail(Msg("addwiki-connection")) : Return
 
             Dim response As String = Encoding.UTF8.GetString(testReq.File.ToArray)
+            Dim oldMatch As Match = oldUrlRegex.Match(response)
+            Dim newMatch As Match = newUrlRegex.Match(response)
+            Dim siteUrl As Uri
 
-            If Not response.Contains("wgScriptPath=""") Then OnFail(Msg("addwiki-badurl")) : Return
+            If oldMatch.Success Then
+                siteUrl = New Uri(Url.Scheme & "://" & Url.Host & oldMatch.Groups(1).Value & "/")
 
-            Dim vars As New Dictionary(Of String, String)
-
-            For Each var As String In response.FromFirst("<script").FromFirst(">").ToFirst("</script>").Split(LF)
-                If var.Contains("=") Then vars.Add(var.ToFirst("=").Trim, var.FromFirst("=").Trim(","c, """"c))
-            Next var
-
-            Dim siteUrl As New Uri(vars("wgServer") & vars("wgScriptPath") & "/")
+            ElseIf newMatch.Success Then
+                siteUrl = New Uri(Url.Scheme & "://" & Url.Host & newMatch.Groups(1).Value & "/")
+            Else
+                OnFail(Msg("addwiki-badurl")) : Return
+            End If
 
             'Check if the wiki is already in the list
             For Each wiki As Wiki In App.Wikis.All
@@ -82,7 +90,7 @@ Namespace Huggle.Actions
                 New QueryString("action", "query", "meta", "siteinfo"))
 
             apiReq.Start()
-            If apiReq.Result.IsError Then OnFail(testReq.Result.Message) : Return
+            If apiReq.Result.IsError Then OnFail(apiReq.Result.Message) : Return
 
             OnSuccess()
         End Sub

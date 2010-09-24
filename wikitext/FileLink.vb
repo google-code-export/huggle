@@ -7,14 +7,14 @@ Namespace Huggle.Wikitext
 
         'Represents a file link
 
-        Private _File As Media, _Selection As Selection
+        Private _File As File, _Selection As Selection
 
-        Public Sub New(ByVal File As Media, ByVal Selection As Selection)
+        Public Sub New(ByVal File As File, ByVal Selection As Selection)
             _File = File
             _Selection = Selection
         End Sub
 
-        Public ReadOnly Property File() As Media
+        Public ReadOnly Property File() As File
             Get
                 Return _File
             End Get

@@ -1,4 +1,89 @@
-﻿wikiadd-explanation:             Use this form to add a wiki to the wiki list.\nWikis must be running MediaWiki 1.15 or later with the API enabled.
+﻿view-titleblacklist-title:       Title blacklist
+view-titleblacklist-all:         All
+view-titleblacklist-edit:        Editing
+view-titleblacklist-create:      Creating pages
+view-titleblacklist-move:        Moving pages
+view-titleblacklist-newuser:     Account creation
+view-titleblacklist-upload:      Uploading new files
+view-titleblacklist-reupload:    Replacing existing files
+view-titleblacklist-empty:       No entries defined in title blacklist
+view-titleblacklist-global:      Global title blacklist for {0} still applies
+view-titleblacklist-filter:      Show entries applicable to
+
+view-spamblacklist-title:        Spam blacklist
+view-spamblacklist-all:          All
+view-spamblacklist-blacklist:    Blacklist
+view-spamblacklist-whitelist:    Whitelist (overrides blacklist)
+view-spamblacklist-custom:       Custom blacklists
+view-spamblacklist-global:       Global spam blacklist for {0} still applies
+
+view-namespace-title:            Namespaces
+view-namespace-special:          special
+view-namespace-content:          content
+view-namespace-custom:           custom
+view-namespace-restricted:       protected
+view-namespace-moverestricted:   move-protected
+view-namespace-unmovable:        unmovable
+view-namespace-discussion:       talk
+view-namespace-subpages:         subpages
+
+view-extension-title:            Extensions
+view-extension-version:          Version: {0}
+view-extension-author:           Author: {0}
+view-extension-authors:          Authors: {0}
+view-extension-typeparserhook:   Parser hook
+view-extension-typeother:        General
+view-extension-typespecialpage:  Special page
+view-extension-typemedia:        Media handler
+
+view-wikigeneral-language:       Content language: {0}
+view-wikigeneral-database:       Database: {0}
+view-wikigeneral-engine:         Engine: {0}
+view-wikigeneral-family:         Family: {0}
+view-wikigeneral-platform:       Platform: {0}
+view-wikigeneral-secure:         Secure server: {0}
+view-wikigeneral-license:        Content license: {0}
+view-wikigeneral-type:           Type: {0}
+view-wikigeneral-mainpage:       Main page: {0}
+
+view-wikistats-pages:            Pages
+view-wikistats-contentpages:     Content pages
+view-wikistats-files:            Files
+view-wikistats-revisions:        Revisions
+view-wikistats-users:            User accounts
+view-wikistats-activeusers:      Active user accounts
+
+view-usergroup-title:            User groups
+view-usergroup-filterall:        (Any)
+view-usergroup-implicit:         (implicit)
+
+view-userright-title:            User rights
+view-userright-nobody:           (nobody)
+
+view-wikigeneral-title:          General
+view-changetag-title:            Change tags 
+view-gadget-title:               Gadgets
+view-moderation-title:           Moderation
+
+view-general-nodescription:      (no description)
+
+view-abusefilter-title:           Abuse filters
+view-abusefilter-actions:         Actions: {0}
+view-abusefilter-disabled:        disabled
+view-abusefilter-deleted:         deleted
+view-abusefilter-enabled:         enabled
+view-abusefilter-modified:        Last modified by {0} at {1}
+view-abusefilter-limitdetail:     {0} matching actions within {1} seconds grouped by {2}
+view-abusefilter-notes:           Notes:
+view-abusefilter-pattern:         Pattern:
+view-abusefilter-private:         private
+view-abusefilter-progress:        Loading filter details
+view-abusefilter-public:          public
+view-abusefilter-ratelimit:       Rate limit: {0}
+view-abusefilter-restricted:      User right 'abusefilter-private' required to view filter details
+view-abusefilter-status:          Status: {0}
+
+wikiadd-explanation:             Use this form to add a wiki to the wiki list.\nWikis must be running MediaWiki 1.15 or later with the API enabled.
 
 logout-desc:                     Log out {0}
 logout-progress:                 Logging out {0}
@@ -31,6 +116,8 @@ config-proxy:					 Detecting proxy settings
 config-progress:				     Updating configuration
 config-desc:			             Update configuration
 
+wikiconfig-apimodulesdisabled:   WARNING: The following API modules are disabled on this wiki. Features may be unavailable or fail to work correctly.
+
 extraconfig-priority:            Updating priority list
 
 abusefilteredit-title:           Edit abuse filter {0}
@@ -56,22 +143,6 @@ globaluserprop-hidden:           hidden
 globaluserprop-groups:           Global groups: {0}
 globaluserprop-wikis:            Local accounts on {0} wikis
 
-abusefilterprop-actions:         Actions: {0}
-abusefilterprop-disabled:        disabled
-abusefilterprop-deleted:         deleted
-abusefilterprop-enabled:         enabled
-abusefilterprop-modified:        Last modified by {0} at {1}
-abusefilterprop-limitdetail:     {0} matching actions within {1} seconds grouped by {2}
-abusefilterprop-notes:           Notes:
-abusefilterprop-pattern:         Pattern:
-abusefilterprop-private:         private
-abusefilterprop-progress:        Loading filter details
-abusefilterprop-public:          public
-abusefilterprop-ratelimit:       Rate limit: {0}
-abusefilterprop-restricted:      User right 'abusefilter-private' required to view filter details
-abusefilterprop-status:          Status: {0}
-abusefilterprop-title:           Abuse filters for {0}
-
 accountprop-title:               Account Properties
 accountprop-contribs:            Contributions: {0}
 accountprop-created:             Registered: {0}
@@ -85,23 +156,8 @@ accountprop-wiki:                Wiki: {0}
 
 accountprefs-title:              Account preferences for '{0}'
 
-
 wikiprop-title:                  Wiki Properties
-wikiprop-name:                   Wiki name:
-wikiprop-language:               Content language:
-wikiprop-database:               Database:
-wikiprop-engine:                 Engine:
-wikiprop-family:                 Family:
-wikiprop-secure:                 Secure server:
-wikiprop-license:                Content license
-wikiprop-type:                   Type:
-wikiprop-version:                MediaWiki version:
-wikiprop-mainpage:               Main page:
-wikiprop-nodescription:          (no description)
 
-wikiprop-ext-version:            Version: {0}
-wikiprop-ext-author:             Author: {0}
-wikiprop-ext-authors:            Authors: {0}
 
 wikiprop-gadget-type:            Type: {0}
 
@@ -207,6 +263,7 @@ a-no:                       No
 a-none:                     none
 a-notspecified:             Not specified
 a-ok:                       OK
+a-optional:                 Optional
 a-other:                    Other
 a-remove:                   Remove
 a-rename:                   Rename
@@ -224,6 +281,7 @@ error-accessdenied:        You are not permitted to use Huggle
 error-account:             Your account is not allowed to do this
 error-alreadydone:         The requested action was already carried out by {0}
 error-apidisabled:         The MediaWiki API is disabled on this wiki
+error-apimoduledisabled:   The MediaWiki API '{0}' module is disabled on this wiki
 error-apiresponse:         Unable to parse MediaWiki API response 
 error-apiunrecognized:     Ignored unrecognized API {0} type '{1}'
 error-badurl:              The URL is not valid

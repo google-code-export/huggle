@@ -41,11 +41,17 @@ Namespace Huggle
                                 errorCode = errorCode.FromFirst("internal_api_error_").ToLower
                                 errorInfo = errorInfo.Remove("Exception Caught: ")
 
-                                OnFail(Msg("error-internal", "Internal API error"), errorInfo)
+                                OnFail(Msg("error-internal", "Internal API error"), errorInfo) : Return
+
+                            ElseIf errorCode = "moduledisabled" Then
+                                errorInfo = Msg("error-apimoduledisabled", errorInfo.FromFirst("``").ToFirst("'"))
+
+                            ElseIf errorCode = "help" Then
+                                errorCode = "noquery"
+                                errorInfo = Msg("error-noquery")
                             End If
 
-                            If errorCode = "help" Then OnFail(Msg("error-noquery"), "noquery") _
-                                Else OnFail(errorInfo, errorCode)
+                            OnFail(errorInfo, errorCode) : Return
 
                         Case "expandtemplates"
                             Dim sources As List(Of String) = Query("text").ToString.Split(ExpandTemplatesQuery.Separator).ToList
@@ -82,7 +88,7 @@ Namespace Huggle
                             If LoginResponse.Result = "wrongpass" Then User.Password = Nothing
 
                         Case "move"
-                        Case "paraminfo"
+                        Case "paraminfo" : ProcessParamInfo(node)
                         Case "parse" : ProcessParse(node)
 
                         Case "patrol"
@@ -321,7 +327,7 @@ Namespace Huggle
                                 Family:=Wiki.Family, _
                                 id:=CInt(block.Attribute("id")), _
                                 rcid:=0, _
-                                reason:=block.Attribute("reason"), _
+                                comment:=block.Attribute("reason"), _
                                 target:=block.Attribute("address"), _
                                 time:=CDate(block.Attribute("timestamp")), _
                                 User:=App.Wikis(block.Attribute("bywiki")).Users(block.Attribute("by")))
@@ -332,7 +338,7 @@ Namespace Huggle
                     Case "globaluserinfo" : ProcessGlobalUserInfo(node)
 
                     Case "imageusage"
-                        Dim media As Media = Wiki.Media(CStr(Query("iutitle")))
+                        Dim media As File = Wiki.Files(CStr(Query("iutitle")))
                         media.Uses.Clear()
 
                         For Each iu As XmlNode In node.ChildNodes
@@ -426,8 +432,8 @@ Namespace Huggle
                         Next r
 
                     Case "rightsinfo"
-                        If node.HasAttribute("text") Then Wiki.License = node.Attribute("text")
-                        If node.HasAttribute("url") Then Wiki.LicenseUrl = New Uri(node.Attribute("url"))
+                        If Not String.IsNullOrEmpty(node.Attribute("text")) Then Wiki.License = node.Attribute("text")
+                        If Not String.IsNullOrEmpty(node.Attribute("url")) Then Wiki.LicenseUrl = New Uri(node.Attribute("url"))
 
                     Case "searchinfo"
                     Case "search"
@@ -436,11 +442,11 @@ Namespace Huggle
                     Case "statistics"
                         Wiki.ActiveUsers = CInt(node.Attribute("activeusers"))
                         Wiki.Administrators = CInt(node.Attribute("admins"))
-                        Wiki.Articles = CInt(node.Attribute("articles"))
-                        Wiki.Media.Total = CInt(node.Attribute("images"))
-                        Wiki.Pages.Total = CInt(node.Attribute("pages"))
-                        Wiki.Revisions.Total = CInt(node.Attribute("edits"))
-                        Wiki.Users.Total = CInt(node.Attribute("users"))
+                        Wiki.ContentPages = CInt(node.Attribute("articles"))
+                        Wiki.Files.Count = CInt(node.Attribute("images"))
+                        Wiki.Pages.Count = CInt(node.Attribute("pages"))
+                        Wiki.Revisions.Count = CInt(node.Attribute("edits"))
+                        Wiki.Users.Count = CInt(node.Attribute("users"))
 
                     Case "tags"
                         Wiki.ChangeTags.Clear()
@@ -458,9 +464,19 @@ Namespace Huggle
 
                     Case "usergroups"
                         Wiki.UserGroups.Reset()
+                        Dim groupCounts As Boolean
 
                         For Each groupNode As XmlNode In node.ChildNodes
                             Dim group As UserGroup = Wiki.UserGroups(groupNode.Attribute("name"))
+
+                            If {"*", "user", "autoconfirmed"}.Contains(group.Name) Then group.IsImplicit = True
+
+                            If group.Name = "user" Then
+                                group.Count = Wiki.Users.Count
+                            ElseIf groupNode.HasAttribute("number") AndAlso Not group.IsImplicit Then
+                                groupCounts = True
+                                group.Count = CInt(groupNode.Attribute("number"))
+                            End If
 
                             For Each rights As XmlNode In groupNode.ChildNodes
                                 If rights.Name = "rights" Then
@@ -472,6 +488,12 @@ Namespace Huggle
 
                             group.Rights.Sort()
                         Next groupNode
+
+                        If groupCounts Then
+                            For Each group As UserGroup In Wiki.UserGroups.All
+                                If group.Count < 0 Then group.IsImplicit = True
+                            Next group
+                        End If
 
                     Case "userinfo" : ProcessUserInfo(node)
                     Case "users" : ProcessUsers(node)
@@ -558,7 +580,7 @@ Namespace Huggle
                             'MediaWiki keeps accounts on the list of unified accounts
                             'even when a wiki is deleted; we don't want these
                             If wiki Is Nothing Then Continue For
-                            
+
                             Dim user As User = App.Wikis.FromInternalCode(mergedNode.Attribute("wiki")).Users(globalUser.Name)
                             globalUser.Users.Add(user)
                             globalUser.Wikis.Add(user.Wiki)
@@ -577,10 +599,10 @@ Namespace Huggle
         End Sub
 
         Private Sub ProcessImageInfo(ByVal page As Page, ByVal mediaNode As XmlNode)
-            Dim media As Media = Wiki.Media(page)
+            Dim media As File = Wiki.Files(page)
 
             For Each ii As XmlNode In mediaNode.ChildNodes
-                Dim mediaRev As New MediaRevision(media, ii.Attribute("timestamp").ToDate)
+                Dim mediaRev As New FileRevision(media, ii.Attribute("timestamp").ToDate)
                 If media.LastRevision Is Nothing Then media.LastRevision = mediaRev
 
                 mediaRev.Comment = ii.Attribute("comment")
@@ -622,6 +644,7 @@ Namespace Huggle
             If node.HasAttribute("logtype") Then type = node.Attribute("logtype")
 
             Dim id As Integer = CInt(node.Attribute("logid"))
+            Dim rcid As Integer = If(node.HasAttribute("rcid"), CInt(node.Attribute("rcid")), 0)
             Dim isNew As Boolean = Not Wiki.Logs.All.ContainsKey(id)
             Dim fullAction As String = type & "/" & action
 
@@ -642,7 +665,7 @@ Namespace Huggle
                         duration:=node.FirstChild.Attribute("duration"), _
                         expires:=node.FirstChild.Attribute("expiry").ToDate, _
                         id:=id, _
-                        rcid:=0, _
+                        rcid:=rcid, _
                         target:=Wiki.Pages(CInt(node.Attribute("ns")), node.Attribute("title")).Owner.Name, _
                         time:=node.Attribute("timestamp").ToDate, _
                         User:=Wiki.Users(node.Attribute("user")))
@@ -661,7 +684,7 @@ Namespace Huggle
                         duration:=Nothing, _
                         expires:=Date.MinValue, _
                         id:=id, _
-                        rcid:=0, _
+                        rcid:=rcid, _
                         Target:=Wiki.Pages(CInt(node.Attribute("ns")), node.Attribute("title")).Owner.Name, _
                         Time:=node.Attribute("timestamp").ToDate, _
                         User:=Wiki.Users(node.Attribute("user")))
@@ -672,7 +695,7 @@ Namespace Huggle
                         action:=action, _
                         Comment:=node.Attribute("comment"), _
                         id:=id, _
-                        rcid:=0, _
+                        rcid:=rcid, _
                         Page:=Wiki.Pages(CInt(node.Attribute("ns")), node.Attribute("title")), _
                         Time:=node.Attribute("timestamp").ToDate, _
                         User:=Wiki.Users(node.Attribute("user")))
@@ -682,7 +705,7 @@ Namespace Huggle
                     newItem = New VisibilityChange( _
                         id:=id, _
                         item:=Nothing, _
-                        rcid:=0, _
+                        rcid:=rcid, _
                         User:=Wiki.Users(node.Attribute("user")))
 
                     'Revision hiding
@@ -690,7 +713,7 @@ Namespace Huggle
                     newItem = New VisibilityChange( _
                         id:=id, _
                         item:=Nothing, _
-                        rcid:=0, _
+                        rcid:=rcid, _
                         User:=Wiki.Users(node.Attribute("user")))
 
                     'Page importing
@@ -707,7 +730,7 @@ Namespace Huggle
                         Source:=node.Attribute("title"), _
                         Destination:=node.FirstChild.Attribute("new_title"), _
                         id:=id, _
-                        rcid:=0, _
+                        rcid:=rcid, _
                         Time:=node.Attribute("timestamp").ToDate, _
                         User:=Wiki.Users(node.Attribute("user")))
 
@@ -722,7 +745,7 @@ Namespace Huggle
                         Comment:=node.Attribute("comment"), _
                         Hidden:=node.HasAttribute("actionhidden"), _
                         id:=id, _
-                        rcid:=0, _
+                        rcid:=rcid, _
                         Levels:=If(level, "[edit:sysop; move:sysop] (indefinite)"), _
                         Page:=If(node.HasAttribute("title"), Wiki.Pages(CInt(node.Attribute("ns")), _
                             node.Attribute("title")), Nothing), _
@@ -737,7 +760,7 @@ Namespace Huggle
                         Comment:=node.Attribute("comment"), _
                         Hidden:=node.HasAttribute("actionhidden"), _
                         id:=id, _
-                        rcid:=0, _
+                        rcid:=rcid, _
                         Levels:=Nothing, _
                         Page:=If(node.HasAttribute("title"), Wiki.Pages(CInt(node.Attribute("ns")), _
                             node.Attribute("title")), Nothing), _
@@ -754,7 +777,7 @@ Namespace Huggle
                     newItem = New UserCreation( _
                         Auto:=False, _
                         id:=id, _
-                        rcid:=0, _
+                        rcid:=rcid, _
                         Time:=node.Attribute("timestamp").ToDate, _
                         User:=Wiki.Users(node.Attribute("user")))
 
@@ -765,7 +788,7 @@ Namespace Huggle
                     newItem = New UserRename( _
                         Comment:=node.Attribute("comment"), _
                         id:=id, _
-                        rcid:=0, _
+                        rcid:=rcid, _
                         Source:=node.Attribute("title"), _
                         Destination:=node.FirstChild.Value, _
                         Time:=node.Attribute("timestamp").ToDate, _
@@ -776,7 +799,7 @@ Namespace Huggle
                     newItem = New RightsChange( _
                         Comment:=node.Attribute("comment"), _
                         id:=id, _
-                        rcid:=0, _
+                        rcid:=rcid, _
                         Rights:=node.FirstChild.Attribute("new").ToList.Trim, _
                         TargetUser:=Wiki.Pages(node.Attribute("title")).Owner, _
                         Time:=node.Attribute("timestamp").ToDate, _
@@ -793,7 +816,7 @@ Namespace Huggle
                         Auto:=(CInt(node.FirstChild.Attribute("auto")) = 1), _
                         Comment:=node.Attribute("comment"), _
                         id:=id, _
-                        rcid:=0, _
+                        rcid:=rcid, _
                         Revision:=Rev, _
                         Time:=node.Attribute("timestamp").ToDate, _
                         type:=If(Rev.Prev Is Revision.Null, "newpage-patrol", "patrol"), _
@@ -818,7 +841,7 @@ Namespace Huggle
                         Comment:=node.Attribute("comment"), _
                         File:=node.Attribute("title"), _
                         id:=id, _
-                        rcid:=0, _
+                        rcid:=rcid, _
                         Time:=node.Attribute("timestamp").ToDate, _
                         User:=Wiki.Users(node.Attribute("user")))
 
@@ -844,7 +867,7 @@ Namespace Huggle
                         Family:=Wiki.Family, _
                         id:=id, _
                         rcid:=CInt(node.Attribute("rcid")), _
-                        reason:=node.Attribute("comment"), _
+                        comment:=node.Attribute("comment"), _
                         target:=Wiki.Pages(node.Attribute("title")).Name, _
                         time:=node.Attribute("timestamp").ToDate, _
                         User:=Wiki.Users(node.Attribute("user")))
@@ -867,7 +890,15 @@ Namespace Huggle
 
                     'Global account status change
                 Case "globalauth/setstatus"
-                    'ignore
+
+                    Dim globalUserLock As New GlobalUserStatusChange(
+                        Wiki:=Wiki,
+                        Comment:=node.Attribute("comment"),
+                        id:=id,
+                        rcid:=rcid,
+                        target:=Wiki.Family.GlobalUsers(Wiki.Pages(node.Attribute("title")).Name),
+                        time:=node.Attribute("timestamp").ToDate,
+                        User:=Wiki.Users(node.Attribute("user")))
 
                     'Flagged revisions reviewing
                 Case "review/approve", _
@@ -890,7 +921,7 @@ Namespace Huggle
                         Comment:=node.Attribute("comment"), _
                         Revision:=rev, _
                         id:=id, _
-                        rcid:=0, _
+                        rcid:=rcid, _
                         Time:=node.Attribute("timestamp").ToDate, _
                         type:="flaggedrevs-" & action, _
                         User:=Wiki.Users(node.Attribute("user")))
@@ -936,7 +967,7 @@ Namespace Huggle
                             End If
 
                             If node.HasAttribute("imagerepository") Then
-                                Dim Media As Media = Wiki.Media(page)
+                                Dim Media As File = Wiki.Files(page)
                                 Media.Exists = (node.Attribute("imagerepository").Length > 0)
                                 Media.IsShared = (node.Attribute("imagerepository") = "shared")
                             End If
@@ -961,10 +992,10 @@ Namespace Huggle
                                     category.IsHidden = pageNode.HasAttribute("hidden")
 
                                 Case "duplicatefiles"
-                                    Wiki.Media(page).Duplicates.Clear()
+                                    Wiki.Files(page).Duplicates.Clear()
 
                                     For Each df As XmlNode In pageNode.ChildNodes
-                                        Wiki.Media(page).Duplicates.Add(Wiki.Media(df.Attribute("name")))
+                                        Wiki.Files(page).Duplicates.Add(Wiki.Files(df.Attribute("name")))
                                     Next df
 
                                 Case "extlinks"
@@ -979,7 +1010,7 @@ Namespace Huggle
 
                                 Case "globalusage"
                                     For Each gu As XmlNode In pageNode.ChildNodes
-                                        Dim media As Media = Wiki.Family.CentralWiki.Media(gu.Attribute("title"))
+                                        Dim media As File = Wiki.Family.CentralWiki.Files(gu.Attribute("title"))
                                         Dim usingPage As Page = App.Wikis(gu.Attribute("wiki").Remove(".org")).Pages(gu.Attribute("title"))
 
                                         media.GlobalUses.Merge(usingPage)
@@ -988,7 +1019,7 @@ Namespace Huggle
 
                                 Case "images"
                                     For Each im As XmlNode In pageNode.ChildNodes
-                                        page.Media.Merge(Wiki.Media(im.Attribute("title")))
+                                        page.Media.Merge(Wiki.Files(im.Attribute("title")))
                                     Next im
 
                                     page.MediaKnown = True
@@ -1027,6 +1058,27 @@ Namespace Huggle
                         If page.Exists AndAlso Processing Then page.Process()
                     End If
                 End If
+            Next node
+        End Sub
+
+        Private Sub ProcessParamInfo(ByVal infoNode As XmlNode)
+            For Each node As XmlNode In infoNode.ChildNodes
+                Select Case node.Name
+                    Case "modules", "querymodules"
+                        For Each moduleNode As XmlNode In node.ChildNodes
+                            If moduleNode.Name = "module" Then
+                                Dim apiModule As ApiModule = Wiki.ApiModules(moduleNode.Attribute("name"))
+
+                                apiModule.IsImplemented = Not moduleNode.HasAttribute("missing")
+                                apiModule.IsDisabled = {"ApiDisabled", "ApiQueryDisabled"}.Contains(moduleNode.Attribute("classname"))
+                            End If
+                        Next moduleNode
+
+                    Case "mainmodule" 'Assume this is always enabled, wouldn't even get this far if it wasn't
+                    Case "pagesetmodule"
+
+                    Case Else : Log.Debug(Msg("error-apiunrecognized", "paraminfo", node.Name))
+                End Select
             Next node
         End Sub
 
@@ -1087,7 +1139,7 @@ Namespace Huggle
                         Case "images"
                             If last Then
                                 For Each img As XmlNode In node.ChildNodes
-                                    Dim Media As Media = Wiki.Media(img.FirstChild.Value)
+                                    Dim Media As File = Wiki.Files(img.FirstChild.Value)
                                     rev.Page.Media.Merge(Media)
                                 Next img
 
@@ -1277,7 +1329,7 @@ Namespace Huggle
 
         Private Sub ProcessSiteInfo(ByVal node As XmlNode)
             Wiki.Engine = "MediaWiki"
-            Wiki.Config.LanguageName = "php"
+            Wiki.Config.PlatformName = "php"
 
             If node.HasAttribute("articlepath") Then Wiki.ShortUrl = New Uri(Wiki.Url.ToString.ToLast("/") & node.Attribute("articlepath").Remove("$1"))
             If node.HasAttribute("case") Then Wiki.Config.FirstLetterCaseSensitive = (Not node.Attribute("case") = "first-letter")
@@ -1285,11 +1337,11 @@ Namespace Huggle
             If node.HasAttribute("dbversion") Then Wiki.Config.DatabaseVersion = node.Attribute("dbversion")
             If node.HasAttribute("generator") Then Wiki.Config.EngineVersion = node.Attribute("generator").Remove("MediaWiki ")
             If node.HasAttribute("mainpage") Then Wiki.MainPage = Wiki.Pages(node.Attribute("mainpage"))
-            If node.HasAttribute("phpversion") Then Wiki.Config.LanguageVersion = node.Attribute("phpversion")
+            If node.HasAttribute("phpversion") Then Wiki.Config.PlatformVersion = node.Attribute("phpversion")
             If node.HasAttribute("rev") Then Wiki.Config.EngineRevision = CInt(node.Attribute("rev"))
             Wiki.Config.ReadOnly = node.HasAttribute("readonly")
             If node.HasAttribute("readonlyreason") Then Wiki.Config.ReadOnlyReason = node.Attribute("readonlyreason")
-            If node.HasAttribute("rights") Then Wiki.License = node.Attribute("rights")
+            If Not String.IsNullOrEmpty(node.Attribute("rights")) Then Wiki.License = node.Attribute("rights")
 
             If node.HasAttribute("sitename") AndAlso Wiki.IsCustom Then
                 Wiki.Name = node.Attribute("sitename")

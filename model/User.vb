@@ -505,7 +505,6 @@ Namespace Huggle
         Private _Hidden As User
         Private _Ignored As New List(Of User)
         Private _NewUsers As New List(Of User)
-        Private _Total As Integer
 
         Private Wiki As Wiki
 
@@ -524,6 +523,8 @@ Namespace Huggle
                 Return FromName(Nothing)
             End Get
         End Property
+
+        Public Property Count() As Integer = -1
 
         Public ReadOnly Property [Default]() As User
             Get
@@ -615,15 +616,6 @@ Namespace Huggle
 
             Return Name
         End Function
-
-        Public Property Total() As Integer
-            Get
-                Return _Total
-            End Get
-            Set(ByVal value As Integer)
-                _Total = value
-            End Set
-        End Property
 
     End Class
 

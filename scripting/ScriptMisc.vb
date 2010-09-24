@@ -42,7 +42,7 @@ Namespace Huggle.Scripting
                 Case "isrevert"
                     Select Case Arg(0).ValueType
                         Case "Revision" : Return New Token(Arg(0).Revision.IsRevert)
-                        Case "MediaRevision" : Return New Token(CType(Arg(0).Value, MediaRevision).IsRevert)
+                        Case "MediaRevision" : Return New Token(CType(Arg(0).Value, FileRevision).IsRevert)
                     End Select
 
                 Case "count"

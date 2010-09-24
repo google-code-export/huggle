@@ -132,9 +132,14 @@
     <Compile Include="actions\ChangePassword.vb" />
     <Compile Include="actions\ResetPreferences.vb" />
     <Compile Include="actions\Unblock.vb" />
+    <Compile Include="config\ConfigRead.vb" />
     <Compile Include="Main.vb" />
+    <Compile Include="model\ApiModule.vb" />
+    <Compile Include="model\GlobalUserStatusChange.vb" />
+    <Compile Include="model\SpamList.vb" />
     <Compile Include="model\Preferences.vb" />
     <Compile Include="model\TitleBlacklist.vb" />
+    <Compile Include="queries\ApiModuleQuery.vb" />
     <Compile Include="queries\Query.vb" />
     <Compile Include="queries\ExtraGlobaluserConfig.vb" />
     <Compile Include="queries\LoadUserConfig.vb" />
@@ -220,18 +225,6 @@
       <DependentUpon>AbuseFilterEditForm.vb</DependentUpon>
     </Compile>
     <Compile Include="ui\forms\AbuseFilterEditForm.vb">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ui\forms\AbuseFiltersForm.Designer.vb">
-      <DependentUpon>AbuseFiltersForm.vb</DependentUpon>
-    </Compile>
-    <Compile Include="ui\forms\AbuseFiltersForm.vb">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ui\forms\Copy of LoginForm.Designer.vb">
-      <DependentUpon>Copy of LoginForm.vb</DependentUpon>
-    </Compile>
-    <Compile Include="ui\forms\Copy of LoginForm.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ui\forms\UserGroupsForm.Designer.vb">
@@ -366,6 +359,75 @@
     <Compile Include="ui\controls\SplitContainerEx.vb">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ui\views\ChangeTagView.Designer.vb">
+      <DependentUpon>ChangeTagView.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\views\ChangeTagView.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ui\views\AbuseFilterView.Designer.vb">
+      <DependentUpon>AbuseFilterView.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\views\AbuseFilterView.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ui\views\UserRightsView.Designer.vb">
+      <DependentUpon>UserRightsView.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\views\UserRightsView.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ui\views\SpamListView.Designer.vb">
+      <DependentUpon>SpamListView.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\views\SpamListView.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ui\views\ExtensionView.Designer.vb">
+      <DependentUpon>ExtensionView.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\views\ExtensionView.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ui\views\GadgetView.Designer.vb">
+      <DependentUpon>GadgetView.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\views\GadgetView.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ui\views\ModerationView.Designer.vb">
+      <DependentUpon>ModerationView.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\views\ModerationView.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ui\views\NamespaceView.Designer.vb">
+      <DependentUpon>NamespaceView.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\views\NamespaceView.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ui\views\TitleBlacklistView.Designer.vb">
+      <DependentUpon>TitleBlacklistView.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\views\TitleBlacklistView.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ui\views\UserGroupView.Designer.vb">
+      <DependentUpon>UserGroupView.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\views\UserGroupView.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ui\views\GeneralWikiView.Designer.vb">
+      <DependentUpon>GeneralWikiView.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\views\GeneralWikiView.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ui\views\Viewer.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="ui\WaitForm.Designer.vb">
       <DependentUpon>WaitForm.vb</DependentUpon>
     </Compile>
@@ -449,7 +511,7 @@
     <Compile Include="Log.vb" />
     <Compile Include="model\LogItem.vb" />
     <Compile Include="model\RightsChange.vb" />
-    <Compile Include="model\Media.vb" />
+    <Compile Include="model\File.vb" />
     <Compile Include="model\Move.vb" />
     <Compile Include="model\Page.vb" />
     <Compile Include="model\Wiki.vb" />
@@ -564,12 +626,6 @@
     <EmbeddedResource Include="ui\forms\AboutForm.resx">
       <DependentUpon>AboutForm.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ui\forms\AbuseFiltersForm.resx">
-      <DependentUpon>AbuseFiltersForm.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ui\forms\Copy of LoginForm.resx">
-      <DependentUpon>Copy of LoginForm.vb</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="ui\forms\UserGroupsForm.resx">
       <DependentUpon>UserGroupsForm.vb</DependentUpon>
     </EmbeddedResource>
@@ -621,6 +677,39 @@
     <EmbeddedResource Include="ui\MainForm.resx">
       <DependentUpon>MainForm.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ui\views\ChangeTagView.resx">
+      <DependentUpon>ChangeTagView.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\views\AbuseFilterView.resx">
+      <DependentUpon>AbuseFilterView.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\views\UserRightsView.resx">
+      <DependentUpon>UserRightsView.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\views\SpamListView.resx">
+      <DependentUpon>SpamListView.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\views\ExtensionView.resx">
+      <DependentUpon>ExtensionView.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\views\GadgetView.resx">
+      <DependentUpon>GadgetView.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\views\ModerationView.resx">
+      <DependentUpon>ModerationView.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\views\NamespaceView.resx">
+      <DependentUpon>NamespaceView.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\views\TitleBlacklistView.resx">
+      <DependentUpon>TitleBlacklistView.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\views\UserGroupView.resx">
+      <DependentUpon>UserGroupView.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\views\GeneralWikiView.resx">
+      <DependentUpon>GeneralWikiView.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ui\WaitForm.resx">
       <DependentUpon>WaitForm.vb</DependentUpon>
     </EmbeddedResource>
@@ -638,6 +727,7 @@
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
     </None>
+    <None Include="ClassDiagram.cd" />
     <None Include="huggle.snk" />
     <None Include="resources\BasicHtmlPage.txt" />
     <Content Include="resources\blobs\blob-anon-filter.png" />

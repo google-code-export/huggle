@@ -19,7 +19,7 @@ Namespace Huggle
             _Wiki = wiki
         End Sub
 
-        Public Property Actions() As List(Of String)
+        Public Property Actions() As New List(Of String)
 
         Public Property Description() As String
 
