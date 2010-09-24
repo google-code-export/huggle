@@ -28,7 +28,7 @@ Class QueuePanel
         If wiki.Queues.Default IsNot Nothing AndAlso Queues.Items.Contains(wiki.Queues.Default) _
             Then Queues.SelectedItem = wiki.Queues.Default Else If Queues.Items.Count > 0 Then Queues.SelectedIndex = 0
 
-        If App.Languages.Current IsNot Nothing Then App.Languages.Current.LocalizeControl(Me)
+        If App.Languages.Current IsNot Nothing Then App.Languages.Current.Localize(Me)
     End Sub
 
     Public Property Mode() As QueueMode

@@ -32,7 +32,7 @@ Public Class LogPanel
             If LogList.Items(i).Tag Is action Then
                 If action.IsComplete Then LogList.Items.RemoveAt(i) _
                     Else LogList.Items(i).SubItems(0).Text = action.Message
-                Exit Sub
+                Return
             End If
         Next i
 

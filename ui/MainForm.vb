@@ -40,6 +40,8 @@ Public Class MainForm
     End Sub
 
     Private Sub SystemLogout_Click() Handles SystemLogout.Click
+        Config.Local.AutoLogin = False
+
         Dim logout As New Logout(Session)
         App.UserWaitForProcess(logout)
         If logout.IsFailed Then App.ShowError(logout.Result)
@@ -49,7 +51,7 @@ Public Class MainForm
     End Sub
 
     Private Sub WikiProperties_Click() Handles WikiProperties.Click
-        Dim form As New WikiPropertiesForm(Session.Wiki)
+        Dim form As New WikiPropertiesForm(Session)
         form.Show()
     End Sub
 
@@ -68,13 +70,17 @@ Public Class MainForm
     End Sub
 
     Private Sub AccountGlobalProperties_Click() Handles AccountGlobalProperties.Click
-        Dim form As New GlobalUserPropertiesForm(Session.User.GlobalUser)
-        form.Show()
+        If Session.User.GlobalUser IsNot Nothing Then
+            Dim form As New GlobalUserPropertiesForm(Session.User.GlobalUser)
+            form.Show()
+        End If
     End Sub
 
     Private Sub WikiFamilyProperties_Click() Handles WikiFamilyProperties.Click
-        Dim form As New FamilyPropertiesForm(Session.Wiki.Family)
-        form.Show()
+        If Session.Wiki.Family IsNot Nothing Then
+            Dim form As New FamilyPropertiesForm(Session.Wiki.Family)
+            form.Show()
+        End If
     End Sub
 
     Private Sub UserChangeGroups_Click() Handles UserChangeGroups.Click

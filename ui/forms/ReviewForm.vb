@@ -32,7 +32,7 @@ Public Class ReviewForm
 
     Private Sub _Load() Handles Me.Load
         Icon = Resources.Icon
-        App.Languages.Current.LocalizeControl(Me)
+        App.Languages.Current.Localize(Me)
 
         For Each flag As ReviewFlag In Revision.Wiki.Config.ReviewFlags.Values
             If flag.Levels >= 2 Then

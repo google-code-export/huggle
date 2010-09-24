@@ -1,20 +1,21 @@
 ﻿Imports Huggle
-Imports Huggle.Actions
+Imports System.Windows.Forms
 
-Public Class AbuseFiltersForm
+Public Class AbuseFilterView : Inherits Viewer
 
     Private CurrentFilter As AbuseFilter
-    Private WithEvents DetailQuery As AbuseFilterDetail
-    Private Wiki As Wiki
+    Private WithEvents DetailQuery As Actions.AbuseFilterDetail
 
-    Public Sub New(ByVal wiki As Wiki)
+    Public Sub New(ByVal session As Session)
+        MyBase.New(session)
         InitializeComponent()
-        Me.Wiki = wiki
     End Sub
 
     Private Sub _Load() Handles Me.Load
-        Icon = Resources.Icon
-        Text = Msg("abusefilterprop-title", Wiki)
+        App.Languages.Current.Localize(Me)
+        VisibilitySel.SelectedIndex = 0
+        StatusSel.SelectedIndex = 0
+        ActionSel.SelectedIndex = 0
     End Sub
 
     Private Sub UpdateDetails() Handles FilterList.SelectedIndexChanged
@@ -44,31 +45,31 @@ Public Class AbuseFiltersForm
                 Dim abfPrivateSession As Session = App.Sessions.GetUserWithRight(Wiki, "abusefilter-private")
 
                 If abfPrivateSession Is Nothing Then
-                    Progress.Text = Msg("abusefilterprop-restricted")
+                    Progress.Text = Msg("view-abusefilter-restricted")
                     Indicator.BackgroundImage = Resources.mini_no
                 Else
-                    DetailQuery = New AbuseFilterDetail(abfPrivateSession.Wiki, CurrentFilter)
+                    DetailQuery = New Actions.AbuseFilterDetail(abfPrivateSession.Wiki, CurrentFilter)
                     CreateThread(AddressOf DetailQuery.Start)
-                    Progress.Text = Msg("abusefilterprop-progress")
+                    Progress.Text = Msg("view-abusefilter-progress")
                     Indicator.BackgroundImage = Nothing
                     Indicator.Start()
                 End If
             End If
 
-            Actions.Text = Msg("abusefilterprop-actions", _
-                If(CurrentFilter.Actions.Count = 0, Msg("a-none"), CurrentFilter.Actions.Join(",")))
+            Actions.Text = Msg("view-abusefilter-actions", _
+                If(CurrentFilter.Actions.Count = 0, Msg("a-none"), CurrentFilter.Actions.Join(", ")))
             Description.Text = CurrentFilter.Description
-            Modified.Text = Msg("abusefilterprop-modified", _
+            Modified.Text = Msg("view-abusefilter-modified", _
                 CurrentFilter.LastModifiedBy.Name, FullDateString(CurrentFilter.LastModified))
             Notes.Text = CurrentFilter.Notes
             Pattern.Text = CurrentFilter.Pattern
-            RateLimit.Text = Msg("abusefilterprop-ratelimit", If(CurrentFilter.RateLimitCount = 0, Msg("a-none"), _
-                Msg("abusefilterprop-limitdetail", CurrentFilter.RateLimitCount, _
+            RateLimit.Text = Msg("view-abusefilter-ratelimit", If(CurrentFilter.RateLimitCount = 0, Msg("a-none"), _
+                Msg("view-abusefilter-limitdetail", CurrentFilter.RateLimitCount, _
                 CurrentFilter.RateLimitPeriod, CurrentFilter.RateLimitGroups.Join(", "))))
-            Status.Text = Msg("abusefilterprop-status", GetFilterStatus(CurrentFilter))
+            Status.Text = Msg("view-abusefilter-status", GetFilterStatus(CurrentFilter))
 
-            CreateFilter.Visible = App.Sessions(Wiki).User.HasRight("abusefilter-modify")
-            EditFilter.Visible = App.Sessions(Wiki).User.HasRight("abusefilter-modify")
+            CreateFilter.Visible = Session.User.HasRight("abusefilter-modify")
+            EditFilter.Visible = Session.User.HasRight("abusefilter-modify")
         End If
     End Sub
 
@@ -84,19 +85,20 @@ Public Class AbuseFiltersForm
 
         For Each filter As AbuseFilter In Wiki.AbuseFilters.All
             If MatchesFilter(filter) Then FilterList.AddRow _
-                (CStr(filter.Id), filter.Description, GetFilterStatus(filter), filter.Actions.Join(", "), CStr(filter.TotalHits))
+                (filter.Id.ToString, filter.Description, GetFilterStatus(filter), _
+                filter.Actions.Join(", "), filter.TotalHits.ToString)
         Next filter
 
-        FilterList.SortMethods(0) = "integer"
-        FilterList.SortMethods(4) = "integer"
+        FilterList.SortMethods(0) = SortMethod.Integer
+        FilterList.SortMethods(4) = SortMethod.Integer
         FilterList.SortBy(0)
         FilterList.EndUpdate()
         FilterCount.Text = Msg("a-count", FilterList.Items.Count)
     End Sub
 
     Private Function GetFilterStatus(ByVal filter As AbuseFilter) As String
-        Return Msg("wikiprop-filter-" & If(filter.IsPrivate, "private", "public")) & ", " & _
-            Msg("wikiprop-filter-" & If(filter.IsDeleted, "deleted", If(filter.IsEnabled, "enabled", "disabled")))
+        Return Msg("view-abusefilter-" & If(filter.IsPrivate, "private", "public")) & ", " & _
+            Msg("view-abusefilter-" & If(filter.IsDeleted, "deleted", If(filter.IsEnabled, "enabled", "disabled")))
     End Function
 
     Private Function MatchesFilter(ByVal filter As AbuseFilter) As Boolean
@@ -120,17 +122,17 @@ Public Class AbuseFiltersForm
     End Function
 
     Private Sub AbuseFilterEdit_LinkClicked() Handles EditFilter.LinkClicked
-        Dim form As New AbuseFilterEditForm(App.Sessions(Wiki), CurrentFilter)
+        Dim form As New AbuseFilterEditForm(Session, CurrentFilter)
         form.Show()
     End Sub
 
     Private Sub AbuseFilterCreate_LinkClicked() Handles CreateFilter.LinkClicked
-        Dim form As New AbuseFilterEditForm(App.Sessions(Wiki), CurrentFilter)
+        Dim form As New AbuseFilterEditForm(Session)
         form.Show()
     End Sub
 
     Private Sub Description_LinkClicked() Handles Description.LinkClicked
-        OpenWebBrowser(Wiki.Pages.FromNsAndName(Wiki.Spaces.Special, "AbuseFilter/" & CStr(CurrentFilter.Id)).Url)
+        OpenWebBrowser(Wiki.Pages.FromNsAndName(Wiki.Spaces.Special, "AbuseFilter/" & CurrentFilter.Id.ToString).Url)
     End Sub
 
 End Class

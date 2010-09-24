@@ -29,7 +29,7 @@ Class FirstRunForm
 
     Private Sub LanguageSelector_SelectedValueChanged() Handles LanguageSelector.SelectedValueChanged
         If LanguageSelector.SelectedItem IsNot Nothing Then App.Languages.Current = CType(LanguageSelector.SelectedItem, Language)
-        App.Languages.Current.LocalizeControl(Me)
+        App.Languages.Current.Localize(Me)
     End Sub
 
     Private Sub TranslateLabel_LinkClicked() Handles TranslateLabel.LinkClicked
