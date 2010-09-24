@@ -22,7 +22,7 @@ Public Class WikiAddForm
 
     Private Sub _Load() Handles Me.Load
         Icon = Resources.Icon
-        App.Languages.Current.LocalizeControl(Me)
+        App.Languages.Current.Localize(Me)
     End Sub
 
     Private Sub InputChanged() Handles Url.TextChanged, Username.TextChanged, Password.TextChanged
@@ -48,10 +48,8 @@ Public Class WikiAddForm
 
         App.UserWaitForProcess(addWiki)
 
-        If addWiki.IsFailed Then
-            App.ShowError(addwiki.Result)
-        Else
-            _Wiki = addWiki.Wiki
+        If Not addwiki.IsFailed Then
+            _Wiki = addwiki.Wiki
             Config.Global.SaveLocal()
             Close()
         End If

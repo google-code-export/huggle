@@ -62,7 +62,7 @@ Public Class ErrorForm
             Icon = Resources.Icon
             Text = Windows.Forms.Application.ProductName
             Image.Image = Resources.error_icon
-            If App.Languages.Current IsNot Nothing Then App.Languages.Current.LocalizeControl(Me)
+            If App.Languages.Current IsNot Nothing Then App.Languages.Current.Localize(Me)
             MessageBox.Text = Message
 
             'Select mode

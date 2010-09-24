@@ -26,7 +26,7 @@ Public Class WaitForm
     Private Sub _Load() Handles Me.Load
         Icon = Resources.Icon
         Text = Msg("wait-title")
-        App.Languages.Current.LocalizeControl(Me)
+        App.Languages.Current.Localize(Me)
         If Message IsNot Nothing Then SetMessage(Message)
         Indicator.Start()
     End Sub

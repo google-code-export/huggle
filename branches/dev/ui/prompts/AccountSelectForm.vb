@@ -10,7 +10,7 @@ Public Class AccountSelectForm
         InitializeComponent()
         Me.Wiki = wiki
 
-        App.Languages.Current.LocalizeControl(Me)
+        App.Languages.Current.Localize(Me)
         Request.Text = Msg("secondarylogin-request", requester)
         Anonymous.Visible = Config.Global.AnonymousLogin
 

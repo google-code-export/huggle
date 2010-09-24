@@ -69,8 +69,8 @@ Public Class GlobalUserPropertiesForm
             Next linkedUser
 
             WikiList.EndUpdate()
-            WikiList.SortMethods.Add(2, "date")
-            WikiList.SortMethods.Add(3, "integer")
+            WikiList.SortMethods.Add(2, SortMethod.Date)
+            WikiList.SortMethods.Add(3, SortMethod.Integer)
             WikiList.SortBy(0)
 
             WikiCount.Text = Msg("globaluserprop-wikis", GlobalUser.Users.Count)

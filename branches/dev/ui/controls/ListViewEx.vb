@@ -10,7 +10,7 @@ Namespace System.Windows.Forms
 
         Private _FlexibleColumn As Integer = -1
         Private _LinkColumn As Boolean
-        Private _SortMethods As New Dictionary(Of Integer, String)
+        Private _SortMethods As New Dictionary(Of Integer, SortMethod)
         Private _SortOnColumnClick As Boolean
 
         Public Sub New()
@@ -32,7 +32,7 @@ Namespace System.Windows.Forms
         End Property
 
         <Browsable(False)> _
-        Public ReadOnly Property SortMethods() As Dictionary(Of Integer, String)
+        Public ReadOnly Property SortMethods() As Dictionary(Of Integer, SortMethod)
             Get
                 Return _SortMethods
             End Get
@@ -63,8 +63,20 @@ Namespace System.Windows.Forms
 
             If SortMethods IsNot Nothing AndAlso SortMethods.ContainsKey(column) Then
                 Select Case SortMethods(column)
-                    Case "integer" : comparison = Function(x As String, y As String) CInt(x) - CInt(y)
-                    Case "date" : comparison = Function(x As String, y As String) Date.Compare(CDate(x), CDate(y))
+                    Case SortMethod.Integer : comparison =
+                        Function(x As String, y As String)
+                            Dim ix, iy As Integer
+
+                            If Integer.TryParse(x, ix) Then
+                                If Integer.TryParse(y, iy) Then Return ix - iy
+                                Return -1
+                            End If
+
+                            Return 1
+                        End Function
+
+                    Case SortMethod.Date : comparison = Function(x As String, y As String) Date.Compare(CDate(x), CDate(y))
+                    Case SortMethod.String : comparison = Function(x As String, y As String) String.Compare(x, y)
                 End Select
             End If
 
@@ -90,7 +102,7 @@ Namespace System.Windows.Forms
 
         Private Sub _Resize() Handles Me.Resize
             If FlexibleColumn > -1 Then
-                Dim columnWidths As Integer = 22
+                Dim columnWidths As Integer = 23
 
                 For i As Integer = 0 To Columns.Count - 1
                     If i <> FlexibleColumn Then columnWidths += Columns(i).Width
@@ -124,5 +136,9 @@ Namespace System.Windows.Forms
         End Class
 
     End Class
+
+    Public Enum SortMethod As Integer
+        : [Custom] : [String] : [Integer] : [Date]
+    End Enum
 
 End Namespace

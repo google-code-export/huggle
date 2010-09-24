@@ -17,7 +17,7 @@ Public Class FamilyPropertiesForm
 
         If Family.FileWiki IsNot Nothing Then
             'Load logo
-            Dim logo As Media = Family.FileWiki.Media.FromString(Family.Config.Logo)
+            Dim logo As File = Family.FileWiki.Files.FromString(Family.Config.Logo)
 
             If Not logo.ContentKnown Then
                 Dim logoQuery As New MediaQuery(App.Sessions(Family.FileWiki), logo, 96)

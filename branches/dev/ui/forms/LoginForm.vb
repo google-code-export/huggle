@@ -82,7 +82,14 @@ Public Class LoginForm
     End Sub
 
     Private Sub _Shown() Handles Me.Shown
-        If Account.Text = "" Then Account.Focus() Else If Password.Text = "" Then Password.Focus() Else Login.Focus()
+        If Account.Text.Length = 0 Then
+            Account.Focus()
+        ElseIf Password.Enabled AndAlso Password.Text.Length = 0 Then
+            Password.Focus()
+        Else
+            Login.Focus()
+        End If
+
         Credentials_TextChanged()
     End Sub
 
@@ -121,21 +128,21 @@ Public Class LoginForm
         Config.Local.AutoLogin = RememberMe.Checked
     End Sub
 
-    Private Sub Username_GotFocus() Handles Account.GotFocus
+    Private Sub Account_GotFocus() Handles Account.GotFocus
         If Account.SelectedItem IsNot Nothing AndAlso Account.SelectedItem.ToString = Msg("login-anonymous") Then
             Account.ForeColor = SystemColors.ControlText
             Account.SelectedItem = Nothing
         End If
     End Sub
 
-    Private Sub Username_KeyDown(ByVal s As Object, ByVal e As KeyEventArgs) Handles Account.KeyDown
+    Private Sub Account_KeyDown(ByVal s As Object, ByVal e As KeyEventArgs) Handles Account.KeyDown
         If e.KeyCode = Keys.Enter Then
             e.SuppressKeyPress = True
             If Account.Text.Length > 0 Then Password.Focus()
         End If
     End Sub
 
-    Private Sub Username_SelectedIndexChanged() Handles Account.SelectedIndexChanged
+    Private Sub Account_SelectedIndexChanged() Handles Account.SelectedIndexChanged
         Password.Clear()
 
         If Account.SelectedItem IsNot Nothing _
@@ -144,7 +151,6 @@ Public Class LoginForm
             User = Wiki.Users.Anonymous
             Account.ForeColor = Color.Gray
             Password.Enabled = False
-            Login.Focus()
 
         ElseIf Account.Text.Length > 0 Then
             User = Wiki.Users.FromString(Account.Text)
@@ -221,7 +227,6 @@ Public Class LoginForm
         Dim loginAction As New Login(session, "Login")
         App.UserWaitForProcess(loginAction)
 
-        If loginAction.IsErrored Then App.ShowError(loginAction.Result)
         Return loginAction.IsSuccess
     End Function
 

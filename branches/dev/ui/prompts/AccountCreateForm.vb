@@ -83,13 +83,13 @@ Public Class AccountCreateForm
                 'Check title blacklists
                 If Session.Wiki.Family.GlobalTitleBlacklist IsNot Nothing _
                     AndAlso Session.Wiki.Family.GlobalTitleBlacklist.IsMatch _
-                    (Session, name, BlacklistAction.CreateAccount) Then
+                    (Session, name, TitleListAction.CreateAccount) Then
 
                     Status = CheckStatus.GlobalBlacklisted
 
                 ElseIf Session.Wiki.TitleBlacklist IsNot Nothing _
                     AndAlso Session.Wiki.TitleBlacklist.IsMatch _
-                    (Session, name, BlacklistAction.CreateAccount) Then
+                    (Session, name, TitleListAction.CreateAccount) Then
 
                     Status = CheckStatus.LocalBlacklisted
                 End If
