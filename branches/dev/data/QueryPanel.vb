@@ -4,22 +4,19 @@ Imports Huggle.Scripting
 
 Public Class QueryPanel
 
-    Private _Wiki As Wiki
+    Private _Session As Session
 
     Private Evaluator As Evaluator
 
-    Public Sub New(ByVal wiki As Wiki)
+    Public Sub New(ByVal session As Session)
         InitializeComponent()
-        Me.Wiki = wiki
+        _Session = session
     End Sub
 
-    Public Property Wiki() As Wiki
+    Public ReadOnly Property Session As Session
         Get
-            Return _Wiki
+            Return _Session
         End Get
-        Set(ByVal value As Wiki)
-            _Wiki = value
-        End Set
     End Property
 
     Private Sub Query_TextChanged() Handles Query.TextChanged
@@ -33,7 +30,7 @@ Public Class QueryPanel
         Else
             Result.Value = Nothing
             Run.Text = Msg("eval-stop")
-            Evaluator = New Evaluator(App.Sessions(Wiki), "query", Query.Text)
+            Evaluator = New Evaluator(Session, "query", Query.Text)
             Indicator.Show()
             Progress.Show()
             Indicator.Start()

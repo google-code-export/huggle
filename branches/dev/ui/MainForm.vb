@@ -11,6 +11,9 @@ Public Class MainForm
     Public Sub New(ByVal session As Session)
         InitializeComponent()
         Me.Session = session
+        Dim queryPanel As New QueryPanel(session)
+        queryPanel.Dock = DockStyle.Fill
+        QueueSplit.Panel2.Controls.Add(queryPanel)
     End Sub
 
     Private Sub _FormClosed() Handles Me.FormClosed
@@ -85,6 +88,11 @@ Public Class MainForm
 
     Private Sub UserChangeGroups_Click() Handles UserChangeGroups.Click
         Dim form As New UserGroupsForm(Session, Nothing)
+        form.Show()
+    End Sub
+
+    Private Sub AssessPageToolStripMenuItem_Click() Handles AssessPageToolStripMenuItem.Click
+        Dim form As New AssessForm(Session)
         form.Show()
     End Sub
 

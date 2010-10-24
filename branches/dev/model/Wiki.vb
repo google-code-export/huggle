@@ -191,7 +191,6 @@ Namespace Huggle
         Public Property IsDefault As Boolean
         Public Property IsHidden As Boolean
         Public Property IsLoaded As Boolean
-        Public Property IsPopular As Boolean
         Public Property IsPublicEditable As Boolean = True
         Public Property IsPublicReadable As Boolean = True
 

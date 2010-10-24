@@ -27,7 +27,7 @@ Namespace Huggle.Actions
         Public Overrides Sub Start()
 
             'Check title blacklists
-            If Wiki.Family.GlobalTitleBlacklist IsNot Nothing _
+            If Wiki.Family IsNot Nothing AndAlso Wiki.Family.GlobalTitleBlacklist IsNot Nothing _
                 AndAlso Wiki.Family.GlobalTitleBlacklist.IsMatch(Session, Name, TitleListAction.CreateAccount) Then
 
                 _Status = CheckStatus.GlobalBlacklisted

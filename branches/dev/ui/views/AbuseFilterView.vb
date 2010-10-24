@@ -16,65 +16,72 @@ Public Class AbuseFilterView : Inherits Viewer
         VisibilitySel.SelectedIndex = 0
         StatusSel.SelectedIndex = 0
         ActionSel.SelectedIndex = 0
+        RestrictedIcon.Image = Resources.mini_no
+        CreateFilter.Visible = Session.User.HasRight("abusefilter-modify")
+        EditFilter.Visible = Session.User.HasRight("abusefilter-modify")
+        UpdateDisplay()
     End Sub
 
-    Private Sub UpdateDetails() Handles FilterList.SelectedIndexChanged
+    Private Sub UpdateDisplay() Handles FilterList.SelectedIndexChanged
         If FilterList.SelectedItems.Count = 0 Then
             AbuseFilterSplit.Panel2Collapsed = True
             CurrentFilter = Nothing
         Else
             AbuseFilterSplit.Panel2Collapsed = False
             CurrentFilter = Wiki.AbuseFilters(CInt(FilterList.SelectedItems(0).Text))
+            GetDetails()
 
-            Dim full As Boolean = (CurrentFilter.Pattern IsNot Nothing)
-
-            RateLimit.Visible = full
-            Progress.Visible = Not full
-            Indicator.Visible = Not full
-
-            If full Then
-                Tabs.TabPages(1).Show()
-                Tabs.TabPages(2).Show()
-                Progress.Text = Nothing
-                Indicator.BackgroundImage = Nothing
-                Indicator.Stop()
-            Else
-                Tabs.TabPages(1).Hide()
-                Tabs.TabPages(2).Hide()
-
-                Dim abfPrivateSession As Session = App.Sessions.GetUserWithRight(Wiki, "abusefilter-private")
-
-                If abfPrivateSession Is Nothing Then
-                    Progress.Text = Msg("view-abusefilter-restricted")
-                    Indicator.BackgroundImage = Resources.mini_no
-                Else
-                    DetailQuery = New Actions.AbuseFilterDetail(abfPrivateSession.Wiki, CurrentFilter)
-                    CreateThread(AddressOf DetailQuery.Start)
-                    Progress.Text = Msg("view-abusefilter-progress")
-                    Indicator.BackgroundImage = Nothing
-                    Indicator.Start()
-                End If
-            End If
-
-            Actions.Text = Msg("view-abusefilter-actions", _
+            Actions.Text = Msg("view-abusefilter-actions",
                 If(CurrentFilter.Actions.Count = 0, Msg("a-none"), CurrentFilter.Actions.Join(", ")))
             Description.Text = CurrentFilter.Description
-            Modified.Text = Msg("view-abusefilter-modified", _
+            Modified.Text = Msg("view-abusefilter-modified",
                 CurrentFilter.LastModifiedBy.Name, FullDateString(CurrentFilter.LastModified))
             Notes.Text = CurrentFilter.Notes
             Pattern.Text = CurrentFilter.Pattern
-            RateLimit.Text = Msg("view-abusefilter-ratelimit", If(CurrentFilter.RateLimitCount = 0, Msg("a-none"), _
-                Msg("view-abusefilter-limitdetail", CurrentFilter.RateLimitCount, _
-                CurrentFilter.RateLimitPeriod, CurrentFilter.RateLimitGroups.Join(", "))))
-            Status.Text = Msg("view-abusefilter-status", GetFilterStatus(CurrentFilter))
 
-            CreateFilter.Visible = Session.User.HasRight("abusefilter-modify")
-            EditFilter.Visible = Session.User.HasRight("abusefilter-modify")
+            RateLimit.Text = Msg("view-abusefilter-ratelimit", If(CurrentFilter.RateLimitCount = 0, Msg("a-none"),
+                Msg("view-abusefilter-limitdetail", CurrentFilter.RateLimitCount,
+                CurrentFilter.RateLimitPeriod, If(CurrentFilter.RateLimitGroups Is Nothing, "",
+                CurrentFilter.RateLimitGroups.Join(", ")))))
+
+            Status.Text = Msg("view-abusefilter-status", GetFilterStatus(CurrentFilter))
         End If
     End Sub
 
-    Private Sub Details() Handles DetailQuery.Complete
-        If CurrentFilter Is DetailQuery.Filter Then UpdateDetails()
+    Private Sub GetDetails()
+        Dim full As Boolean = (CurrentFilter.Pattern IsNot Nothing)
+
+        RateLimit.Visible = full
+        Progress.Visible = Not full
+        Indicator.Visible = Not full
+        Restricted.Visible = False
+        RestrictedIcon.Visible = False
+
+        If full Then
+            FilterDetails.Visible = True
+            Progress.Text = Nothing
+            Indicator.Stop()
+        Else
+            Dim privilegedSession As Session = App.Sessions.GetUserWithRight(Wiki, "abusefilter-private")
+
+            If CurrentFilter.IsPrivate AndAlso privilegedSession Is Nothing Then
+                FilterDetails.Visible = False
+                Restricted.Visible = True
+                RestrictedIcon.Visible = True
+                Return
+            End If
+
+            Progress.Text = Msg("view-abusefilter-progress")
+            Indicator.Start()
+
+            If privilegedSession Is Nothing Then privilegedSession = Session
+            DetailQuery = New Actions.AbuseFilterDetail(privilegedSession, CurrentFilter)
+            CreateThread(AddressOf DetailQuery.Start)
+        End If
+    End Sub
+
+    Private Sub GotDetails() Handles DetailQuery.Complete
+        If CurrentFilter Is DetailQuery.Filter Then UpdateDisplay()
     End Sub
 
     Private Sub PopulateFilterList() _
@@ -84,8 +91,8 @@ Public Class AbuseFilterView : Inherits Viewer
         FilterList.Items.Clear()
 
         For Each filter As AbuseFilter In Wiki.AbuseFilters.All
-            If MatchesFilter(filter) Then FilterList.AddRow _
-                (filter.Id.ToString, filter.Description, GetFilterStatus(filter), _
+            If MatchesFilter(filter) Then FilterList.AddRow(
+                filter.Id.ToString, filter.Description, GetFilterStatus(filter),
                 filter.Actions.Join(", "), filter.TotalHits.ToString)
         Next filter
 
@@ -97,7 +104,7 @@ Public Class AbuseFilterView : Inherits Viewer
     End Sub
 
     Private Function GetFilterStatus(ByVal filter As AbuseFilter) As String
-        Return Msg("view-abusefilter-" & If(filter.IsPrivate, "private", "public")) & ", " & _
+        Return Msg("view-abusefilter-" & If(filter.IsPrivate, "private", "public")) & ", " &
             Msg("view-abusefilter-" & If(filter.IsDeleted, "deleted", If(filter.IsEnabled, "enabled", "disabled")))
     End Function
 

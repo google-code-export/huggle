@@ -121,14 +121,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="actions\Assess.vb" />
     <Compile Include="actions\ChangePassword.vb" />
     <Compile Include="actions\ResetPreferences.vb" />
     <Compile Include="actions\Unblock.vb" />
@@ -215,6 +215,9 @@
     <Compile Include="scripting\Model.vb" />
     <Compile Include="scripting\Parser.vb" />
     <Compile Include="Session.vb" />
+    <Compile Include="ui\controls\EnhancedComboBox.vb">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ui\forms\AboutForm.Designer.vb">
       <DependentUpon>AboutForm.vb</DependentUpon>
     </Compile>
@@ -225,6 +228,18 @@
       <DependentUpon>AbuseFilterEditForm.vb</DependentUpon>
     </Compile>
     <Compile Include="ui\forms\AbuseFilterEditForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\forms\AssessForm.Designer.vb">
+      <DependentUpon>AssessForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\forms\AssessForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\forms\QueryForm.Designer.vb">
+      <DependentUpon>QueryForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\forms\QueryForm.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ui\forms\UserGroupsForm.Designer.vb">
@@ -614,6 +629,9 @@
     <Compile Include="wikitext\Transclusion.vb" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="data\QueryPanel.resx">
+      <DependentUpon>QueryPanel.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources.resx">
       <Generator>PublicVbMyResourcesResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
@@ -625,6 +643,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ui\forms\AboutForm.resx">
       <DependentUpon>AboutForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\forms\AssessForm.resx">
+      <DependentUpon>AssessForm.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\forms\QueryForm.resx">
+      <DependentUpon>QueryForm.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ui\forms\UserGroupsForm.resx">
       <DependentUpon>UserGroupsForm.vb</DependentUpon>
@@ -792,36 +816,6 @@
     <None Include="resources\icons\data-wikitext.png" />
     <None Include="resources\icons\data-table.png" />
     <None Include="resources\icons\data-html.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="My Project\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>

@@ -15,11 +15,9 @@ Namespace Huggle
 
         Private _Assessment As String
         Private _DeletedEdits As New List(Of Revision)
-        Private _EditCount As Integer
         Private _Exists As Boolean
         Private _FirstRev As Revision
         Private _HasDeletedEdits As Boolean
-        Private _Id As Integer
         Private _IsIgnored As Boolean
         Private _IsPatrolled As Boolean
         Private _IsPriority As Boolean
@@ -37,12 +35,11 @@ Namespace Huggle
         Private _Title As String
         Private _Wiki As Wiki
 
-        Private _ExtendedInfoKnown, _ExternalLinksKnown, _ExistsKnown, _DeletedEditsKnown, _
+        Private _ExistsKnown, _DeletedEditsKnown, _
             _LinksKnown, _LangLinksKnown, _LogsKnown, _MediaKnown, _TargetKnown, _
-            _TranscludesKnown, _CategoriesKnown, _RedirectsKnown, _SectionsKnown, _HistoryKnown As Boolean
+            _TranscludesKnown, _CategoriesKnown, _RedirectsKnown, _SectionsKnown As Boolean
 
         Private _Categories As New List(Of Category)
-        Private _ExternalLinks As New List(Of String)
         Private _LangLinks As New List(Of String)
         Private _Links As New List(Of Page)
         Private _Media As New List(Of File)
@@ -111,13 +108,6 @@ Namespace Huggle
         End Property
 
         Public Property EditCount() As Integer
-            Get
-                Return _EditCount
-            End Get
-            Set(ByVal value As Integer)
-                _EditCount = value
-            End Set
-        End Property
 
         Public ReadOnly Property Edits() As List(Of Revision)
             Get
@@ -151,31 +141,10 @@ Namespace Huggle
         End Property
 
         Public Property ExtendedInfoKnown() As Boolean
-            Get
-                Return _ExtendedInfoKnown
-            End Get
-            Set(ByVal value As Boolean)
-                _ExtendedInfoKnown = value
-            End Set
-        End Property
 
         Public Property ExternalLinks() As List(Of String)
-            Get
-                Return _ExternalLinks
-            End Get
-            Set(ByVal value As List(Of String))
-                _ExternalLinks = value
-            End Set
-        End Property
 
         Public Property ExternalLinksKnown() As Boolean
-            Get
-                Return _ExternalLinksKnown
-            End Get
-            Set(ByVal value As Boolean)
-                _ExternalLinksKnown = value
-            End Set
-        End Property
 
         Public Property FirstRev() As Revision
             Get
@@ -203,22 +172,8 @@ Namespace Huggle
         End Property
 
         Public Property HistoryKnown() As Boolean
-            Get
-                Return _HistoryKnown
-            End Get
-            Set(ByVal value As Boolean)
-                _HistoryKnown = value
-            End Set
-        End Property
 
         Public Property Id() As Integer
-            Get
-                Return _Id
-            End Get
-            Set(ByVal value As Integer)
-                _Id = value
-            End Set
-        End Property
 
         Public ReadOnly Property IsArticle() As Boolean
             Get
@@ -881,19 +836,23 @@ Namespace Huggle
             'Capitalize first letter of title
             If Not Wiki.Config.FirstLetterCaseSensitive Then title = UcFirst(title)
 
-            'Handle namespace aliases
-            If Wiki.Spaces.FromTitle(title) IsNot Wiki.Spaces.Article _
-                Then title = Wiki.Spaces.FromTitle(title).Name & ":" & title.FromFirst(":")
+            'Handle namespaces
+            Dim space As Space = Wiki.Spaces.FromTitle(title)
 
-            'Handle special namespaces
-            If title.StartsWith(Wiki.Spaces.Special.Name & ":") Then Return Nothing
+            'Handle special namespace
+            If space.IsSpecial Then Return Nothing
 
-            'Capitalize first letter after namespace
-            If Not Wiki.Config.FirstLetterCaseSensitive Then
-                Dim pos As Integer = title.IndexOf(":")
+            If space IsNot Wiki.Spaces.Article Then
+                'Normalize namespace name
+                title = space.Name & ":" & title.FromFirst(":")
 
-                If pos >= 0 AndAlso Wiki.Spaces(title.Substring(0, pos)) IsNot Nothing _
-                    Then title = title.Substring(0, pos + 1) & title.Substring(pos + 1, 1).ToUpper & title.Substring(pos + 2)
+                'Reject titles that are a namespace name followed by a colon
+                Dim cPos As Integer = title.IndexOf(":")
+                If cPos = title.Length - 1 Then Return Nothing
+
+                'Capitalize first letter after namespace
+                If Not Wiki.Config.FirstLetterCaseSensitive AndAlso cPos >= 0 _
+                    Then title = title.Substring(0, cPos + 1) & title.Substring(cPos + 1, 1).ToUpper & title.Substring(cPos + 2)
             End If
 
             Return title

@@ -8,10 +8,8 @@ Namespace System.Windows.Forms
         Private LastSortColumn As Integer
         Private LastSortOrder As Boolean = True
 
-        Private _FlexibleColumn As Integer = -1
         Private _LinkColumn As Boolean
         Private _SortMethods As New Dictionary(Of Integer, SortMethod)
-        Private _SortOnColumnClick As Boolean
 
         Public Sub New()
             Me.DoubleBuffered = True
@@ -21,15 +19,8 @@ Namespace System.Windows.Forms
             Me.View = Forms.View.Details
         End Sub
 
-        <DefaultValue(-1)> _
+        <DefaultValue(-1)>
         Public Property FlexibleColumn() As Integer
-            Get
-                Return _FlexibleColumn
-            End Get
-            Set(ByVal value As Integer)
-                _FlexibleColumn = value
-            End Set
-        End Property
 
         <Browsable(False)> _
         Public ReadOnly Property SortMethods() As Dictionary(Of Integer, SortMethod)
@@ -38,15 +29,8 @@ Namespace System.Windows.Forms
             End Get
         End Property
 
-        <DefaultValue(False)> _
+        <DefaultValue(False)>
         Public Property SortOnColumnClick() As Boolean
-            Get
-                Return _SortOnColumnClick
-            End Get
-            Set(ByVal value As Boolean)
-                _SortOnColumnClick = value
-            End Set
-        End Property
 
         Public Sub AddRow(ByVal ParamArray cells() As String)
             Items.Add(New ListViewItem(cells) With {.UseItemStyleForSubItems = False})

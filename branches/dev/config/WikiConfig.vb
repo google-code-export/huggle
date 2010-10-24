@@ -106,7 +106,7 @@ Namespace Huggle
 
         Public ReadOnly Property ConfigPage() As Page
             Get
-                Return Wiki.Pages.FromString(Config.Global.WikiConfigPageName)
+                Return Wiki.Pages.FromString(Config.Global.WikiConfigPageTitle)
             End Get
         End Property
 

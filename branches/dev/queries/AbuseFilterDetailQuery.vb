@@ -11,8 +11,8 @@ Namespace Huggle.Actions
         Private _AllowedActions As New List(Of String)
         Private _Filter As AbuseFilter
 
-        Public Sub New(ByVal wiki As Wiki, ByVal filter As AbuseFilter)
-            MyBase.New(App.Sessions.GetUserWithRight(wiki, "abusefilter-view"), Msg("abusefilterdetail-desc", filter))
+        Public Sub New(ByVal session As Session, ByVal filter As AbuseFilter)
+            MyBase.New(session, Msg("abusefilterdetail-desc", filter))
             _Filter = filter
         End Sub
 
@@ -29,33 +29,36 @@ Namespace Huggle.Actions
         End Property
 
         Public Overrides Sub Start()
-            If Session Is Nothing Then OnFail(Msg("error-rights", "abusefilter-view")) : Return
-
             OnStarted()
 
-            Dim req As New UIRequest(Session, Description, New QueryString("title", "Special:AbuseFilter/" & _
-                If(Filter.Id = 0, "new", CStr(Filter.Id))), Nothing)
+            Dim req As New UIRequest(Session, Description, New QueryString("title", "Special:AbuseFilter/" &
+                If(Filter.Id = 0, "new", Filter.Id.ToString)), Nothing)
+
             req.Start()
             If req.IsFailed Then OnFail(req.Result) : Return
 
-            Dim notes As String = GetHtmlInputValue(req.Response, "wpFilterNotes")
-            Dim pattern As String = GetHtmlInputValue(req.Response, "wpFilterRules")
-            Dim rateLimitCount As String = GetHtmlInputValue(req.Response, "wpFilterThrottleCount")
-            Dim rateLimitPeriod As String = GetHtmlInputValue(req.Response, "wpFilterThrottlePeriod")
-            Dim rateLimitGroups As String = GetHtmlInputValue(req.Response, "wpFilterThrottleGroups")
-            Dim warning As String = GetHtmlInputValue(req.Response, "wpFilterWarnMessageOther")
+            Dim notes As String = GetHtmlTextFromName(req.Response, "wpFilterNotes")
+            Dim pattern As String = GetHtmlTextFromName(req.Response, "wpFilterRules")
+            Dim warning As String = GetHtmlAttributeFromName(req.Response, "wpFilterWarnMessageOther", "value")
 
             If notes IsNot Nothing Then Filter.Notes = notes
             If pattern IsNot Nothing Then Filter.Pattern = pattern
-            If rateLimitCount IsNot Nothing Then Filter.RateLimitCount = CInt(rateLimitCount)
-            If rateLimitGroups IsNot Nothing Then Filter.RateLimitGroups = List(rateLimitGroups.Split(LF))
-            If rateLimitPeriod IsNot Nothing Then Filter.RateLimitPeriod = New TimeSpan(0, 0, CInt(rateLimitPeriod))
             If warning IsNot Nothing Then Filter.WarningMessage = warning
 
-            For Each item As String In List( _
-                "blockautopromote", "block", "degroup", "disallow", "tag", "throttle", "warn", "rangeblock")
+            If GetHtmlAttributeFromName(req.Response, "wpFilterActionThrottle", "checked") IsNot Nothing Then
+                Dim rateLimitCount As String = GetHtmlAttributeFromName(req.Response, "wpFilterThrottleCount", "value")
+                Dim rateLimitPeriod As String = GetHtmlAttributeFromName(req.Response, "wpFilterThrottlePeriod", "value")
+                Dim rateLimitGroups As String = GetHtmlAttributeFromName(req.Response, "wpFilterThrottleGroups", "value")
 
-                If req.Response.Contains("wpFilterAction" & UcFirst(item)) Then AllowedActions.Add(item)
+                If rateLimitCount IsNot Nothing Then Filter.RateLimitCount = CInt(rateLimitCount)
+                If rateLimitGroups IsNot Nothing Then Filter.RateLimitGroups = List(rateLimitGroups.Split(LF))
+                If rateLimitPeriod IsNot Nothing Then Filter.RateLimitPeriod = New TimeSpan(0, 0, CInt(rateLimitPeriod))
+            End If
+            
+            For Each item As String In
+                {"blockautopromote", "block", "degroup", "disallow", "tag", "throttle", "warn", "rangeblock"}
+
+                If req.Response.Contains("wpFilterAction" & UcFirst(item)) Then AllowedActions.Merge(item)
             Next item
 
             OnSuccess()

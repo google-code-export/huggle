@@ -762,10 +762,10 @@ Namespace Huggle
                     If i >= 0 Then
                         Page.Owner.IsShared = True
 
-                        Dim RegisteredTo As String = Text.Substring(i + 1)
-                        If RegisteredTo.Contains("}}") Then RegisteredTo = RegisteredTo.ToFirst("}}")
-                        If RegisteredTo.Contains("|") Then RegisteredTo = RegisteredTo.ToFirst("|")
-                        Page.Owner.RegisteredTo = RegisteredTo
+                        Dim registeredTo As String = Text.Substring(i + 1)
+                        If registeredTo.Contains("}}") Then registeredTo = registeredTo.ToFirst("}}")
+                        If registeredTo.Contains("|") Then registeredTo = registeredTo.ToFirst("|")
+                        Page.Owner.RegisteredTo = registeredTo
                     End If
                 Next item
             End If

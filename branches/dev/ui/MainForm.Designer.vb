@@ -29,11 +29,13 @@ Partial Class MainForm
         Me.WikiToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.WikiFamilyProperties = New System.Windows.Forms.ToolStripMenuItem()
         Me.WikiProperties = New System.Windows.Forms.ToolStripMenuItem()
+        Me.AssessPageToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.UserToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.AccountGlobalProperties = New System.Windows.Forms.ToolStripMenuItem()
         Me.AccountProperties = New System.Windows.Forms.ToolStripMenuItem()
         Me.PageToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.UserToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.UserChangeGroups = New System.Windows.Forms.ToolStripMenuItem()
         Me.RevisionToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.HelpToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.HelpManual = New System.Windows.Forms.ToolStripMenuItem()
@@ -42,7 +44,8 @@ Partial Class MainForm
         Me.OuterPanel = New System.Windows.Forms.ToolStripContainer()
         Me.LogSplit = New SplitContainerEx()
         Me.QueueSplit = New SplitContainerEx()
-        Me.UserChangeGroups = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.QueryWindowToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuBar.SuspendLayout()
         Me.OuterPanel.ContentPanel.SuspendLayout()
         Me.OuterPanel.SuspendLayout()
@@ -53,7 +56,7 @@ Partial Class MainForm
         '
         'MenuBar
         '
-        Me.MenuBar.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SystemMenu, Me.WikiToolStripMenuItem, Me.UserToolStripMenuItem, Me.PageToolStripMenuItem, Me.UserToolStripMenuItem1, Me.RevisionToolStripMenuItem, Me.HelpToolStripMenuItem})
+        Me.MenuBar.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SystemMenu, Me.WikiToolStripMenuItem, Me.UserToolStripMenuItem, Me.PageToolStripMenuItem, Me.UserToolStripMenuItem1, Me.RevisionToolStripMenuItem, Me.ToolStripMenuItem1, Me.HelpToolStripMenuItem})
         Me.MenuBar.Location = New System.Drawing.Point(0, 0)
         Me.MenuBar.Name = "MenuBar"
         Me.MenuBar.Size = New System.Drawing.Size(640, 24)
@@ -80,7 +83,7 @@ Partial Class MainForm
         '
         'WikiToolStripMenuItem
         '
-        Me.WikiToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.WikiFamilyProperties, Me.WikiProperties})
+        Me.WikiToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.WikiFamilyProperties, Me.WikiProperties, Me.AssessPageToolStripMenuItem})
         Me.WikiToolStripMenuItem.Name = "WikiToolStripMenuItem"
         Me.WikiToolStripMenuItem.Size = New System.Drawing.Size(42, 20)
         Me.WikiToolStripMenuItem.Text = "Wiki"
@@ -96,6 +99,12 @@ Partial Class MainForm
         Me.WikiProperties.Name = "WikiProperties"
         Me.WikiProperties.Size = New System.Drawing.Size(174, 22)
         Me.WikiProperties.Text = "Properties..."
+        '
+        'AssessPageToolStripMenuItem
+        '
+        Me.AssessPageToolStripMenuItem.Name = "AssessPageToolStripMenuItem"
+        Me.AssessPageToolStripMenuItem.Size = New System.Drawing.Size(174, 22)
+        Me.AssessPageToolStripMenuItem.Text = "Assess page"
         '
         'UserToolStripMenuItem
         '
@@ -129,6 +138,12 @@ Partial Class MainForm
         Me.UserToolStripMenuItem1.Size = New System.Drawing.Size(42, 20)
         Me.UserToolStripMenuItem1.Text = "User"
         '
+        'UserChangeGroups
+        '
+        Me.UserChangeGroups.Name = "UserChangeGroups"
+        Me.UserChangeGroups.Size = New System.Drawing.Size(165, 22)
+        Me.UserChangeGroups.Text = "Change Groups..."
+        '
         'RevisionToolStripMenuItem
         '
         Me.RevisionToolStripMenuItem.Name = "RevisionToolStripMenuItem"
@@ -145,18 +160,18 @@ Partial Class MainForm
         'HelpManual
         '
         Me.HelpManual.Name = "HelpManual"
-        Me.HelpManual.Size = New System.Drawing.Size(152, 22)
+        Me.HelpManual.Size = New System.Drawing.Size(116, 22)
         Me.HelpManual.Text = "Manual"
         '
         'ToolStripSeparator4
         '
         Me.ToolStripSeparator4.Name = "ToolStripSeparator4"
-        Me.ToolStripSeparator4.Size = New System.Drawing.Size(149, 6)
+        Me.ToolStripSeparator4.Size = New System.Drawing.Size(113, 6)
         '
         'HelpAbout
         '
         Me.HelpAbout.Name = "HelpAbout"
-        Me.HelpAbout.Size = New System.Drawing.Size(152, 22)
+        Me.HelpAbout.Size = New System.Drawing.Size(116, 22)
         Me.HelpAbout.Text = "About..."
         '
         'OuterPanel
@@ -200,11 +215,18 @@ Partial Class MainForm
         Me.QueueSplit.SplitterDistance = 200
         Me.QueueSplit.TabIndex = 0
         '
-        'UserChangeGroups
+        'ToolStripMenuItem1
         '
-        Me.UserChangeGroups.Name = "UserChangeGroups"
-        Me.UserChangeGroups.Size = New System.Drawing.Size(165, 22)
-        Me.UserChangeGroups.Text = "Change Groups..."
+        Me.ToolStripMenuItem1.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.QueryWindowToolStripMenuItem})
+        Me.ToolStripMenuItem1.Name = "ToolStripMenuItem1"
+        Me.ToolStripMenuItem1.Size = New System.Drawing.Size(51, 20)
+        Me.ToolStripMenuItem1.Text = "Query"
+        '
+        'QueryWindowToolStripMenuItem
+        '
+        Me.QueryWindowToolStripMenuItem.Name = "QueryWindowToolStripMenuItem"
+        Me.QueryWindowToolStripMenuItem.Size = New System.Drawing.Size(153, 22)
+        Me.QueryWindowToolStripMenuItem.Text = "Query Window"
         '
         'MainForm
         '
@@ -250,4 +272,7 @@ Partial Class MainForm
     Friend WithEvents AccountGlobalProperties As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents WikiFamilyProperties As System.Windows.Forms.ToolStripMenuItem
     Private WithEvents UserChangeGroups As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents AssessPageToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ToolStripMenuItem1 As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents QueryWindowToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
 End Class

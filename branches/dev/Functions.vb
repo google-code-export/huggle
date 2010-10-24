@@ -161,35 +161,12 @@ Namespace Huggle
             Diagnostics.Process.Start(url.ToString)
         End Sub
 
-        Public Function Scramble(ByVal value As String, ByVal key As Byte()) As Byte()
-            Dim algo As New RijndaelManaged
-            algo.IV = key
-            algo.Key = key
-
-            Dim input As Byte() = Encoding.UTF8.GetBytes(value)
-            Dim outputStream As New MemoryStream
-            Dim cryptoStream As New CryptoStream(outputStream, algo.CreateEncryptor, CryptoStreamMode.Write)
-            cryptoStream.Write(input, 0, input.Length)
-            cryptoStream.FlushFinalBlock()
-            cryptoStream.Close()
-
-            Return outputStream.ToArray
+        Public Function Scramble(ByVal data As String, ByVal key As Byte()) As Byte()
+            Return ProtectedData.Protect(Encoding.UTF8.GetBytes(data), key, DataProtectionScope.CurrentUser)
         End Function
 
-        Public Function Unscramble(ByVal value As Byte(), ByVal key As Byte()) As String
-            Dim algo As New RijndaelManaged
-            algo.IV = key
-            algo.Key = key
-
-            Dim inputStream As New MemoryStream(value)
-            Dim output(value.Length - 1) As Byte
-            Dim cryptoStream As New CryptoStream(inputStream, algo.CreateDecryptor, CryptoStreamMode.Read)
-            cryptoStream.Read(output, 0, CInt(inputStream.Length))
-            cryptoStream.Close()
-
-            Dim result As String = Encoding.UTF8.GetString(output)
-            If result.Contains(Convert.ToChar(0)) Then result = result.ToFirst(Convert.ToChar(0))
-            Return result
+        Public Function Unscramble(ByVal data As Byte(), ByVal key As Byte()) As String
+            Return Encoding.UTF8.GetString(ProtectedData.Unprotect(data, key, DataProtectionScope.CurrentUser))
         End Function
 
         Public Function WikiUrl(ByVal wiki As Wiki, ByVal title As String, ByVal ParamArray params As String()) As Uri
@@ -280,11 +257,22 @@ Namespace Huggle
             Return New Regex("(" & String.Join("|", Patterns.ToArray) & ")", RegexOptions.Compiled)
         End Function
 
-        Public Function GetHtmlInputValue(ByVal html As String, ByVal name As String) As String
-            If Not html.Contains("<input name=""" & name & """") Then Return Nothing
-            html = html.FromFirst("<input name=""" & name & """")
-            If Not html.Contains("value=""") Then Return Nothing
-            Return HtmlDecode(html.FromFirst("value=""").ToFirst(""""))
+        Public Function GetHtmlAttributeFromName(ByVal html As String, ByVal name As String, ByVal attribute As String) As String
+            Dim pattern As New Regex("<[^ ]+ name=""" & Regex.Escape(name) & """[^>]+" &
+                Regex.Escape(attribute) & "=""([^""]+)""", RegexOptions.Compiled Or RegexOptions.IgnoreCase)
+
+            Dim match As Match = pattern.Match(html)
+            If match.Success Then Return HtmlDecode(match.Groups(1).Value)
+            Return Nothing
+        End Function
+
+        Public Function GetHtmlTextFromName(ByVal html As String, ByVal name As String) As String
+            Dim pattern As New Regex("<[^ ]+ name=""" & Regex.Escape(name) & """[^>]+>([^<]*)<",
+                RegexOptions.Compiled Or RegexOptions.IgnoreCase)
+
+            Dim match As Match = pattern.Match(html)
+            If match.Success Then Return HtmlDecode(match.Groups(1).Value)
+            Return Nothing
         End Function
 
         Public Function ParseUrl(ByVal uri As Uri) As Dictionary(Of String, String)

@@ -92,6 +92,12 @@ Namespace Huggle
             End Get
         End Property
 
+        Public ReadOnly Property Name As String
+            Get
+                Return Windows.Forms.Application.ProductName
+            End Get
+        End Property
+
         Public ReadOnly Property Randomness As Random
             Get
                 Return _Randomness
@@ -102,6 +108,12 @@ Namespace Huggle
             Get
                 If _Sessions Is Nothing Then _Sessions = New SessionCollection
                 Return _Sessions
+            End Get
+        End Property
+
+        Public ReadOnly Property Version As String
+            Get
+                Return Windows.Forms.Application.ProductVersion
             End Get
         End Property
 
@@ -128,7 +140,7 @@ Namespace Huggle
             Config.Global.DownloadLocation = "http://code.google.com/p/huggle"
             Config.Global.IsDefault = True
             Config.Global.LatestVersion = Reflection.Assembly.GetExecutingAssembly.GetName.Version
-            Config.Global.WikiConfigPageName = "Project:Huggle/Config"
+            Config.Global.WikiConfigPageTitle = "Project:Huggle/Config"
 
             Dim metaWiki As Wiki = Wikis("meta")
             metaWiki.Family = Families.Wikimedia

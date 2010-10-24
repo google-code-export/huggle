@@ -34,6 +34,8 @@ Namespace Huggle
             (ByVal session As Session, ByVal title As String, ByVal action As TitleListAction) As Boolean
 
             Get
+                If Entries Is Nothing Then Return False
+
                 For Each entry As TitleListEntry In Entries
                     If entry.IsMatch(session, title, action) Then Return True
                 Next entry
