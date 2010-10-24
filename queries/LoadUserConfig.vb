@@ -39,11 +39,11 @@ Namespace Huggle.Actions
                 list.Add("tags")
                 meta.Add("siteinfo", "allmessages")
                 query.Add("ammessages", Config.Internal.WikiMessages)
-                query.Add("siprop", "general|namespaces|namespacealiases|extensions|rightsinfo|usergroups")
+                query.Add("siprop", "general|namespaces|namespacealiases|extensions|fileextensions|rightsinfo|statistics|usergroups")
                 query.Add("sinumberingroup", True)
                 query.Add("tgprop", "name|displayname|description|hitcount")
                 query.Add("tglimit", "max")
-                titles.Add(Config.Global.WikiConfigPageName)
+                titles.Add(Config.Global.WikiConfigPageTitle)
 
                 If Wiki.Extensions.All.Count = 0 OrElse Wiki.Extensions.Contains(Extension.AbuseFilter) Then
                     list.Add("abusefilters")
@@ -68,7 +68,7 @@ Namespace Huggle.Actions
             If req.IsErrored Then OnFail(req.Result) : Return
 
             'Load wiki config
-            Wiki.Config.Load(Wiki.Pages(Config.Global.WikiConfigPageName).Text)
+            Wiki.Config.Load(Wiki.Pages(Config.Global.WikiConfigPageTitle).Text)
 
             If User.Config.NeedsUpdate Then
                 User.Config.IsLocalCopy = False

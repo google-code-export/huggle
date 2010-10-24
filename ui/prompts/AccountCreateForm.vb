@@ -81,7 +81,7 @@ Public Class AccountCreateForm
                 Status = CheckResults(name)
             Else
                 'Check title blacklists
-                If Session.Wiki.Family.GlobalTitleBlacklist IsNot Nothing _
+                If Session.Wiki.Family IsNot Nothing AndAlso Session.Wiki.Family.GlobalTitleBlacklist IsNot Nothing _
                     AndAlso Session.Wiki.Family.GlobalTitleBlacklist.IsMatch _
                     (Session, name, TitleListAction.CreateAccount) Then
 
@@ -94,8 +94,8 @@ Public Class AccountCreateForm
                     Status = CheckStatus.LocalBlacklisted
                 End If
 
-                If Status = CheckStatus.None Then CheckTimer.Start()
-            End If
+                    If Status = CheckStatus.None Then CheckTimer.Start()
+                End If
         End If
 
         UpdateStatus()

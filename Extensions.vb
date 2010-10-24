@@ -4,6 +4,7 @@ Imports System.Collections
 Imports System.Collections.Generic
 Imports System.Drawing
 Imports System.Runtime.CompilerServices
+Imports System.Web.HttpUtility
 Imports System.Text.RegularExpressions
 Imports System.Windows.Forms
 Imports System.Xml
@@ -53,7 +54,7 @@ Public Module Extensions
 
     <Extension()> _
     Function Attribute(ByVal node As XmlNode, ByVal value As String) As String
-        If node.Attributes(value) IsNot Nothing Then Return node.Attributes(value).Value Else Return Nothing
+        If node.Attributes(value) IsNot Nothing Then Return HtmlDecode(node.Attributes(value).Value) Else Return Nothing
     End Function
 
     <Extension()> _

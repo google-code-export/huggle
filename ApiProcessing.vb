@@ -10,151 +10,151 @@ Namespace Huggle
         Private LastRev As Revision
 
         Private Sub ProcessApi(ByVal rootNode As XmlNode)
-            Try
-                If rootNode.Name <> "api" Then OnFail(Msg("error-apiresponse"), "badroot")
+            'Try
+            If rootNode.Name <> "api" Then OnFail(Msg("error-apiresponse"), "badroot")
 
-                For Each node As XmlNode In rootNode.ChildNodes
-                    Select Case node.Name
-                        Case "block"
-                        Case "changerights"
-                        Case "delete"
+            For Each node As XmlNode In rootNode.ChildNodes
+                Select Case node.Name
+                    Case "block"
+                    Case "changerights"
+                    Case "delete"
 
-                        Case "edit"
-                            If node.Attribute("result") = "Success" Then
-                                Dim rev As Revision = Wiki.Revisions(CInt(node.Attribute("newrevid")))
-                                Dim old As Revision = Wiki.Revisions(CInt(node.Attribute("oldrevid")))
-                                Dim page As Page = Wiki.Pages(node.Attribute("title"))
-
-                                page.Id = CInt(node.Attribute("pageid"))
-                                rev.Prev = old
-                                old.Next = rev
-                            End If
-
-                        Case "emailuser"
-
-                        Case "error"
-                            Dim errorCode As String = node.Attribute("code")
-                            Dim errorInfo As String = node.Attribute("info")
-
-                            'Tidy internal API error messages
-                            If errorCode.StartsWith("internal_api_error_") Then
-                                errorCode = errorCode.FromFirst("internal_api_error_").ToLower
-                                errorInfo = errorInfo.Remove("Exception Caught: ")
-
-                                OnFail(Msg("error-internal", "Internal API error"), errorInfo) : Return
-
-                            ElseIf errorCode = "moduledisabled" Then
-                                errorInfo = Msg("error-apimoduledisabled", errorInfo.FromFirst("``").ToFirst("'"))
-
-                            ElseIf errorCode = "help" Then
-                                errorCode = "noquery"
-                                errorInfo = Msg("error-noquery")
-                            End If
-
-                            OnFail(errorInfo, errorCode) : Return
-
-                        Case "expandtemplates"
-                            Dim sources As List(Of String) = Query("text").ToString.Split(ExpandTemplatesQuery.Separator).ToList
-                            Dim results As List(Of String) = node.Value.Split(ExpandTemplatesQuery.Separator).ToList
-
-                            For i As Integer = 0 To sources.Count - 1
-                                Wiki.ExpansionCache.Merge(sources(i), results(i))
-                            Next i
-
-                        Case "flagconfig"
-                            Wiki.ReviewFlags.Clear()
-
-                            For Each flagNode As XmlNode In node.ChildNodes
-                                Dim flag As ReviewFlag = Wiki.ReviewFlags(flagNode.Attribute("name"))
-
-                                flag.DefaultLevel = 0
-                                flag.Levels = CInt(flagNode.Attribute("levels"))
-                                flag.PristineLevel = CInt(flagNode.Attribute("tier3"))
-                                flag.QualityLevel = CInt(flagNode.Attribute("tier2"))
-                            Next flagNode
-
-                        Case "import"
-                        Case "limits"
-
-                        Case "login"
-                            _LoginResponse = New LoginResponse
-
-                            If node.HasAttribute("result") Then LoginResponse.Result = node.Attribute("result").ToLower
-                            If LoginResponse.Result = "wrongpluginpass" Then LoginResponse.Result = "wrongpass"
-                            If node.HasAttribute("token") Then LoginResponse.Token = node.Attribute("token")
-                            If node.HasAttribute("wait") Then LoginResponse.Wait = New TimeSpan(0, 0, CInt(node.Attribute("wait")))
-
-                            'Clear saved password if it's wrong
-                            If LoginResponse.Result = "wrongpass" Then User.Password = Nothing
-
-                        Case "move"
-                        Case "paraminfo" : ProcessParamInfo(node)
-                        Case "parse" : ProcessParse(node)
-
-                        Case "patrol"
-                            Dim rcid As Integer = CInt(node.Attribute("rcid"))
-
-                            If Wiki.RecentChanges.ContainsKey(rcid) _
-                                Then CType(Wiki.RecentChanges(rcid), Revision).IsReviewed = True
-
-                        Case "protect"
-                        Case "purge"
-                        Case "query" : ProcessQuery(node)
-
-                        Case "query-continue"
-                            Continues.Clear()
-
-                            For Each qcNode As XmlNode In node.ChildNodes
-                                Dim name As String = qcNode.Attributes(0).Name
-                                Dim value As String = qcNode.Attributes(0).Value
-
-                                If name = "rvstartid" AndAlso LastRev IsNot Nothing _
-                                    Then LastRev.Prev = Wiki.Revisions(CInt(value))
-
-                                Continues.Merge(name, value)
-                            Next qcNode
-
-                        Case "review"
-
-                        Case "rollback"
-                            Dim rev As Revision = Wiki.Revisions(CInt(node.Attribute("revid")))
-                            Dim old As Revision = Wiki.Revisions(CInt(node.Attribute("old_revid")))
-                            Dim last As Revision = Wiki.Revisions(CInt(node.Attribute("last_revid")))
+                    Case "edit"
+                        If node.Attribute("result") = "Success" Then
+                            Dim rev As Revision = Wiki.Revisions(CInt(node.Attribute("newrevid")))
+                            Dim old As Revision = Wiki.Revisions(CInt(node.Attribute("oldrevid")))
                             Dim page As Page = Wiki.Pages(node.Attribute("title"))
 
                             page.Id = CInt(node.Attribute("pageid"))
-                            rev.Summary = node.Attribute("summary")
-                            rev.Page = page : old.Page = page : last.Page = page
+                            rev.Prev = old
+                            old.Next = rev
+                        End If
 
-                            rev.RevertTo = last
+                    Case "emailuser"
 
-                            If rev IsNot old Then
-                                rev.Prev = old
-                                old.Next = rev
-                                old.RevertedBy = rev
-                            End If
+                    Case "error"
+                        Dim errorCode As String = node.Attribute("code")
+                        Dim errorInfo As String = node.Attribute("info")
 
-                        Case "sitematrix" : ProcessSiteMatrix(node)
-                        Case "stabilize"
-                        Case "undelete"
-                        Case "upload"
+                        'Tidy internal API error messages
+                        If errorCode.StartsWith("internal_api_error_") Then
+                            errorCode = errorCode.FromFirst("internal_api_error_").ToLower
+                            errorInfo = errorInfo.Remove("Exception Caught: ")
 
-                        Case "warnings"
-                            Warnings.Clear()
+                            OnFail(Msg("error-internal", "Internal API error"), errorInfo) : Return
 
-                            For Each warningNode As XmlNode In node.ChildNodes
-                                Warnings.Add(warningNode.InnerText)
-                            Next warningNode
+                        ElseIf errorCode = "moduledisabled" Then
+                            errorInfo = Msg("error-apimoduledisabled", errorInfo.FromFirst("``").ToFirst("'"))
 
-                        Case "watch"
+                        ElseIf errorCode = "help" Then
+                            errorCode = "noquery"
+                            errorInfo = Msg("error-noquery")
+                        End If
 
-                        Case Else : Log.Debug(Msg("error-apiunrecognized", "result", node.Name))
-                    End Select
-                Next node
+                        OnFail(errorInfo, errorCode) : Return
 
-            Catch ex As Exception
-                OnFail(Result.FromException(ex).Wrap(Msg("error-apiresponse")))
-            End Try
+                    Case "expandtemplates"
+                        Dim sources As List(Of String) = Query("text").ToString.Split(ExpandTemplatesQuery.Separator).ToList
+                        Dim results As List(Of String) = node.Value.Split(ExpandTemplatesQuery.Separator).ToList
+
+                        For i As Integer = 0 To sources.Count - 1
+                            Wiki.ExpansionCache.Merge(sources(i), results(i))
+                        Next i
+
+                    Case "flagconfig"
+                        Wiki.ReviewFlags.Clear()
+
+                        For Each flagNode As XmlNode In node.ChildNodes
+                            Dim flag As ReviewFlag = Wiki.ReviewFlags(flagNode.Attribute("name"))
+
+                            flag.DefaultLevel = 0
+                            flag.Levels = CInt(flagNode.Attribute("levels"))
+                            flag.PristineLevel = CInt(flagNode.Attribute("tier3"))
+                            flag.QualityLevel = CInt(flagNode.Attribute("tier2"))
+                        Next flagNode
+
+                    Case "import"
+                    Case "limits"
+
+                    Case "login"
+                        _LoginResponse = New LoginResponse
+
+                        If node.HasAttribute("result") Then LoginResponse.Result = node.Attribute("result").ToLower
+                        If LoginResponse.Result = "wrongpluginpass" Then LoginResponse.Result = "wrongpass"
+                        If node.HasAttribute("token") Then LoginResponse.Token = node.Attribute("token")
+                        If node.HasAttribute("wait") Then LoginResponse.Wait = New TimeSpan(0, 0, CInt(node.Attribute("wait")))
+
+                        'Clear saved password if it's wrong
+                        If LoginResponse.Result = "wrongpass" Then User.Password = Nothing
+
+                    Case "move"
+                    Case "paraminfo" : ProcessParamInfo(node)
+                    Case "parse" : ProcessParse(node)
+
+                    Case "patrol"
+                        Dim rcid As Integer = CInt(node.Attribute("rcid"))
+
+                        If Wiki.RecentChanges.ContainsKey(rcid) _
+                            Then CType(Wiki.RecentChanges(rcid), Revision).IsReviewed = True
+
+                    Case "protect"
+                    Case "purge"
+                    Case "query" : ProcessQuery(node)
+
+                    Case "query-continue"
+                        Continues.Clear()
+
+                        For Each qcNode As XmlNode In node.ChildNodes
+                            Dim name As String = qcNode.Attributes(0).Name
+                            Dim value As String = qcNode.Attributes(0).Value
+
+                            If name = "rvstartid" AndAlso LastRev IsNot Nothing _
+                                Then LastRev.Prev = Wiki.Revisions(CInt(value))
+
+                            Continues.Merge(name, value)
+                        Next qcNode
+
+                    Case "review"
+
+                    Case "rollback"
+                        Dim rev As Revision = Wiki.Revisions(CInt(node.Attribute("revid")))
+                        Dim old As Revision = Wiki.Revisions(CInt(node.Attribute("old_revid")))
+                        Dim last As Revision = Wiki.Revisions(CInt(node.Attribute("last_revid")))
+                        Dim page As Page = Wiki.Pages(node.Attribute("title"))
+
+                        page.Id = CInt(node.Attribute("pageid"))
+                        rev.Summary = node.Attribute("summary")
+                        rev.Page = page : old.Page = page : last.Page = page
+
+                        rev.RevertTo = last
+
+                        If rev IsNot old Then
+                            rev.Prev = old
+                            old.Next = rev
+                            old.RevertedBy = rev
+                        End If
+
+                    Case "sitematrix" : ProcessSiteMatrix(node)
+                    Case "stabilize"
+                    Case "undelete"
+                    Case "upload"
+
+                    Case "warnings"
+                        Warnings.Clear()
+
+                        For Each warningNode As XmlNode In node.ChildNodes
+                            Warnings.Add(warningNode.InnerText)
+                        Next warningNode
+
+                    Case "watch"
+
+                    Case Else : Log.Debug(Msg("error-apiunrecognized", "result", node.Name))
+                End Select
+            Next node
+
+            'Catch ex As Exception
+            '    OnFail(Result.FromException(ex).Wrap(Msg("error-apiresponse")))
+            'End Try
         End Sub
 
         Private Sub ProcessQuery(ByVal queryNode As XmlNode)
@@ -205,6 +205,9 @@ Namespace Huggle
                                 Items.Add(user)
                             End If
                         Next u
+
+                    Case "articleassessment"
+                        'todo: implement...
 
                     Case "backlinks"
                         Dim sourcePage As Page = Wiki.Pages.FromString(CStr(Query("bltitle")))
@@ -313,7 +316,7 @@ Namespace Huggle
                         Wiki.FileExtensions.Clear()
 
                         For Each fe As XmlNode In node.ChildNodes
-                            Wiki.FileExtensions.Add(node.Attribute("ext"))
+                            Wiki.FileExtensions.Merge(node.Attribute("ext"))
                         Next fe
 
                     Case "general" : ProcessSiteInfo(node)

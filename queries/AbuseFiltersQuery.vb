@@ -4,20 +4,11 @@
 
     Class AbuseFiltersQuery : Inherits Query
 
-        Private _Limit As Integer
-
         Public Sub New(ByVal session As Session)
             MyBase.New(session, Msg("abusefilters-desc"))
         End Sub
 
         Public Property Limit() As Integer
-            Get
-                Return _Limit
-            End Get
-            Set(ByVal value As Integer)
-                _Limit = value
-            End Set
-        End Property
 
         Public Overrides Sub Start()
             OnProgress(Msg("abusefilters-progress"))

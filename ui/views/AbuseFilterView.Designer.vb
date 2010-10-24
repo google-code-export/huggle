@@ -39,7 +39,7 @@ Partial Class AbuseFilterView
         Me.StatusSel = New System.Windows.Forms.ComboBox()
         Me.ActionSel = New System.Windows.Forms.ComboBox()
         Me.FilterCount = New System.Windows.Forms.Label()
-        Me.Tabs = New System.Windows.Forms.TabControl()
+        Me.FilterDetails = New System.Windows.Forms.TabControl()
         Me.DescriptionTab = New System.Windows.Forms.TabPage()
         Me.AbuseFilterProps = New System.Windows.Forms.FlowLayoutPanel()
         Me.Actions = New System.Windows.Forms.Label()
@@ -52,16 +52,19 @@ Partial Class AbuseFilterView
         Me.Notes = New System.Windows.Forms.TextBox()
         Me.EditFilter = New System.Windows.Forms.LinkLabel()
         Me.FilterImage = New System.Windows.Forms.PictureBox()
+        Me.RestrictedIcon = New System.Windows.Forms.PictureBox()
+        Me.Restricted = New System.Windows.Forms.Label()
         Me.AbuseFilterSplit.Panel1.SuspendLayout()
         Me.AbuseFilterSplit.Panel2.SuspendLayout()
         Me.AbuseFilterSplit.SuspendLayout()
         Me.SelLayout.SuspendLayout()
-        Me.Tabs.SuspendLayout()
+        Me.FilterDetails.SuspendLayout()
         Me.DescriptionTab.SuspendLayout()
         Me.AbuseFilterProps.SuspendLayout()
         Me.PatternTab.SuspendLayout()
         Me.NotesTab.SuspendLayout()
         CType(Me.FilterImage, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.RestrictedIcon, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'Description
@@ -121,12 +124,13 @@ Partial Class AbuseFilterView
         '
         'AbuseFilterSplit.Panel2
         '
-        Me.AbuseFilterSplit.Panel2.Controls.Add(Me.Tabs)
+        Me.AbuseFilterSplit.Panel2.Controls.Add(Me.FilterDetails)
         Me.AbuseFilterSplit.Panel2.Controls.Add(Me.EditFilter)
         Me.AbuseFilterSplit.Panel2.Controls.Add(Me.FilterImage)
-        Me.AbuseFilterSplit.Panel2Collapsed = True
+        Me.AbuseFilterSplit.Panel2.Controls.Add(Me.RestrictedIcon)
+        Me.AbuseFilterSplit.Panel2.Controls.Add(Me.Restricted)
         Me.AbuseFilterSplit.Size = New System.Drawing.Size(562, 432)
-        Me.AbuseFilterSplit.SplitterDistance = 282
+        Me.AbuseFilterSplit.SplitterDistance = 278
         Me.AbuseFilterSplit.TabIndex = 8
         '
         'Title
@@ -165,7 +169,7 @@ Partial Class AbuseFilterView
         Me.FilterList.Location = New System.Drawing.Point(3, 55)
         Me.FilterList.Name = "FilterList"
         Me.FilterList.ShowGroups = False
-        Me.FilterList.Size = New System.Drawing.Size(555, 374)
+        Me.FilterList.Size = New System.Drawing.Size(555, 220)
         Me.FilterList.SortOnColumnClick = True
         Me.FilterList.TabIndex = 1
         Me.FilterList.UseCompatibleStateImageBehavior = False
@@ -247,19 +251,19 @@ Partial Class AbuseFilterView
         Me.FilterCount.Text = "0 items"
         Me.FilterCount.TextAlign = System.Drawing.ContentAlignment.TopRight
         '
-        'Tabs
+        'FilterDetails
         '
-        Me.Tabs.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+        Me.FilterDetails.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
                     Or System.Windows.Forms.AnchorStyles.Left) _
                     Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.Tabs.Controls.Add(Me.DescriptionTab)
-        Me.Tabs.Controls.Add(Me.PatternTab)
-        Me.Tabs.Controls.Add(Me.NotesTab)
-        Me.Tabs.Location = New System.Drawing.Point(74, 3)
-        Me.Tabs.Name = "Tabs"
-        Me.Tabs.SelectedIndex = 0
-        Me.Tabs.Size = New System.Drawing.Size(485, 140)
-        Me.Tabs.TabIndex = 14
+        Me.FilterDetails.Controls.Add(Me.DescriptionTab)
+        Me.FilterDetails.Controls.Add(Me.PatternTab)
+        Me.FilterDetails.Controls.Add(Me.NotesTab)
+        Me.FilterDetails.Location = New System.Drawing.Point(77, 3)
+        Me.FilterDetails.Name = "FilterDetails"
+        Me.FilterDetails.SelectedIndex = 0
+        Me.FilterDetails.Size = New System.Drawing.Size(482, 144)
+        Me.FilterDetails.TabIndex = 14
         '
         'DescriptionTab
         '
@@ -268,7 +272,7 @@ Partial Class AbuseFilterView
         Me.DescriptionTab.Controls.Add(Me.Indicator)
         Me.DescriptionTab.Location = New System.Drawing.Point(4, 22)
         Me.DescriptionTab.Name = "DescriptionTab"
-        Me.DescriptionTab.Size = New System.Drawing.Size(477, 114)
+        Me.DescriptionTab.Size = New System.Drawing.Size(474, 118)
         Me.DescriptionTab.TabIndex = 3
         Me.DescriptionTab.Text = "Description"
         Me.DescriptionTab.UseVisualStyleBackColor = True
@@ -288,9 +292,8 @@ Partial Class AbuseFilterView
         Me.AbuseFilterProps.Location = New System.Drawing.Point(0, 0)
         Me.AbuseFilterProps.Name = "AbuseFilterProps"
         Me.AbuseFilterProps.Padding = New System.Windows.Forms.Padding(0, 1, 0, 0)
-        Me.AbuseFilterProps.Size = New System.Drawing.Size(477, 87)
+        Me.AbuseFilterProps.Size = New System.Drawing.Size(471, 96)
         Me.AbuseFilterProps.TabIndex = 9
-        Me.AbuseFilterProps.Visible = False
         '
         'Actions
         '
@@ -311,12 +314,13 @@ Partial Class AbuseFilterView
         Me.RateLimit.Size = New System.Drawing.Size(53, 16)
         Me.RateLimit.TabIndex = 8
         Me.RateLimit.Text = "Rate limit:"
+        Me.RateLimit.Visible = False
         '
         'Progress
         '
         Me.Progress.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.Progress.AutoSize = True
-        Me.Progress.Location = New System.Drawing.Point(24, 93)
+        Me.Progress.Location = New System.Drawing.Point(24, 97)
         Me.Progress.Name = "Progress"
         Me.Progress.Size = New System.Drawing.Size(109, 13)
         Me.Progress.TabIndex = 13
@@ -327,7 +331,7 @@ Partial Class AbuseFilterView
         '
         Me.Indicator.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.Indicator.BackColor = System.Drawing.SystemColors.ControlLightLight
-        Me.Indicator.Location = New System.Drawing.Point(6, 91)
+        Me.Indicator.Location = New System.Drawing.Point(6, 95)
         Me.Indicator.MaximumSize = New System.Drawing.Size(16, 16)
         Me.Indicator.MinimumSize = New System.Drawing.Size(16, 16)
         Me.Indicator.Name = "Indicator"
@@ -342,7 +346,7 @@ Partial Class AbuseFilterView
         Me.PatternTab.Location = New System.Drawing.Point(4, 22)
         Me.PatternTab.Name = "PatternTab"
         Me.PatternTab.Padding = New System.Windows.Forms.Padding(3)
-        Me.PatternTab.Size = New System.Drawing.Size(477, 114)
+        Me.PatternTab.Size = New System.Drawing.Size(474, 118)
         Me.PatternTab.TabIndex = 0
         Me.PatternTab.Text = "Pattern"
         Me.PatternTab.UseVisualStyleBackColor = True
@@ -359,7 +363,7 @@ Partial Class AbuseFilterView
         Me.Pattern.Name = "Pattern"
         Me.Pattern.ReadOnly = True
         Me.Pattern.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.Pattern.Size = New System.Drawing.Size(465, 102)
+        Me.Pattern.Size = New System.Drawing.Size(466, 102)
         Me.Pattern.TabIndex = 0
         '
         'NotesTab
@@ -368,7 +372,7 @@ Partial Class AbuseFilterView
         Me.NotesTab.Location = New System.Drawing.Point(4, 22)
         Me.NotesTab.Name = "NotesTab"
         Me.NotesTab.Padding = New System.Windows.Forms.Padding(3)
-        Me.NotesTab.Size = New System.Drawing.Size(477, 114)
+        Me.NotesTab.Size = New System.Drawing.Size(473, 118)
         Me.NotesTab.TabIndex = 1
         Me.NotesTab.Text = "Notes"
         Me.NotesTab.UseVisualStyleBackColor = True
@@ -414,6 +418,26 @@ Partial Class AbuseFilterView
         Me.FilterImage.TabStop = False
         Me.FilterImage.Visible = False
         '
+        'RestrictedIcon
+        '
+        Me.RestrictedIcon.Location = New System.Drawing.Point(79, 6)
+        Me.RestrictedIcon.Name = "RestrictedIcon"
+        Me.RestrictedIcon.Size = New System.Drawing.Size(16, 16)
+        Me.RestrictedIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize
+        Me.RestrictedIcon.TabIndex = 16
+        Me.RestrictedIcon.TabStop = False
+        Me.RestrictedIcon.Visible = False
+        '
+        'Restricted
+        '
+        Me.Restricted.AutoSize = True
+        Me.Restricted.Location = New System.Drawing.Point(96, 8)
+        Me.Restricted.Name = "Restricted"
+        Me.Restricted.Size = New System.Drawing.Size(284, 13)
+        Me.Restricted.TabIndex = 15
+        Me.Restricted.Text = "User right ""abusefilter-view-private"" required to view details"
+        Me.Restricted.Visible = False
+        '
         'AbuseFilterView
         '
         Me.Controls.Add(Me.AbuseFilterSplit)
@@ -425,7 +449,7 @@ Partial Class AbuseFilterView
         Me.AbuseFilterSplit.Panel2.PerformLayout()
         Me.AbuseFilterSplit.ResumeLayout(False)
         Me.SelLayout.ResumeLayout(False)
-        Me.Tabs.ResumeLayout(False)
+        Me.FilterDetails.ResumeLayout(False)
         Me.DescriptionTab.ResumeLayout(False)
         Me.DescriptionTab.PerformLayout()
         Me.AbuseFilterProps.ResumeLayout(False)
@@ -435,6 +459,7 @@ Partial Class AbuseFilterView
         Me.NotesTab.ResumeLayout(False)
         Me.NotesTab.PerformLayout()
         CType(Me.FilterImage, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.RestrictedIcon, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -459,7 +484,7 @@ Partial Class AbuseFilterView
     Private WithEvents FilterActionsColumn As System.Windows.Forms.ColumnHeader
     Private WithEvents FilterCountColumn As System.Windows.Forms.ColumnHeader
     Private WithEvents CreateFilter As System.Windows.Forms.LinkLabel
-    Private WithEvents Tabs As System.Windows.Forms.TabControl
+    Private WithEvents FilterDetails As System.Windows.Forms.TabControl
     Private WithEvents DescriptionTab As System.Windows.Forms.TabPage
     Private WithEvents AbuseFilterProps As System.Windows.Forms.FlowLayoutPanel
     Private WithEvents Actions As System.Windows.Forms.Label
@@ -473,5 +498,7 @@ Partial Class AbuseFilterView
     Private WithEvents Title As System.Windows.Forms.Label
     Private WithEvents Progress As System.Windows.Forms.Label
     Private WithEvents Indicator As Huggle.Controls.WaitControl
+    Private WithEvents Restricted As System.Windows.Forms.Label
+    Private WithEvents RestrictedIcon As System.Windows.Forms.PictureBox
 
 End Class

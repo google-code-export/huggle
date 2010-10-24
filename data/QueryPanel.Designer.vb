@@ -22,11 +22,11 @@ Partial Class QueryPanel
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Me.Result = New DataView
-        Me.Query = New System.Windows.Forms.RichTextBox
-        Me.Run = New System.Windows.Forms.Button
-        Me.Progress = New System.Windows.Forms.Label
-        Me.Indicator = New Huggle.Controls.WaitControl
+        Me.Result = New DataView()
+        Me.Query = New System.Windows.Forms.RichTextBox()
+        Me.Run = New System.Windows.Forms.Button()
+        Me.Progress = New System.Windows.Forms.Label()
+        Me.Indicator = New Huggle.Controls.WaitControl()
         Me.SuspendLayout()
         '
         'Result
@@ -42,6 +42,7 @@ Partial Class QueryPanel
         '
         'Query
         '
+        Me.Query.AcceptsTab = True
         Me.Query.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
                     Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Query.Font = New System.Drawing.Font("Courier New", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))

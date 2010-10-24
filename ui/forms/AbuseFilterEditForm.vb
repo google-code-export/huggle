@@ -14,7 +14,7 @@ Public Class AbuseFilterEditForm
     End Sub
 
     Private Sub _Load() Handles Me.Load
-        Dim getter As New AbuseFilterDetail(Session.Wiki, Filter)
+        Dim getter As New AbuseFilterDetail(Session, Filter)
         App.UserWaitForProcess(getter)
         If getter.IsCancelled Then Close() : Return
 

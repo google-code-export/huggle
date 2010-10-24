@@ -12,10 +12,9 @@ Public Class LoginForm
 
     Private FakePassword As Boolean
     Private LastSelectedWiki As Wiki
+    Private SubFamilies As New Dictionary(Of String, List(Of Wiki))
     Private User As User
     Private Wiki As Wiki
-
-    Private Shared ReadOnly Separator As String = "----------------------------------------------"
 
     Public ReadOnly Property Session As Session
         Get
@@ -27,36 +26,15 @@ Public Class LoginForm
         Try
             Logo.Image = Resources.HuggleLogo
             Icon = Resources.Icon
-            Text = "{0} {1}".FormatWith(Windows.Forms.Application.ProductName, Windows.Forms.Application.ProductVersion)
+            Text = "{0} {1}".FormatWith(App.Name, App.Version)
 
             Dim topWiki As Wiki = App.Wikis.Global
             If Config.Global.TopWiki IsNot Nothing Then topWiki = Config.Global.TopWiki
             If Config.Local.LastLogin IsNot Nothing Then topWiki = Config.Local.LastLogin.Wiki
 
-            'Populate wiki selector
-            Dim otherWikis As New List(Of Wiki)
-            Dim popularWikis As New List(Of Wiki)
-            Dim specialWikis As New List(Of Wiki)
+            PopulateSelectors()
 
-            For Each wiki As Wiki In App.Wikis.All
-                If wiki.IsHidden OrElse Not wiki.IsPublicReadable OrElse Not wiki.IsPublicEditable Then Continue For
-
-                If wiki IsNot topWiki AndAlso (wiki.IsPopular OrElse wiki.IsCustom) Then popularWikis.Add(wiki)
-                If Not wiki.IsCustom AndAlso Not (wiki.IsPopular AndAlso wiki.Type = "special") _
-                    Then If wiki.Type = "special" Then specialWikis.Add(wiki) Else otherWikis.Add(wiki)
-            Next wiki
-
-            otherWikis.Sort(AddressOf CompareWikis)
-            popularWikis.Sort(AddressOf CompareWikis)
-            specialWikis.Sort(AddressOf CompareWikis)
-
-            WikiSelector.Items.Add(topWiki)
-            WikiSelector.Items.AddRange(popularWikis.ToArray)
-            WikiSelector.Items.Add(Separator)
-            WikiSelector.Items.AddRange(otherWikis.ToArray)
-            WikiSelector.Items.Add(Separator)
-            WikiSelector.Items.AddRange(specialWikis.ToArray)
-
+            FamilySelector.SelectedItem = SubFamilyName(topWiki)
             WikiSelector.SelectedItem = topWiki
 
             If Config.Local.LastLogin IsNot Nothing Then
@@ -71,15 +49,18 @@ Public Class LoginForm
             RememberMe.Checked = Config.Local.AutoLogin
             Secure.Checked = Config.Local.LoginSecure
 
-            'Widen wiki list if necessary to accommodate long wiki names
-            ResizeDropDown(WikiSelector)
-
         Catch ex As SystemException
             App.ShowError(Result.FromException(ex))
             DialogResult = DialogResult.Abort
             Close()
         End Try
     End Sub
+
+    Private Function SubFamilyName(ByVal wiki As Wiki) As String
+        Dim result As String = If(wiki.Family Is Nothing, Msg("a-other"), wiki.Family.Name)
+        If wiki.Type IsNot Nothing Then result = UcFirst(wiki.Type)
+        Return result
+    End Function
 
     Private Sub _Shown() Handles Me.Shown
         If Account.Text.Length = 0 Then
@@ -172,15 +153,29 @@ Public Class LoginForm
         End If
     End Sub
 
-    Private Sub Wikis_SelectedIndexChanged() Handles WikiSelector.SelectedIndexChanged
+    Private Sub FamilySelector_SelectedIndexChanged() Handles FamilySelector.SelectedIndexChanged
+        WikiSelector.BeginUpdate()
+        WikiSelector.Items.Clear()
+
+        If FamilySelector.SelectedItem IsNot Nothing Then
+            For Each wiki As Wiki In SubFamilies(FamilySelector.SelectedItem.ToString)
+                If wiki.IsHidden OrElse Not wiki.IsPublicReadable OrElse Not wiki.IsPublicEditable Then Continue For
+                WikiSelector.Items.Add(wiki)
+            Next wiki
+
+            If WikiSelector.Items.Count > 0 Then WikiSelector.SelectedIndex = 0
+        End If
+
+        WikiSelector.ResizeDropDown()
+        WikiSelector.EndUpdate()
+    End Sub
+
+    Private Sub WikiSelector_SelectedIndexChanged() Handles WikiSelector.SelectedIndexChanged
         If WikiSelector.SelectedItem Is Nothing Then
             Wiki = Nothing
             Account.Items.Clear()
 
-        ElseIf WikiSelector.SelectedItem.ToString = Separator Then
-            WikiSelector.SelectedItem = LastSelectedWiki
-
-        Else
+        ElseIf TypeOf WikiSelector.SelectedItem Is Wiki Then
             Wiki = CType(WikiSelector.SelectedItem, Wiki)
             Wiki.Config.LoadLocal()
             Account.Items.Clear()
@@ -198,6 +193,9 @@ Public Class LoginForm
             ResizeDropDown(Account)
             User = Wiki.Users.FromString(Account.Text)
             LastSelectedWiki = CType(WikiSelector.SelectedItem, Wiki)
+        Else
+            Wiki = Nothing
+            Account.Items.Clear()
         End If
 
         Secure.Enabled = (Wiki IsNot Nothing AndAlso Wiki.SecureUrl IsNot Nothing)
@@ -212,7 +210,7 @@ Public Class LoginForm
 
     Private Function DoLogin(ByVal user As User) As Boolean
         If user Is Nothing Then App.ShowError _
-            (New Result({Msg("login-fail", Msg("login-error-badusername"))})) : Return False
+            (New Result(Msg("login-fail", Msg("login-error-badusername")))) : Return False
 
         If user.DisplayName = user.Name Then user.DisplayName = Account.Text
         If Not FakePassword Then user.Password = Scramble(Password.Text, Hash(user))
@@ -230,6 +228,26 @@ Public Class LoginForm
         Return loginAction.IsSuccess
     End Function
 
+    Private Sub PopulateSelectors()
+        For Each wiki As Wiki In App.Wikis.All
+            Dim familyName As String = SubFamilyName(wiki)
+            If Not SubFamilies.ContainsKey(familyName) Then SubFamilies.Add(familyName, New List(Of Wiki))
+            SubFamilies(familyName).Merge(wiki)
+        Next wiki
+
+        For Each subFamily As List(Of Wiki) In SubFamilies.Values
+            subFamily.Sort(AddressOf CompareWikis)
+        Next subFamily
+
+        Dim subFamilyNames As List(Of String) = SubFamilies.Keys.ToList
+        subFamilyNames.Sort()
+
+        FamilySelector.BeginUpdate()
+        FamilySelector.Items.AddRange(subFamilyNames.ToArray)
+        FamilySelector.ResizeDropDown()
+        FamilySelector.EndUpdate()
+    End Sub
+
     Private Sub AddWiki_LinkClicked() Handles AddWiki.LinkClicked
         Dim form As New WikiAddForm()
         form.ShowDialog()
@@ -237,7 +255,8 @@ Public Class LoginForm
         If form.Wiki Is Nothing Then
             WikiSelector.SelectedItem = LastSelectedWiki
         Else
-            If Not WikiSelector.Items.Contains(form.Wiki) Then WikiSelector.Items.Insert(1, form.Wiki)
+            PopulateSelectors()
+            FamilySelector.SelectedItem = SubFamilyName(form.Wiki)
             WikiSelector.SelectedItem = form.Wiki
 
             If form.User Is Nothing Then
@@ -269,7 +288,7 @@ Public Class LoginForm
             Login.Focus()
         End If
 
-        If Not Wiki.IsPublicEditable Then Wikis_SelectedIndexChanged()
+        If Not Wiki.IsPublicEditable Then WikiSelector_SelectedIndexChanged()
     End Sub
 
 End Class

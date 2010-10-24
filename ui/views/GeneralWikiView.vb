@@ -58,7 +58,7 @@ Public Class GeneralWikiView : Inherits Viewer
         StatisticsList.AddRow(Msg("view-wikistats-pages"), If(Wiki.Pages.Count < 0, Msg("a-unknown"), Wiki.Pages.Count.ToString))
         StatisticsList.AddRow(Msg("view-wikistats-contentpages"), If(Wiki.ContentPages < 0, Msg("a-unknown"), Wiki.ContentPages.ToString))
         StatisticsList.AddRow(Msg("view-wikistats-files"), If(Wiki.Files.Count < 0, Msg("a-unknown"), Wiki.Files.Count.ToString))
-        StatisticsList.AddRow(Msg("view-wikistats-revisions"), If(Wiki.Revisions.Count < 0, Msg("a-unknown"), Wiki.Revisions.ToString))
+        StatisticsList.AddRow(Msg("view-wikistats-revisions"), If(Wiki.Revisions.Count < 0, Msg("a-unknown"), Wiki.Revisions.Count.ToString))
         StatisticsList.AddRow(Msg("view-wikistats-users"), If(Wiki.Users.Count < 0, Msg("a-unknown"), Wiki.Users.Count.ToString))
         StatisticsList.AddRow(Msg("view-wikistats-activeusers"), If(Wiki.ActiveUsers < 0, Msg("a-unknown"), Wiki.ActiveUsers.ToString))
         StatisticsList.EndUpdate()

@@ -16,7 +16,7 @@ Namespace Huggle
         Public Property ScaryPattern As Regex
         Public Property TimeZones As New Dictionary(Of String, Integer)
         Public Property TopWiki As Wiki
-        Public Property WikiConfigPageName As String
+        Public Property WikiConfigPageTitle As String
 
         Private _Loader As LoadGlobalConfig
 
@@ -65,7 +65,7 @@ Namespace Huggle
 
         Public ReadOnly Property PageTitle() As String
             Get
-                Return "User:Gurch"
+                Return "Huggle/test config"
             End Get
         End Property
 
@@ -119,15 +119,6 @@ Namespace Huggle
                                 Next prop
                             Next node
 
-                        Case "popular-wikis"
-                            For Each wiki As Wiki In App.Wikis.All
-                                wiki.IsPopular = False
-                            Next wiki
-
-                            For Each code As String In value.ToList.Trim
-                                If App.Wikis.Contains(code) Then App.Wikis(code).IsPopular = True
-                            Next code
-
                         Case "scary-pattern" : ScaryPattern = New Regex(value)
 
                         Case "time-zones"
@@ -139,7 +130,7 @@ Namespace Huggle
 
                         Case "top-wiki" : TopWiki = App.Wikis(value)
                         Case "version" : LatestVersion = New Version(value)
-                        Case "wikiconfig-page" : WikiConfigPageName = value
+                        Case "wikiconfig-page" : WikiConfigPageTitle = value
                         Case "wikis" : LoadWikis(key, value)
                     End Select
 
@@ -193,7 +184,6 @@ Namespace Huggle
                         Case "hidden" : wiki.IsHidden = prop.Value.ToBoolean
                         Case "language" : wiki.Language = App.Languages(prop.Value)
                         Case "name" : wiki.Name = prop.Value
-                        Case "popular" : wiki.IsPopular = prop.Value.ToBoolean
                         Case "read" : wiki.IsPublicReadable = prop.Value.ToBoolean
                         Case "secure" : wiki.SecureUrl = New Uri(prop.Value)
                         Case "type" : wiki.Type = prop.Value
@@ -226,7 +216,7 @@ Namespace Huggle
             If TimeZones.Count > 0 Then items.Add("time-zones", TimeZones.ToDictionary(Of String, Object))
             If TopWiki IsNot Nothing Then items.Add("top-wiki", TopWiki.Code)
             items.Add("version", LatestVersion)
-            items.Add("wikiconfig-page", WikiConfigPageName)
+            items.Add("wikiconfig-page", WikiConfigPageTitle)
             items.Add("default-user-config", App.Wikis.Default.Users.Default.Config.WriteConfig(True))
             items.Add("default-wiki-config", App.Wikis.Default.Config.WriteConfig(True))
 
@@ -270,7 +260,6 @@ Namespace Huggle
                 wikiItems.Add("family", If(wiki.Family Is Nothing, "none", wiki.Family.Name))
                 If wiki.FileUrl IsNot Nothing Then wikiItems.Add("files", wiki.FileUrl.ToString)
                 If wiki.IsHidden Then wikiItems.Add("hidden", True)
-                If wiki.IsPopular Then wikiItems.Add("popular", True)
                 If wiki.Language IsNot Nothing Then wikiItems.Add("language", wiki.Language.Code)
                 If wiki.Name <> wiki.Code Then wikiItems.Add("name", wiki.Name)
                 If Not wiki.IsPublicReadable Then wikiItems.Add("read", False)
