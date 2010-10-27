@@ -4,7 +4,7 @@ Imports System.Collections.Generic
 Imports System.Drawing
 Imports System.Windows.Forms
 
-Namespace Huggle.Controls
+Namespace Huggle.UI
 
     Class WaitControl : Inherits UserControl
 

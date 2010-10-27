@@ -1,3 +1,7 @@
-﻿Public Class AccountConfigForm
+﻿Namespace Huggle.UI
 
-End Class
+    Public Class AccountConfigForm
+
+    End Class
+
+End Namespace

@@ -1,3 +1,7 @@
-﻿Public Class ScriptsForm
+﻿Namespace Huggle.UI
 
-End Class
+    Public Class ScriptsForm
+
+    End Class
+
+End Namespace

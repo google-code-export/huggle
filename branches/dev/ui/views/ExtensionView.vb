@@ -1,54 +1,57 @@
-﻿Imports Huggle
-Imports System.Web.HttpUtility
+﻿Imports System.Web.HttpUtility
 Imports System.Windows.Forms
 
-Public Class ExtensionView : Inherits Viewer
+Namespace Huggle.UI
 
-    Public Sub New(ByVal session As Session)
-        MyBase.New(session)
-        InitializeComponent()
-    End Sub
+    Public Class ExtensionView : Inherits Viewer
 
-    Private Current As Extension
+        Public Sub New(ByVal session As Session)
+            MyBase.New(session)
+            InitializeComponent()
+        End Sub
 
-    Private Sub _Load() Handles Me.Load
-        List.BeginUpdate()
-        List.Items.Clear()
+        Private Current As Extension
 
-        For Each extension As Extension In Wiki.Extensions.All
-            List.AddRow(extension.Name, Msg("view-extension-type" & If(extension.Type, "general")), extension.Version)
-        Next extension
+        Private Sub _Load() Handles Me.Load
+            List.BeginUpdate()
+            List.Items.Clear()
 
-        List.EndUpdate()
-        List.SortBy(0)
-        Count.Text = Msg("a-count", List.Items.Count)
-    End Sub
+            For Each extension As Extension In Wiki.Extensions.All
+                List.AddRow(extension.Name, Msg("view-extension-type" & If(extension.Type, "general")), extension.Version)
+            Next extension
 
-    Private Sub List_SelectedIndexChanged() Handles List.SelectedIndexChanged
-        If List.SelectedItems.Count = 0 Then
-            Current = Nothing
-        Else
-            Image.Visible = True
-            Properties.Visible = True
+            List.EndUpdate()
+            List.SortBy(0)
+            Count.Text = Msg("a-count", List.Items.Count)
+        End Sub
 
-            Current = Wiki.Extensions(List.SelectedItems(0).Text)
-            ExtensionName.Text = Current.Name
-            Description.Text = If(Current.Description Is Nothing, _
-                Msg("view-general-nodescription"), WikiStripSummary(HtmlDecode(Current.Description)))
-            If Current.Version IsNot Nothing Then Version.Text = Msg("view-extension-version", Current.Version)
-            If Current.Author IsNot Nothing Then Author.Text = _
-                Msg("view-extension-" & If(Current.Author.Contains(","), "authors", "author"), Current.Author)
+        Private Sub List_SelectedIndexChanged() Handles List.SelectedIndexChanged
+            If List.SelectedItems.Count = 0 Then
+                Current = Nothing
+            Else
+                Image.Visible = True
+                Properties.Visible = True
 
-            Author.Visible = (Current.Author IsNot Nothing)
-            Version.Visible = (Current.Version IsNot Nothing)
+                Current = Wiki.Extensions(List.SelectedItems(0).Text)
+                ExtensionName.Text = Current.Name
+                Description.Text = If(Current.Description Is Nothing, _
+                    Msg("view-general-nodescription"), WikiStripSummary(HtmlDecode(Current.Description)))
+                If Current.Version IsNot Nothing Then Version.Text = Msg("view-extension-version", Current.Version)
+                If Current.Author IsNot Nothing Then Author.Text = _
+                    Msg("view-extension-" & If(Current.Author.Contains(","), "authors", "author"), Current.Author)
 
-            If Current.Url Is Nothing Then ExtensionName.LinkArea = New LinkArea(0, 0) _
-                Else ExtensionName.LinkArea = New LinkArea(0, ExtensionName.Text.Length)
-        End If
-    End Sub
+                Author.Visible = (Current.Author IsNot Nothing)
+                Version.Visible = (Current.Version IsNot Nothing)
 
-    Private Sub ExtensionName_LinkClicked() Handles ExtensionName.LinkClicked
-        If Current.Url IsNot Nothing Then OpenWebBrowser(Current.Url)
-    End Sub
+                If Current.Url Is Nothing Then ExtensionName.LinkArea = New LinkArea(0, 0) _
+                    Else ExtensionName.LinkArea = New LinkArea(0, ExtensionName.Text.Length)
+            End If
+        End Sub
 
-End Class
+        Private Sub ExtensionName_LinkClicked() Handles ExtensionName.LinkClicked
+            If Current.Url IsNot Nothing Then OpenWebBrowser(Current.Url)
+        End Sub
+
+    End Class
+
+End Namespace

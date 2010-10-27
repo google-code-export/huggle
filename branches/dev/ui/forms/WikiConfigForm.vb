@@ -1,3 +1,7 @@
-﻿Public Class WikiConfigForm
+﻿Namespace Huggle.UI
 
-End Class
+    Public Class WikiConfigForm
+
+    End Class
+
+End Namespace

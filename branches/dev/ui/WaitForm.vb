@@ -3,75 +3,79 @@ Imports Huggle.Actions
 Imports System
 Imports System.Windows.Forms
 
-Public Class WaitForm
+Namespace Huggle.UI
 
-    Private _Cancelled As Boolean
+    Public Class WaitForm
 
-    Private Available As Boolean
-    Private Message As String
+        Private _Cancelled As Boolean
 
-    Public Sub New(ByVal message As String)
-        InitializeComponent()
-        Me.Message = message
-    End Sub
+        Private Available As Boolean
+        Private Message As String
 
-    Private Sub _HandleCreated() Handles Me.HandleCreated
-        Available = True
-    End Sub
+        Public Sub New(ByVal message As String)
+            InitializeComponent()
+            Me.Message = message
+        End Sub
 
-    Private Sub _HandleDestroyed() Handles Me.HandleDestroyed
-        Available = False
-    End Sub
+        Private Sub _HandleCreated() Handles Me.HandleCreated
+            Available = True
+        End Sub
 
-    Private Sub _Load() Handles Me.Load
-        Icon = Resources.Icon
-        Text = Msg("wait-title")
-        App.Languages.Current.Localize(Me)
-        If Message IsNot Nothing Then SetMessage(Message)
-        Indicator.Start()
-    End Sub
+        Private Sub _HandleDestroyed() Handles Me.HandleDestroyed
+            Available = False
+        End Sub
 
-    Private Sub _FormClosing() Handles Me.FormClosing
-        Indicator.Stop()
-    End Sub
+        Private Sub _Load() Handles Me.Load
+            Icon = Resources.Icon
+            Text = Msg("wait-title")
+            App.Languages.Current.Localize(Me)
+            If Message IsNot Nothing Then SetMessage(Message)
+            Indicator.Start()
+        End Sub
 
-    Public ReadOnly Property Cancelled() As Boolean
-        Get
-            Return _Cancelled
-        End Get
-    End Property
+        Private Sub _FormClosing() Handles Me.FormClosing
+            Indicator.Stop()
+        End Sub
 
-    Public Sub CloseByProcess(ByVal process As Process)
-        Done()
-    End Sub
+        Public ReadOnly Property Cancelled() As Boolean
+            Get
+                Return _Cancelled
+            End Get
+        End Property
 
-    Public Sub UpdateByProcess(ByVal process As Process)
-        SetMessage(process.Message)
-    End Sub
+        Public Sub CloseByProcess(ByVal process As Process)
+            Done()
+        End Sub
 
-    Public Sub SetMessage(ByVal message As String)
-        If Not Available Then Return
+        Public Sub UpdateByProcess(ByVal process As Process)
+            SetMessage(process.Message)
+        End Sub
 
-        Label.Text = message
+        Public Sub SetMessage(ByVal message As String)
+            If Not Available Then Return
 
-        'Resize to accommodate message
-        Width = Math.Max(280, Label.Width + 60)
-        Height = Math.Max(100, Label.Height + 80)
+            Label.Text = message
 
-        'Center on screen
-        Left = Screen.FromControl(Me).Bounds.Width \ 2 - Width \ 2
-        Top = Screen.FromControl(Me).Bounds.Height \ 2 - Height \ 2
-    End Sub
+            'Resize to accommodate message
+            Width = Math.Max(280, Label.Width + 60)
+            Height = Math.Max(100, Label.Height + 80)
 
-    Private Sub Cancel_Click() Handles Cancel.Click
-        _Cancelled = True
-        Close()
-    End Sub
+            'Center on screen
+            Left = Screen.FromControl(Me).Bounds.Width \ 2 - Width \ 2
+            Top = Screen.FromControl(Me).Bounds.Height \ 2 - Height \ 2
+        End Sub
 
-    Public Function Done() As Object
-        _Cancelled = False
-        Close()
-        Return Nothing
-    End Function
+        Private Sub Cancel_Click() Handles Cancel.Click
+            _Cancelled = True
+            Close()
+        End Sub
 
-End Class
+        Public Function Done() As Object
+            _Cancelled = False
+            Close()
+            Return Nothing
+        End Function
+
+    End Class
+
+End Namespace

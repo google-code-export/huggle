@@ -1,41 +1,44 @@
-﻿Imports Huggle
-Imports System
+﻿Imports System
 Imports System.Drawing
 Imports System.Windows.Forms
 
-Public Class ConfirmationForm
+Namespace Huggle.UI
 
-    Private _Confirmation As Confirmation
+    Public Class ConfirmationForm
 
-    Public Sub New(ByVal confirmation As Confirmation)
-        InitializeComponent()
-        _Confirmation = confirmation
-    End Sub
+        Private _Confirmation As Confirmation
 
-    Private Sub _Load() Handles Me.Load
-        Try
-            ConfirmImage.Image = Confirmation.Image
+        Public Sub New(ByVal confirmation As Confirmation)
+            InitializeComponent()
+            _Confirmation = confirmation
+        End Sub
 
-            'Fit confirmation code to form
-            Width = 300 + Math.Max(0, ConfirmImage.Image.Width - ConfirmImage.Width)
-            ConfirmRefresh.Left = ConfirmImage.Left + (ConfirmImage.Width \ 2) _
-                + (ConfirmImage.Image.Width \ 2) - ConfirmRefresh.Width
+        Private Sub _Load() Handles Me.Load
+            Try
+                ConfirmImage.Image = Confirmation.Image
 
-        Catch ex As SystemException
-            App.ShowError(Result.FromException(ex))
-            DialogResult = DialogResult.Abort
-            Close()
-        End Try
-    End Sub
+                'Fit confirmation code to form
+                Width = 300 + Math.Max(0, ConfirmImage.Image.Width - ConfirmImage.Width)
+                ConfirmRefresh.Left = ConfirmImage.Left + (ConfirmImage.Width \ 2) _
+                    + (ConfirmImage.Image.Width \ 2) - ConfirmRefresh.Width
 
-    Private Sub ConfirmRefresh_LinkClicked() Handles ConfirmRefresh.LinkClicked
+            Catch ex As SystemException
+                App.ShowError(Result.FromException(ex))
+                DialogResult = DialogResult.Abort
+                Close()
+            End Try
+        End Sub
 
-    End Sub
+        Private Sub ConfirmRefresh_LinkClicked() Handles ConfirmRefresh.LinkClicked
 
-    Public ReadOnly Property Confirmation As Confirmation
-        Get
-            Return _Confirmation
-        End Get
-    End Property
+        End Sub
 
-End Class
+        Public ReadOnly Property Confirmation As Confirmation
+            Get
+                Return _Confirmation
+            End Get
+        End Property
+
+    End Class
+
+End Namespace

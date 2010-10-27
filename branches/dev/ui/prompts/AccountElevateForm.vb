@@ -1,3 +1,7 @@
-﻿Public Class AccountElevateForm
+﻿Namespace Huggle.UI
 
-End Class
+    Public Class AccountElevateForm
+
+    End Class
+
+End Namespace

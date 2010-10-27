@@ -1,3 +1,7 @@
-﻿Public Class TutorialForm
+﻿Namespace Huggle.UI
 
-End Class
+    Public Class TutorialForm
+
+    End Class
+
+End Namespace

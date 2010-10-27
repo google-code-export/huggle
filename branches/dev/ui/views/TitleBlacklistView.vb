@@ -1,78 +1,80 @@
-﻿Imports Huggle
+﻿Namespace Huggle.UI
 
-Public Class TitleBlacklistView : Inherits Viewer
+    Public Class TitleBlacklistView : Inherits Viewer
 
-    Public Sub New(ByVal session As Session)
-        MyBase.New(session)
-        InitializeComponent()
-    End Sub
+        Public Sub New(ByVal session As Session)
+            MyBase.New(session)
+            InitializeComponent()
+        End Sub
 
-    Private Sub _Load() Handles Me.Load
-        App.Languages.Current.Localize(Me)
+        Private Sub _Load() Handles Me.Load
+            App.Languages.Current.Localize(Me)
 
-        If Wiki.TitleBlacklist Is Nothing OrElse Wiki.TitleBlacklist.Entries Is Nothing OrElse Wiki.TitleBlacklist.Entries.Count = 0 Then
-            Entries.Clear()
-            EmptyNote.Visible = True
-            EditBlacklist.Visible = (Wiki.TitleBlacklist IsNot Nothing)
+            If Wiki.TitleBlacklist Is Nothing OrElse Wiki.TitleBlacklist.Entries Is Nothing OrElse Wiki.TitleBlacklist.Entries.Count = 0 Then
+                Entries.Clear()
+                EmptyNote.Visible = True
+                EditBlacklist.Visible = (Wiki.TitleBlacklist IsNot Nothing)
 
-            If Wiki.Family IsNot Nothing AndAlso Wiki.Family.GlobalTitleBlacklist IsNot Nothing Then
-                GlobalListNote.Text = Msg("view-titleblacklist-global", Wiki.Family.Name)
-                GlobalListNote.Visible = True
+                If Wiki.Family IsNot Nothing AndAlso Wiki.Family.GlobalTitleBlacklist IsNot Nothing Then
+                    GlobalListNote.Text = Msg("view-titleblacklist-global", Wiki.Family.Name)
+                    GlobalListNote.Visible = True
+                End If
+            Else
+                Filter.Enabled = True
+                Filter.Items.AddRange({
+                    Msg("view-titleblacklist-all"),
+                    Msg("view-titleblacklist-create"),
+                    Msg("view-titleblacklist-move"),
+                    Msg("view-titleblacklist-newuser"),
+                    Msg("view-titleblacklist-upload"),
+                    Msg("view-titleblacklist-reupload")})
+
+                Filter.SelectedIndex = 0
             End If
-        Else
-            Filter.Enabled = True
-            Filter.Items.AddRange({
-                Msg("view-titleblacklist-all"),
-                Msg("view-titleblacklist-create"),
-                Msg("view-titleblacklist-move"),
-                Msg("view-titleblacklist-newuser"),
-                Msg("view-titleblacklist-upload"),
-                Msg("view-titleblacklist-reupload")})
+        End Sub
 
-            Filter.SelectedIndex = 0
-        End If
-    End Sub
+        Private Sub Filter_SelectedIndexChanged() Handles Filter.SelectedIndexChanged
+            If Not Filter.Enabled Then Return
 
-    Private Sub Filter_SelectedIndexChanged() Handles Filter.SelectedIndexChanged
-        If Not Filter.Enabled Then Return
+            Entries.BeginUpdate()
+            Entries.Clear()
 
-        Entries.BeginUpdate()
-        Entries.Clear()
+            For Each entry As TitleListEntry In Wiki.TitleBlacklist.Entries
+                Select Case Filter.SelectedItem.ToString
+                    Case Msg("view-titleblacklist-edit")
+                        If Not entry.Options.Contains(TitleListOption.NoEdit) Then Continue For
 
-        For Each entry As TitleListEntry In Wiki.TitleBlacklist.Entries
-            Select Case Filter.SelectedItem.ToString
-                Case Msg("view-titleblacklist-edit")
-                    If Not entry.Options.Contains(TitleListOption.NoEdit) Then Continue For
+                    Case Msg("view-titleblacklist-create")
+                        If entry.Options.Contains(TitleListOption.MoveOnly) OrElse
+                            entry.Options.Contains(TitleListOption.NewAccountOnly) Then Continue For
 
-                Case Msg("view-titleblacklist-create")
-                    If entry.Options.Contains(TitleListOption.MoveOnly) OrElse
-                        entry.Options.Contains(TitleListOption.NewAccountOnly) Then Continue For
+                    Case Msg("view-titleblacklist-move")
+                        If entry.Options.Contains(TitleListOption.NewAccountOnly) Then Continue For
 
-                Case Msg("view-titleblacklist-move")
-                    If entry.Options.Contains(TitleListOption.NewAccountOnly) Then Continue For
+                    Case Msg("view-titleblacklist-newuser")
+                        If entry.Options.Contains(TitleListOption.MoveOnly) Then Continue For
 
-                Case Msg("view-titleblacklist-newuser")
-                    If entry.Options.Contains(TitleListOption.MoveOnly) Then Continue For
+                    Case Msg("view-titleblacklist-upload")
+                        If entry.Options.Contains(TitleListOption.MoveOnly) OrElse
+                            entry.Options.Contains(TitleListOption.NewAccountOnly) Then Continue For
 
-                Case Msg("view-titleblacklist-upload")
-                    If entry.Options.Contains(TitleListOption.MoveOnly) OrElse
-                        entry.Options.Contains(TitleListOption.NewAccountOnly) Then Continue For
+                    Case Msg("view-titleblacklist-reupload")
+                        If entry.Options.Contains(TitleListOption.MoveOnly) OrElse
+                            entry.Options.Contains(TitleListOption.NewAccountOnly) OrElse
+                            entry.Options.Contains(TitleListOption.ReUpload) Then Continue For
+                End Select
 
-                Case Msg("view-titleblacklist-reupload")
-                    If entry.Options.Contains(TitleListOption.MoveOnly) OrElse
-                        entry.Options.Contains(TitleListOption.NewAccountOnly) OrElse
-                        entry.Options.Contains(TitleListOption.ReUpload) Then Continue For
-            End Select
+                Entries.AddRow(entry.Pattern, entry.Options.ToStringArray.Join(", "), entry.ErrorMessage)
+            Next entry
 
-            Entries.AddRow(entry.Pattern, entry.Options.ToStringArray.Join(", "), entry.ErrorMessage)
-        Next entry
+            Entries.EndUpdate()
+            Count.Text = Msg("a-count", Entries.Items.Count)
+        End Sub
 
-        Entries.EndUpdate()
-        Count.Text = Msg("a-count", Entries.Items.Count)
-    End Sub
+        Private Sub EditBlacklist_LinkClicked() Handles EditBlacklist.LinkClicked
+            OpenWebBrowser(Wiki.TitleBlacklist.Location.Url)
+        End Sub
 
-    Private Sub EditBlacklist_LinkClicked() Handles EditBlacklist.LinkClicked
-        OpenWebBrowser(Wiki.TitleBlacklist.Location.Url)
-    End Sub
+    End Class
 
-End Class
+End Namespace

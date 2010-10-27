@@ -1,3 +1,5 @@
-﻿Public Class QueryForm
+﻿Namespace Huggle.UI
+    Public Class QueryForm
 
-End Class
+    End Class
+End Namespace

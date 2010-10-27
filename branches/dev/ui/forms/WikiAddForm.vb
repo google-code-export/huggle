@@ -1,62 +1,65 @@
-﻿Imports Huggle
-Imports Huggle.Actions
+﻿Imports Huggle.Actions
 Imports System
 Imports System.Windows.Forms
 
-Public Class WikiAddForm
+Namespace Huggle.UI
 
-    Private _User As User
-    Private _Wiki As Wiki
+    Public Class WikiAddForm
 
-    Public ReadOnly Property User() As User
-        Get
-            Return _User
-        End Get
-    End Property
+        Private _User As User
+        Private _Wiki As Wiki
 
-    Public ReadOnly Property Wiki() As Wiki
-        Get
-            Return _Wiki
-        End Get
-    End Property
+        Public ReadOnly Property User() As User
+            Get
+                Return _User
+            End Get
+        End Property
 
-    Private Sub _Load() Handles Me.Load
-        Icon = Resources.Icon
-        App.Languages.Current.Localize(Me)
-    End Sub
+        Public ReadOnly Property Wiki() As Wiki
+            Get
+                Return _Wiki
+            End Get
+        End Property
 
-    Private Sub InputChanged() Handles Url.TextChanged, Username.TextChanged, Password.TextChanged
-        OK.Enabled = (Url.Text.Length > 0 AndAlso Not (Username.Text.Length > 0 Xor Password.Text.Length > 0))
-    End Sub
+        Private Sub _Load() Handles Me.Load
+            Icon = Resources.Icon
+            App.Languages.Current.Localize(Me)
+        End Sub
 
-    Private Sub OK_Click() Handles OK.Click
-        Dim urlText As String = Url.Text
-        If Not urlText.Contains("://") Then urlText = "http://" & urlText
+        Private Sub InputChanged() Handles Url.TextChanged, Username.TextChanged, Password.TextChanged
+            OK.Enabled = (Url.Text.Length > 0 AndAlso Not (Username.Text.Length > 0 Xor Password.Text.Length > 0))
+        End Sub
 
-        Dim newUrl As Uri
+        Private Sub OK_Click() Handles OK.Click
+            Dim urlText As String = Url.Text
+            If Not urlText.Contains("://") Then urlText = "http://" & urlText
 
-        Try
-            newUrl = New Uri(urlText)
+            Dim newUrl As Uri
 
-        Catch ex As UriFormatException
-            App.ShowError(New Result({Msg("addwiki-fail"), Msg("error-badurl")}))
-            Return
-        End Try
+            Try
+                newUrl = New Uri(urlText)
 
-        Dim addwiki As AddWiki = If(Username.Text.Length > 0,
-            New AddWiki(newUrl, Username.Text, Password.Text), New AddWiki(newUrl))
+            Catch ex As UriFormatException
+                App.ShowError(New Result({Msg("addwiki-fail"), Msg("error-badurl")}))
+                Return
+            End Try
 
-        App.UserWaitForProcess(addWiki)
+            Dim addwiki As AddWiki = If(Username.Text.Length > 0,
+                New AddWiki(newUrl, Username.Text, Password.Text), New AddWiki(newUrl))
 
-        If Not addwiki.IsFailed Then
-            _Wiki = addwiki.Wiki
-            Config.Global.SaveLocal()
+            App.UserWaitForProcess(addwiki)
+
+            If Not addwiki.IsFailed Then
+                _Wiki = addwiki.Wiki
+                Config.Global.SaveLocal()
+                Close()
+            End If
+        End Sub
+
+        Private Sub Cancel_Click() Handles Cancel.Click
             Close()
-        End If
-    End Sub
+        End Sub
 
-    Private Sub Cancel_Click() Handles Cancel.Click
-        Close()
-    End Sub
+    End Class
 
-End Class
+End Namespace

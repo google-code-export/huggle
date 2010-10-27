@@ -3,45 +3,49 @@ Imports Huggle.Actions
 Imports System.Collections.Generic
 Imports System.Windows.Forms
 
-Public Class AssessForm
+Namespace Huggle.UI
 
-    Private _Page As Page
+    Public Class AssessForm
 
-    Private Session As Session
+        Private _Page As Page
 
-    Public Sub New(ByVal session As Session)
-        Me.Session = session
-        InitializeComponent()
-    End Sub
+        Private Session As Session
 
-    Public ReadOnly Property Page As Page
-        Get
-            Return _Page
-        End Get
-    End Property
+        Public Sub New(ByVal session As Session)
+            Me.Session = session
+            InitializeComponent()
+        End Sub
 
-    Private Sub _Load() Handles Me.Load
-        Icon = Resources.Icon
-    End Sub
+        Public ReadOnly Property Page As Page
+            Get
+                Return _Page
+            End Get
+        End Property
 
-    Private Sub OK_Click() Handles OK.Click
-        Dim ratings As New List(Of String)({Rating1.Text, Rating2.Text, Rating3.Text, Rating4.Text})
+        Private Sub _Load() Handles Me.Load
+            Icon = Resources.Icon
+        End Sub
 
-        Dim action As New Assess(Session, Page, ratings)
-        App.UserWaitForProcess(action)
+        Private Sub OK_Click() Handles OK.Click
+            Dim ratings As New List(Of String)({Rating1.Text, Rating2.Text, Rating3.Text, Rating4.Text})
 
-        DialogResult = DialogResult.OK
-        Close()
-    End Sub
+            Dim action As New Assess(Session, Page, ratings)
+            App.UserWaitForProcess(action)
 
-    Private Sub Cancel_Click() Handles Cancel.Click
-        DialogResult = DialogResult.Cancel
-        Close()
-    End Sub
+            DialogResult = DialogResult.OK
+            Close()
+        End Sub
 
-    Private Sub Page_TextChanged() Handles PageInput.TextChanged
-        _Page = Session.Wiki.Pages.FromString(PageInput.Text)
-        OK.Enabled = (Page IsNot Nothing)
-    End Sub
+        Private Sub Cancel_Click() Handles Cancel.Click
+            DialogResult = DialogResult.Cancel
+            Close()
+        End Sub
 
-End Class
+        Private Sub Page_TextChanged() Handles PageInput.TextChanged
+            _Page = Session.Wiki.Pages.FromString(PageInput.Text)
+            OK.Enabled = (Page IsNot Nothing)
+        End Sub
+
+    End Class
+
+End Namespace

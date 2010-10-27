@@ -1,35 +1,37 @@
-﻿Imports Huggle
-Imports System
+﻿Imports System
 Imports System.Windows.Forms
 
-Public Class AccountLoginForm
+Namespace Huggle.UI
 
-    Private Requester As String
-    Private User As User
+    Public Class AccountLoginForm
 
-    Public Sub New(ByVal user As User, ByVal requester As String)
-        InitializeComponent()
-        Me.Requester = requester
-        Me.User = user
-    End Sub
+        Private Requester As String
+        Private User As User
 
-    Private Sub _FormClosing() Handles Me.FormClosing
-        If DialogResult = DialogResult.OK Then
-            User.Password = Scramble(Password.Text, Hash(User))
-            User.Config.RememberPassword = RememberPassword.Checked
-        End If
-    End Sub
+        Public Sub New(ByVal user As User, ByVal requester As String)
+            InitializeComponent()
+            Me.Requester = requester
+            Me.User = user
+        End Sub
 
-    Private Sub _Load() Handles Me.Load
-        Try
-            Icon = Resources.Icon
-            Text = Windows.Forms.Application.ProductName
-            Request.Text = Request.Text.FormatWith(Requester, User.FullName)
+        Private Sub _FormClosing() Handles Me.FormClosing
+            If DialogResult = DialogResult.OK Then
+                User.Password = Scramble(Password.Text, Hash(User))
+                User.Config.RememberPassword = RememberPassword.Checked
+            End If
+        End Sub
 
-        Catch ex As SystemException
-            App.ShowError(Result.FromException(ex))
-            Close()
-        End Try
-    End Sub
+        Private Sub _Load() Handles Me.Load
+            Try
+                Icon = Resources.Icon
+                Text = Windows.Forms.Application.ProductName
+                Request.Text = Request.Text.FormatWith(Requester, User.FullName)
 
-End Class
+            Catch ex As SystemException
+                App.ShowError(Result.FromException(ex))
+                Close()
+            End Try
+        End Sub
+
+    End Class
+End Namespace
