@@ -1,35 +1,38 @@
-﻿Imports Huggle
-Imports System.Collections.Generic
+﻿Imports System.Collections.Generic
 Imports System.Windows.Forms
 
-Public Class UserGroupView : Inherits Viewer
+Namespace Huggle.UI
 
-    Public Sub New(ByVal session As Session)
-        MyBase.New(session)
-        InitializeComponent()
-    End Sub
+    Public Class UserGroupView : Inherits Viewer
 
-    Private Sub _Load() Handles Me.Load
-        Dim rights As List(Of String) = Wiki.UserRights
-        rights.Sort()
+        Public Sub New(ByVal session As Session)
+            MyBase.New(session)
+            InitializeComponent()
+        End Sub
 
-        List.BeginUpdate()
-        List.Items.Clear()
+        Private Sub _Load() Handles Me.Load
+            Dim rights As List(Of String) = Wiki.UserRights
+            rights.Sort()
 
-        For Each group As UserGroup In Wiki.UserGroups.All
-            Dim groupCountString As String
+            List.BeginUpdate()
+            List.Items.Clear()
 
-            If group.IsImplicit _
-                Then groupCountString = Msg("view-usergroup-implicit") _
-                Else groupCountString = If(group.Count < 0, Msg("a-unknown"), group.Count.ToString)
+            For Each group As UserGroup In Wiki.UserGroups.All
+                Dim groupCountString As String
 
-            List.AddRow(group.Name, groupCountString, group.Rights.Join(", "))
-        Next group
+                If group.IsImplicit _
+                    Then groupCountString = Msg("view-usergroup-implicit") _
+                    Else groupCountString = If(group.Count < 0, Msg("a-unknown"), group.Count.ToString)
 
-        List.EndUpdate()
-        List.SortMethods(1) = SortMethod.Integer
-        List.SortBy(0)
-        Count.Text = Msg("a-count", List.Items.Count)
-    End Sub
+                List.AddRow(group.Name, groupCountString, group.Rights.Join(", "))
+            Next group
 
-End Class
+            List.EndUpdate()
+            List.SortMethods(1) = SortMethod.Integer
+            List.SortBy(0)
+            Count.Text = Msg("a-count", List.Items.Count)
+        End Sub
+
+    End Class
+
+End Namespace

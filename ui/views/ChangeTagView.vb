@@ -1,30 +1,33 @@
-﻿Imports Huggle
-Imports System.Windows.Forms
+﻿Imports System.Windows.Forms
 
-Public Class ChangeTagView : Inherits Viewer
+Namespace Huggle.UI
 
-    Public Sub New(ByVal session As Session)
-        MyBase.New(session)
-        InitializeComponent()
-    End Sub
+    Public Class ChangeTagView : Inherits Viewer
 
-    Private Sub _Load() Handles Me.Load
-        App.Languages.Current.Localize(Me)
+        Public Sub New(ByVal session As Session)
+            MyBase.New(session)
+            InitializeComponent()
+        End Sub
 
-        List.BeginUpdate()
-        List.Items.Clear()
+        Private Sub _Load() Handles Me.Load
+            App.Languages.Current.Localize(Me)
 
-        For Each tag As ChangeTag In Wiki.ChangeTags.All
-            Dim displayName As String = If(Wiki.Config.ChangeTagIdentifier Is Nothing, _
-                tag.DisplayName, tag.DisplayName.Remove(Wiki.Config.ChangeTagIdentifier).Trim)
+            List.BeginUpdate()
+            List.Items.Clear()
 
-            List.AddRow(WikiStripMarkup(displayName), WikiStripMarkup(tag.Description), CStr(tag.Hits))
-        Next tag
+            For Each tag As ChangeTag In Wiki.ChangeTags.All
+                Dim displayName As String = If(Wiki.Config.ChangeTagIdentifier Is Nothing, _
+                    tag.DisplayName, tag.DisplayName.Remove(Wiki.Config.ChangeTagIdentifier).Trim)
 
-        List.SortMethods.Merge(2, SortMethod.Integer)
-        List.SortBy(0)
-        List.EndUpdate()
-        Count.Text = Msg("a-count", List.Items.Count)
-    End Sub
+                List.AddRow(WikiStripMarkup(displayName), WikiStripMarkup(tag.Description), CStr(tag.Hits))
+            Next tag
 
-End Class
+            List.SortMethods.Merge(2, SortMethod.Integer)
+            List.SortBy(0)
+            List.EndUpdate()
+            Count.Text = Msg("a-count", List.Items.Count)
+        End Sub
+
+    End Class
+
+End Namespace

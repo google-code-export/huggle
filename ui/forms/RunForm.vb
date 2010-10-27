@@ -1,18 +1,22 @@
 ﻿Imports System.Drawing
 Imports System.Windows.Forms
 
-Public Class RunForm
+Namespace Huggle.UI
 
-    Private Sub Mode_DrawItem(ByVal s As Object, ByVal e As DrawItemEventArgs)
-        e.DrawBackground()
-        e.DrawFocusRectangle()
+    Public Class RunForm
 
-        Select Case e.Index
+        Private Sub Mode_DrawItem(ByVal s As Object, ByVal e As DrawItemEventArgs)
+            e.DrawBackground()
+            e.DrawFocusRectangle()
 
-        End Select
+            Select Case e.Index
 
-        'e.Graphics.DrawString(Mode.Items(e.Index).ToString, e.Font, New Pen(e.ForeColor).Brush, e.Bounds, _
-        '    New StringFormat With {.Alignment = StringAlignment.Center, .LineAlignment = StringAlignment.Far})
-    End Sub
+            End Select
 
-End Class
+            'e.Graphics.DrawString(Mode.Items(e.Index).ToString, e.Font, New Pen(e.ForeColor).Brush, e.Bounds, _
+            '    New StringFormat With {.Alignment = StringAlignment.Center, .LineAlignment = StringAlignment.Far})
+        End Sub
+
+    End Class
+
+End Namespace

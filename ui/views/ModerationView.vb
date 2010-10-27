@@ -1,28 +1,31 @@
-﻿Imports Huggle
-Imports System.Windows.Forms
+﻿Imports System.Windows.Forms
 
-Public Class ModerationView : Inherits Viewer
+Namespace Huggle.UI
 
-    Public Sub New(ByVal session As Session)
-        MyBase.New(session)
-        InitializeComponent()
-    End Sub
+    Public Class ModerationView : Inherits Viewer
 
-    Private Sub _Load() Handles Me.Load
-        List.BeginUpdate()
-        List.Items.Clear()
+        Public Sub New(ByVal session As Session)
+            MyBase.New(session)
+            InitializeComponent()
+        End Sub
 
-        For Each flag As ReviewFlag In Wiki.ReviewFlags.All
-            List.AddRow(flag.Name, flag.DisplayName, _
-                flag.Levels.ToString, flag.QualityLevel.ToString, flag.PristineLevel.ToString)
-        Next flag
+        Private Sub _Load() Handles Me.Load
+            List.BeginUpdate()
+            List.Items.Clear()
 
-        List.EndUpdate()
-        List.SortMethods.Merge(2, SortMethod.Integer)
-        List.SortMethods.Merge(3, SortMethod.Integer)
-        List.SortMethods.Merge(4, SortMethod.Integer)
-        List.SortBy(0)
-        Count.Text = Msg("a-count", List.Items.Count)
-    End Sub
+            For Each flag As ReviewFlag In Wiki.ReviewFlags.All
+                List.AddRow(flag.Name, flag.DisplayName, _
+                    flag.Levels.ToString, flag.QualityLevel.ToString, flag.PristineLevel.ToString)
+            Next flag
 
-End Class
+            List.EndUpdate()
+            List.SortMethods.Merge(2, SortMethod.Integer)
+            List.SortMethods.Merge(3, SortMethod.Integer)
+            List.SortMethods.Merge(4, SortMethod.Integer)
+            List.SortBy(0)
+            Count.Text = Msg("a-count", List.Items.Count)
+        End Sub
+
+    End Class
+
+End Namespace

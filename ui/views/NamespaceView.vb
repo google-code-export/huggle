@@ -1,38 +1,41 @@
-﻿Imports Huggle
-Imports System.Collections.Generic
+﻿Imports System.Collections.Generic
 Imports System.Windows.Forms
 
-Public Class NamespaceView : Inherits Viewer
+Namespace Huggle.UI
 
-    Public Sub New(ByVal session As Session)
-        MyBase.New(session)
-        InitializeComponent()
-    End Sub
+    Public Class NamespaceView : Inherits Viewer
 
-    Private Sub _Load() Handles Me.Load
-        App.Languages.Current.Localize(Me)
+        Public Sub New(ByVal session As Session)
+            MyBase.New(session)
+            InitializeComponent()
+        End Sub
 
-        List.BeginUpdate()
-        List.Items.Clear()
+        Private Sub _Load() Handles Me.Load
+            App.Languages.Current.Localize(Me)
 
-        For Each space As Space In Wiki.Spaces.All
-            Dim props As New List(Of String)
-            If space.IsSpecial Then props.Add(Msg("view-namespace-special"))
-            If space.IsContent Then props.Add(Msg("view-namespace-content"))
-            If space.IsCustom Then props.Add(Msg("view-namespace-custom"))
-            If space.IsEditRestricted Then props.Add(Msg("view-namespace-restricted"))
-            If Not space.IsEditRestricted AndAlso space.IsMoveRestricted Then props.Add(Msg("view-namespace-moverestricted"))
-            If Not space.IsMovable Then props.Add(Msg("view-namespace-unmovable"))
-            If space.IsTalkSpace Then props.Add(Msg("view-namespace-discussion"))
-            If space.HasSubpages Then props.Add(Msg("view-namespace-subpages"))
-            List.AddRow(space.Number.ToString, space.Name, props.Join(", "))
-        Next space
+            List.BeginUpdate()
+            List.Items.Clear()
 
-        List.SortMethods.Add(0, SortMethod.Integer)
-        List.SortBy(0)
-        List.EndUpdate()
+            For Each space As Space In Wiki.Spaces.All
+                Dim props As New List(Of String)
+                If space.IsSpecial Then props.Add(Msg("view-namespace-special"))
+                If space.IsContent Then props.Add(Msg("view-namespace-content"))
+                If space.IsCustom Then props.Add(Msg("view-namespace-custom"))
+                If space.IsEditRestricted Then props.Add(Msg("view-namespace-restricted"))
+                If Not space.IsEditRestricted AndAlso space.IsMoveRestricted Then props.Add(Msg("view-namespace-moverestricted"))
+                If Not space.IsMovable Then props.Add(Msg("view-namespace-unmovable"))
+                If space.IsTalkSpace Then props.Add(Msg("view-namespace-discussion"))
+                If space.HasSubpages Then props.Add(Msg("view-namespace-subpages"))
+                List.AddRow(space.Number.ToString, space.Name, props.Join(", "))
+            Next space
 
-        Count.Text = Msg("a-count", List.Items.Count)
-    End Sub
+            List.SortMethods.Add(0, SortMethod.Integer)
+            List.SortBy(0)
+            List.EndUpdate()
 
-End Class
+            Count.Text = Msg("a-count", List.Items.Count)
+        End Sub
+
+    End Class
+
+End Namespace

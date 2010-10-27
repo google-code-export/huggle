@@ -1,75 +1,107 @@
 ﻿Imports Huggle
-Imports Huggle.Actions
 Imports System
 Imports System.Collections.Generic
 Imports System.Drawing
+Imports System.Windows.Forms
 
-Public Class FamilyPropertiesForm
+Namespace Huggle.UI
 
-    Private Family As Family
+    Public Class FamilyPropertiesForm
 
-    Public Sub New(ByVal family As Family)
-        InitializeComponent()
-        Me.Family = family
-    End Sub
+        Private LoadedViews As New List(Of Viewer)
+        Private Session As Session
 
-    Private Sub _Load() Handles Me.Load
+        Public Sub New(ByVal session As Session)
+            InitializeComponent()
+            Size = New Size(720, 480)
+            Me.Session = session
+        End Sub
 
-        If Family.FileWiki IsNot Nothing Then
-            'Load logo
-            Dim logo As File = Family.FileWiki.Files.FromString(Family.Config.Logo)
+        Private ReadOnly Property Family As Family
+            Get
+                Return Session.Wiki.Family
+            End Get
+        End Property
 
-            If Not logo.ContentKnown Then
-                Dim logoQuery As New MediaQuery(App.Sessions(Family.FileWiki), logo, 96)
-                Dim form As New WaitForm(Msg("extraconfig-progress"))
-                AddHandler logoQuery.Complete, AddressOf form.CloseByProcess
-                CreateThread(AddressOf logoQuery.Start)
-                form.ShowDialog()
-                If form.Cancelled Then Close() : Return
-            End If
-
+        Private Sub _Load() Handles Me.Load
             Try
-                If logo.ThumbKnown(96) Then FamilyLogo.Image = New Bitmap(logo.Thumb(96))
+                Icon = Resources.Icon
+                Text = Msg("view-family-title", Family.Name)
+                App.Languages.Current.Localize(Me)
+
+                'Core MediaWiki views
+                Views.Items.AddRange({
+                    Msg("view-familygeneral-title"),
+                    Msg("view-globalgroups-title")})
+
+                Views.SelectedIndex = 0
+
             Catch ex As SystemException
-                Log.Write("Logo for {0} not in recognized format".FormatWith(Family.Name))
+                App.ShowError(Result.FromException(ex))
+                Close()
             End Try
-        End If
+        End Sub
 
-        Icon = Resources.Icon
-        Text = Msg("familyprop-title", Family.Name)
+        Private Sub Views_SelectedIndexChanged() Handles Views.SelectedIndexChanged
+            Select Case Views.SelectedItem.ToString
+                Case Msg("view-wikigeneral-title")
+                    If Not LoadedViews.ContainsInstance(Of GeneralWikiView)() Then LoadedViews.Add(New GeneralWikiView(Session))
+                    ViewInstance(Of GeneralWikiView)()
 
-        FamilyName.Text = Family.Name
+                Case Msg("view-namespace-title")
+                    If Not LoadedViews.ContainsInstance(Of NamespaceView)() Then LoadedViews.Add(New NamespaceView(Session))
+                    ViewInstance(Of NamespaceView)()
 
-        WikiCount.Text = Msg("familyprop-wikis", Family.Wikis.All.Count)
-        CentralWiki.Text = Msg("familyprop-centralwiki", Family.CentralWiki.Name)
+                Case Msg("view-usergroup-title")
+                    If Not LoadedViews.ContainsInstance(Of UserGroupView)() Then LoadedViews.Add(New UserGroupView(Session))
+                    ViewInstance(Of UserGroupView)()
 
-        Dim globalExts As New List(Of String)
+                Case Msg("view-userright-title")
+                    If Not LoadedViews.ContainsInstance(Of UserRightsView)() Then LoadedViews.Add(New UserRightsView(Session))
+                    ViewInstance(Of UserRightsView)()
 
-        For Each globalExt As String In Config.Internal.GlobalExtensions
-            If App.Sessions(Family).Wiki.Extensions.Contains(globalExt) _
-                Then globalExts.Add(App.Sessions(Family).Wiki.Extensions(globalExt).Name)
-        Next globalExt
+                Case Msg("view-extension-title")
+                    If Not LoadedViews.ContainsInstance(Of ExtensionView)() Then LoadedViews.Add(New ExtensionView(Session))
+                    ViewInstance(Of ExtensionView)()
 
-        globalExts.Sort()
-        Extensions.Text = Msg("familyprop-extensions", globalExts.Join(", "))
+                Case Msg("view-titleblacklist-title")
+                    If Not LoadedViews.ContainsInstance(Of TitleBlacklistView)() Then LoadedViews.Add(New TitleBlacklistView(Session))
+                    ViewInstance(Of TitleBlacklistView)()
 
-        WikiList.BeginUpdate()
-        WikiList.Items.Clear()
+                Case Msg("view-gadget-title")
+                    If Not LoadedViews.ContainsInstance(Of GadgetView)() Then LoadedViews.Add(New GadgetView(Session))
+                    ViewInstance(Of GadgetView)()
 
-        For Each wiki As Wiki In Family.Wikis.All
-            WikiList.AddRow(wiki.Name)
-        Next wiki
+                Case Msg("view-moderation-title")
+                    If Not LoadedViews.ContainsInstance(Of ModerationView)() Then LoadedViews.Add(New ModerationView(Session))
+                    ViewInstance(Of ModerationView)()
 
-        WikiList.EndUpdate()
-        WikiList.SortBy(0)
-    End Sub
+                Case Msg("view-changetag-title")
+                    If Not LoadedViews.ContainsInstance(Of ChangeTagView)() Then LoadedViews.Add(New ChangeTagView(Session))
+                    ViewInstance(Of ChangeTagView)()
 
-    Private Sub WikiList_Resize() Handles WikiList.Resize
-        WikiList.Columns(0).Width = WikiList.Width - 22
-    End Sub
+                Case Msg("view-abusefilter-title")
+                    If Not LoadedViews.ContainsInstance(Of AbuseFilterView)() Then LoadedViews.Add(New AbuseFilterView(Session))
+                    ViewInstance(Of AbuseFilterView)()
 
-    Private Sub FamilyName_LinkClicked() Handles FamilyName.LinkClicked
-        OpenWebBrowser(Family.CentralWiki.Url)
-    End Sub
+                Case Msg("view-spamblacklist-title")
+                    If Not LoadedViews.ContainsInstance(Of SpamList)() Then LoadedViews.Add(New SpamListView(Session))
+                    ViewInstance(Of SpamListView)()
+            End Select
+        End Sub
 
-End Class
+        Private Sub ViewInstance(Of T As Viewer)()
+            ViewContainer.Controls.Clear()
+            ViewContainer.Controls.Add(LoadedViews.FirstInstance(Of T))
+        End Sub
+
+        Private Sub Views_DrawItem(ByVal sender As Object, ByVal e As DrawItemEventArgs) Handles Views.DrawItem
+            e.DrawBackground()
+            e.DrawFocusRectangle()
+            e.Graphics.DrawString(Views.Items(e.Index).ToString, Views.Font, _
+                New Pen(e.ForeColor).Brush, e.Bounds, New StringFormat With {.LineAlignment = Drawing.StringAlignment.Center})
+        End Sub
+
+    End Class
+
+End Namespace

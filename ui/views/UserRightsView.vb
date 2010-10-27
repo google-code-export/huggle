@@ -1,34 +1,37 @@
-﻿Imports Huggle
-Imports System.Collections.Generic
+﻿Imports System.Collections.Generic
 Imports System.Windows.Forms
 
-Public Class UserRightsView : Inherits Viewer
+Namespace Huggle.UI
 
-    Public Sub New(ByVal session As Session)
-        MyBase.New(session)
-        InitializeComponent()
-    End Sub
+    Public Class UserRightsView : Inherits Viewer
 
-    Private Sub _Load() Handles Me.Load
-        Dim rights As List(Of String) = Wiki.UserRights
-        rights.Sort()
+        Public Sub New(ByVal session As Session)
+            MyBase.New(session)
+            InitializeComponent()
+        End Sub
 
-        List.BeginUpdate()
-        List.Items.Clear()
+        Private Sub _Load() Handles Me.Load
+            Dim rights As List(Of String) = Wiki.UserRights
+            rights.Sort()
 
-        For Each right As String In Wiki.UserRights
-            Dim groups As New List(Of UserGroup)
+            List.BeginUpdate()
+            List.Items.Clear()
 
-            For Each group As UserGroup In Wiki.UserGroups.All
-                If group.Rights.Contains(right) Then groups.Add(group)
-            Next group
+            For Each right As String In Wiki.UserRights
+                Dim groups As New List(Of UserGroup)
 
-            List.AddRow(right, If(groups.Count = 0, Msg("view-userright-nobody"), groups.Join(", ")))
-        Next right
+                For Each group As UserGroup In Wiki.UserGroups.All
+                    If group.Rights.Contains(right) Then groups.Add(group)
+                Next group
 
-        List.EndUpdate()
-        List.SortBy(0)
-        Count.Text = Msg("a-count", List.Items.Count)
-    End Sub
+                List.AddRow(right, If(groups.Count = 0, Msg("view-userright-nobody"), groups.Join(", ")))
+            Next right
 
-End Class
+            List.EndUpdate()
+            List.SortBy(0)
+            Count.Text = Msg("a-count", List.Items.Count)
+        End Sub
+
+    End Class
+
+End Namespace

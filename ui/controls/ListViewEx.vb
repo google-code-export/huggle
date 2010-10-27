@@ -3,7 +3,7 @@ Imports System.ComponentModel
 
 Namespace System.Windows.Forms
 
-    Public Class ListViewEx : Inherits ListView
+    Public Class EnhancedListView : Inherits ListView
 
         Private LastSortColumn As Integer
         Private LastSortOrder As Boolean = True

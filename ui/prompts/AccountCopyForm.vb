@@ -1,23 +1,25 @@
-﻿Imports Huggle
+﻿Namespace Huggle.UI
 
-Public Class AccountCopyForm
+    Public Class AccountCopyForm
 
-    Private User As User
+        Private User As User
 
-    Public Sub New(ByVal user As User)
-        InitializeComponent()
-        Me.User = user
+        Public Sub New(ByVal user As User)
+            InitializeComponent()
+            Me.User = user
 
-        For Each item As User In user.Wiki.Users.All
-            If item IsNot user Then Source.Items.Add(item)
-        Next item
-    End Sub
+            For Each item As User In user.Wiki.Users.All
+                If item IsNot user Then Source.Items.Add(item)
+            Next item
+        End Sub
 
-    Public ReadOnly Property Result() As User
-        Get
-            If UseDefault.Checked Then Return Nothing
-            Return CType(Source.SelectedItem, User)
-        End Get
-    End Property
+        Public ReadOnly Property Result() As User
+            Get
+                If UseDefault.Checked Then Return Nothing
+                Return CType(Source.SelectedItem, User)
+            End Get
+        End Property
 
-End Class
+    End Class
+
+End Namespace
