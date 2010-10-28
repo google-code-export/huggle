@@ -5,7 +5,7 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class WaitForm
+    Public Class WaitForm : Inherits HuggleForm
 
         Private _Cancelled As Boolean
 

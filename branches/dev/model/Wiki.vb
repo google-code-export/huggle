@@ -122,6 +122,7 @@ Namespace Huggle
         End Property
 
         Public Property Engine As String
+        Public Property Exists As Boolean
 
         Public ReadOnly Property ExpansionCache() As Dictionary(Of String, String)
             Get

@@ -48,7 +48,7 @@ Namespace Huggle.Actions
                         If User.Can("block") AndAlso Interactive Then
                             'Blocking a reported user
                             If User.Config.ConfirmBlockReported Then
-                                If Prompt.Show(Msg("warn-prompt", Rev.User), Msg("warn-reported", Rev.User), _
+                                If App.ShowPrompt(Msg("warn-prompt", Rev.User), Msg("warn-reported", Rev.User), _
                                     Nothing, 1, Msg("warn-block"), Msg("cancel")) = 2 Then Return
                             End If
 
@@ -82,7 +82,7 @@ Namespace Huggle.Actions
                         If options.Count = 0 Then Return
                         options.Add(Msg("cancel"))
 
-                        answer = options(Prompt.Show(Msg("warn-prompt"), _
+                        answer = options(App.ShowPrompt(Msg("warn-prompt"), _
                             Msg("warn-alreadywarned", Rev.User), Nothing, 1, options.ToArray) - 1)
                     End If
 

@@ -1,4 +1,5 @@
 ﻿Imports Huggle.Actions
+Imports Huggle.UI
 Imports System
 Imports System.Collections.Generic
 Imports System.Drawing
@@ -18,6 +19,36 @@ Namespace Huggle
         Private _Wikis As WikiCollection
 
         Public Sub Run()
+            Windows.Forms.Application.EnableVisualStyles()
+            Windows.Forms.Application.SetCompatibleTextRenderingDefault(False)
+
+            'Create a dummy form we can call Invoke on from other threads to manipulate the UI
+            'Access window handle to force creation without actually displaying the form
+            Handle = New Form
+            Dim ptr As IntPtr = Handle.Handle
+
+            ServicePointManager.Expect100Continue = False
+            ServicePointManager.DefaultConnectionLimit = 4
+            HttpWebRequest.DefaultWebProxy = Nothing
+
+            Config.Global.DownloadLocation = Config.Internal.DownloadUrl.ToString
+            Config.Global.IsDefault = True
+            Config.Global.LatestVersion = Version
+            Config.Global.WikiConfigPageTitle = "Project:Huggle/Config"
+
+            'This information needs to be hardcoded so that the global configuration can be located
+            Dim metaWiki As Wiki = Wikis("meta")
+            metaWiki.Family = Families.Wikimedia
+            metaWiki.Url = New Uri("http://meta.wikimedia.org/w/")
+            Families.Wikimedia.CentralWiki = metaWiki
+            Families.Wikimedia.Name = "Wikimedia"
+            Wikis.Global = metaWiki
+
+            'Load configuration
+            Config.Local.LoadBeforeGlobal()
+            Config.Messages.LoadLocal()
+            Config.Global.LoadLocal()
+
             'Show first-time preferences form
             If Config.Local.IsFirstRun Then
                 Log.Debug("Doing first run")
@@ -34,41 +65,51 @@ Namespace Huggle
                 (New GeneralProcess(Msg("config-proxy"), AddressOf GetProxy))
 
             'Load global config if out of date
-            If Config.Global.NeedsUpdate Then UserWaitForProcess(Config.Global.Loader, True)
-            If Config.Global.Loader.IsFailed Then Return
+            If Config.Global.NeedsUpdate Then
+                UserWaitForProcess(Config.Global.Loader, Nothing, True)
+                If Config.Global.Loader.IsFailed Then Return
+            End If
+
+            Config.Local.LoadAfterGlobal()
 
             'As connection to IRC feed can take several seconds, anticipate the user selecting a
             'Wikimedia wiki, and try to make the feed available as soon as possible
             If Config.Local.RcFeeds AndAlso Families.Wikimedia.Feed IsNot Nothing Then Families.Wikimedia.Feed.Connect()
 
-            Dim user As User = Config.Local.LastLogin
+            Dim mainSession As Session = Nothing
 
             'Login automatically if configured to do so
-            If Config.Local.AutoLogin AndAlso user IsNot Nothing Then
+            If Config.Local.AutoLogin AndAlso Config.Local.LastLogin IsNot Nothing Then
+                Dim user As User = Config.Local.LastLogin
                 user.Config.LoadLocal()
 
                 If user.IsAnonymous OrElse user.Password IsNot Nothing Then
-                    Dim login As New Login(user.Session, "Automatic login")
-                    UserWaitForProcess(login)
+                    mainSession = App.Sessions(user)
+                    Dim login As New Login(mainSession, "Automatic login")
+                    UserWaitForProcess(login, Msg("login-error-auto"))
 
-                    If login.IsFailed Then user.Session.IsActive = False
-                    If login.IsErrored Then App.ShowError(login.Result.Wrap(Msg("login-error-auto")))
+                    If login.IsFailed Then
+                        mainSession.Discard()
+                        mainSession = Nothing
+                    End If
                 End If
             End If
 
             While True
                 'Show login form
-                If user Is Nothing OrElse Not user.Session.IsActive Then
+                If mainSession Is Nothing Then
                     Using loginForm As New LoginForm
-                        If loginForm.ShowDialog <> DialogResult.OK Then Exit While
-                        user = loginForm.Session.User
+                        If loginForm.ShowDialog <> DialogResult.OK Then Return
+                        mainSession = loginForm.Session
                     End Using
                 End If
 
                 'Show main form
-                Using mainForm As New MainForm(user.Session)
-                    If mainForm.ShowDialog() <> DialogResult.OK Then Exit While
+                Using mainForm As New MainForm(mainSession)
+                    If mainForm.ShowDialog() <> DialogResult.OK Then Return
                 End Using
+
+                mainSession = Nothing
             End While
         End Sub
 
@@ -111,7 +152,13 @@ Namespace Huggle
             End Get
         End Property
 
-        Public ReadOnly Property Version As String
+        Public ReadOnly Property Version As Version
+            Get
+                Return Reflection.Assembly.GetExecutingAssembly.GetName.Version
+            End Get
+        End Property
+
+        Public ReadOnly Property VersionString As String
             Get
                 Return Windows.Forms.Application.ProductVersion
             End Get
@@ -124,52 +171,22 @@ Namespace Huggle
             End Get
         End Property
 
-        Public Sub Initialize()
-            Windows.Forms.Application.EnableVisualStyles()
-            Windows.Forms.Application.SetCompatibleTextRenderingDefault(False)
-
-            'Create a dummy form we can call Invoke on from other threads to manipulate the UI
-            'Access window handle to force creation without actually displaying the form
-            Handle = New Form
-            Dim ptr As IntPtr = Handle.Handle
-
-            ServicePointManager.Expect100Continue = False
-            ServicePointManager.DefaultConnectionLimit = 4
-            HttpWebRequest.DefaultWebProxy = Nothing
-
-            Config.Global.DownloadLocation = "http://code.google.com/p/huggle"
-            Config.Global.IsDefault = True
-            Config.Global.LatestVersion = Reflection.Assembly.GetExecutingAssembly.GetName.Version
-            Config.Global.WikiConfigPageTitle = "Project:Huggle/Config"
-
-            Dim metaWiki As Wiki = Wikis("meta")
-            metaWiki.Family = Families.Wikimedia
-            metaWiki.Url = New Uri("http://meta.wikimedia.org/w/")
-
-            Dim commonsWiki As Wiki = Wikis("commons")
-            commonsWiki.Family = Families.Wikimedia
-            commonsWiki.Url = New Uri("http://commons.wikimedia.org/w/")
-
-            Families.Wikimedia.CentralWiki = metaWiki
-            Families.Wikimedia.Feed = New Feed(Families.Wikimedia, "irc.wikimedia.org", 6667)
-            Families.Wikimedia.FileWiki = commonsWiki
-            Families.Wikimedia.Name = "Wikimedia"
-            Families.Wikimedia.GlobalTitleBlacklist = New TitleList(metaWiki.Pages("Title blacklist"))
-
-            Wikis.Global = metaWiki
-
-            Config.Local.Load()
-            Config.Messages.LoadLocal()
-            Config.Global.LoadLocal()
-        End Sub
-
         Public Function ShowError(ByVal result As Result, Optional ByVal showRetry As Boolean = False) As DialogResult
             Using form As New ErrorForm(result.ErrorMessage, showRetry)
                 Return form.ShowDialog()
             End Using
         End Function
 
-        Public Sub UserWaitForProcess(ByVal process As Process, ByVal retryable As Boolean)
+        Public Function ShowPrompt _
+            (ByVal title As String, ByVal largeText As String, ByVal smallText As String, _
+            ByVal defaultButton As Integer, ByVal ParamArray buttons As String()) As Integer
+
+            Return Prompt.Show(title, largeText, smallText, defaultButton, buttons)
+        End Function
+
+        Public Sub UserWaitForProcess(ByVal process As Process,
+            Optional ByVal errorMessage As String = Nothing, Optional ByVal retryable As Boolean = False)
+
             'Display cancellable progress dialog while executing an action on another thread
             'If action fails, display error message
 
@@ -188,17 +205,15 @@ Namespace Huggle
                     RemoveHandler process.Complete, AddressOf waitForm.CloseByProcess
                 End Using
 
-                If process.IsErrored AndAlso App.ShowError(process.Result, retryable) = DialogResult.Retry Then
+                Dim fullMessage As Result = If(errorMessage Is Nothing, process.Result, process.Result.Wrap(errorMessage))
+
+                If process.IsErrored AndAlso App.ShowError(fullMessage, retryable) = DialogResult.Retry Then
                     process.Reset()
                     Continue Do
                 Else
                     Exit Do
                 End If
             Loop
-        End Sub
-
-        Public Sub UserWaitForProcess(ByVal process As Process)
-            UserWaitForProcess(process, False)
         End Sub
 
         Public Sub WaitFor(ByVal condition As Expression)

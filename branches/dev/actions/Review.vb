@@ -1,4 +1,5 @@
-﻿Imports Huggle.Queries
+﻿Imports Huggle.UI
+Imports Huggle.Queries
 Imports System.Collections.Generic
 Imports System.Windows.Forms
 

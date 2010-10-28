@@ -3,7 +3,7 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class AccountAutoUnifiedForm
+    Public Class AccountAutoUnifiedForm : Inherits HuggleForm
 
         Private Requester As String
         Private User As User

@@ -6,7 +6,7 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class GlobalUserPropertiesForm
+    Public Class GlobalUserPropertiesForm : Inherits HuggleForm
 
         Private GlobalUser As GlobalUser
         Private HoveredItem As ListViewItem.ListViewSubItem

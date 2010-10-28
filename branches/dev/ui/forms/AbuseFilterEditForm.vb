@@ -1,10 +1,9 @@
-﻿Imports Huggle
-Imports Huggle.Actions
+﻿Imports Huggle.Actions
 Imports System
 
 Namespace Huggle.UI
 
-    Public Class AbuseFilterEditForm
+    Public Class AbuseFilterEditForm : Inherits HuggleForm
 
         Private Filter As AbuseFilter
         Private Session As Session

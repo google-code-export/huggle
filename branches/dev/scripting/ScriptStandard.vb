@@ -133,7 +133,7 @@ Namespace Huggle.Scripting
                 Case "lowerfirst" : Return New Token(arg(0).String.Substring(0, 1).ToLower & arg(0).String.Substring(1))
                 Case "upperfirst" : Return New Token(arg(0).String.Substring(0, 1).ToUpper & arg(0).String.Substring(1))
                 Case "length" : Return New Token(arg(0).String.Length)
-                Case "empty" : Return New Token(arg(0).String.IsEmpty)
+                Case "empty" : Return New Token(arg(0).String = "")
                 Case "startswith" : Return New Token(arg(0).String.StartsWith(arg(1).String))
                 Case "endswith" : Return New Token(arg(0).String.EndsWith(arg(1).String))
 

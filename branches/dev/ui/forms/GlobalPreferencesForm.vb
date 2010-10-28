@@ -1,11 +1,10 @@
-﻿Imports Huggle
-Imports Huggle.Actions
+﻿Imports Huggle.Actions
 Imports System
 Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class GlobalPreferencesForm
+    Public Class GlobalPreferencesForm : Inherits HuggleForm
 
         Private PrefsValid As Boolean
         Private Session As Session

@@ -9,7 +9,7 @@ Namespace Huggle.Actions
         Private _Confirmation As Confirmation
 
         Public Sub New(ByVal wiki As Wiki)
-            MyBase.New(wiki.Users.Anonymous.Session, Msg("createaccount-desc"))
+            MyBase.New(App.Sessions(wiki.Users.Anonymous), Msg("createaccount-desc"))
         End Sub
 
         Public ReadOnly Property Confirmation As Confirmation

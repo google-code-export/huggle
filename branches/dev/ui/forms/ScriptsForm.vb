@@ -1,6 +1,6 @@
 ﻿Namespace Huggle.UI
 
-    Public Class ScriptsForm
+    Public Class ScriptsForm : Inherits HuggleForm
 
     End Class
 

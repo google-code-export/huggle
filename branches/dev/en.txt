@@ -1,4 +1,14 @@
-﻿view-titleblacklist-title:       Title blacklist
+﻿wikitype-wikimedia:              Wikimedia chapters
+wikitype-special:                Other Wikimedia projects
+wikitype-other:                  Others
+
+view-family-title:               Family Properties
+view-wiki-title:                 Wiki Properties
+
+view-familygeneral-title:        General
+view-globalgroups-title:         Global user groups
+
+view-titleblacklist-title:       Title blacklist
 view-titleblacklist-all:         All
 view-titleblacklist-edit:        Editing
 view-titleblacklist-create:      Creating pages
@@ -36,6 +46,7 @@ view-extension-typeother:        General
 view-extension-typespecialpage:  Special page
 view-extension-typemedia:        Media handler
 
+view-wikigeneral-title:          General
 view-wikigeneral-language:       Content language: {0}
 view-wikigeneral-database:       Database: {0}
 view-wikigeneral-engine:         Engine: {0}
@@ -60,7 +71,6 @@ view-usergroup-implicit:         (implicit)
 view-userright-title:            User rights
 view-userright-nobody:           (nobody)
 
-view-wikigeneral-title:          General
 view-changetag-title:            Change tags 
 view-gadget-title:               Gadgets
 view-moderation-title:           Moderation
@@ -155,9 +165,6 @@ accountprop-id:                  User ID: {0}
 accountprop-wiki:                Wiki: {0}
 
 accountprefs-title:              Account preferences for '{0}'
-
-wikiprop-title:                  Wiki Properties
-
 
 wikiprop-gadget-type:            Type: {0}
 
@@ -631,22 +638,15 @@ list-title:                List Builder
 
 === Login ===
 <pre>
-login-language:            Language:
-login-project:             Project:
-login-addwiki:             (Add new wiki)
-login-anonymous:           (Anonymous login)
-login-createaccount:       (Create new account)
-login-username:            Username:
-login-password:            Password:
-login-proxygroup:          Proxy settings
-login-proxy:               Use a proxy server
-login-proxyaddress:        Address:
-login-proxyport:           Port:
-login-proxydomain:         Domain:
-login-start:               Login
-login-translate:           Translate
-login-captchatitle:        Captcha required to log in
-login-langwikiname:        {0}
+form-login-type:           Wiki type:
+form-login-wiki:           Wiki:
+form-login-account:        Account:
+form-login-password:       Password:
+form-login-addwiki:        Add wiki
+form-login-createaccount:  Create
+form-login-anonymous:      <Log in anonymously>
+form-login-login:          Login
+form-login-cancel:         Cancel
 
 login-error-admin:         Use of Huggle on this project requires an administrator account.
 login-error-age:           Use of Huggle on this project requires an account at least {0} days old.

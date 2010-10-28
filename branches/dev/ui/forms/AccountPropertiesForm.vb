@@ -1,9 +1,9 @@
-﻿Imports Huggle
-Imports System
+﻿Imports System
 Imports System.Windows.Forms
 
 Namespace Huggle.UI
-    Public Class AccountPropertiesForm
+
+    Public Class AccountPropertiesForm : Inherits HuggleForm
 
         Private _User As User
 

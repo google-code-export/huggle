@@ -81,12 +81,12 @@ Namespace Huggle.Actions
                 If User Is Nothing Then OnFail(Msg("usernamecheck-invalid"))
                 User.Password = Scramble(Password, Hash(User))
 
-                Dim login As New Login(User.Session, "addwiki")
+                Dim login As New Login(App.Sessions(User), "addwiki")
                 login.Start()
                 If login.IsFailed Then OnFail(login.Message)
             End If
 
-            Dim apiReq As New ApiRequest(User.Session, Msg("addwiki-desc"),
+            Dim apiReq As New ApiRequest(App.Sessions(User), Msg("addwiki-desc"),
                 New QueryString("action", "query", "meta", "siteinfo"))
 
             apiReq.Start()

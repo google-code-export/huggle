@@ -7,7 +7,7 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class WikiPropertiesForm
+    Public Class WikiPropertiesForm : Inherits HuggleForm
 
         Private LoadedViews As New List(Of Viewer)
         Private Session As Session

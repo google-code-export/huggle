@@ -77,6 +77,7 @@ Namespace Huggle
         Public Sub Localize(ByVal control As Control)
             Dim prefix As String = control.Name.ToLower
             If control.Name.EndsWith("View") Then prefix = "view-" & control.Name.Remove("View").ToLower
+            If control.Name.EndsWith("Form") Then prefix = "form-" & control.Name.Remove("Form").ToLower
             Localize(control, prefix, Nothing)
         End Sub
 

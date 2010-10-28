@@ -58,6 +58,10 @@ Namespace Huggle
             End Get
         End Property
 
+        Public Sub Discard()
+            App.Sessions.Discard(Me)
+        End Sub
+
     End Class
 
     Public Class SessionCollection
@@ -135,9 +139,13 @@ Namespace Huggle
                         AndAlso Not session.User.IsAnonymous Then Return session
                 Next session
 
-                Return family.CentralWiki.Users.Anonymous.Session
+                Return Item(family.CentralWiki.Users.Anonymous)
             End Get
         End Property
+
+        Public Sub Discard(ByVal session As Session)
+            _All.Merge(session.User, New Session(session.User))
+        End Sub
 
     End Class
 

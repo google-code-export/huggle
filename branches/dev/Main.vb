@@ -51,7 +51,6 @@ Namespace Huggle
                 Log.Debug("Session started")
 
                 _App = New Application
-                App.Initialize()
                 App.Run()
 
                 Config.Local.Save()

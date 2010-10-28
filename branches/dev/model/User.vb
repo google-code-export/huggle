@@ -27,7 +27,6 @@ Namespace Huggle
         Private _Preferences As Preferences
         Private _RateLimits As List(Of RateLimit)
         Private _Sanctions As List(Of Sanction)
-        Private _Session As Session
         Private _Watchlist As List(Of String)
         Private _Wiki As Wiki
 
@@ -390,12 +389,6 @@ Namespace Huggle
             End Get
         End Property
 
-        Public ReadOnly Property Session() As Session
-            Get
-                Return App.Sessions(Me)
-            End Get
-        End Property
-
         Public Property SessionEdits As Integer
 
         Public ReadOnly Property Talkpage() As Page
@@ -584,37 +577,38 @@ Namespace Huggle
             End If
         End Sub
 
-        Public Shared Function SanitizeName(ByVal Name As String) As String
-            If String.IsNullOrEmpty(Name) Then Return Nothing
+        Public Shared Function SanitizeName(ByVal name As String) As String
+            If String.IsNullOrEmpty(name) Then Return Nothing
 
             'Remove illegal characters
-            If Name.Contains("#") Then Name = Name.ToFirst("#")
+            If name.Contains("#") Then name = name.ToFirst("#")
 
-            Name = Name.Remove(Tab, CR, LF).Replace("_", " ").Trim
+            name = name.Remove(Tab, CR, LF).Replace("_", " ").Trim
 
-            If String.IsNullOrEmpty(Name) Then Return Nothing
+            If String.IsNullOrEmpty(name) Then Return Nothing
 
-            While Name.Contains("  ")
-                Name = Name.Replace("  ", " ")
+            While name.Contains("  ")
+                name = name.Replace("  ", " ")
             End While
 
             For Each badchar As Char In "[]{}|<>#/\".ToCharArray
-                If Name.Contains(badchar) Then Return Nothing
+                If name.Contains(badchar) Then Return Nothing
             Next badchar
 
-            If Name = "." OrElse Name = ".." Then Return Nothing
-            If Name.StartsWith(":") OrElse Name.StartsWith("./") OrElse Name.StartsWith("../") Then Return Nothing
-            If Name.Contains("/./") OrElse Name.Contains("/../") Then Return Nothing
-            If Name.EndsWith("/.") OrElse Name.EndsWith("/..") Then Return Nothing
+            If name = "." OrElse name = ".." Then Return Nothing
+            If name.StartsWith(":") OrElse name.StartsWith("./") OrElse name.StartsWith("../") Then Return Nothing
+            If name.Contains("/./") OrElse name.Contains("/../") Then Return Nothing
+            If name.EndsWith("/.") OrElse name.EndsWith("/..") Then Return Nothing
 
-            If Name.ContainsPattern("&[a-zA-z0-9];") Then Return Nothing
+            Static HtmlEntityPattern As New Regex("&[a-zA-z0-9];", RegexOptions.Compiled)
+            If HtmlEntityPattern.IsMatch(name) Then Return Nothing
 
-            If Encoding.UTF8.GetBytes(Name).Length > 255 Then Return Nothing
+            If Encoding.UTF8.GetBytes(name).Length > 255 Then Return Nothing
 
             'Capitalize
-            If Name.Length > 1 Then Name = Name(0).ToString.ToUpper & Name.Substring(1) Else Name = Name.ToUpper
+            If name.Length > 1 Then name = name(0).ToString.ToUpper & name.Substring(1) Else name = name.ToUpper
 
-            Return Name
+            Return name
         End Function
 
     End Class

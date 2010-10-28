@@ -1,4 +1,5 @@
-﻿Imports System.Windows.Forms
+﻿Imports Huggle.UI
+Imports System.Windows.Forms
 
 Namespace Huggle.Actions
 

@@ -218,7 +218,7 @@ Namespace Huggle.Actions
                     Case ConflictAction.Prompt
                         If Not Interactive Then OnFail(Msg("edit-conflict")) : Return
 
-                        Select Case Prompt.Show(Msg("edit-conflict"), Msg("edit-conflictdetail", Page), _
+                        Select Case App.ShowPrompt(Msg("edit-conflict"), Msg("edit-conflictdetail", Page), _
                             Nothing, 1, Msg("edit-retry"), Msg("edit-ignore"), Msg("cancel"))
 
                             Case 1

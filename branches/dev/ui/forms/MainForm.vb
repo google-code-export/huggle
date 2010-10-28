@@ -5,7 +5,7 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class MainForm
+    Public Class MainForm : Inherits HuggleForm
 
         Private Session As Session
 

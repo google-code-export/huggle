@@ -1,6 +1,6 @@
 ﻿Namespace Huggle.UI
 
-    Public Class AccountElevateForm
+    Public Class AccountElevateForm : Inherits HuggleForm
 
     End Class
 

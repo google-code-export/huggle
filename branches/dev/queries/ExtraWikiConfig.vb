@@ -60,40 +60,53 @@ Namespace Huggle.Actions
             If Not Session.User.IsAnonymous Then
                 'Time zone options
                 If Config.Global.TimeZones.Count = 0 Then
-                    If Not (prefsReq.Response.Contains("id=""mw-input-timecorrection""") _
-                        AndAlso prefsReq.Response.Contains("</select>")) Then OnFail(Msg("error-scrape")) : Return
+                    Dim zoneTable As String = Nothing
 
-                    Dim zoneTable As String = prefsReq.Response.FromFirst("id=""mw-input-timecorrection""") _
-                        .FromFirst(">").ToFirst("</select>")
+                    If prefsReq.Response.Contains("id=""mw-input-timecorrection""") Then
+                        zoneTable = prefsReq.Response.FromFirst("id=""mw-input-timecorrection""")
 
-                    For Each item As String In zoneTable.Split("<option ")
-                        If item.Contains("value=""") Then
-                            item = item.FromFirst("value=""").ToFirst("""")
+                    ElseIf prefsReq.Response.Contains("id=""wpTimeZone""") Then
+                        zoneTable = prefsReq.Response.FromFirst("id=""wpTimeZone""")
 
-                            If item.StartsWith("ZoneInfo|") Then
-                                item = item.FromFirst("|")
-                                Config.Global.TimeZones.Merge(item.FromFirst("|"), CInt(item.ToFirst("|")))
+                    Else
+                        Log.Debug("Unable to load timezones from user preferences page")
+                    End If
+
+                    If zoneTable IsNot Nothing Then
+                        zoneTable = zoneTable.FromFirst(">").ToFirst("</select>")
+
+                        For Each item As String In zoneTable.Split("<option ")
+                            If item.Contains("value=""") Then
+                                item = item.FromFirst("value=""").ToFirst("""")
+
+                                If item.StartsWith("ZoneInfo|") Then
+                                    item = item.FromFirst("|")
+                                    Config.Global.TimeZones.Merge(item.FromFirst("|"), CInt(item.ToFirst("|")))
+                                End If
                             End If
-                        End If
-                    Next item
+                        Next item
+                    End If
                 End If
 
                 'Skins
                 If Wiki.Skins.Count = 0 Then
                     If Not (prefsReq.Response.Contains("id=""mw-htmlform-skin""") _
-                        AndAlso prefsReq.Response.Contains("</table>")) Then OnFail(Msg("error-scrape")) : Return
+                        AndAlso prefsReq.Response.Contains("</table>")) Then
 
-                    Dim skinsTable As String = prefsReq.Response.FromFirst("id=""mw-htmlform-skin""") _
-                        .FromFirst(">").ToFirst("</table>")
+                        Log.Debug("Unable to load skins from user preferences page")
+                    Else
+                        Dim skinsTable As String = prefsReq.Response.FromFirst("id=""mw-htmlform-skin""") _
+                            .FromFirst(">").ToFirst("</table>")
 
-                    For Each item As String In skinsTable.Split("<input ")
-                        If item.Contains("value=""") Then
-                            Dim code As String = item.FromFirst("value=""").ToFirst("""")
-                            Dim name As String = item.FromFirst("for=""mw-input-skin-").FromFirst(">").ToFirst(" (")
-                            Wiki.Skins.Add(code, New WikiSkin(Wiki, code, name))
-                            If item.Contains(" (default") Then Wiki.Config.DefaultSkin = code
-                        End If
-                    Next item
+                        For Each item As String In skinsTable.Split("<input ")
+                            If item.Contains("value=""") Then
+                                Dim code As String = item.FromFirst("value=""").ToFirst("""")
+                                Dim name As String = item.FromFirst("for=""mw-input-skin-").FromFirst(">").ToFirst(" (")
+                                Wiki.Skins.Add(code, New WikiSkin(Wiki, code, name))
+                                If item.Contains(" (default") Then Wiki.Config.DefaultSkin = code
+                            End If
+                        Next item
+                    End If
                 End If
             End If
 

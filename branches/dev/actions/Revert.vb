@@ -258,7 +258,7 @@ Namespace Huggle.Actions
             ConfirmOptions.Add(Msg("cancel"))
 
             'Show prompt to user
-            Select Case ConfirmOptions(Prompt.Show _
+            Select Case ConfirmOptions(App.ShowPrompt _
                 (Msg("revert-action"), MakeConfirmation(ConfirmMessages), Nothing, 1, ConfirmOptions.ToArray) - 1)
 
                 Case Msg("revert-blank") : BlankPage = True

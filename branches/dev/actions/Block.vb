@@ -143,7 +143,7 @@ Namespace Huggle.Actions
 
             If confirmMessages.Count > 0 Then
                 'Show prompt to user
-                Select Case Prompt.Show(Msg("block-action"), MakeConfirmation(confirmMessages), _
+                Select Case App.ShowPrompt(Msg("block-action"), MakeConfirmation(confirmMessages), _
                     Nothing, 1, Msg("block-continue"), Msg("cancel"))
 
                     Case 1 : Exit Select

@@ -1,6 +1,4 @@
-﻿Imports Huggle
-
-Namespace Huggle.UI
+﻿Namespace Huggle.UI
 
     Public Class AboutForm : Inherits HuggleForm
 
