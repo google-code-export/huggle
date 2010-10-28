@@ -1,6 +1,6 @@
 ﻿Namespace Huggle.UI
 
-    Public Class AccountCopyForm
+    Public Class AccountCopyForm : Inherits HuggleForm
 
         Private User As User
 

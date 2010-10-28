@@ -3,7 +3,7 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class ErrorForm
+    Public Class ErrorForm : Inherits HuggleForm
 
         Private Message As String
         Private ShowRetry As Boolean

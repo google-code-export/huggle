@@ -145,6 +145,7 @@ Namespace Huggle
         Private Sub LoadWikis(ByVal key As String, ByVal value As String)
             For Each node As KeyValuePair(Of String, String) In Config.ParseConfig("global", key, value)
                 Dim wiki As Wiki = App.Wikis(node.Key)
+                wiki.Exists = True
 
                 Dim props As Dictionary(Of String, String) = _
                     Config.ParseConfig("global", node.Key & ":" & wiki.Code, node.Value)
@@ -158,7 +159,7 @@ Namespace Huggle
                         wiki.Language = App.Languages(wiki.Code.ToFirst("."))
                         wiki.Type = wiki.Code.FromFirst(".")
 
-                        wiki.Name = Msg("login-langwikiname", wiki.Code, UcFirst(wiki.Type), wiki.Language.Code, wiki.Language.Name)
+                        wiki.Name = wiki.Code
                         wiki.FileUrl = New Uri(Config.Internal.WikimediaFilePath & wiki.Type & "/" & wiki.Language.Code & "/")
                         wiki.SecureUrl = New Uri(Config.Internal.WikimediaSecurePath & wiki.Type & "/" & wiki.Language.Code & "/w/")
                         wiki.Url = New Uri("http://" & wiki.Code & ".org/w/")
@@ -191,6 +192,10 @@ Namespace Huggle
                     End Select
                 Next prop
             Next node
+
+            For Each wiki As Wiki In App.Wikis.All.ToList
+                If Not wiki.Exists Then App.Wikis.Remove(wiki)
+            Next wiki
         End Sub
 
         Public Sub SaveLocal()
@@ -278,7 +283,7 @@ Namespace Huggle
                             & wiki.Type & "/" & wiki.Language.Code & "/" Then wikiItems.Remove("files")
                         If wiki.Language IsNot Nothing AndAlso wiki.SecureUrl.ToString = Config.Internal.WikimediaSecurePath _
                             & wiki.Type & "/" & wiki.Language.Code & "/w/" Then wikiItems.Remove("secure")
-                        If wiki.Name = Msg("login-langwikiname", wiki.Code, UcFirst(wiki.Type), wiki.Language.Code, wiki.Language.Name) Then wikiItems.Remove("name")
+                        If wiki.Name = wiki.Code Then wikiItems.Remove("name")
                         If wiki.Type = wiki.Code.FromFirst(".") Then wikiItems.Remove("type")
                         If wiki.Url.ToString = "http://" & wiki.Language.Code & "." & wiki.Type & ".org/w/" Then wikiItems.Remove("url")
                     Else

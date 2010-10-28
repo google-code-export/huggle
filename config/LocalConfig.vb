@@ -26,66 +26,101 @@ Namespace Huggle
         Public Property WindowMaximized As Boolean = True
         Public Property WindowSize As Size
 
-        Public Sub Load()
+        Public Sub LoadBeforeGlobal()
             Dim configFile As String = ConfigPath & "config.txt"
 
             If Not IO.File.Exists(configFile) Then
                 Config.Local.IsFirstRun = True
             Else
-                Dim Text As String = ""
+                Dim text As String = ""
 
                 Try
-                    If IO.File.Exists(configFile) Then Text = IO.File.ReadAllText(configFile, Encoding.UTF8)
+                    text = IO.File.ReadAllText(configFile, Encoding.UTF8)
                 Catch ex As IOException
                     Log.Write(Msg("config-loadfail", ex.Message))
                 End Try
 
-                Dim Items As Dictionary(Of String, String) = Config.ParseConfig("local", Nothing, Text)
+                Dim items As Dictionary(Of String, String) = Config.ParseConfig("local", Nothing, text)
 
-                For Each Item As KeyValuePair(Of String, String) In Items
-                    Dim Name As String = Item.Key
-                    Dim Value As String = Item.Value
+                For Each item As KeyValuePair(Of String, String) In items
+                    Dim name As String = item.Key
+                    Dim value As String = item.Value
 
                     Try
-                        Select Case Name
-                            Case "accounts"
-                                For Each wikiCode As KeyValuePair(Of String, String) In Config.ParseConfig("local", "accounts", Value)
-                                    For Each userCode As String In Value.ToList
-                                        Dim user As User = App.Wikis(wikiCode.Key).Users.FromString(userCode)
-                                        If user IsNot Nothing Then user.IsUsed = True
-                                    Next userCode
-                                Next wikiCode
-
-                            Case "auto-login" : AutoLogin = Value.ToBoolean
-                            Case "debug-enabled" : DebugEnabled = Value.ToBoolean
-                            Case "debug-visible" : DebugVisible = Value.ToBoolean
-                            Case "detect-proxy" : DetectProxySettings = Value.ToBoolean
-                            Case "first-run" : IsFirstRun = Value.ToBoolean
-
-                            Case "last-login"
-                                Dim wiki As Wiki = App.Wikis(Value.FromLast("@"))
-                                Dim user As String = Value.ToLast("@")
-                                If user = "[anonymous]" Then LastLogin = wiki.Users.Anonymous _
-                                    Else LastLogin = wiki.Users.FromString(user)
-
-                            Case "log-to-file" : LogToFile = Value.ToBoolean
-                            Case "login-secure" : LoginSecure = Value.ToBoolean
-                            Case "save-passwords" : SavePasswords = Value.ToBoolean
-                            Case "uid" : Uid = Value
-                            Case "window-location" : WindowLocation = New Point(CInt(Value.ToFirst(",")), CInt(Value.FromFirst(",")))
-                            Case "window-maximized" : WindowMaximized = Value.ToBoolean
-                            Case "window-size" : WindowSize = New Size(CInt(Value.ToFirst(",")), CInt(Value.FromFirst(",")))
+                        Select Case name
+                            Case "debug-enabled" : DebugEnabled = value.ToBoolean
+                            Case "debug-visible" : DebugVisible = value.ToBoolean
+                            Case "detect-proxy" : DetectProxySettings = value.ToBoolean
+                            Case "first-run" : IsFirstRun = value.ToBoolean
+                            Case "log-to-file" : LogToFile = value.ToBoolean
+                            Case "uid" : Uid = value
                         End Select
 
                     Catch ex As SystemException
-                        Log.Write(Msg("error-configvalue", Name, "local") & ": " & ex.GetType.Name)
+                        Log.Write(Msg("error-configvalue", name, "local") & ": " & ex.GetType.Name)
                     End Try
-                Next Item
+                Next item
             End If
 
             If Uid Is Nothing Then Uid = Guid.NewGuid.ToString
 
             Log.Debug("Loaded local config")
+        End Sub
+
+        Public Sub LoadAfterGlobal()
+            Dim configFile As String = ConfigPath & "config.txt"
+
+            Dim text As String = ""
+
+            Try
+                text = IO.File.ReadAllText(configFile, Encoding.UTF8)
+            Catch ex As IOException
+                Log.Write(Msg("config-loadfail", ex.Message))
+                Return
+            End Try
+
+            Dim items As Dictionary(Of String, String) = Config.ParseConfig("local", Nothing, text)
+
+            For Each item As KeyValuePair(Of String, String) In items
+                Dim name As String = item.Key
+                Dim value As String = item.Value
+
+                Try
+                    Select Case name
+                        Case "accounts"
+                            For Each wikiCode As KeyValuePair(Of String, String) In Config.ParseConfig("local", "accounts", value)
+                                For Each userCode As String In wikiCode.Value.ToList("|")
+                                    If App.Wikis.Contains(wikiCode.Key) Then
+                                        Dim user As User = App.Wikis(wikiCode.Key).Users.FromString(userCode)
+                                        If user IsNot Nothing Then user.IsUsed = True
+                                    End If
+                                Next userCode
+                            Next wikiCode
+
+                        Case "auto-login" : AutoLogin = value.ToBoolean
+
+                        Case "last-login"
+                            Dim user As String = value.ToLast("@")
+                            Dim wikiCode As String = value.FromLast("@")
+
+                            If App.Wikis.Contains(wikiCode) Then
+                                If user = "[anonymous]" Then LastLogin = App.Wikis(wikiCode).Users.Anonymous _
+                                    Else LastLogin = App.Wikis(wikiCode).Users.FromString(user)
+                            End If
+
+                        Case "login-secure" : LoginSecure = value.ToBoolean
+                        Case "save-passwords" : SavePasswords = value.ToBoolean
+                        Case "window-location" : WindowLocation = New Point(CInt(value.ToFirst(",")), CInt(value.FromFirst(",")))
+                        Case "window-maximized" : WindowMaximized = value.ToBoolean
+                        Case "window-size" : WindowSize = New Size(CInt(value.ToFirst(",")), CInt(value.FromFirst(",")))
+                    End Select
+
+                Catch ex As SystemException
+                    Log.Write(Msg("error-configvalue", name, "local") & ": " & ex.GetType.Name)
+                End Try
+            Next item
+
+            Log.Debug("Loaded more local config")
         End Sub
 
         Public Sub Save()
@@ -108,13 +143,13 @@ Namespace Huggle
             Dim accounts As New Dictionary(Of String, Object)
 
             For Each wiki As Wiki In App.Wikis.All
-                Dim wikiUsers As New List(Of String)
+                Dim wikiAccounts As New List(Of String)
 
                 For Each user As User In wiki.Users.All
-                    If Not user.IsAnonymous AndAlso user.IsUsed Then wikiUsers.Add(user.Name)
+                    If Not user.IsAnonymous AndAlso user.IsUsed Then wikiAccounts.Add(user.Name)
                 Next user
 
-                If wikiUsers.Count > 0 Then accounts.Add(wiki.Code, wikiUsers.Join(","))
+                If wikiAccounts.Count > 0 Then accounts.Add(wiki.Code, wikiAccounts.Join("|"))
             Next wiki
 
             If accounts.Count > 0 Then items.Add("accounts", accounts)

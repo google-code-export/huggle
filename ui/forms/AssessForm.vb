@@ -1,11 +1,10 @@
-﻿Imports Huggle
-Imports Huggle.Actions
+﻿Imports Huggle.Actions
 Imports System.Collections.Generic
 Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class AssessForm
+    Public Class AssessForm : Inherits HuggleForm
 
         Private _Page As Page
 

@@ -4,7 +4,7 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class Prompt : Inherits Form
+    Public Class Prompt : Inherits HuggleForm
 
         Private WithEvents Title As New Label
         Private WithEvents ButtonPanel As New FlowLayoutPanel

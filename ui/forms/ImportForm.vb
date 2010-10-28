@@ -1,6 +1,6 @@
 ﻿Namespace Huggle.UI
 
-    Public Class ImportForm
+    Public Class ImportForm : Inherits HuggleForm
 
         Private Sub _Load() Handles Me.Load
             SourceWikiInput.Items.AddRange(App.Wikis.All.ToArray)

@@ -1,6 +1,6 @@
 ﻿Namespace Huggle.UI
 
-    Public Class TutorialForm
+    Public Class TutorialForm : Inherits HuggleForm
 
     End Class
 

@@ -779,6 +779,7 @@ Namespace Huggle
 
         Default Public ReadOnly Property Item(ByVal title As String) As Page
             Get
+                If title Is Nothing Then Throw New ArgumentNullException("title")
                 If Not All.ContainsKey(title) Then Return Item(Wiki.Spaces.FromTitle(title), title)
                 Return All(title)
             End Get

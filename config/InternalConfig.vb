@@ -8,6 +8,7 @@ Namespace Huggle
 
         'Settings here are hardcoded and not user-editable; they are kept in a common place for convenience
 
+        Public Property DownloadUrl As New Uri("http://code.google.com/p/huggle")
         Public Property FeedbackUrl As New Uri("http://en.wikipedia.org/wiki/Wikipedia:Huggle/Feedback")
 
         Public Property GlobalExtensions As New List(Of String) _

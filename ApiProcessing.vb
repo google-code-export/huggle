@@ -1411,8 +1411,7 @@ Namespace Huggle
                                         wiki.Family = App.Families.Wikimedia
                                         wiki.Language = language
                                         wiki.Type = type
-
-                                        wiki.Name = Msg("login-langwikiname").FormatWith(wiki.Code, UcFirst(type), language.Code, language.Name)
+                                        wiki.Name = wiki.Code
                                         wiki.FileUrl = New Uri(Config.Internal.WikimediaFilePath & type & "/" & language.Code & "/")
                                         wiki.SecureUrl = New Uri(Config.Internal.WikimediaSecurePath & type & "/" & language.Code & "/w/")
                                         wiki.Url = New Uri(site.Attribute("url") & "/w/")

@@ -10,7 +10,7 @@ Namespace Huggle.Actions
     Public Class LoadGlobalConfig : Inherits Query
 
         Public Sub New()
-            MyBase.New(App.Wikis.Global.Users.Anonymous.Session, Msg("config-desc"))
+            MyBase.New(App.Sessions(App.Wikis.Global.Users.Anonymous), Msg("config-desc"))
             Interactive = True
         End Sub
 
@@ -33,9 +33,9 @@ Namespace Huggle.Actions
                 Then configRequest.Pages.Merge(Wiki.Family.GlobalTitleBlacklist.Location)
 
             Dim wikiRequest As New ApiRequest _
-                (App.Wikis("meta").Users.Anonymous.Session, Description, New QueryString("action", "sitematrix"))
+                (App.Sessions(App.Wikis.Global.Users.Anonymous), Description, New QueryString("action", "sitematrix"))
             Dim closedRequest As New FileRequest _
-                (App.Wikis("meta").Users.Anonymous.Session, Config.Internal.WikimediaClosedWikisPath)
+                (App.Sessions(App.Wikis.Global.Users.Anonymous), Config.Internal.WikimediaClosedWikisPath)
 
             'Run requests in parallel
             CreateThread(AddressOf configRequest.Start)

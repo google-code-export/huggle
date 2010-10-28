@@ -1,4 +1,5 @@
-﻿Imports Huggle.Queries
+﻿Imports Huggle.UI
+Imports Huggle.Queries
 Imports System
 Imports System.Collections.Generic
 Imports System.Net
@@ -22,7 +23,7 @@ Namespace Huggle.Actions
         End Sub
 
         Public Sub New(ByVal wiki As Wiki, ByVal requester As String)
-            MyBase.New(wiki.Users.Anonymous.Session, Msg("login-desc"))
+            MyBase.New(App.Sessions(wiki.Users.Anonymous), Msg("login-desc"))
             Me.Requester = requester
         End Sub
 
@@ -51,7 +52,7 @@ Namespace Huggle.Actions
                 Dim form As New AccountSelectForm(Requester, Wiki)
                 If form.ShowDialog = DialogResult.Cancel Then OnFail(Msg("error-cancelled")) : Return
 
-                Session = form.User.Session
+                Session = App.Sessions(form.User)
             End If
 
             'Load cached config
@@ -63,7 +64,7 @@ Namespace Huggle.Actions
                 AndAlso Session.User.GlobalUser.IsActive Then
 
                 'Prompt the user for permission to use a unified account
-                If Not User.GlobalUser.Config.AutoUnifiedLogin Then
+                If Not Interactive AndAlso Not User.GlobalUser.Config.AutoUnifiedLogin Then
                     Dim form As New AccountAutoUnifiedForm(User, Requester)
                     If form.ShowDialog = DialogResult.Cancel Then OnFail(Msg("error-cancelled")) : Return
                 End If

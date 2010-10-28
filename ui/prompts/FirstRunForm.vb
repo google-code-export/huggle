@@ -4,9 +4,9 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Class FirstRunForm
+    Public Class FirstRunForm : Inherits HuggleForm
 
-        Public Sub _Load() Handles Me.Load
+        Private Sub _Load() Handles Me.Load
             Try
                 Icon = Resources.Icon
                 Text = Windows.Forms.Application.ProductName

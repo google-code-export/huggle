@@ -1,10 +1,9 @@
-﻿Imports Huggle
-Imports Huggle.Actions
+﻿Imports Huggle.Actions
 Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class ChangePasswordForm
+    Public Class ChangePasswordForm : Inherits HuggleForm
 
         Private Session As Session
 

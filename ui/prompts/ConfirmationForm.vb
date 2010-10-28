@@ -4,7 +4,7 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class ConfirmationForm
+    Public Class ConfirmationForm : Inherits HuggleForm
 
         Private _Confirmation As Confirmation
 

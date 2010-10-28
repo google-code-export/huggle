@@ -1,12 +1,11 @@
-﻿Imports Huggle
-Imports System
+﻿Imports System
 Imports System.Collections.Generic
 Imports System.Drawing
 Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class FamilyPropertiesForm
+    Public Class FamilyPropertiesForm : Inherits HuggleForm
 
         Private LoadedViews As New List(Of Viewer)
         Private Session As Session

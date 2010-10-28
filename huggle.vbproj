@@ -236,6 +236,9 @@
     <Compile Include="ui\forms\AssessForm.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="ui\forms\HuggleForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="ui\forms\QueryForm.Designer.vb">
       <DependentUpon>QueryForm.vb</DependentUpon>
     </Compile>
@@ -332,10 +335,10 @@
     <Compile Include="ui\forms\GlobalUserPropertiesForm.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ui\ErrorForm.Designer.vb">
+    <Compile Include="ui\prompts\ErrorForm.Designer.vb">
       <DependentUpon>ErrorForm.vb</DependentUpon>
     </Compile>
-    <Compile Include="ui\ErrorForm.vb">
+    <Compile Include="ui\prompts\ErrorForm.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ui\forms\ImportForm.Designer.vb">
@@ -359,10 +362,10 @@
     <Compile Include="ui\controls\LogPanel.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ui\MainForm.Designer.vb">
+    <Compile Include="ui\forms\MainForm.Designer.vb">
       <DependentUpon>MainForm.vb</DependentUpon>
     </Compile>
-    <Compile Include="ui\MainForm.vb">
+    <Compile Include="ui\forms\MainForm.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ui\forms\ReviewForm.Designer.vb">
@@ -384,6 +387,12 @@
       <DependentUpon>AbuseFilterView.vb</DependentUpon>
     </Compile>
     <Compile Include="ui\views\AbuseFilterView.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ui\views\GeneralFamilyView.Designer.vb">
+      <DependentUpon>GeneralFamilyView.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\views\GeneralFamilyView.vb">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ui\views\UserRightsView.Designer.vb">
@@ -443,10 +452,10 @@
     <Compile Include="ui\views\Viewer.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ui\WaitForm.Designer.vb">
+    <Compile Include="ui\prompts\WaitForm.Designer.vb">
       <DependentUpon>WaitForm.vb</DependentUpon>
     </Compile>
-    <Compile Include="ui\WaitForm.vb">
+    <Compile Include="ui\prompts\WaitForm.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ui\forms\WikiAddForm.Designer.vb">
@@ -506,7 +515,7 @@
     <Compile Include="ui\forms\LoginForm.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ui\Prompt.vb">
+    <Compile Include="ui\prompts\Prompt.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="model\Abuse.vb" />
@@ -569,13 +578,6 @@
     <Compile Include="model\QueueItem.vb" />
     <Compile Include="ApiRequest.vb" />
     <Compile Include="Extensions.vb" />
-    <Compile Include="ui\Form1.vb">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ui\Form1.Designer.vb">
-      <DependentUpon>Form1.vb</DependentUpon>
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="model\UserRename.vb" />
     <Compile Include="queries\ListQuery.vb" />
     <Compile Include="Result.vb" />
@@ -617,10 +619,10 @@
     <Compile Include="ui\forms\ScriptsForm.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ui\TutorialForm.Designer.vb">
+    <Compile Include="ui\forms\TutorialForm.Designer.vb">
       <DependentUpon>TutorialForm.vb</DependentUpon>
     </Compile>
-    <Compile Include="ui\TutorialForm.vb">
+    <Compile Include="ui\forms\TutorialForm.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="WikiFunctions.vb" />
@@ -674,7 +676,7 @@
     <EmbeddedResource Include="ui\prompts\AccountLoginForm.resx">
       <DependentUpon>AccountLoginForm.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ui\ErrorForm.resx">
+    <EmbeddedResource Include="ui\prompts\ErrorForm.resx">
       <DependentUpon>ErrorForm.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ui\forms\FamilyPropertiesForm.resx">
@@ -698,7 +700,7 @@
     <EmbeddedResource Include="ui\controls\LogPanel.resx">
       <DependentUpon>LogPanel.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ui\MainForm.resx">
+    <EmbeddedResource Include="ui\forms\MainForm.resx">
       <DependentUpon>MainForm.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ui\views\ChangeTagView.resx">
@@ -706,6 +708,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ui\views\AbuseFilterView.resx">
       <DependentUpon>AbuseFilterView.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\views\GeneralFamilyView.resx">
+      <DependentUpon>GeneralFamilyView.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ui\views\UserRightsView.resx">
       <DependentUpon>UserRightsView.vb</DependentUpon>
@@ -734,7 +739,7 @@
     <EmbeddedResource Include="ui\views\GeneralWikiView.resx">
       <DependentUpon>GeneralWikiView.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ui\WaitForm.resx">
+    <EmbeddedResource Include="ui\prompts\WaitForm.resx">
       <DependentUpon>WaitForm.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ui\forms\WikiAddForm.resx">

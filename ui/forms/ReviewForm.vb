@@ -3,7 +3,7 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class ReviewForm
+    Public Class ReviewForm : Inherits HuggleForm
 
         Private _Levels As New Dictionary(Of ReviewFlag, Integer)
         Private _Revision As Revision

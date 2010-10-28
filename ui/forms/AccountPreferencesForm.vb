@@ -1,11 +1,10 @@
-﻿Imports Huggle
-Imports Huggle.Actions
+﻿Imports Huggle.Actions
 Imports System
 Imports System.Collections.Generic
 
 Namespace Huggle.UI
 
-    Public Class AccountPreferencesForm
+    Public Class AccountPreferencesForm : Inherits HuggleForm
 
         Private _User As User
 

@@ -14,6 +14,7 @@ Imports System.Windows.Forms
 
 Namespace Huggle
 
+    <Diagnostics.DebuggerStepThrough()>
     Public Module Functions
 
         Public ReadOnly CRLF As String = Convert.ToChar(13) & Convert.ToChar(10)
