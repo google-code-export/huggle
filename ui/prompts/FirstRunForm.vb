@@ -55,7 +55,7 @@ Namespace Huggle.UI
         End Sub
 
         Private Sub TranslateLabel_LinkClicked() Handles Translate.LinkClicked
-            OpenWebBrowser(Config.Internal.TranslationUrl)
+            OpenWebBrowser(InternalConfig.TranslationUrl)
         End Sub
 
         Private Sub DoLayout() Handles Proxy.CheckedChanged

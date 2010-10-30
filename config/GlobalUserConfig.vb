@@ -5,12 +5,13 @@ Imports System.IO
 Imports System.Text
 Imports System.Text.RegularExpressions
 
+Imports KVP = System.Collections.Generic.KeyValuePair(Of String, String)
+
 Namespace Huggle
 
-    Public Class GlobalUserConfig
+    Public Class GlobalUserConfig : Inherits Config
 
         Private GlobalUser As GlobalUser
-        Private LocalPath As String
 
         Public Property AutoUnifiedLogin As Boolean
         Public Property Extra As Boolean
@@ -19,40 +20,20 @@ Namespace Huggle
         Public Sub New(ByVal globalUser As GlobalUser)
             Me.GlobalUser = globalUser
             IsDefault = True
-            LocalPath = Config.Local.ConfigPath & "globaluser" & Slash & GetValidFileName(globalUser.FullName) & ".txt"
-        End Sub
-
-        Public ReadOnly Property CacheTime() As TimeSpan
-            Get
-                Return TimeSpan.FromHours(12)
-            End Get
-        End Property
-
-        Public Sub LoadLocal()
-            Try
-                If IO.File.Exists(LocalPath) Then
-                    Load(IO.File.ReadAllText(LocalPath, Encoding.UTF8))
-                    Log.Debug("Loaded global user config for {0} [L]".FormatWith(GlobalUser.FullName))
-                Else
-                    If IsDefault Then Config.Global.NeedsUpdate = True
-                End If
-
-            Catch ex As ConfigException
-                Log.Write(Result.FromException(ex).LogMessage)
-
-            Catch ex As SystemException
-                Log.Write(Result.FromException(ex).LogMessage)
-            End Try
         End Sub
 
         Public Property IsDefault() As Boolean
 
         Public Property IsLocalCopy() As Boolean
 
-        Public Sub Load(ByVal text As String)
-            For Each mainProp As KeyValuePair(Of String, String) In Config.ParseConfig("globaluser", Nothing, text)
-                Dim key As String = mainProp.Key
-                Dim value As String = mainProp.Value
+        Protected Overrides Function Location() As String
+            Return PathCombine("globaluser", GetValidFileName(GlobalUser.FullName & ".txt"))
+        End Function
+
+        Protected Overrides Sub ReadConfig(ByVal text As String)
+            For Each item As KVP In Config.ParseConfig("globaluser", Nothing, text)
+                Dim key As String = item.Key
+                Dim value As String = item.Value
 
                 Try
                     Select Case key
@@ -78,17 +59,13 @@ Namespace Huggle
                             GlobalUser.Users.Clear()
                             GlobalUser.Wikis.Clear()
 
-                            For Each item As KeyValuePair(Of String, String) In
-                                Config.ParseConfig("globaluser", key, value)
-
-                                Dim user As User = App.Wikis(item.Key).Users(GlobalUser.Name)
+                            For Each userItem As KVP In Config.ParseConfig("globaluser", key, value)
+                                Dim user As User = App.Wikis(userItem.Key).Users(GlobalUser.Name)
                                 user.Contributions = 0
                                 user.GlobalUser = GlobalUser
                                 user.UnificationMethod = "login"
 
-                                For Each prop As KeyValuePair(Of String, String) In
-                                    Config.ParseConfig("globaluser", key & ":" & item.Key, item.Value)
-
+                                For Each prop As KVP In Config.ParseConfig("globaluser", key & ":" & userItem.Key, userItem.Value)
                                     Select Case prop.Key
                                         Case "contribs" : user.Contributions = CInt(prop.Value)
                                         Case "merged" : user.UnificationDate = prop.Value.ToDate
@@ -98,45 +75,23 @@ Namespace Huggle
 
                                 GlobalUser.Users.Add(user)
                                 GlobalUser.Wikis.Add(user.Wiki)
-                            Next item
+                            Next userItem
                     End Select
 
                 Catch ex As SystemException
-                    Log.Write(Msg("error-configvalue", mainProp.Key, "globaluser"))
+                    Log.Write(Msg("error-configvalue", item.Key, "globaluser"))
                 End Try
-            Next mainProp
+            Next item
 
             If Not GlobalUser.IsDefault Then IsDefault = False
         End Sub
 
-        Public ReadOnly Property NeedsUpdate() As Boolean
-            Get
-                Try
-                    Return (IO.File.GetLastWriteTime(LocalPath).Add(CacheTime) < Date.Now)
-                Catch ex As IOException
-                    Return True
-                End Try
-            End Get
-        End Property
-
-        Public Sub SaveLocal()
-            Try
-                Dim path As String = IO.Path.GetDirectoryName(LocalPath)
-                If Not Directory.Exists(path) Then Directory.CreateDirectory(path)
-                IO.File.WriteAllText(LocalPath, Config.MakeConfig(WriteConfig(True)), Encoding.UTF8)
-                Log.Debug("Saved global user config for {0} [L]".FormatWith(GlobalUser.FullName))
-
-            Catch ex As IOException
-                Log.Write(Msg("globalconfig-savefail", ex.Message))
-            End Try
-        End Sub
-
-        Public Function WriteConfig(ByVal local As Boolean) As Dictionary(Of String, Object)
+        Public Overrides Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
             Dim items As New Dictionary(Of String, Object)
 
             items.Add("auto-unified-login", AutoUnifiedLogin)
 
-            If local Then
+            If target = ConfigTarget.Local Then
                 If GlobalUser.Created > Date.MinValue Then items.Add("created", WikiTimestamp(GlobalUser.Created))
                 If Extra Then items.Add("extra", True)
                 If GlobalUser.GlobalGroups.Count > 0 Then items.Add("groups", GlobalUser.GlobalGroups.Join(","))
@@ -166,7 +121,7 @@ Namespace Huggle
 
         Public Function Copy(ByVal globalUser As GlobalUser) As GlobalUserConfig
             Dim result As New GlobalUserConfig(globalUser)
-            result.Load(Config.MakeConfig(WriteConfig(True)))
+            result.ReadConfig(Config.MakeConfig(WriteConfig(ConfigTarget.Local)))
             result.IsDefault = IsDefault
             Return result
         End Function

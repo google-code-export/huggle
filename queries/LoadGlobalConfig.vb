@@ -18,6 +18,24 @@ Namespace Huggle.Actions
             OnStarted()
             OnProgress(Msg("config-progress"))
 
+            'Get cached config from the cloud
+            If InternalConfig.UseCloud Then
+                Dim cloudQuery As New CloudQuery("global")
+                cloudQuery.Start()
+
+                If cloudQuery.IsFailed Then
+                    Log.Write(Msg("query-cloud-error", cloudQuery.Result.LogMessage))
+                Else
+                    Config.Global.Load(cloudQuery.Value)
+
+                    If Config.Global.IsCurrent Then
+                        Config.Global.SaveLocal()
+                        OnSuccess()
+                        Return
+                    End If
+                End If
+            End If
+
             Dim configPage As Page = Wiki.Pages(Config.Global.PageTitle)
             Dim languagePage As Page = Wiki.Pages(Config.Global.LocalizationPageName(App.Languages.Current.Code))
 
@@ -35,7 +53,7 @@ Namespace Huggle.Actions
             Dim wikiRequest As New ApiRequest _
                 (App.Sessions(App.Wikis.Global.Users.Anonymous), Description, New QueryString("action", "sitematrix"))
             Dim closedRequest As New FileRequest _
-                (App.Sessions(App.Wikis.Global.Users.Anonymous), Config.Internal.WikimediaClosedWikisPath)
+                (App.Sessions(App.Wikis.Global.Users.Anonymous), InternalConfig.WikimediaClosedWikisPath)
 
             'Run requests in parallel
             CreateThread(AddressOf configRequest.Start)
@@ -59,7 +77,7 @@ Namespace Huggle.Actions
 
             If languagePage.Exists Then
                 Try
-                    App.Languages.Current.Load(languagePage.Text)
+                    App.Languages.Current.GetConfig.Load(languagePage.Text)
                     Log.Debug("Loaded messages for '{0}' [R]".FormatWith(App.Languages.Current.Name))
 
                 Catch ex As ConfigException
@@ -82,8 +100,15 @@ Namespace Huggle.Actions
             End If
 
             'Save configuration
+            Config.Global.Updated = Date.UtcNow
             Config.Global.SaveLocal()
-            Config.Messages.SaveLocal()
+
+            For Each lang As Language In App.Languages.All
+                If lang.IsLocalized Then lang.GetConfig.SaveLocal()
+            Next lang
+
+            'Store config to the cloud
+            If InternalConfig.UseCloud Then CreateThread(AddressOf Config.Global.SaveCloud)
 
             OnSuccess()
         End Sub

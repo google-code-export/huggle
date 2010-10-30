@@ -8,19 +8,19 @@
         End Sub
 
         Private Sub PictureBox1_Click() Handles MediaWiki.Click
-            OpenWebBrowser(Config.Internal.MediaWikiUrl)
+            OpenWebBrowser(InternalConfig.MediaWikiUrl)
         End Sub
 
         Private Sub ManualLink_LinkClicked() Handles ManualLink.LinkClicked
-            OpenWebBrowser(Config.Internal.ManualUrl)
+            OpenWebBrowser(InternalConfig.ManualUrl)
         End Sub
 
         Private Shared Sub FeedbackLink_LinkClicked() Handles FeedbackLink.LinkClicked
-            OpenWebBrowser(Config.Internal.FeedbackUrl)
+            OpenWebBrowser(InternalConfig.FeedbackUrl)
         End Sub
 
         Private Sub SourceLink_LinkClicked() Handles SourceLink.LinkClicked
-            OpenWebBrowser(Config.Internal.SourceUrl)
+            OpenWebBrowser(InternalConfig.SourceUrl)
         End Sub
 
     End Class

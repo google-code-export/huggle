@@ -16,8 +16,9 @@ Namespace Huggle
 
     'Represents an HTTP request
 
-    Public MustInherit Class Request : Inherits Process
+    Public Class Request : Inherits Process
 
+        Private _Response As MemoryStream
         Private ReadOnly _Session As Session
 
         Private Shared ReadOnly MaxAttempts As Integer = 3
@@ -29,10 +30,22 @@ Namespace Huggle
         End Sub
 
         Public Property Boundary() As String
+
         Public Property Cookies() As CookieContainer
+
         Public Property Data() As Byte()
+
         Public Property IsMultipart() As Boolean
-        Protected Property Response() As MemoryStream
+
+        Public Property Response() As MemoryStream
+            Get
+                Return _Response
+            End Get
+            Protected Set(ByVal value As MemoryStream)
+                _Response = value
+            End Set
+        End Property
+
         Public Property ResponseTime() As TimeSpan
 
         Public ReadOnly Property Session() As Session
@@ -59,7 +72,7 @@ Namespace Huggle
                         request = CType(WebRequest.Create(Url), HttpWebRequest)
 
                     Catch ex As SystemException
-                        Result = New Result(Msg("error-badurl"), "badurl")
+                        OnFail(New Result(Msg("error-badurl"), "badurl"))
                         Return
                     End Try
 
@@ -69,7 +82,7 @@ Namespace Huggle
                     request.Proxy = Config.Local.Proxy
                     request.ReadWriteTimeout = CInt(Timeout.TotalMilliseconds)
                     request.Timeout = CInt(Timeout.TotalMilliseconds)
-                    request.UserAgent = Config.Internal.UserAgent
+                    request.UserAgent = InternalConfig.UserAgent
 
                     Dim startTime As Date = Date.Now
 
@@ -101,6 +114,7 @@ Namespace Huggle
                     ResponseTime = (Date.Now - startTime)
                     If Not App.IsMono AndAlso Cookies IsNot Nothing Then FixCookieContainer(Cookies, Url)
 
+                    OnSuccess()
                     Return
 
                 Catch ex As IOException
@@ -141,6 +155,8 @@ Namespace Huggle
                 If retries = 0 Then Result = New Result({Msg("error-noresponse"), Msg("error-connectionhelp")})
 
             Loop Until Result.IsError
+
+            OnFail(Result)
         End Sub
 
         Private Shared Sub FixCookieContainer(ByVal cookies As CookieContainer, ByVal url As Uri)

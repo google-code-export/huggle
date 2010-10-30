@@ -1,4 +1,5 @@
-﻿Imports System
+﻿Imports Huggle.Actions
+Imports System
 Imports System.Collections.Generic
 Imports System.IO
 Imports System.Text
@@ -7,43 +8,58 @@ Imports System.Windows.Forms
 
 Namespace Huggle
 
-    Public NotInheritable Class Config
+    Public MustInherit Class Config
 
-        Private Shared _Global As New GlobalConfig
-        Private Shared _Internal As New InternalConfig
-        Private Shared _Local As New LocalConfig
-        Private Shared _Messages As New MessageConfig
+        Private _IsLoaded As Boolean
 
-        Public Shared CustomReverts As New Dictionary(Of Page, CustomRevert)
+        Private Shared ReadOnly UpdateInterval As New TimeSpan(12, 0, 0)
 
-        Private Sub New()
-        End Sub
+        Protected MustOverride Function Location() As String
+        Protected MustOverride Sub ReadConfig(ByVal text As String)
+        Public MustOverride Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
 
-        Public Shared ReadOnly Property [Global]() As GlobalConfig
+        Public Property Updated As Date
+
+        Public Shared ReadOnly Property [Global] As GlobalConfig
             Get
-                Return _Global
+                Static config As New GlobalConfig
+                Return config
             End Get
         End Property
 
-        Public Shared ReadOnly Property Internal() As InternalConfig
+        Public Shared ReadOnly Property Local As LocalConfig
             Get
-                Return _Internal
+                Static config As New LocalConfig
+                Return config
             End Get
         End Property
 
-        Public Shared ReadOnly Property Local() As LocalConfig
+        Public Shared Function BaseLocation() As String
+            Static location As String = DetermineBaseLocation()
+            Return location
+        End Function
+
+        Private Shared Function GetValidCloudKey(ByVal str As String) As String
+            For i As Integer = 0 To str.Length - 1
+                If Not Char.IsLetterOrDigit(str(i)) AndAlso Not str(i) = "-" Then str = str.Replace(str(i), "-")
+            Next i
+
+            Return str
+        End Function
+
+        Public ReadOnly Property IsCurrent() As Boolean
             Get
-                Return _Local
+                Return Updated.Add(UpdateInterval) > Date.UtcNow
             End Get
         End Property
 
-        Public Shared ReadOnly Property Messages() As MessageConfig
+        Public ReadOnly Property IsLoaded As Boolean
             Get
-                Return _Messages
+                Return _IsLoaded
             End Get
         End Property
 
-        Public Shared Function MakeConfig(ByVal items As Dictionary(Of String, Object)) As String
+        Protected Shared Function MakeConfig(ByVal items As Dictionary(Of String, Object)) As String
             If items Is Nothing Then Return ""
             Dim result As New StringBuilder
 
@@ -86,19 +102,19 @@ Namespace Huggle
             Return value
         End Function
 
-        Public Shared Function EscapeWs(ByVal value As String) As String
+        Protected Shared Function EscapeWs(ByVal value As String) As String
             If value.StartsWith(" "c) Then value = "\@" & value
             If value.EndsWith(" "c) Then value = value & "\@"
             Return value
         End Function
 
-        Public Shared Function UnescapeWs(ByVal value As String) As String
+        Protected Shared Function UnescapeWs(ByVal value As String) As String
             If value.StartsWith("\@") Then value = value.Substring(2)
             If value.EndsWith("\@") Then value = value.Substring(0, value.Length - 2)
             Return value
         End Function
 
-        Public Shared Function ParseConfig(ByVal source As String, ByVal context As String, ByVal text As String) _
+        Protected Shared Function ParseConfig(ByVal source As String, ByVal context As String, ByVal text As String) _
             As Dictionary(Of String, String)
 
             Dim result As New Dictionary(Of String, String)
@@ -155,15 +171,118 @@ Namespace Huggle
             Return result
         End Function
 
+        Private Shared Function DetermineBaseLocation() As String
+            'Try the current directory first
+            Dim currentDirPath As String = PathCombine(Directory.GetCurrentDirectory, "config")
+            If Directory.Exists(currentDirPath) Then Return currentDirPath
+
+            Try
+                Directory.CreateDirectory(currentDirPath)
+                Return currentDirPath
+
+            Catch ex As SystemException
+                'nom
+            End Try
+
+            'Then try AppData
+            Dim appDataPath As String = PathCombine(Environment.GetFolderPath(
+                Environment.SpecialFolder.ApplicationData), "huggle", "config")
+
+            If Directory.Exists(appDataPath) Then Return appDataPath
+
+            Try
+                Directory.CreateDirectory(appDataPath)
+                Return appDataPath
+
+            Catch ex As SystemException
+                'nom
+            End Try
+
+            Throw New ConfigException("No suitable location for configuration data")
+        End Function
+
+        Public Sub LoadCloud()
+            Dim cloudQuery As New CloudQuery(Config.GetValidCloudKey(Location))
+            cloudQuery.Start()
+            If cloudQuery.IsFailed Then
+                Log.Write(Msg("config-loaderror", cloudQuery.Result.LogMessage))
+            Else
+                Log.Debug(Msg("config-loadcloud", Config.GetValidCloudKey(Location)))
+                Load(cloudQuery.Value)
+            End If
+        End Sub
+
+        Public Sub LoadLocal()
+            Load(LoadFile(Location))
+        End Sub
+
+        Public Overridable Sub Load(ByVal text As String)
+            _IsLoaded = True
+            ReadConfig(text)
+        End Sub
+
+        Protected Shared Function LoadFile(ByVal location As String) As String
+            Try
+                Dim filePath As String = PathCombine(BaseLocation, location)
+
+                Dim contents As String = IO.File.ReadAllText(filePath, Encoding.UTF8)
+                Log.Debug("Loaded config: {0}".FormatWith(location))
+                Return contents
+
+            Catch ex As SystemException
+                Log.Write(Result.FromException(ex).Wrap(Msg("config-loaderror", location)).LogMessage)
+                Return Nothing
+            End Try
+        End Function
+
+        Public Sub SaveCloud()
+            Dim cloudQuery As New CloudStore(Config.GetValidCloudKey(Location), Save(ConfigTarget.Cloud))
+            cloudQuery.Start()
+            If cloudQuery.IsFailed _
+                Then Log.Write(Msg("config-saveerror", cloudQuery.Result.LogMessage)) _
+                Else Log.Debug(Msg("config-savecloud", Config.GetValidCloudKey(Location)))
+        End Sub
+
+        Public Overridable Sub SaveLocal()
+            Config.SaveFile(Location, Save(ConfigTarget.Local))
+        End Sub
+
+        Protected Function Save(ByVal target As ConfigTarget) As String
+            Return MakeConfig(WriteConfig(target))
+        End Function
+
+        Protected Shared Sub SaveFile(ByVal location As String, ByVal contents As String)
+            Try
+                Dim filePath As String = PathCombine(Config.BaseLocation, location)
+
+                If Not Directory.Exists(Path.GetDirectoryName(filePath)) _
+                    Then Directory.CreateDirectory(Path.GetDirectoryName(filePath))
+
+                IO.File.WriteAllText(filePath, contents, Encoding.UTF8)
+                Log.Debug("Saved config: {0}".FormatWith(location))
+
+            Catch ex As SystemException
+                Log.Write(Result.FromException(ex).Wrap(Msg("config-saveerror", location)).LogMessage)
+            End Try
+        End Sub
+
     End Class
 
     <Serializable()>
     Public Class ConfigException : Inherits ApplicationException
+
+        Public Sub New(ByVal message As String)
+            MyBase.New(message)
+        End Sub
 
         Public Sub New(ByVal message As String, ByVal innerException As Exception)
             MyBase.New(message, innerException)
         End Sub
 
     End Class
+
+    Public Enum ConfigTarget As Integer
+        : Local : Cloud : Wiki
+    End Enum
 
 End Namespace

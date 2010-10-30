@@ -59,7 +59,7 @@ Namespace Huggle
 
         Private ReadOnly Property FilePath() As String
             Get
-                Return Config.Local.ConfigPath & "media" & Slash & GetValidFileName(Wiki.Code & "-" & Name)
+                Return PathCombine(Config.BaseLocation, "media", GetValidFileName(Wiki.Code & "-" & Name))
             End Get
         End Property
 
@@ -119,8 +119,8 @@ Namespace Huggle
 
         Public ReadOnly Property ThumbPath(ByVal size As Integer) As String
             Get
-                Return Config.Local.ConfigPath & "media" & Slash & "thumbs" & _
-                    Slash & GetValidFileName(Wiki.Code & "-" & ThumbName(size))
+                Return PathCombine(Config.BaseLocation, "media", "thumbs",
+                    GetValidFileName(Wiki.Code & "-" & ThumbName(size)))
             End Get
         End Property
 

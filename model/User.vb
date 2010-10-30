@@ -266,7 +266,7 @@ Namespace Huggle
         Public ReadOnly Property IsPrivileged() As Boolean
             Get
                 For Each group As UserGroup In Groups
-                    For Each right As String In Huggle.Config.Internal.PrivilegedRights
+                    For Each right As String In InternalConfig.PrivilegedRights
                         If group.Rights.Contains(right) Then Return True
                     Next right
                 Next group

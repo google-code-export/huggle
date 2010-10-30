@@ -25,8 +25,6 @@ Namespace Huggle
         Public ReadOnly C1 As Char = Convert.ToChar(31)
         Public ReadOnly C2 As Char = Convert.ToChar(30)
 
-        Public ReadOnly Slash As String = Path.DirectorySeparatorChar
-
         Public ReadOnly BlpIconHtml As String = _
             "<img src='http://upload.wikimedia.org/wikipedia/commons/thumb/4/41/" & _
             "Crystal_Clear_app_personal_gray.png/32px-Crystal_Clear_app_personal_gray.png' " & _
@@ -43,6 +41,18 @@ Namespace Huggle
         End Function
 
         Public Delegate Function Expression() As Boolean
+
+        Public Function PathCombine(ByVal ParamArray components As String()) As String
+            If components.Length = 0 Then Return ""
+
+            Dim result As String = components(0)
+
+            For i As Integer = 1 To components.Length - 1
+                result = Path.Combine(result, components(i))
+            Next i
+
+            Return result
+        End Function
 
         Public ReadOnly Property DesignTime() As Boolean
             Get

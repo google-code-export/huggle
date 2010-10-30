@@ -4,18 +4,17 @@ Imports System.IO
 Imports System.Net
 Imports System.Text
 
+Imports KVP = System.Collections.Generic.KeyValuePair(Of String, String)
+
 Namespace Huggle
 
-    Public Class UserConfig
+    Public Class UserConfig : Inherits Config
 
-        Private _User As User
-
-        Private LocalPath As String
+        Private User As User
 
         Public Sub New(ByVal user As User)
             _IsDefault = True
-            _User = user
-            LocalPath = Config.Local.ConfigPath & "user" & Slash & GetValidFileName(user.FullName) & ".txt"
+            Me.User = user
         End Sub
 
         Public Property AutoIgnoreAfter As Integer
@@ -58,13 +57,12 @@ Namespace Huggle
         Public Property SemiIgnoreAfter As Integer
         Public Property Watch As New List(Of String)
 
-        Public Shared ReadOnly Property CacheTime() As TimeSpan
-            Get
-                Return TimeSpan.FromHours(12)
-            End Get
-        End Property
+        Protected Overrides Function Location() As String
+            Return PathCombine("user", GetValidFileName(User.FullName & ".txt"))
+        End Function
 
         Public Property IsDefault() As Boolean
+
         Public Property IsLocalCopy() As Boolean
 
         Public ReadOnly Property IsWatch(ByVal key As String) As Boolean
@@ -73,61 +71,8 @@ Namespace Huggle
             End Get
         End Property
 
-        Public ReadOnly Property NeedsUpdate() As Boolean
-            Get
-                If IsDefault Then Return True
-
-                Try
-                    If IO.File.Exists(LocalPath) Then Return IO.File.GetLastWriteTime(LocalPath).Add(CacheTime) < Date.Now
-                Catch ex As IOException
-                End Try
-
-                Return True
-            End Get
-        End Property
-
-        Public ReadOnly Property User() As User
-            Get
-                Return _User
-            End Get
-        End Property
-
-        Public Sub Load(ByVal source As String)
-            ReadConfig(source)
-        End Sub
-
-        Public Sub LoadLocal()
-            Try
-                If IO.File.Exists(LocalPath) Then
-                    Dim text As String = IO.File.ReadAllText(LocalPath, Encoding.UTF8)
-                    Load(text)
-                    _IsDefault = False
-                    _IsLocalCopy = True
-                    Log.Debug("Loaded user config for {0} [L]".FormatWith(User.FullName))
-                Else
-                    If IsDefault Then Config.Global.NeedsUpdate = True
-                End If
-
-            Catch ex As IOException
-                Log.Write(Msg("accountconfig-loadfail", ex.Message))
-            End Try
-        End Sub
-
-        Public Sub SaveLocal()
-            Try
-                Dim path As String = IO.Path.GetDirectoryName(LocalPath)
-                If Not Directory.Exists(path) Then Directory.CreateDirectory(path)
-                IO.File.WriteAllText(LocalPath, Config.MakeConfig(WriteConfig(True)), Encoding.UTF8)
-                Log.Debug("Saved user config for {0} [L]".FormatWith(User.FullName))
-
-            Catch ex As IOException
-                Log.Write(Msg("accountconfig-savefail", ex.Message))
-            End Try
-        End Sub
-
-        Private Sub ReadConfig(ByVal text As String)
-
-            For Each item As KeyValuePair(Of String, String) In Config.ParseConfig("account", Nothing, text)
+        Protected Overrides Sub ReadConfig(ByVal text As String)
+            For Each item As KVP In Config.ParseConfig("account", Nothing, text)
                 Dim key As String = item.Key
                 Dim value As String = item.Value
 
@@ -204,7 +149,7 @@ Namespace Huggle
 
                         Case "preferences"
                             User.Preferences.LoadFromMwFormat(Config.ParseConfig("user", key, value))
-                            
+
                         Case "revert-alwaysblank" : RevertAlwaysBlank = value.ToBoolean
                         Case "revert-checkrollbacktarget" : RevertCheckRollbackTarget = value.ToBoolean
                         Case "revert-delete" : RevertDelete = value.ToBoolean
@@ -220,7 +165,7 @@ Namespace Huggle
             Next item
         End Sub
 
-        Public Function WriteConfig(ByVal local As Boolean) As Dictionary(Of String, Object)
+        Public Overrides Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
             Dim def As UserConfig = User.Wiki.Users.Default.Config
 
             Dim items As New Dictionary(Of String, Object)
@@ -258,7 +203,7 @@ Namespace Huggle
             If RevertSpeedy <> def.RevertSpeedy Then items.Add("revert-speedy", RevertSpeedy)
             If SemiIgnoreAfter <> def.SemiIgnoreAfter Then items.Add("semi-ignore-after", SemiIgnoreAfter)
 
-            If local AndAlso Not User.IsDefault Then
+            If target = ConfigTarget.Local AndAlso Not User.IsDefault Then
                 If User.DisplayName <> User.Name Then items.Add("display-name", User.DisplayName)
 
                 If Config.Local.SavePasswords AndAlso Not User.IsAnonymous AndAlso User.Password IsNot Nothing _
@@ -294,7 +239,7 @@ Namespace Huggle
 
         Public Function Copy(ByVal user As User) As UserConfig
             Dim result As New UserConfig(user)
-            result.ReadConfig(Config.MakeConfig(WriteConfig(True)))
+            result.ReadConfig(Config.MakeConfig(WriteConfig(ConfigTarget.Local)))
             result.IsDefault = IsDefault
             Return result
         End Function

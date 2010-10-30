@@ -88,7 +88,7 @@ Namespace Huggle.Actions
             If User.IsUnified AndAlso User.GlobalUser.Config.IsDefault Then User.GlobalUser.Config.LoadLocal()
 
             'Load config from wiki if necessary
-            If Wiki.Config.NeedsUpdate OrElse User.Config.NeedsUpdate Then
+            If Not Wiki.Config.IsCurrent OrElse Not User.Config.IsCurrent Then
                 OnProgress(Msg("userconfig-progress", Session.User.FullName))
                 Dim process As New LoadUserConfig(Session)
                 process.Start()
@@ -187,7 +187,7 @@ Namespace Huggle.Actions
 
             User.IsLoaded = True
             Wiki.IsLoaded = True
-            Config.Local.Save()
+            Config.Local.SaveLocal()
             User.Config.SaveLocal()
             Wiki.Config.SaveLocal()
             Wiki.Rc.Enabled = True

@@ -5,39 +5,48 @@ Imports KVP = System.Collections.Generic.KeyValuePair(Of String, String)
 
 Namespace Huggle
 
-    Public Class ConfigRead
+    Partial Public Class Config
 
-        Public Shared Sub ReadSpamLists(ByVal lists As SpamListCollection, ByVal context As String, ByVal value As String)
+        Protected Shared Sub ReadSpamLists(ByVal lists As SpamListCollection,
+            ByVal context As String, ByVal value As String)
 
-            For Each listItem As KVP In Config.ParseConfig(context, "spam-list", value)
-                Dim list As SpamList = lists.FromPage(lists.Wiki.Pages.FromString(listItem.Key))
+            For Each rootItem As KVP In ParseConfig(context, "spam-list", value)
+                Dim list As SpamList = lists.FromPage(lists.Wiki.Pages.FromString(rootItem.Key))
 
-                For Each listProp As KVP In Config.ParseConfig(context, listItem.Key, listItem.Value)
-                    Select Case listProp.Key
-                        Case "action" : list.Action = If(listProp.Value = "permit", SpamListAction.Permit, SpamListAction.Deny)
-                        Case "custom" : list.IsCustom = listProp.Value.ToBoolean
+                For Each rootProp As KVP In ParseConfig(context, rootItem.Key, rootItem.Value)
+                    Select Case rootProp.Key
+                        Case "action"
+                            list.Action = If(rootProp.Value = "permit", SpamListAction.Permit, SpamListAction.Deny)
+
+                        Case "custom"
+                            list.IsCustom = rootProp.Value.ToBoolean
+
                         Case "entries"
                             Dim entries As New List(Of SpamListEntry)
 
-                            For Each entryItem As KVP In Config.ParseConfig("family", listProp.Key, listProp.Value)
+                            For Each item As KVP In ParseConfig("family", rootProp.Key, rootProp.Value)
+                                Dim entry As New SpamListEntry(list, New Regex(item.Key))
 
-                                Dim entry As New SpamListEntry(list, New Regex(entryItem.Key))
+                                For Each prop As KVP In ParseConfig("family", item.Key, item.Value)
+                                    Select Case prop.Key
+                                        Case "comment"
+                                            entry.Comment = prop.Value
 
-                                For Each entryProp As KVP In Config.ParseConfig("family", entryItem.Key, entryItem.Value)
-                                    Select Case entryProp.Key
-                                        Case "comment" : entry.Comment = entryProp.Value
-                                        Case "last-modified-at" : entry.LastModifiedAt = entryProp.Value.ToDate
-                                        Case "last-modified-by" : entry.LastModifiedBy = lists.Wiki.Users.FromString(entryProp.Value)
+                                        Case "last-modified-at"
+                                            entry.LastModifiedAt = prop.Value.ToDate
+
+                                        Case "last-modified-by"
+                                            entry.LastModifiedBy = lists.Wiki.Users.FromString(prop.Value)
                                     End Select
-                                Next entryProp
+                                Next prop
 
                                 entries.Add(entry)
-                            Next entryItem
+                            Next item
 
                             list.Entries = entries
                     End Select
-                Next listProp
-            Next listItem
+                Next rootProp
+            Next rootItem
         End Sub
 
     End Class

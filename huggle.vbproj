@@ -133,6 +133,7 @@
     <Compile Include="actions\ResetPreferences.vb" />
     <Compile Include="actions\Unblock.vb" />
     <Compile Include="config\ConfigRead.vb" />
+    <Compile Include="Cloud.vb" />
     <Compile Include="Main.vb" />
     <Compile Include="model\ApiModule.vb" />
     <Compile Include="model\GlobalUserStatusChange.vb" />

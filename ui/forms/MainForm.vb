@@ -70,7 +70,7 @@ Namespace Huggle.UI
         End Sub
 
         Private Sub HelpManual_Click() Handles HelpManual.Click
-            OpenWebBrowser(Config.Internal.ManualUrl)
+            OpenWebBrowser(InternalConfig.ManualUrl)
         End Sub
 
         Private Sub AccountGlobalProperties_Click() Handles AccountGlobalProperties.Click

@@ -45,7 +45,7 @@ Namespace Huggle.UI
 
             Dim globalExts As New List(Of String)
 
-            For Each globalExt As String In Config.Internal.GlobalExtensions
+            For Each globalExt As String In InternalConfig.GlobalExtensions
                 If App.Sessions(Family).Wiki.Extensions.Contains(globalExt) _
                     Then globalExts.Add(App.Sessions(Family).Wiki.Extensions(globalExt).Name)
             Next globalExt

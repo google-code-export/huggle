@@ -635,29 +635,29 @@ Namespace Huggle
             ProcessRevert()
 
             'Reverts with custom summary
-            If Config.CustomReverts.ContainsKey(Page) Then
-                Dim crv As CustomRevert = Config.CustomReverts(Page)
+            'If Config.CustomReverts.ContainsKey(Page) Then
+            '    Dim crv As CustomRevert = Config.CustomReverts(Page)
 
-                If User.IsUsed AndAlso Summary = crv.Summary Then
-                    IsRevert = True
-                    crv.Rev.RevertedBy = Me
+            '    If User.IsUsed AndAlso Summary = crv.Summary Then
+            '        IsRevert = True
+            '        crv.Rev.RevertedBy = Me
 
-                    If crv.Target Is Nothing Then
-                        'Revert was a rollback to unknown target, try to find it
-                        Dim rev As Revision = Prev
+            '        If crv.Target Is Nothing Then
+            '            'Revert was a rollback to unknown target, try to find it
+            '            Dim rev As Revision = Prev
 
-                        While IsKnown(rev) AndAlso rev.User Is Prev.User
-                            rev = rev.Prev
-                        End While
+            '            While IsKnown(rev) AndAlso rev.User Is Prev.User
+            '                rev = rev.Prev
+            '            End While
 
-                        If IsKnown(rev) Then crv.Target = rev
-                    End If
+            '            If IsKnown(rev) Then crv.Target = rev
+            '        End If
 
-                    If RevertTo Is Nothing Then RevertTo = crv.Target
-                End If
-            End If
+            '        If RevertTo Is Nothing Then RevertTo = crv.Target
+            '    End If
+            'End If
 
-            Config.CustomReverts.Remove(Page)
+            'Config.CustomReverts.Remove(Page)
 
             If Prev Is Null Then Page.EditCount = 0
             If PrevByUser Is Null Then User.Contributions = 0

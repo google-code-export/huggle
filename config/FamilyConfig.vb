@@ -7,25 +7,19 @@ Imports KVP = System.Collections.Generic.KeyValuePair(Of String, String)
 
 Namespace Huggle
 
-    Public Class FamilyConfig
+    Public Class FamilyConfig : Inherits Config
 
         Private Family As Family
-        Private LocalPath As String
 
-        Private Shared ReadOnly Path As String = Config.Local.ConfigPath & "family"
-
-        Public Logo As String = "Wikimedia.png"
+        Public Property Logo As String = "Wikimedia.png"
 
         Public Sub New(ByVal family As Family)
             Me.Family = family
-            LocalPath = Path & Slash & GetValidFileName(family.Code) & ".txt"
         End Sub
 
-        Public ReadOnly Property CacheTime() As TimeSpan
-            Get
-                Return TimeSpan.FromHours(12)
-            End Get
-        End Property
+        Protected Overrides Function Location() As String
+            Return PathCombine("family", GetValidFileName(Family.Code & ".txt"))
+        End Function
 
         Public Shared Sub LoadAll()
             For Each family As Family In App.Families.All
@@ -39,25 +33,8 @@ Namespace Huggle
             Next family
         End Sub
 
-        Public Sub LoadLocal()
-            Try
-                If IO.File.Exists(LocalPath) Then
-                    Load(IO.File.ReadAllText(LocalPath, Encoding.UTF8))
-                    Log.Debug("Loaded family config for {0} [L]".FormatWith(Family.Name))
-                Else
-                    Config.Global.NeedsUpdate = True
-                End If
-
-            Catch ex As ConfigException
-                Log.Write(Result.FromException(ex).LogMessage)
-
-            Catch ex As SystemException
-                Log.Write(Result.FromException(ex).LogMessage)
-            End Try
-        End Sub
-
-        Public Sub Load(ByVal text As String)
-            For Each item As KeyValuePair(Of String, String) In Config.ParseConfig("family", Nothing, text)
+        Protected Overrides Sub ReadConfig(ByVal text As String)
+            For Each item As KVP In Config.ParseConfig("family", Nothing, text)
                 Dim key As String = item.Key
                 Dim value As String = item.Value
 
@@ -89,7 +66,7 @@ Namespace Huggle
 
                         Case "logo" : Logo = value
                         Case "name" : Family.Name = value
-                        Case "spam-list" : ConfigRead.ReadSpamLists(Family.GlobalSpamLists, "family", value)
+                        Case "spam-list" : ReadSpamLists(Family.GlobalSpamLists, "family", value)
 
                         Case "title-blacklist"
                             Family.GlobalTitleBlacklist = New TitleList(Family.CentralWiki.Pages.FromString(value))
@@ -110,29 +87,7 @@ Namespace Huggle
             Next item
         End Sub
 
-        Public ReadOnly Property NeedsUpdate() As Boolean
-            Get
-                Try
-                    Return IO.File.GetLastWriteTime(LocalPath).Add(CacheTime) < Date.Now
-                Catch ex As IOException
-                    Return True
-                End Try
-            End Get
-        End Property
-
-        Public Sub SaveLocal()
-            Try
-                Dim path As String = IO.Path.GetDirectoryName(LocalPath)
-                If Not Directory.Exists(path) Then Directory.CreateDirectory(path)
-                IO.File.WriteAllText(LocalPath, Config.MakeConfig(WriteConfig(True)), Encoding.UTF8)
-                Log.Debug("Saved family config for {0} [L]".FormatWith(Family.Name))
-
-            Catch ex As IOException
-                Log.Write(Msg("globalconfig-savefail", ex.Message))
-            End Try
-        End Sub
-
-        Public Function WriteConfig(ByVal local As Boolean) As Dictionary(Of String, Object)
+        Public Overrides Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
             Dim items As New Dictionary(Of String, Object)
 
             If Family.CentralWiki IsNot Nothing Then items.Add("central-wiki", Family.CentralWiki.Code)
@@ -169,10 +124,10 @@ Namespace Huggle
                 End If
             End If
 
-            If local Then
-                items.Add("default-globaluser-config", Family.GlobalUsers.Default.Config.WriteConfig(True))
-                items.Add("default-user-config", Family.Wikis.Default.Users.Default.Config.WriteConfig(True))
-                items.Add("default-wiki-config", Family.Wikis.Default.Config.WriteConfig(True))
+            If target = ConfigTarget.Local Then
+                items.Add("default-globaluser-config", Family.GlobalUsers.Default.Config.WriteConfig(target))
+                items.Add("default-user-config", Family.Wikis.Default.Users.Default.Config.WriteConfig(target))
+                items.Add("default-wiki-config", Family.Wikis.Default.Config.WriteConfig(target))
             End If
 
             Return items
@@ -180,7 +135,7 @@ Namespace Huggle
 
         Public Function Copy(ByVal family As Family) As FamilyConfig
             Dim result As New FamilyConfig(family)
-            result.Load(Config.MakeConfig(WriteConfig(True)))
+            result.Load(Config.MakeConfig(WriteConfig(ConfigTarget.Local)))
             Return result
         End Function
 
