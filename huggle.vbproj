@@ -140,6 +140,7 @@
     <Compile Include="model\Preferences.vb" />
     <Compile Include="model\TitleBlacklist.vb" />
     <Compile Include="queries\ApiModuleQuery.vb" />
+    <Compile Include="queries\GlobalGroupsQuery.vb" />
     <Compile Include="queries\Query.vb" />
     <Compile Include="queries\ExtraGlobaluserConfig.vb" />
     <Compile Include="queries\LoadUserConfig.vb" />
@@ -215,6 +216,9 @@
     <Compile Include="scripting\Model.vb" />
     <Compile Include="scripting\Parser.vb" />
     <Compile Include="Session.vb" />
+    <Compile Include="ui\controls\EnhancedFlowLayoutPanel.vb">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ui\controls\EnhancedComboBox.vb">
       <SubType>Component</SubType>
     </Compile>
@@ -353,7 +357,7 @@
     <Compile Include="ui\prompts\AccountSelectForm.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ui\controls\ListViewEx.vb">
+    <Compile Include="ui\controls\EnhancedListView.vb">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ui\controls\LogPanel.Designer.vb">
@@ -387,6 +391,12 @@
       <DependentUpon>AbuseFilterView.vb</DependentUpon>
     </Compile>
     <Compile Include="ui\views\AbuseFilterView.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ui\views\GlobalGroupView.Designer.vb">
+      <DependentUpon>GlobalGroupView.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\views\GlobalGroupView.vb">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ui\views\GeneralFamilyView.Designer.vb">
@@ -709,6 +719,9 @@
     <EmbeddedResource Include="ui\views\AbuseFilterView.resx">
       <DependentUpon>AbuseFilterView.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ui\views\GlobalGroupView.resx">
+      <DependentUpon>GlobalGroupView.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ui\views\GeneralFamilyView.resx">
       <DependentUpon>GeneralFamilyView.vb</DependentUpon>
     </EmbeddedResource>
@@ -751,6 +764,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="en.txt" />
+    <Content Include="resources\languages.txt" />
     <None Include="app.manifest" />
     <None Include="Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>

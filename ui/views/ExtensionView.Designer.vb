@@ -35,6 +35,8 @@
             Me.List = New System.Windows.Forms.EnhancedListView()
             Me.Image = New System.Windows.Forms.PictureBox()
             Me.Title = New System.Windows.Forms.Label()
+            Me.TypeLabel = New System.Windows.Forms.Label()
+            Me.Type = New System.Windows.Forms.EnhancedComboBox()
             NameColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             TypeColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             VersionColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
@@ -59,7 +61,7 @@
             'Count
             '
             Me.Count.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-            Me.Count.Location = New System.Drawing.Point(500, 6)
+            Me.Count.Location = New System.Drawing.Point(497, 33)
             Me.Count.Name = "Count"
             Me.Count.Size = New System.Drawing.Size(67, 13)
             Me.Count.TabIndex = 17
@@ -137,10 +139,10 @@
             Me.List.FlexibleColumn = 0
             Me.List.FullRowSelect = True
             Me.List.GridLines = True
-            Me.List.Location = New System.Drawing.Point(3, 25)
+            Me.List.Location = New System.Drawing.Point(3, 52)
             Me.List.Name = "List"
             Me.List.ShowGroups = False
-            Me.List.Size = New System.Drawing.Size(561, 308)
+            Me.List.Size = New System.Drawing.Size(561, 281)
             Me.List.SortOnColumnClick = True
             Me.List.TabIndex = 14
             Me.List.UseCompatibleStateImageBehavior = False
@@ -149,7 +151,6 @@
             'Image
             '
             Me.Image.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-            Me.Image.Image = Huggle.Resources.mediawiki_extension
             Me.Image.Location = New System.Drawing.Point(3, 339)
             Me.Image.Name = "Image"
             Me.Image.Size = New System.Drawing.Size(64, 85)
@@ -168,8 +169,28 @@
             Me.Title.TabIndex = 22
             Me.Title.Text = "Extensions"
             '
+            'TypeLabel
+            '
+            Me.TypeLabel.AutoSize = True
+            Me.TypeLabel.Location = New System.Drawing.Point(3, 28)
+            Me.TypeLabel.Name = "TypeLabel"
+            Me.TypeLabel.Size = New System.Drawing.Size(34, 13)
+            Me.TypeLabel.TabIndex = 24
+            Me.TypeLabel.Text = "Type:"
+            '
+            'Type
+            '
+            Me.Type.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+            Me.Type.FormattingEnabled = True
+            Me.Type.Location = New System.Drawing.Point(38, 25)
+            Me.Type.Name = "Type"
+            Me.Type.Size = New System.Drawing.Size(142, 21)
+            Me.Type.TabIndex = 25
+            '
             'ExtensionView
             '
+            Me.Controls.Add(Me.Type)
+            Me.Controls.Add(Me.TypeLabel)
             Me.Controls.Add(Me.Title)
             Me.Controls.Add(Me.Count)
             Me.Controls.Add(Me.Properties)
@@ -193,6 +214,8 @@
         Private WithEvents List As System.Windows.Forms.EnhancedListView
         Private WithEvents Image As System.Windows.Forms.PictureBox
         Private WithEvents Title As System.Windows.Forms.Label
+        Private WithEvents TypeLabel As System.Windows.Forms.Label
+        Private WithEvents Type As System.Windows.Forms.EnhancedComboBox
 
     End Class
 End Namespace

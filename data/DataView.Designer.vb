@@ -52,7 +52,7 @@
             '
             Me.ViewText.AutoSize = False
             Me.ViewText.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-            Me.ViewText.Image = Huggle.Resources.data_text
+            Me.ViewText.Image = Resources.data_text
             Me.ViewText.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None
             Me.ViewText.ImageTransparentColor = System.Drawing.Color.Magenta
             Me.ViewText.Name = "ViewText"
@@ -63,7 +63,7 @@
             '
             Me.ViewWikiText.AutoSize = False
             Me.ViewWikiText.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-            Me.ViewWikiText.Image = Huggle.Resources.data_wikitext
+            Me.ViewWikiText.Image = Resources.data_wikitext
             Me.ViewWikiText.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None
             Me.ViewWikiText.ImageTransparentColor = System.Drawing.Color.Magenta
             Me.ViewWikiText.Name = "ViewWikiText"
@@ -74,7 +74,7 @@
             '
             Me.ViewHtml.AutoSize = False
             Me.ViewHtml.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-            Me.ViewHtml.Image = Huggle.Resources.data_html
+            Me.ViewHtml.Image = Resources.data_html
             Me.ViewHtml.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None
             Me.ViewHtml.ImageTransparentColor = System.Drawing.Color.Magenta
             Me.ViewHtml.Name = "ViewHtml"
@@ -85,7 +85,7 @@
             '
             Me.ViewWebPage.AutoSize = False
             Me.ViewWebPage.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-            Me.ViewWebPage.Image = Huggle.Resources.data_webpage
+            Me.ViewWebPage.Image = Resources.data_webpage
             Me.ViewWebPage.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None
             Me.ViewWebPage.ImageTransparentColor = System.Drawing.Color.Magenta
             Me.ViewWebPage.Name = "ViewWebPage"
@@ -96,7 +96,7 @@
             '
             Me.ViewTable.AutoSize = False
             Me.ViewTable.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-            Me.ViewTable.Image = Huggle.Resources.data_table
+            Me.ViewTable.Image = Resources.data_table
             Me.ViewTable.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None
             Me.ViewTable.ImageTransparentColor = System.Drawing.Color.Magenta
             Me.ViewTable.Name = "ViewTable"
@@ -107,7 +107,7 @@
             '
             Me.ViewImage.AutoSize = False
             Me.ViewImage.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-            Me.ViewImage.Image = Huggle.Resources.data_image
+            Me.ViewImage.Image = Resources.data_image
             Me.ViewImage.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None
             Me.ViewImage.ImageTransparentColor = System.Drawing.Color.Magenta
             Me.ViewImage.Name = "ViewImage"
@@ -118,7 +118,7 @@
             '
             Me.ViewChart.AutoSize = False
             Me.ViewChart.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image
-            Me.ViewChart.Image = Huggle.Resources.data_chart
+            Me.ViewChart.Image = Resources.data_chart
             Me.ViewChart.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None
             Me.ViewChart.ImageTransparentColor = System.Drawing.Color.Magenta
             Me.ViewChart.Name = "ViewChart"

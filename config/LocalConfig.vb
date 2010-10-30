@@ -2,6 +2,7 @@
 Imports System.Collections.Generic
 Imports System.Drawing
 Imports System.IO
+Imports System.Net
 Imports System.Text
 Imports System.Windows.Forms
 
@@ -18,6 +19,10 @@ Namespace Huggle
         Public Property LastLogin As User
         Public Property LoginSecure As Boolean
         Public Property LogToFile As Boolean = True
+        Public Property ManualProxySettings As Boolean
+        Public Property Proxy As IWebProxy
+        Public Property ProxyHost As String
+        Public Property ProxyPort As Integer
         Public Property RcFeeds As Boolean = True
         Public Property SavePasswords As Boolean = True
         Public Property Uid As String
@@ -52,7 +57,9 @@ Namespace Huggle
                             Case "debug-visible" : DebugVisible = value.ToBoolean
                             Case "detect-proxy" : DetectProxySettings = value.ToBoolean
                             Case "first-run" : IsFirstRun = value.ToBoolean
+                            Case "language" : App.Languages.Current = App.Languages(value)
                             Case "log-to-file" : LogToFile = value.ToBoolean
+                            Case "manual-proxy" : ManualProxySettings = value.ToBoolean
                             Case "uid" : Uid = value
                         End Select
 
@@ -131,9 +138,11 @@ Namespace Huggle
             items.Add("debug-visible", DebugVisible)
             items.Add("detect-proxy", DetectProxySettings)
             items.Add("first-run", IsFirstRun)
+            items.Add("language", App.Languages.Current.Code)
             items.Add("login-secure", LoginSecure)
             If LastLogin IsNot Nothing Then items.Add("last-login", LastLogin.FullName)
             items.Add("log-file", LogToFile)
+            items.Add("manual-proxy", ManualProxySettings)
             items.Add("save-passwords", SavePasswords)
             items.Add("uid", Uid)
             items.Add("window-location", WindowLocation.X.ToString & "," & WindowLocation.Y.ToString)

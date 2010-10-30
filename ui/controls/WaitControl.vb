@@ -18,6 +18,9 @@ Namespace Huggle.UI
         Private Frame As Integer
         Private Gfx As BufferedGraphics
 
+        Private WithEvents AttachedProcess As Process
+        Private Callback As ProcessDelegate
+
         Public Sub New()
             InitializeComponent()
             TabStop = False
@@ -82,6 +85,23 @@ Namespace Huggle.UI
                 Gfx.Graphics.Clear(BackColor)
                 Gfx.Render()
             End If
+        End Sub
+
+        Public Sub WaitOn(ByVal process As Process, ByVal callback As ProcessDelegate)
+            If process.IsComplete Then
+                [Stop]()
+                callback(process)
+            Else
+                If Not process.IsRunning Then CreateThread(AddressOf process.Start)
+                Me.Callback = callback
+                AttachedProcess = process
+                Start()
+            End If
+        End Sub
+
+        Private Sub AttachedProcess_Complete() Handles AttachedProcess.Complete
+            [Stop]()
+            Callback(AttachedProcess)
         End Sub
 
     End Class

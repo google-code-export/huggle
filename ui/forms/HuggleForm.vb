@@ -8,6 +8,7 @@ Namespace Huggle.UI
     Public Class HuggleForm : Inherits Form
 
         Public Sub New()
+
         End Sub
 
     End Class

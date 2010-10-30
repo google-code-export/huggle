@@ -17,6 +17,8 @@ Namespace Huggle
             _Name = name
         End Sub
 
+        Public Property DisplayName As String
+            
         Public ReadOnly Property Family() As Family
             Get
                 Return _Family
@@ -63,6 +65,10 @@ Namespace Huggle
                 Return _All(code)
             End Get
         End Property
+
+        Public Sub Clear()
+            _All.Clear()
+        End Sub
 
     End Class
 

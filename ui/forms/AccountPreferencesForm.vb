@@ -88,6 +88,8 @@ Namespace Huggle.UI
             Next skin
 
             If User.Wiki.Skins.ContainsKey(prefs.Skin) Then Skins.SelectedItem = User.Wiki.Skins(prefs.Skin)
+            Skins.Enabled = User.Wiki.Skins.Count > 0
+
             ImageSize.SelectedIndex = prefs.ImageSize
             ThumbnailSize.SelectedIndex = prefs.ThumbnailSize
             MathOption.SelectedIndex = prefs.MathOption
@@ -132,7 +134,7 @@ Namespace Huggle.UI
 
             'Appearence
 
-            prefs.Skin = CType(Skins.SelectedItem, WikiSkin).Code
+            If Skins.SelectedItem IsNot Nothing Then prefs.Skin = CType(Skins.SelectedItem, WikiSkin).Code
             prefs.ImageSize = ImageSize.SelectedIndex
             prefs.ThumbnailSize = ThumbnailSize.SelectedIndex
             prefs.MathOption = MathOption.SelectedIndex

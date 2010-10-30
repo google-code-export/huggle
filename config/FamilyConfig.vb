@@ -3,6 +3,8 @@ Imports System.Collections.Generic
 Imports System.IO
 Imports System.Text
 
+Imports KVP = System.Collections.Generic.KeyValuePair(Of String, String)
+
 Namespace Huggle
 
     Public Class FamilyConfig
@@ -74,6 +76,17 @@ Namespace Huggle
                             Family.FileWiki = App.Wikis(value)
                             App.Wikis(value).Family = Family
 
+                        Case "global-groups"
+                            For Each groupItem As KVP In Config.ParseConfig("family", key, value)
+                                Dim group As GlobalGroup = Family.GlobalGroups(groupItem.Key)
+
+                                For Each groupProp As KVP In Config.ParseConfig("family", key & ":" & groupItem.Key, groupItem.Value)
+                                    Select Case groupProp.Key
+                                        Case "display-name" : group.DisplayName = groupProp.Value
+                                    End Select
+                                Next groupProp
+                            Next groupItem
+
                         Case "logo" : Logo = value
                         Case "name" : Family.Name = value
                         Case "spam-list" : ConfigRead.ReadSpamLists(Family.GlobalSpamLists, "family", value)
@@ -127,6 +140,20 @@ Namespace Huggle
             If Family.FileWiki IsNot Nothing Then items.Add("file-wiki", Family.FileWiki.Code)
             If Logo IsNot Nothing Then items.Add("logo", Logo)
             If Family.Name <> Family.Code Then items.Add("name", Family.Name)
+
+            If Family.GlobalGroups.All.Count > 0 Then
+                Dim groupItems As New Dictionary(Of String, Object)
+
+                For Each group As GlobalGroup In Family.GlobalGroups.All
+                    Dim groupObject As New Dictionary(Of String, Object)
+                    If group.DisplayName IsNot Nothing Then groupObject.Add("display-name", group.DisplayName)
+                    If group.Rights.Count > 0 Then groupObject.Add("rights", group.Rights.Join(", "))
+
+                    groupItems.Add(group.Name, groupObject)
+                Next group
+
+                items.Add("global-groups", groupItems)
+            End If
 
             If Family.GlobalTitleBlacklist IsNot Nothing Then
                 items.Add("title-blacklist", Family.GlobalTitleBlacklist.Location.Title)

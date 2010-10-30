@@ -24,6 +24,7 @@ Namespace Huggle
         Public Sub New(ByVal wiki As Wiki, ByVal name As String)
             _Name = name
             _Wiki = wiki
+            Type = "other"
         End Sub
 
         Public Property Author() As String

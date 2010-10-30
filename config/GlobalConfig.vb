@@ -36,6 +36,8 @@ Namespace Huggle
         End Property
 
         Public Sub LoadLocal()
+            Load(Resources.languages)
+
             Try
                 If IO.File.Exists(Path) Then
                     If IO.File.GetLastWriteTime(Path).Add(Config.Global.CacheTime) < Date.Now Then NeedsUpdate = True
@@ -94,16 +96,6 @@ Namespace Huggle
                                 family.Config.Load(node.Value)
                             Next node
 
-                        Case "hide-languages"
-                            For Each code As String In value.ToList.Trim
-                                App.Languages(code).IsHidden = True
-                            Next code
-
-                        Case "hide-wikis"
-                            For Each code As String In value.ToList.Trim
-                                If App.Wikis.Contains(code) Then App.Wikis(code).IsHidden = True
-                            Next code
-
                         Case "languages"
                             For Each node As KeyValuePair(Of String, String) In Config.ParseConfig("global", key, value)
                                 Dim language As Language = App.Languages(node.Key)
@@ -112,7 +104,7 @@ Namespace Huggle
                                     In Config.ParseConfig("global", key & ":" & language.Name, node.Value)
 
                                     Select Case prop.Key
-                                        Case "hidden" : language.IsHidden = prop.Value.ToBoolean
+                                        Case "ignored" : language.IsIgnored = prop.Value.ToBoolean
                                         Case "localized" : language.IsLocalized = prop.Value.ToBoolean
                                         Case "name" : language.Name = prop.Value
                                     End Select
@@ -242,7 +234,7 @@ Namespace Huggle
                 Dim config As New Dictionary(Of String, Object)
 
                 config.Add("name", language.Name)
-                If language.IsHidden Then config.Add("hidden", True)
+                If language.IsIgnored Then config.Add("ignored", True)
                 If language.IsLocalized Then config.Add("localized", True)
 
                 languageConfigs.Add(language.Code, config)

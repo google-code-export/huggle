@@ -162,8 +162,8 @@
             Me.SetGlobalPreferences.VisitedLinkColor = System.Drawing.SystemColors.HotTrack
             '
             'AccountImage
-            '
-            Me.AccountImage.Image = Huggle.Resources.globaluser_icon
+
+            Me.AccountImage.Image = Resources.globaluser_icon
             Me.AccountImage.Location = New System.Drawing.Point(12, 12)
             Me.AccountImage.Name = "AccountImage"
             Me.AccountImage.Size = New System.Drawing.Size(128, 128)
