@@ -5,9 +5,11 @@ Imports System.IO
 Imports System.Text
 Imports System.Text.RegularExpressions
 
+Imports KVP = System.Collections.Generic.KeyValuePair(Of String, String)
+
 Namespace Huggle
 
-    Public Class GlobalConfig
+    Public Class GlobalConfig : Inherits Config
 
         Public Property AnonymousLogin As Boolean
         Public Property AutoUnifiedLogin As Boolean
@@ -20,12 +22,6 @@ Namespace Huggle
 
         Private _Loader As LoadGlobalConfig
 
-        Public ReadOnly Property CacheTime() As TimeSpan
-            Get
-                Return TimeSpan.FromHours(12)
-            End Get
-        End Property
-
         Public Property IsDefault() As Boolean = True
 
         Public ReadOnly Property Loader() As LoadGlobalConfig
@@ -35,35 +31,11 @@ Namespace Huggle
             End Get
         End Property
 
-        Public Sub LoadLocal()
-            Load(Resources.languages)
-
-            Try
-                If IO.File.Exists(Path) Then
-                    If IO.File.GetLastWriteTime(Path).Add(Config.Global.CacheTime) < Date.Now Then NeedsUpdate = True
-                    Config.Global.Load(IO.File.ReadAllText(Path, Encoding.UTF8))
-                    Log.Debug("Loaded global config [L]")
-                Else
-                    NeedsUpdate = True
-                End If
-
-                FamilyConfig.LoadAll()
-
-            Catch ex As ConfigException
-                Log.Write(Result.FromException(ex).LogMessage)
-
-            Catch ex As SystemException
-                Log.Write(Result.FromException(ex).LogMessage)
-            End Try
-        End Sub
-
         Public ReadOnly Property LocalizationPageName(ByVal code As String) As String
             Get
                 Return "Huggle/messages/" & code
             End Get
         End Property
-
-        Public Property NeedsUpdate() As Boolean
 
         Public ReadOnly Property PageTitle() As String
             Get
@@ -71,14 +43,12 @@ Namespace Huggle
             End Get
         End Property
 
-        Private ReadOnly Property Path() As String
-            Get
-                Return Config.Local.ConfigPath & "global.txt"
-            End Get
-        End Property
+        Protected Overrides Function Location() As String
+            Return "global"
+        End Function
 
-        Public Sub Load(ByVal text As String)
-            For Each item As KeyValuePair(Of String, String) In Config.ParseConfig("global", Nothing, text)
+        Protected Overrides Sub ReadConfig(ByVal text As String)
+            For Each item As KVP In Config.ParseConfig("global", Nothing, text)
                 Dim key As String = item.Key
                 Dim value As String = item.Value
 
@@ -91,18 +61,16 @@ Namespace Huggle
                         Case "download-location" : DownloadLocation = value
 
                         Case "families"
-                            For Each node As KeyValuePair(Of String, String) In Config.ParseConfig("global", key, value)
+                            For Each node As KVP In Config.ParseConfig("global", key, value)
                                 Dim family As Family = App.Families(node.Key)
                                 family.Config.Load(node.Value)
                             Next node
 
                         Case "languages"
-                            For Each node As KeyValuePair(Of String, String) In Config.ParseConfig("global", key, value)
+                            For Each node As KVP In Config.ParseConfig("global", key, value)
                                 Dim language As Language = App.Languages(node.Key)
 
-                                For Each prop As KeyValuePair(Of String, String) _
-                                    In Config.ParseConfig("global", key & ":" & language.Name, node.Value)
-
+                                For Each prop As KVP In Config.ParseConfig("global", key & ":" & language.Name, node.Value)
                                     Select Case prop.Key
                                         Case "ignored" : language.IsIgnored = prop.Value.ToBoolean
                                         Case "localized" : language.IsLocalized = prop.Value.ToBoolean
@@ -116,11 +84,12 @@ Namespace Huggle
                         Case "time-zones"
                             TimeZones.Clear()
 
-                            For Each zone As KeyValuePair(Of String, String) In Config.ParseConfig("global", key, value)
+                            For Each zone As KVP In Config.ParseConfig("global", key, value)
                                 TimeZones.Merge(zone.Key, CInt(zone.Value))
                             Next zone
 
                         Case "top-wiki" : TopWiki = App.Wikis(value)
+                        Case "updated" : Updated = value.ToDate
                         Case "version" : LatestVersion = New Version(value)
                         Case "wikiconfig-page" : WikiConfigPageTitle = value
                         Case "wikis" : LoadWikis(key, value)
@@ -135,7 +104,7 @@ Namespace Huggle
         End Sub
 
         Private Sub LoadWikis(ByVal key As String, ByVal value As String)
-            For Each node As KeyValuePair(Of String, String) In Config.ParseConfig("global", key, value)
+            For Each node As KVP In Config.ParseConfig("global", key, value)
                 Dim wiki As Wiki = App.Wikis(node.Key)
                 wiki.Exists = True
 
@@ -152,21 +121,21 @@ Namespace Huggle
                         wiki.Type = wiki.Code.FromFirst(".")
 
                         wiki.Name = wiki.Code
-                        wiki.FileUrl = New Uri(Config.Internal.WikimediaFilePath & wiki.Type & "/" & wiki.Language.Code & "/")
-                        wiki.SecureUrl = New Uri(Config.Internal.WikimediaSecurePath & wiki.Type & "/" & wiki.Language.Code & "/w/")
+                        wiki.FileUrl = New Uri(InternalConfig.WikimediaFilePath & wiki.Type & "/" & wiki.Language.Code & "/")
+                        wiki.SecureUrl = New Uri(InternalConfig.WikimediaSecurePath & wiki.Type & "/" & wiki.Language.Code & "/w/")
                         wiki.Url = New Uri("http://" & wiki.Code & ".org/w/")
                     Else
                         wiki.Channel = "#" & wiki.Code & ".wikimedia"
                         wiki.Type = "special"
 
                         wiki.Name = UcFirst(wiki.Code)
-                        wiki.FileUrl = New Uri(Config.Internal.WikimediaFilePath & "wikipedia/" & wiki.Code & "/")
-                        wiki.SecureUrl = New Uri(Config.Internal.WikimediaSecurePath & "wikipedia/" & wiki.Code & "/w/")
+                        wiki.FileUrl = New Uri(InternalConfig.WikimediaFilePath & "wikipedia/" & wiki.Code & "/")
+                        wiki.SecureUrl = New Uri(InternalConfig.WikimediaSecurePath & "wikipedia/" & wiki.Code & "/w/")
                         wiki.Url = New Uri("http://" & wiki.Code & ".wikimedia.org/w/")
                     End If
                 End If
 
-                For Each prop As KeyValuePair(Of String, String) In props
+                For Each prop As KVP In props
                     Select Case prop.Key
                         Case "anon-login" : wiki.AnonymousLogin = prop.Value.ToBoolean
                         Case "account-confirmation" : wiki.AccountConfirmation = prop.Value.ToBoolean
@@ -190,20 +159,7 @@ Namespace Huggle
             Next wiki
         End Sub
 
-        Public Sub SaveLocal()
-            Try
-                IO.File.WriteAllText(Path, Config.MakeConfig(WriteConfig(True)), Encoding.UTF8)
-                Config.Global.NeedsUpdate = False
-                Log.Debug("Saved global config [L]")
-
-                FamilyConfig.SaveAll()
-
-            Catch ex As IOException
-                Log.Write(Msg("globalconfig-savefail", ex.Message))
-            End Try
-        End Sub
-
-        Private Function WriteConfig(ByVal local As Boolean) As Dictionary(Of String, Object)
+        Public Overrides Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
             Dim items As New Dictionary(Of String, Object)
 
             items.Add("anon-login", AnonymousLogin)
@@ -214,8 +170,9 @@ Namespace Huggle
             If TopWiki IsNot Nothing Then items.Add("top-wiki", TopWiki.Code)
             items.Add("version", LatestVersion)
             items.Add("wikiconfig-page", WikiConfigPageTitle)
-            items.Add("default-user-config", App.Wikis.Default.Users.Default.Config.WriteConfig(True))
-            items.Add("default-wiki-config", App.Wikis.Default.Config.WriteConfig(True))
+            items.Add("default-user-config", App.Wikis.Default.Users.Default.Config.WriteConfig(target))
+            items.Add("default-wiki-config", App.Wikis.Default.Config.WriteConfig(target))
+            items.Add("updated", Updated.ToLongTimeString)
 
             Dim familyConfigs As New Dictionary(Of String, Object)
 
@@ -246,6 +203,7 @@ Namespace Huggle
 
             For Each wiki As Wiki In App.Wikis.All
                 If wiki.IsDefault Then Continue For
+                If wiki.IsCustom AndAlso target <> ConfigTarget.Local Then Continue For
 
                 Dim wikiItems As New Dictionary(Of String, Object)
 
@@ -271,18 +229,18 @@ Namespace Huggle
                     If wiki.Code.Contains(".") Then
                         If wiki.Channel = "#" & wiki.Code Then wikiItems.Remove("channel")
                         If wiki.Language IsNot Nothing AndAlso wiki.Language.Code = wiki.Code.ToFirst(".") Then wikiItems.Remove("language")
-                        If wiki.Language IsNot Nothing AndAlso wiki.FileUrl.ToString = Config.Internal.WikimediaFilePath _
+                        If wiki.Language IsNot Nothing AndAlso wiki.FileUrl.ToString = InternalConfig.WikimediaFilePath _
                             & wiki.Type & "/" & wiki.Language.Code & "/" Then wikiItems.Remove("files")
-                        If wiki.Language IsNot Nothing AndAlso wiki.SecureUrl.ToString = Config.Internal.WikimediaSecurePath _
+                        If wiki.Language IsNot Nothing AndAlso wiki.SecureUrl.ToString = InternalConfig.WikimediaSecurePath _
                             & wiki.Type & "/" & wiki.Language.Code & "/w/" Then wikiItems.Remove("secure")
                         If wiki.Name = wiki.Code Then wikiItems.Remove("name")
                         If wiki.Type = wiki.Code.FromFirst(".") Then wikiItems.Remove("type")
                         If wiki.Url.ToString = "http://" & wiki.Language.Code & "." & wiki.Type & ".org/w/" Then wikiItems.Remove("url")
                     Else
                         If wiki.Channel = "#" & wiki.Code & ".wikimedia" Then wikiItems.Remove("channel")
-                        If wiki.FileUrl.ToString = Config.Internal.WikimediaFilePath & "wikipedia/" & wiki.Code & "/" _
+                        If wiki.FileUrl.ToString = InternalConfig.WikimediaFilePath & "wikipedia/" & wiki.Code & "/" _
                             Then wikiItems.Remove("files")
-                        If wiki.SecureUrl.ToString = Config.Internal.WikimediaSecurePath & "wikipedia/" & wiki.Code & "/w/" _
+                        If wiki.SecureUrl.ToString = InternalConfig.WikimediaSecurePath & "wikipedia/" & wiki.Code & "/w/" _
                             Then wikiItems.Remove("secure")
                         If wiki.Type = "special" Then wikiItems.Remove("type")
                         If wiki.Url.ToString = "http://" & wiki.Code & ".wikimedia.org/w/" Then wikiItems.Remove("url")

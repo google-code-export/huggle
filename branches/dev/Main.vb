@@ -53,7 +53,7 @@ Namespace Huggle
                 _App = New Application
                 App.Run()
 
-                Config.Local.Save()
+                Config.Local.SaveLocal()
                 Log.Debug("Session ended")
 
 #If Not DEBUG Then

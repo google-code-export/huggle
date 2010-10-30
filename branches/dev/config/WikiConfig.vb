@@ -7,10 +7,11 @@ Imports System.Text.RegularExpressions
 
 Namespace Huggle
 
-    Public Class WikiConfig
+    Public Class WikiConfig : Inherits Config
 
         Private _ExtraLoader As ExtraWikiConfig
-        Private _Wiki As Wiki
+
+        Private Wiki As Wiki
 
         Private ReadOnly IgnoredMessages As String() = {
             "bad_image_list", "common.css", "common.js", "monobook.css", "monobook.js",
@@ -18,7 +19,7 @@ Namespace Huggle
             }
 
         Public Sub New(ByVal wiki As Wiki)
-            _Wiki = wiki
+            Me.Wiki = wiki
         End Sub
 
         Public Property AbuseFilters As New List(Of Integer)
@@ -98,12 +99,6 @@ Namespace Huggle
         Public Property WarningMonthHeadings As Boolean
         Public Property WarningSummaries As New Dictionary(Of Integer, String)
 
-        Public Shared ReadOnly Property CacheTime() As TimeSpan
-            Get
-                Return TimeSpan.FromHours(12)
-            End Get
-        End Property
-
         Public ReadOnly Property ConfigPage() As Page
             Get
                 Return Wiki.Pages.FromString(Config.Global.WikiConfigPageTitle)
@@ -118,7 +113,9 @@ Namespace Huggle
         End Property
 
         Public Property ExtraConfigLoaded() As Boolean
+
         Public Property IsDefault() As Boolean
+
         Public Property IsLocalCopy() As Boolean
 
         Public ReadOnly Property IsMinor(ByVal action As String) As Boolean
@@ -127,53 +124,22 @@ Namespace Huggle
             End Get
         End Property
 
-        Private ReadOnly Property LocalPath() As String
+        Public ReadOnly Property PriorityNeedsUpdate As Boolean
             Get
-                Return Config.Local.ConfigPath & "wiki" & Slash & GetValidFileName(Wiki.Code) & ".txt"
+                Return False
             End Get
         End Property
 
-        Public ReadOnly Property NeedsUpdate() As Boolean
-            Get
-                If IsDefault Then Return True
+        Private Function PriorityListLocation() As String
+            Return Path.Combine("wiki", "priority-" & GetValidFileName(Wiki.Code) & ".txt")
+        End Function
 
-                Try
-                    If IO.File.Exists(LocalPath) Then Return IO.File.GetLastWriteTime(LocalPath).Add(CacheTime) < Date.Now
-                Catch ex As IOException
-                End Try
+        Protected Overrides Function Location() As String
+            Return Path.Combine("wiki", GetValidFileName(Wiki.Code) & ".txt")
+        End Function
 
-                Return True
-            End Get
-        End Property
-
-        Public ReadOnly Property PriorityNeedsUpdate() As Boolean
-            Get
-                If IsDefault Then Return True
-
-                Try
-                    If IO.File.Exists(PriorityPath) _
-                        Then Return IO.File.GetLastWriteTime(PriorityPath).Add(PriorityCacheTime) < Date.Now
-                Catch ex As IOException
-                End Try
-
-                Return True
-            End Get
-        End Property
-
-        Private ReadOnly Property PriorityPath() As String
-            Get
-                Return Config.Local.ConfigPath & "wiki" & Slash & "priority-" & GetValidFileName(Wiki.Code) & ".txt"
-            End Get
-        End Property
-
-        Public ReadOnly Property Wiki() As Wiki
-            Get
-                Return _Wiki
-            End Get
-        End Property
-
-        Public Sub Load(ByVal source As String)
-            If source IsNot Nothing Then ReadConfig(source)
+        Public Overrides Sub Load(ByVal text As String)
+            MyBase.Load(text)
 
             If Not IsDefault Then
                 ReportPages.Merge(VandalReportPage)
@@ -206,52 +172,16 @@ Namespace Huggle
             End If
         End Sub
 
-        Public Sub LoadLocal()
-            Try
-                If IO.File.Exists(LocalPath) Then
-                    Load(IO.File.ReadAllText(LocalPath, Encoding.UTF8))
-                    _IsDefault = False
-                    IsLocalCopy = True
-                    Log.Debug("Loaded wiki config for {0} [L]".FormatWith(Wiki.Code))
-                Else
-                    If IsDefault Then Config.Global.NeedsUpdate = True
-                End If
-
-            Catch ex As IOException
-                Log.Write(Msg("wikiconfig-localloadfail", Wiki, ex.Message))
-            End Try
+        Public Overrides Sub SaveLocal()
+            MyBase.SaveLocal()
+            If Wiki.Pages.Priority IsNot Nothing Then Config.SaveFile(PriorityListLocation, Wiki.Pages.Priority.Join(LF))
         End Sub
 
-        Public Sub Save()
+        Public Sub SaveWiki()
 
         End Sub
 
-        Public Sub SaveLocal()
-            Try
-                Dim path As String = IO.Path.GetDirectoryName(LocalPath)
-                If Not Directory.Exists(path) Then Directory.CreateDirectory(path)
-                IO.File.WriteAllText(LocalPath, Config.MakeConfig(WriteConfig(True)), Encoding.UTF8)
-
-                If Wiki.Pages.Priority IsNot Nothing AndAlso Wiki.Pages.Priority.Count > 0 Then
-                    path = IO.Path.GetDirectoryName(PriorityPath)
-                    If Not Directory.Exists(path) Then Directory.CreateDirectory(path)
-                    IO.File.WriteAllText(PriorityPath, Wiki.Pages.Priority.Join(LF), Encoding.UTF8)
-                End If
-
-                If Wiki Is App.Wikis.Default Then
-                    Log.Debug("Saved default wiki config [L]")
-                ElseIf Wiki.Family IsNot Nothing AndAlso Wiki Is Wiki.Family.Wikis.Default Then
-                    Log.Debug("Saved wiki config for {0} family [L]".FormatWith(Wiki.Family.Name))
-                Else
-                    Log.Debug("Saved wiki config for {0} [L]".FormatWith(Wiki.Code))
-                End If
-
-            Catch ex As SystemException
-                Log.Write(Msg("wikiconfig-localsavefail", Wiki, ex.Message))
-            End Try
-        End Sub
-
-        Private Sub ReadConfig(ByVal text As String)
+        Protected Overrides Sub ReadConfig(ByVal text As String)
             Dim source As String = "wiki:" & Wiki.Code
 
             For Each mainProp As KeyValuePair(Of String, String) In Config.ParseConfig(source, Nothing, text)
@@ -440,7 +370,7 @@ Namespace Huggle
 
                             Next item
 
-                        Case "spam-list" : ConfigRead.ReadSpamLists(Wiki.SpamLists, source, value)
+                        Case "spam-list" : ReadSpamLists(Wiki.SpamLists, source, value)
 
                         Case "activeusers" : Wiki.ActiveUsers = CInt(value)
                         Case "files" : Wiki.Files.Count = CInt(value)
@@ -456,8 +386,7 @@ Namespace Huggle
             Next mainProp
         End Sub
 
-        Public Function WriteConfig(ByVal local As Boolean) As Dictionary(Of String, Object)
-
+        Public Overrides Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
             Dim items As New Dictionary(Of String, Object)
 
             items.Add("default-queue", Wiki.Queues.Default)
@@ -496,189 +425,189 @@ Namespace Huggle
                 items.Add("queues", queues)
             End If
 
-            If Not local Then Return items
+            If target = ConfigTarget.Wiki OrElse Wiki.IsDefault Then Return items
 
-            'For local copy, cache additional information about the
-            'wiki's config that is not part of Huggle's config
+            'Cache additional information about the wiki's config that is not Huggle-specific
             'This improves startup time
 
-            If Not Wiki.IsDefault Then
-                'Abuse filters
-                If Wiki.AbuseFilters.All.Count > 0 Then
-                    Dim abuseFilters As New Dictionary(Of String, Object)
+            'Abuse filters
+            If target = ConfigTarget.Local AndAlso Wiki.AbuseFilters.All.Count > 0 Then
+                Dim abuseFilters As New Dictionary(Of String, Object)
 
-                    For Each abuseFilter As AbuseFilter In Wiki.AbuseFilters.All
-                        Dim item As New Dictionary(Of String, Object)
-
-                        If abuseFilter.Actions.Count > 0 Then item.Add("actions", abuseFilter.Actions)
-                        If abuseFilter.Description IsNot Nothing Then item.Add("description", abuseFilter.Description)
-                        If abuseFilter.IsDeleted Then item.Add("deleted", True)
-                        If abuseFilter.IsEnabled Then item.Add("enabled", True)
-                        If abuseFilter.IsPrivate Then item.Add("private", True)
-                        If abuseFilter.LastModified > Date.MinValue Then item.Add("last-modified", abuseFilter.LastModified)
-                        If abuseFilter.LastModifiedBy IsNot Nothing Then item.Add("last-modified-by", abuseFilter.LastModifiedBy)
-                        If abuseFilter.Notes IsNot Nothing Then item.Add("notes", abuseFilter.Notes)
-                        If abuseFilter.Pattern IsNot Nothing Then item.Add("pattern", abuseFilter.Pattern)
-                        If abuseFilter.TotalHits > -1 Then item.Add("hits", abuseFilter.TotalHits)
-
-                        abuseFilters.Add(CStr(abuseFilter.Id).PadLeft(4, "0"c), item)
-                    Next abuseFilter
-
-                    items.Add("abuse-filters", abuseFilters)
-                End If
-
-                'Change tags
-                If Wiki.ChangeTags.All.Count > 0 Then
-                    Dim changeTags As New Dictionary(Of String, Object)
-
-                    For Each changeTag As ChangeTag In Wiki.ChangeTags.All
-                        Dim item As New Dictionary(Of String, Object)
-
-                        item.Add("count", changeTag.Hits)
-                        If Not String.IsNullOrEmpty(changeTag.Description) Then item.Add("description", changeTag.Description)
-                        If Not String.IsNullOrEmpty(changeTag.DisplayName) AndAlso changeTag.DisplayName <> changeTag.Name _
-                            Then item.Add("display-name", changeTag.DisplayName)
-
-                        changeTags.Add(changeTag.Name, item)
-                    Next changeTag
-
-                    items.Add("change-tags", changeTags)
-                End If
-
-                'MediaWiki extensions
-                If Wiki.Extensions.All.Count > 0 Then
-                    Dim extensions As New Dictionary(Of String, Object)
-
-                    For Each extension As Extension In Wiki.Extensions.All
-                        Dim item As New Dictionary(Of String, Object)
-
-                        If extension.Author IsNot Nothing Then item.Add("author", extension.Author)
-                        If extension.Description IsNot Nothing Then item.Add("description", extension.Description)
-                        If extension.Type <> "other" Then item.Add("type", extension.Type)
-                        If extension.Url IsNot Nothing Then item.Add("url", extension.Url)
-                        If extension.Version IsNot Nothing Then item.Add("version", extension.Version)
-
-                        extensions.Add(extension.Name, item)
-                    Next extension
-
-                    items.Add("extensions", extensions)
-                End If
-
-                'User groups
-                Dim groups As New Dictionary(Of String, Object)
-
-                For Each group As UserGroup In Wiki.UserGroups.All
+                For Each abuseFilter As AbuseFilter In Wiki.AbuseFilters.All
                     Dim item As New Dictionary(Of String, Object)
 
-                    If group.Count >= 0 Then item.Add("count", group.Count)
-                    If group.IsImplicit Then item.Add("implicit", True)
-                    item.Add("rights", group.Rights.Join(","))
+                    If abuseFilter.Actions.Count > 0 Then item.Add("actions", abuseFilter.Actions)
+                    If abuseFilter.Description IsNot Nothing Then item.Add("description", abuseFilter.Description)
+                    If abuseFilter.IsDeleted Then item.Add("deleted", True)
+                    If abuseFilter.IsEnabled Then item.Add("enabled", True)
+                    If abuseFilter.IsPrivate Then item.Add("private", True)
+                    If abuseFilter.LastModified > Date.MinValue Then item.Add("last-modified", abuseFilter.LastModified)
+                    If abuseFilter.LastModifiedBy IsNot Nothing Then item.Add("last-modified-by", abuseFilter.LastModifiedBy)
+                    If abuseFilter.Notes IsNot Nothing Then item.Add("notes", abuseFilter.Notes)
+                    If abuseFilter.Pattern IsNot Nothing Then item.Add("pattern", abuseFilter.Pattern)
+                    If abuseFilter.TotalHits > -1 Then item.Add("hits", abuseFilter.TotalHits)
 
-                    groups.Add(group.Name, item)
-                Next group
+                    abuseFilters.Add(CStr(abuseFilter.Id).PadLeft(4, "0"c), item)
+                Next abuseFilter
 
-                items.Add("groups", groups)
+                items.Add("abuse-filters", abuseFilters)
+            End If
 
-                'Namespaces
-                Dim spaces As New Dictionary(Of String, Object)
+            'Change tags
+            If Wiki.ChangeTags.All.Count > 0 Then
+                Dim changeTags As New Dictionary(Of String, Object)
 
-                For Each space As Space In Wiki.Spaces.All
+                For Each changeTag As ChangeTag In Wiki.ChangeTags.All
                     Dim item As New Dictionary(Of String, Object)
 
-                    If space.IsContent Then item.Add("content", True)
-                    If space.Name IsNot Nothing Then item.Add("name", space.Name)
-                    If space.IsEditRestricted Then item.Add("edit-restricted", True)
-                    If space.IsMoveRestricted Then item.Add("move-restricted", True)
-                    If Not space.IsMovable Then item.Add("movable", False)
-                    If space.IsSpecial Then item.Add("special", True)
-                    If Not space.IsSpecial AndAlso Not space.HasSubpages Then item.Add("subpages", False)
+                    item.Add("count", changeTag.Hits)
+                    If Not String.IsNullOrEmpty(changeTag.Description) Then item.Add("description", changeTag.Description)
+                    If Not String.IsNullOrEmpty(changeTag.DisplayName) AndAlso changeTag.DisplayName <> changeTag.Name _
+                        Then item.Add("display-name", changeTag.DisplayName)
 
-                    spaces.Add(If(space.Number < 0, "-", "") & CStr(Math.Abs(space.Number)).PadLeft(4, "0"c), item)
-                Next space
+                    changeTags.Add(changeTag.Name, item)
+                Next changeTag
 
-                items.Add("namespaces", spaces)
+                items.Add("change-tags", changeTags)
+            End If
 
-                'MediaWiki interface messages
-                If Wiki.Messages.Count > 0 Then
-                    Dim messages As New Dictionary(Of String, Object)
+            'MediaWiki extensions
+            If Wiki.Extensions.All.Count > 0 Then
+                Dim extensions As New Dictionary(Of String, Object)
 
-                    For Each msg As KeyValuePair(Of String, String) In Wiki.Messages
-                        If Not IgnoredMessages.Contains(msg.Key) Then messages.Add(msg.Key, msg.Value)
-                    Next msg
+                For Each extension As Extension In Wiki.Extensions.All
+                    Dim item As New Dictionary(Of String, Object)
 
-                    items.Add("messages", messages)
-                End If
+                    If extension.Author IsNot Nothing Then item.Add("author", extension.Author)
+                    If extension.Description IsNot Nothing Then item.Add("description", extension.Description)
+                    If extension.Type <> "other" Then item.Add("type", extension.Type)
+                    If extension.Url IsNot Nothing Then item.Add("url", extension.Url)
+                    If extension.Version IsNot Nothing Then item.Add("version", extension.Version)
 
-                'Reviewing configuration
-                If Wiki.ReviewFlags.All.Count > 0 Then
-                    Dim flags As New Dictionary(Of String, Object)
+                    extensions.Add(extension.Name, item)
+                Next extension
 
-                    For Each flag As ReviewFlag In Wiki.ReviewFlags.All
-                        Dim item As New Dictionary(Of String, Object)
+                items.Add("extensions", extensions)
+            End If
 
-                        item.Add("default-level", flag.DefaultLevel)
-                        item.Add("display-name", flag.DisplayName)
-                        item.Add("levels", flag.Levels)
-                        item.Add("pristine-level", flag.PristineLevel)
-                        item.Add("quality-level", flag.QualityLevel)
+            'User groups
+            Dim groups As New Dictionary(Of String, Object)
 
-                        flags.Add(flag.Name, item)
-                    Next flag
+            For Each group As UserGroup In Wiki.UserGroups.All
+                Dim item As New Dictionary(Of String, Object)
 
-                    items.Add("review-flags", flags)
-                End If
+                If group.Count >= 0 Then item.Add("count", group.Count)
+                If group.IsImplicit Then item.Add("implicit", True)
+                item.Add("rights", group.Rights.Join(","))
 
-                'MediaWiki skins
-                If Wiki.Skins.Count > 0 Then
-                    Dim skins As New Dictionary(Of String, Object)
+                groups.Add(group.Name, item)
+            Next group
 
-                    For Each skin As WikiSkin In Wiki.Skins.Values
-                        skins.Add(skin.Code, skin.Name)
-                    Next skin
+            items.Add("groups", groups)
 
-                    items.Add("skins", skins)
-                End If
+            'Namespaces
+            Dim spaces As New Dictionary(Of String, Object)
 
-                'MediaWiki gadgets
-                If Wiki.Gadgets.All.Count > 0 Then
-                    Dim gadgets As New Dictionary(Of String, Object)
+            For Each space As Space In Wiki.Spaces.All
+                Dim item As New Dictionary(Of String, Object)
 
-                    For Each gadget As Gadget In Wiki.Gadgets.All
-                        Dim item As New Dictionary(Of String, Object)
+                If space.IsContent Then item.Add("content", True)
+                If space.Name IsNot Nothing Then item.Add("name", space.Name)
+                If space.IsEditRestricted Then item.Add("edit-restricted", True)
+                If space.IsMoveRestricted Then item.Add("move-restricted", True)
+                If Not space.IsMovable Then item.Add("movable", False)
+                If space.IsSpecial Then item.Add("special", True)
+                If Not space.IsSpecial AndAlso Not space.HasSubpages Then item.Add("subpages", False)
 
-                        item.Add("description", gadget.Description)
-                        If gadget.Name <> gadget.Code Then item.Add("name", gadget.Name)
-                        item.Add("type", gadget.Type)
-                        item.Add("typedesc", gadget.TypeDesc)
+                spaces.Add(If(space.Number < 0, "-", "") & CStr(Math.Abs(space.Number)).PadLeft(4, "0"c), item)
+            Next space
 
-                        gadgets.Add(gadget.Code, item)
-                    Next gadget
+            items.Add("namespaces", spaces)
 
-                    items.Add("gadgets", gadgets)
-                End If
+            'MediaWiki interface messages
+            If Wiki.Messages.Count > 0 Then
+                Dim messages As New Dictionary(Of String, Object)
 
-                'Miscellaneous
-                Dim def As WikiConfig = App.Wikis.Default.Config
+                For Each msg As KeyValuePair(Of String, String) In Wiki.Messages
+                    If Not IgnoredMessages.Contains(msg.Key) Then messages.Add(msg.Key, msg.Value)
+                Next msg
 
-                If Database <> def.Database Then items.Add("database", Database)
-                If DatabaseVersion <> def.DatabaseVersion Then items.Add("database-version", DatabaseVersion)
-                items.Add("default-user-config", Wiki.Users.Default.Config.WriteConfig(True))
-                If DefaultSkin IsNot Nothing Then items.Add("default-skin", DefaultSkin)
-                If Wiki.Engine <> def.Wiki.Engine Then items.Add("engine", Wiki.Engine)
-                If EngineRevision <> def.EngineRevision Then items.Add("engine-revision", EngineRevision)
-                If EngineVersion <> def.EngineVersion Then items.Add("engine-version", EngineVersion)
+                items.Add("messages", messages)
+            End If
+
+            'Reviewing configuration
+            If Wiki.ReviewFlags.All.Count > 0 Then
+                Dim flags As New Dictionary(Of String, Object)
+
+                For Each flag As ReviewFlag In Wiki.ReviewFlags.All
+                    Dim item As New Dictionary(Of String, Object)
+
+                    item.Add("default-level", flag.DefaultLevel)
+                    item.Add("display-name", flag.DisplayName)
+                    item.Add("levels", flag.Levels)
+                    item.Add("pristine-level", flag.PristineLevel)
+                    item.Add("quality-level", flag.QualityLevel)
+
+                    flags.Add(flag.Name, item)
+                Next flag
+
+                items.Add("review-flags", flags)
+            End If
+
+            'MediaWiki skins
+            If Wiki.Skins.Count > 0 Then
+                Dim skins As New Dictionary(Of String, Object)
+
+                For Each skin As WikiSkin In Wiki.Skins.Values
+                    skins.Add(skin.Code, skin.Name)
+                Next skin
+
+                items.Add("skins", skins)
+            End If
+
+            'MediaWiki gadgets
+            If Wiki.Gadgets.All.Count > 0 Then
+                Dim gadgets As New Dictionary(Of String, Object)
+
+                For Each gadget As Gadget In Wiki.Gadgets.All
+                    Dim item As New Dictionary(Of String, Object)
+
+                    item.Add("description", gadget.Description)
+                    If gadget.Name <> gadget.Code Then item.Add("name", gadget.Name)
+                    item.Add("type", gadget.Type)
+                    item.Add("typedesc", gadget.TypeDesc)
+
+                    gadgets.Add(gadget.Code, item)
+                Next gadget
+
+                items.Add("gadgets", gadgets)
+            End If
+
+            'Miscellaneous
+            Dim def As WikiConfig = App.Wikis.Default.Config
+
+            If Database <> def.Database Then items.Add("database", Database)
+            If DatabaseVersion <> def.DatabaseVersion Then items.Add("database-version", DatabaseVersion)
+            items.Add("default-user-config", Wiki.Users.Default.Config.WriteConfig(ConfigTarget.Local))
+            If DefaultSkin IsNot Nothing Then items.Add("default-skin", DefaultSkin)
+            If Wiki.Engine <> def.Wiki.Engine Then items.Add("engine", Wiki.Engine)
+            If EngineRevision <> def.EngineRevision Then items.Add("engine-revision", EngineRevision)
+            If EngineVersion <> def.EngineVersion Then items.Add("engine-version", EngineVersion)
+            If FirstLetterCaseSensitive <> def.FirstLetterCaseSensitive _
+                Then items.Add("first-letter-case-sensitive", FirstLetterCaseSensitive)
+            If GadgetIdentifierPattern IsNot def.GadgetIdentifierPattern _
+                Then items.Add("gadget-identifier-pattern", Config.EscapeWs(GadgetIdentifierPattern.ToString))
+            If PlatformName <> def.PlatformName Then items.Add("platform", PlatformName)
+            If PlatformVersion <> def.PlatformVersion Then items.Add("platform-version", PlatformVersion)
+            If Logo <> def.Logo Then items.Add("logo", Logo)
+            If Wiki.License <> def.Wiki.License Then items.Add("license", Wiki.License)
+            If Wiki.LicenseUrl <> def.Wiki.LicenseUrl Then items.Add("license-url", Wiki.LicenseUrl)
+            If Wiki.MainPage IsNot def.Wiki.MainPage Then items.Add("main-page", Wiki.MainPage)
+            If Wiki.Preferences IsNot Nothing Then items.Add("preferences", Wiki.Preferences)
+
+            If target = ConfigTarget.Local Then
                 If ExtraConfigLoaded Then items.Add("extra-config-loaded", True)
-                If FirstLetterCaseSensitive <> def.FirstLetterCaseSensitive _
-                    Then items.Add("first-letter-case-sensitive", FirstLetterCaseSensitive)
-                If GadgetIdentifierPattern IsNot def.GadgetIdentifierPattern _
-                    Then items.Add("gadget-identifier-pattern", Config.EscapeWs(GadgetIdentifierPattern.ToString))
-                If PlatformName <> def.PlatformName Then items.Add("platform", PlatformName)
-                If PlatformVersion <> def.PlatformVersion Then items.Add("platform-version", PlatformVersion)
-                If Logo <> def.Logo Then items.Add("logo", Logo)
-                If Wiki.License <> def.Wiki.License Then items.Add("license", Wiki.License)
-                If Wiki.LicenseUrl <> def.Wiki.LicenseUrl Then items.Add("license-url", Wiki.LicenseUrl)
-                If Wiki.MainPage IsNot def.Wiki.MainPage Then items.Add("main-page", Wiki.MainPage)
-                If Wiki.Preferences IsNot Nothing Then items.Add("preferences", Wiki.Preferences)
                 If ServerTimeOffset <> TimeSpan.Zero Then items.Add("server-time-offset", ServerTimeOffset.TotalSeconds)
             End If
 
@@ -687,7 +616,7 @@ Namespace Huggle
 
         Public Function Copy(ByVal wiki As Wiki) As WikiConfig
             Dim result As New WikiConfig(wiki)
-            result.ReadConfig(Config.MakeConfig(WriteConfig(True)))
+            result.ReadConfig(Config.MakeConfig(WriteConfig(ConfigTarget.Local)))
             result.IsDefault = IsDefault
             Return result
         End Function
@@ -696,7 +625,7 @@ Namespace Huggle
             'In order to reliably interpret RC feed messages, I essentially have to be a MediaWiki parser.
             'They honestly couldn't make a less machine-friendly interface if they tried.
 
-            wiki.FeedPatterns.Clear()
+            Wiki.FeedPatterns.Clear()
             If Wiki.Messages.Count = 0 Then Return
 
             Wiki.FeedPatterns.Add("edit", New Regex(Feed.BasePattern.FormatWith("(!?)(M?)(B?)", _

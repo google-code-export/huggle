@@ -1,4 +1,7 @@
-﻿form-firstrun-language:          Language:
+﻿cloud-queryerror:                Cloud query error: {0}
+cloud-storeerror:                Cloud store error: {0}
+
+form-firstrun-language:          Language:
 form-firstrun-translate:         If your native language is not listed or only partially translated, you can {0}.
 form-firstrun-translatelink:     help with translation
 form-firstrun-proxy:             Connect to the Internet through a proxy server
@@ -135,6 +138,10 @@ pageinfo-desc:					 Load details of page '{0}'
 config-proxy:					 Detecting proxy settings
 config-progress:				     Updating configuration
 config-desc:			             Update configuration
+config-saveerror:                Error saving configuration '{0}'
+config-loaderror:                Error loading configuration '{0}'
+config-savecloud:                Saved configuration '{0}' to cloud
+config-loadcloud:                Loaded configuration '{0}' from cloud
 
 wikiconfig-apimodulesdisabled:   WARNING: The following API modules are disabled on this wiki. Features may be unavailable or fail to work correctly.
 

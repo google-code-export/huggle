@@ -30,7 +30,7 @@ Namespace Huggle.Actions
             End If
 
             'Save the config
-            Config.Save()
+            Config.SaveWiki()
         End Sub
 
     End Class

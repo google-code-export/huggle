@@ -32,11 +32,9 @@ Namespace Huggle
 
         Public Property Name() As String
 
-        Public Sub Load(ByVal text As String)
-            For Each item As KeyValuePair(Of String, String) In Config.ParseConfig("messages-" & Code, Nothing, text)
-                Messages.Merge(item.Key, item.Value)
-            Next item
-        End Sub
+        Public Function GetConfig() As MessageConfig
+            Return New MessageConfig(Me)
+        End Function
 
         Public Sub Localize(ByVal control As Control)
             Dim prefix As String = control.Name.ToLower

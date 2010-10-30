@@ -31,7 +31,7 @@ Namespace Huggle
             ServicePointManager.DefaultConnectionLimit = 4
             HttpWebRequest.DefaultWebProxy = Nothing
 
-            Config.Global.DownloadLocation = Config.Internal.DownloadUrl.ToString
+            Config.Global.DownloadLocation = InternalConfig.DownloadUrl.ToString
             Config.Global.IsDefault = True
             Config.Global.LatestVersion = Version
             Config.Global.WikiConfigPageTitle = "Project:Huggle/Config"
@@ -45,8 +45,8 @@ Namespace Huggle
             Wikis.Global = metaWiki
 
             'Load configuration
-            Config.Local.LoadBeforeGlobal()
-            Config.Messages.LoadLocal()
+            Config.Local.LoadLocal()
+            LoadMessages()
             Config.Global.LoadLocal()
 
             'Show first-time preferences form
@@ -68,12 +68,12 @@ Namespace Huggle
                 New WebProxy(Config.Local.ProxyHost, Config.Local.ProxyPort)
 
             'Load global config if out of date
-            If Config.Global.NeedsUpdate Then
+            If Not Config.Global.IsCurrent Then
                 UserWaitForProcess(Config.Global.Loader, Nothing, True)
                 If Config.Global.Loader.IsFailed Then Return
             End If
 
-            Config.Local.LoadAfterGlobal()
+            Config.Local.LoadLocal()
 
             'As connection to IRC feed can take several seconds, anticipate the user selecting a
             'Wikimedia wiki, and try to make the feed available as soon as possible
@@ -227,6 +227,33 @@ Namespace Huggle
 
         Private Sub GetProxy()
             If Not IsMono AndAlso Config.Local.Proxy Is Nothing Then Config.Local.Proxy = HttpWebRequest.GetSystemWebProxy
+        End Sub
+
+        Private Sub LoadMessages()
+            'Load default languages and messages
+            Dim en As Language = App.Languages("en")
+            en.IsLocalized = True
+            en.Name = "English"
+            en.GetConfig.Load(Resources.en)
+            
+            App.Languages.Default = en
+            App.Languages.Current = en
+
+            'Load cached messages from config
+            Try
+                Dim languageLocation As String = PathCombine(Config.BaseLocation, "messages")
+
+                If Directory.Exists(languageLocation) Then
+                    For Each item As String In Directory.GetFiles(languageLocation)
+                        App.Languages(Path.GetFileNameWithoutExtension(item)).GetConfig.LoadLocal()
+                    Next item
+                End If
+
+            Catch ex As SystemException
+                Log.Write(Msg("language-loadfail"))
+            End Try
+
+            Log.Debug("Loaded messages [L]")
         End Sub
 
     End Class

@@ -22,7 +22,7 @@ Namespace Huggle.Actions
             Dim meta As New List(Of String)
             Dim titles As New List(Of String)
 
-            If User.Config.NeedsUpdate Then
+            If Not User.Config.IsCurrent Then
                 list.Add("users")
                 meta.Add("userinfo")
                 query.Add("uiprop", "blockinfo|groups|rights|changeablegroups|options|editcount|ratelimits|email")
@@ -30,15 +30,15 @@ Namespace Huggle.Actions
                 query.Add("ususers", User)
             End If
 
-            If User.IsUnified AndAlso User.GlobalUser.Config.NeedsUpdate Then
+            If User.IsUnified AndAlso Not User.GlobalUser.Config.IsCurrent Then
                 meta.Add("globaluserinfo")
                 query.Add("guiprop", "groups|rights")
             End If
 
-            If Wiki.Config.NeedsUpdate Then
+            If Not Wiki.Config.IsCurrent Then
                 list.Add("tags")
                 meta.Add("siteinfo", "allmessages")
-                query.Add("ammessages", Config.Internal.WikiMessages)
+                query.Add("ammessages", InternalConfig.WikiMessages)
                 query.Add("siprop", "general|namespaces|namespacealiases|extensions|fileextensions|rightsinfo|statistics|usergroups")
                 query.Add("sinumberingroup", True)
                 query.Add("tgprop", "name|displayname|description|hitcount")
@@ -70,17 +70,17 @@ Namespace Huggle.Actions
             'Load wiki config
             Wiki.Config.Load(Wiki.Pages(Config.Global.WikiConfigPageTitle).Text)
 
-            If User.Config.NeedsUpdate Then
+            If Not User.Config.IsCurrent Then
                 User.Config.IsLocalCopy = False
                 Log.Debug("Loaded user details for {0} [R]".FormatWith(User.FullName))
             End If
 
-            If Wiki.Config.NeedsUpdate Then
+            If Not Wiki.Config.IsCurrent Then
                 Wiki.Config.IsLocalCopy = False
                 Log.Debug("Loaded wiki details for {0} [R]".FormatWith(Wiki))
             End If
 
-            If User.IsUnified AndAlso User.GlobalUser.Config.NeedsUpdate Then
+            If User.IsUnified AndAlso Not User.GlobalUser.Config.IsCurrent Then
                 User.GlobalUser.Config.IsLocalCopy = False
                 Log.Debug("Loaded global user details for {0} [R]".FormatWith(User.GlobalUser.FullName))
             End If

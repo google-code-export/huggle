@@ -1371,8 +1371,8 @@ Namespace Huggle
                             wiki.Type = "special"
 
                             wiki.Name = UcFirst(wiki.Code)
-                            wiki.FileUrl = New Uri(Config.Internal.WikimediaFilePath & "wikipedia/" & wiki.Code & "/")
-                            wiki.SecureUrl = New Uri(Config.Internal.WikimediaSecurePath & "wikipedia/" & wiki.Code & "/w/")
+                            wiki.FileUrl = New Uri(InternalConfig.WikimediaFilePath & "wikipedia/" & wiki.Code & "/")
+                            wiki.SecureUrl = New Uri(InternalConfig.WikimediaSecurePath & "wikipedia/" & wiki.Code & "/w/")
                             wiki.Url = New Uri(special.Attribute("url") & "/w/")
 
                             If special.HasAttribute("private") Then
@@ -1412,8 +1412,8 @@ Namespace Huggle
                                         wiki.Language = language
                                         wiki.Type = type
                                         wiki.Name = wiki.Code
-                                        wiki.FileUrl = New Uri(Config.Internal.WikimediaFilePath & type & "/" & language.Code & "/")
-                                        wiki.SecureUrl = New Uri(Config.Internal.WikimediaSecurePath & type & "/" & language.Code & "/w/")
+                                        wiki.FileUrl = New Uri(InternalConfig.WikimediaFilePath & type & "/" & language.Code & "/")
+                                        wiki.SecureUrl = New Uri(InternalConfig.WikimediaSecurePath & type & "/" & language.Code & "/w/")
                                         wiki.Url = New Uri(site.Attribute("url") & "/w/")
                                     End If
                                 Next site

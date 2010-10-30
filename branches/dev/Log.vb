@@ -23,7 +23,7 @@ Namespace Huggle
 
         Private ReadOnly Property Path() As String
             Get
-                Return Environment.CurrentDirectory & Slash & "log.txt"
+                Return PathCombine(Environment.CurrentDirectory, "log.txt")
             End Get
         End Property
 

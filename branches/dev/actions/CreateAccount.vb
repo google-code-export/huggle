@@ -77,7 +77,7 @@ Namespace Huggle.Actions
             End If
 
             NewUser.IsUsed = True
-            Config.Local.Save()
+            Config.Local.SaveLocal()
             OnSuccess()
         End Sub
 

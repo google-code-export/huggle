@@ -230,7 +230,7 @@ Namespace Huggle.UI
 
             Config.Local.LastLogin = user
             Config.Local.LoginSecure = session.IsSecure
-            Config.Local.Save()
+            Config.Local.SaveLocal()
 
             Dim loginAction As New Login(session, "Login")
             loginAction.Interactive = True
