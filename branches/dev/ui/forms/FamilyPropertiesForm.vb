@@ -43,49 +43,13 @@ Namespace Huggle.UI
 
         Private Sub Views_SelectedIndexChanged() Handles Views.SelectedIndexChanged
             Select Case Views.SelectedItem.ToString
-                Case Msg("view-wikigeneral-title")
-                    If Not LoadedViews.ContainsInstance(Of GeneralWikiView)() Then LoadedViews.Add(New GeneralWikiView(Session))
-                    ViewInstance(Of GeneralWikiView)()
+                Case Msg("view-familygeneral-title")
+                    If Not LoadedViews.ContainsInstance(Of GeneralFamilyView)() Then LoadedViews.Add(New GeneralFamilyView(Session))
+                    ViewInstance(Of GeneralFamilyView)()
 
-                Case Msg("view-namespace-title")
-                    If Not LoadedViews.ContainsInstance(Of NamespaceView)() Then LoadedViews.Add(New NamespaceView(Session))
-                    ViewInstance(Of NamespaceView)()
-
-                Case Msg("view-usergroup-title")
-                    If Not LoadedViews.ContainsInstance(Of UserGroupView)() Then LoadedViews.Add(New UserGroupView(Session))
-                    ViewInstance(Of UserGroupView)()
-
-                Case Msg("view-userright-title")
-                    If Not LoadedViews.ContainsInstance(Of UserRightsView)() Then LoadedViews.Add(New UserRightsView(Session))
-                    ViewInstance(Of UserRightsView)()
-
-                Case Msg("view-extension-title")
-                    If Not LoadedViews.ContainsInstance(Of ExtensionView)() Then LoadedViews.Add(New ExtensionView(Session))
-                    ViewInstance(Of ExtensionView)()
-
-                Case Msg("view-titleblacklist-title")
-                    If Not LoadedViews.ContainsInstance(Of TitleBlacklistView)() Then LoadedViews.Add(New TitleBlacklistView(Session))
-                    ViewInstance(Of TitleBlacklistView)()
-
-                Case Msg("view-gadget-title")
-                    If Not LoadedViews.ContainsInstance(Of GadgetView)() Then LoadedViews.Add(New GadgetView(Session))
-                    ViewInstance(Of GadgetView)()
-
-                Case Msg("view-moderation-title")
-                    If Not LoadedViews.ContainsInstance(Of ModerationView)() Then LoadedViews.Add(New ModerationView(Session))
-                    ViewInstance(Of ModerationView)()
-
-                Case Msg("view-changetag-title")
-                    If Not LoadedViews.ContainsInstance(Of ChangeTagView)() Then LoadedViews.Add(New ChangeTagView(Session))
-                    ViewInstance(Of ChangeTagView)()
-
-                Case Msg("view-abusefilter-title")
-                    If Not LoadedViews.ContainsInstance(Of AbuseFilterView)() Then LoadedViews.Add(New AbuseFilterView(Session))
-                    ViewInstance(Of AbuseFilterView)()
-
-                Case Msg("view-spamblacklist-title")
-                    If Not LoadedViews.ContainsInstance(Of SpamList)() Then LoadedViews.Add(New SpamListView(Session))
-                    ViewInstance(Of SpamListView)()
+                Case Msg("view-globalgroups-title")
+                    If Not LoadedViews.ContainsInstance(Of GlobalGroupView)() Then LoadedViews.Add(New GlobalGroupView(Session))
+                    ViewInstance(Of GlobalGroupView)()
             End Select
         End Sub
 

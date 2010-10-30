@@ -66,7 +66,7 @@ Namespace Huggle
                     request.AutomaticDecompression = DecompressionMethods.GZip
                     request.CookieContainer = Cookies
                     request.KeepAlive = False
-                    request.Proxy = HttpWebRequest.DefaultWebProxy
+                    request.Proxy = Config.Local.Proxy
                     request.ReadWriteTimeout = CInt(Timeout.TotalMilliseconds)
                     request.Timeout = CInt(Timeout.TotalMilliseconds)
                     request.UserAgent = Config.Internal.UserAgent

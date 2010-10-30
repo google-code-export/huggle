@@ -1,4 +1,5 @@
-﻿Imports System.Web.HttpUtility
+﻿Imports System.Collections.Generic
+Imports System.Web.HttpUtility
 Imports System.Windows.Forms
 
 Namespace Huggle.UI
@@ -13,16 +14,20 @@ Namespace Huggle.UI
         Private Current As Extension
 
         Private Sub _Load() Handles Me.Load
-            List.BeginUpdate()
-            List.Items.Clear()
+            Dim types As New List(Of String)
 
             For Each extension As Extension In Wiki.Extensions.All
-                List.AddRow(extension.Name, Msg("view-extension-type" & If(extension.Type, "general")), extension.Version)
+                types.Merge(Msg("view-extension-type" & extension.Type))
             Next extension
 
-            List.EndUpdate()
-            List.SortBy(0)
-            Count.Text = Msg("a-count", List.Items.Count)
+            Type.BeginUpdate()
+            Type.Items.Add(Msg("view-extension-all"))
+            Type.Items.AddRange(types.ToArray)
+            Type.ResizeDropDown()
+            Type.SelectedIndex = 0
+            Type.EndUpdate()
+
+            PopulateList()
         End Sub
 
         Private Sub List_SelectedIndexChanged() Handles List.SelectedIndexChanged
@@ -50,6 +55,22 @@ Namespace Huggle.UI
 
         Private Sub ExtensionName_LinkClicked() Handles ExtensionName.LinkClicked
             If Current.Url IsNot Nothing Then OpenWebBrowser(Current.Url)
+        End Sub
+
+        Private Sub PopulateList() Handles Type.SelectedIndexChanged
+            List.BeginUpdate()
+            List.Items.Clear()
+
+            For Each extension As Extension In Wiki.Extensions.All
+                Dim extensionType As String = Msg("view-extension-type" & extension.Type)
+
+                If Type.SelectedIndex = 0 OrElse extensionType = Type.SelectedItem.ToString _
+                    Then List.AddRow(extension.Name, extensionType, extension.Version)
+            Next extension
+
+            List.EndUpdate()
+            List.SortBy(0)
+            Count.Text = Msg("a-count", List.Items.Count)
         End Sub
 
     End Class

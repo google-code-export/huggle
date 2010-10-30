@@ -201,7 +201,7 @@
             '
             'AccountImage
             '
-            Me.AccountImage.Image = Huggle.Resources.user_icon
+            Me.AccountImage.Image = Resources.user_icon
             Me.AccountImage.Location = New System.Drawing.Point(6, 6)
             Me.AccountImage.Name = "AccountImage"
             Me.AccountImage.Size = New System.Drawing.Size(122, 176)

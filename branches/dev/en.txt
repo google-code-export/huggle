@@ -1,4 +1,13 @@
-﻿wikitype-wikimedia:              Wikimedia chapters
+﻿form-firstrun-language:          Language:
+form-firstrun-translate:         If your native language is not listed or only partially translated, you can {0}.
+form-firstrun-translatelink:     help with translation
+form-firstrun-proxy:             Connect to the Internet through a proxy server
+form-firstrun-detectproxy:       Detect and use system proxy settings
+form-firstrun-manualproxy:       Use the following settings:
+form-firstrun-proxyhost:         Server:
+form-firstrun-proxyport:         Port:
+
+wikitype-wikimedia:              Wikimedia chapters
 wikitype-special:                Other Wikimedia projects
 wikitype-other:                  Others
 
@@ -42,9 +51,10 @@ view-extension-version:          Version: {0}
 view-extension-author:           Author: {0}
 view-extension-authors:          Authors: {0}
 view-extension-typeparserhook:   Parser hook
-view-extension-typeother:        General
+view-extension-typeother:        Other
 view-extension-typespecialpage:  Special page
 view-extension-typemedia:        Media handler
+view-extension-all:              (All types)
 
 view-wikigeneral-title:          General
 view-wikigeneral-language:       Content language: {0}

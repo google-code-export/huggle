@@ -59,7 +59,7 @@
             '
             'WikiLogo
             '
-            Me.WikiLogo.Image = Huggle.Resources.mediawiki_wiki
+            Me.WikiLogo.Image = Resources.mediawiki_wiki
             Me.WikiLogo.Location = New System.Drawing.Point(3, 3)
             Me.WikiLogo.Name = "WikiLogo"
             Me.WikiLogo.Size = New System.Drawing.Size(128, 128)

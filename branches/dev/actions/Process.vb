@@ -3,6 +3,8 @@ Imports System.Collections.Generic
 
 Namespace Huggle.Actions
 
+    Public Delegate Sub ProcessDelegate(ByVal sender As Process)
+
     Public MustInherit Class Process
 
         Private _Description As String
@@ -13,9 +15,9 @@ Namespace Huggle.Actions
 
         Public MustOverride Sub Start()
 
-        Public Event Complete(ByVal sender As Process)
-        Public Event Fail(ByVal result As Result)
-        Public Event Progress(ByVal sender As Process)
+        Public Event Complete As ProcessDelegate
+        Public Event Fail As ProcessDelegate
+        Public Event Progress As ProcessDelegate
         Public Event Started()
         Public Event Success()
 
@@ -140,7 +142,7 @@ Namespace Huggle.Actions
         End Sub
 
         Private Sub _OnFail()
-            RaiseEvent Fail(Result)
+            RaiseEvent Fail(Me)
             RaiseEvent Complete(Me)
         End Sub
 

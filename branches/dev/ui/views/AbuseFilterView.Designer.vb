@@ -410,7 +410,7 @@
             'FilterImage
             '
             Me.FilterImage.BackColor = System.Drawing.Color.Transparent
-            Me.FilterImage.Image = Huggle.Resources.abuse_filter
+            Me.FilterImage.Image = Resources.abuse_filter
             Me.FilterImage.Location = New System.Drawing.Point(7, 4)
             Me.FilterImage.Name = "FilterImage"
             Me.FilterImage.Size = New System.Drawing.Size(64, 64)

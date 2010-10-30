@@ -64,6 +64,9 @@ Namespace Huggle
             If Config.Local.DetectProxySettings Then UserWaitForProcess _
                 (New GeneralProcess(Msg("config-proxy"), AddressOf GetProxy))
 
+            If Config.Local.ManualProxySettings Then Config.Local.Proxy =
+                New WebProxy(Config.Local.ProxyHost, Config.Local.ProxyPort)
+
             'Load global config if out of date
             If Config.Global.NeedsUpdate Then
                 UserWaitForProcess(Config.Global.Loader, Nothing, True)
@@ -223,8 +226,7 @@ Namespace Huggle
         End Sub
 
         Private Sub GetProxy()
-            If Not IsMono AndAlso HttpWebRequest.DefaultWebProxy Is Nothing _
-                Then HttpWebRequest.DefaultWebProxy = HttpWebRequest.GetSystemWebProxy
+            If Not IsMono AndAlso Config.Local.Proxy Is Nothing Then Config.Local.Proxy = HttpWebRequest.GetSystemWebProxy
         End Sub
 
     End Class

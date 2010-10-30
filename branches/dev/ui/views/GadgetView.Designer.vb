@@ -102,7 +102,7 @@
             'GadgetImage
             '
             Me.GadgetImage.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-            Me.GadgetImage.Image = Huggle.Resources.mediawiki_gadget
+            Me.GadgetImage.Image = Resources.mediawiki_gadget
             Me.GadgetImage.Location = New System.Drawing.Point(3, 306)
             Me.GadgetImage.Name = "GadgetImage"
             Me.GadgetImage.Size = New System.Drawing.Size(64, 78)

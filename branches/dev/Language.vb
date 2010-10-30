@@ -11,11 +11,6 @@ Namespace Huggle
         'Represents a language
 
         Private _Code As String
-        Private _IsHidden As Boolean
-        Private _IsLocalized As Boolean
-        Private _Name As String
-        Private _Messages As New Dictionary(Of String, String)
-
         Private Shared _MessageGroups As New Dictionary(Of String, String)
 
         Public Sub New(ByVal code As String)
@@ -23,50 +18,19 @@ Namespace Huggle
             _Name = code
         End Sub
 
-        Public Property Code() As String
+        Public ReadOnly Property Code() As String
             Get
                 Return _Code
             End Get
-            Set(ByVal value As String)
-                _Code = value
-            End Set
         End Property
 
-        Public Property IsHidden() As Boolean
-            Get
-                Return _IsHidden
-            End Get
-            Set(ByVal value As Boolean)
-                _IsHidden = value
-            End Set
-        End Property
+        Public Property IsIgnored() As Boolean
 
         Public Property IsLocalized() As Boolean
-            Get
-                Return _IsLocalized
-            End Get
-            Set(ByVal value As Boolean)
-                _IsLocalized = value
-            End Set
-        End Property
-
+            
         Public Property Messages() As Dictionary(Of String, String)
-            Get
-                Return _Messages
-            End Get
-            Set(ByVal value As Dictionary(Of String, String))
-                _Messages = value
-            End Set
-        End Property
 
         Public Property Name() As String
-            Get
-                Return _Name
-            End Get
-            Set(ByVal value As String)
-                _Name = value
-            End Set
-        End Property
 
         Public Sub Load(ByVal text As String)
             For Each item As KeyValuePair(Of String, String) In Config.ParseConfig("messages-" & Code, Nothing, text)

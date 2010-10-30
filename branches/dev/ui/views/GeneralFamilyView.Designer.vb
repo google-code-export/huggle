@@ -38,7 +38,7 @@
             '
             'FamilyLogo
             '
-            Me.FamilyLogo.Image = Huggle.Resources.family_icon
+            Me.FamilyLogo.Image = Resources.family_icon
             Me.FamilyLogo.Location = New System.Drawing.Point(4, 3)
             Me.FamilyLogo.Name = "FamilyLogo"
             Me.FamilyLogo.Size = New System.Drawing.Size(128, 128)
