@@ -6,7 +6,7 @@ Imports System.Web.HttpUtility
 
 Namespace Huggle
 
-    <Diagnostics.DebuggerDisplay("{Title}")> _
+    <Diagnostics.DebuggerDisplay("{Title}")>
     Public Class Page : Inherits QueueItem
 
         'Represents a MediaWiki page
@@ -15,45 +15,35 @@ Namespace Huggle
 
         Private _Assessment As String
         Private _DeletedEdits As New List(Of Revision)
-        Private _Exists As Boolean
         Private _FirstRev As Revision
-        Private _HasDeletedEdits As Boolean
         Private _IsIgnored As Boolean
-        Private _IsPatrolled As Boolean
-        Private _IsPriority As Boolean
         Private _IsPriorityTalk As Boolean
-        Private _IsProtected As Boolean
         Private _IsRedirect As Boolean
-        Private _IsReviewable As Boolean
         Private _LastRev As Revision
         Private _Logs As New SortedList(Of LogItem)(Function(x As LogItem, y As LogItem) Date.Compare(x.Time, y.Time))
         Private _Owner As User
         Private _RedirectTo As Page
-        Private _Reverted As Boolean
-        Private _SessionEdits As Integer
         Private _Space As Space
         Private _Title As String
         Private _Wiki As Wiki
 
-        Private _ExistsKnown, _DeletedEditsKnown, _
-            _LinksKnown, _LangLinksKnown, _LogsKnown, _MediaKnown, _TargetKnown, _
-            _TranscludesKnown, _CategoriesKnown, _RedirectsKnown, _SectionsKnown As Boolean
+        Private _ExistsKnown As Boolean
+        Private _TargetKnown As Boolean
 
         Private _Categories As New List(Of Category)
         Private _LangLinks As New List(Of String)
         Private _Links As New List(Of Page)
         Private _Media As New List(Of File)
         Private _Redirects As New List(Of Page)
-        Private _Sections As New List(Of String)
         Private _TranscludedBy As New List(Of Page)
         Private _Transcludes As New List(Of Page)
 
-        Public Event Deleted As EventHandler(Of Page, EventArgs)
-        Public Event Edited As EventHandler(Of Page, EditEventArgs)
-        Public Event Moved As EventHandler(Of Page, PageMoveEventArgs)
-        Public Event [Protected] As EventHandler(Of Page, EventArgs)
-        Public Event StateChanged As EventHandler(Of Page, EventArgs)
-        Public Event HistoryChanged As EventHandler(Of Page, EventArgs)
+        Public Event Deleted As SimpleEventHandler(Of Page)
+        Public Event Edited As SimpleEventHandler(Of Revision)
+        Public Event Moved(ByVal sender As Object, ByVal e As PageMoveEventArgs)
+        Public Event [Protected] As SimpleEventHandler(Of Page)
+        Public Event StateChanged As SimpleEventHandler(Of Page)
+        Public Event HistoryChanged As SimpleEventHandler(Of Page)
 
         Public Sub New(ByVal wiki As Wiki, ByVal title As String, ByVal space As Space)
             _EditCount = -1
@@ -77,13 +67,6 @@ Namespace Huggle
         End Property
 
         Public Property CategoriesKnown() As Boolean
-            Get
-                Return _CategoriesKnown
-            End Get
-            Set(ByVal value As Boolean)
-                _CategoriesKnown = value
-            End Set
-        End Property
 
         Public ReadOnly Property Creator() As User
             Get
@@ -99,13 +82,6 @@ Namespace Huggle
         End Property
 
         Public Property DeletedEditsKnown() As Boolean
-            Get
-                Return _DeletedEditsKnown
-            End Get
-            Set(ByVal value As Boolean)
-                _DeletedEditsKnown = value
-            End Set
-        End Property
 
         Public Property EditCount() As Integer
 
@@ -125,14 +101,6 @@ Namespace Huggle
         End Property
 
         Public Property Exists() As Boolean
-            Get
-                Return _Exists
-            End Get
-            Set(ByVal value As Boolean)
-                _Exists = value
-                _ExistsKnown = True
-            End Set
-        End Property
 
         Public ReadOnly Property ExistsKnown() As Boolean
             Get
@@ -163,13 +131,6 @@ Namespace Huggle
         End Property
 
         Public Property HasDeletedEdits() As Boolean
-            Get
-                Return _HasDeletedEdits
-            End Get
-            Set(ByVal value As Boolean)
-                _HasDeletedEdits = value
-            End Set
-        End Property
 
         Public Property HistoryKnown() As Boolean
 
@@ -263,23 +224,8 @@ Namespace Huggle
         End Property
 
         Public Property IsPatrolled() As Boolean
-            Get
-                Return _IsPatrolled
-            End Get
-            Set(ByVal value As Boolean)
-                _IsPatrolled = value
-            End Set
-        End Property
 
         Public Property IsPriority() As Boolean
-            Get
-                If Not Processed Then Process()
-                Return _IsPriority
-            End Get
-            Set(ByVal value As Boolean)
-                _IsPriority = value
-            End Set
-        End Property
 
         Public ReadOnly Property IsPriorityTalk() As Boolean
             Get
@@ -289,13 +235,6 @@ Namespace Huggle
         End Property
 
         Public Property IsProtected() As Boolean
-            Get
-                Return _IsProtected
-            End Get
-            Set(ByVal value As Boolean)
-                _IsProtected = value
-            End Set
-        End Property
 
         Public ReadOnly Property IsProtectableBy(ByVal Account As User) As Boolean
             Get
@@ -314,13 +253,6 @@ Namespace Huggle
         End Property
 
         Public Property IsReviewable() As Boolean
-            Get
-                Return _IsReviewable
-            End Get
-            Set(ByVal value As Boolean)
-                _IsReviewable = value
-            End Set
-        End Property
 
         Public ReadOnly Property IsReviewed() As Boolean
             Get
@@ -375,13 +307,6 @@ Namespace Huggle
         End Property
 
         Public Property LangLinksKnown() As Boolean
-            Get
-                Return _LangLinksKnown
-            End Get
-            Set(ByVal value As Boolean)
-                _LangLinksKnown = value
-            End Set
-        End Property
 
         Public Property LastRev() As Revision
             Get
@@ -414,13 +339,6 @@ Namespace Huggle
         End Property
 
         Public Property LinksKnown() As Boolean
-            Get
-                Return _LinksKnown
-            End Get
-            Set(ByVal value As Boolean)
-                _LinksKnown = value
-            End Set
-        End Property
 
         Public ReadOnly Property Logs() As List(Of LogItem)
             Get
@@ -429,13 +347,6 @@ Namespace Huggle
         End Property
 
         Public Property LogsKnown() As Boolean
-            Get
-                Return _LogsKnown
-            End Get
-            Set(ByVal value As Boolean)
-                _LogsKnown = value
-            End Set
-        End Property
 
         Public ReadOnly Property Media() As List(Of File)
             Get
@@ -444,13 +355,6 @@ Namespace Huggle
         End Property
 
         Public Property MediaKnown() As Boolean
-            Get
-                Return _MediaKnown
-            End Get
-            Set(ByVal value As Boolean)
-                _MediaKnown = value
-            End Set
-        End Property
 
         Public ReadOnly Property Name() As String
             Get
@@ -488,22 +392,8 @@ Namespace Huggle
         End Property
 
         Public Property RedirectsKnown() As Boolean
-            Get
-                Return _RedirectsKnown
-            End Get
-            Set(ByVal value As Boolean)
-                _RedirectsKnown = value
-            End Set
-        End Property
 
         Public Property Reverted() As Boolean
-            Get
-                Return _Reverted
-            End Get
-            Set(ByVal value As Boolean)
-                _Reverted = value
-            End Set
-        End Property
 
         Public ReadOnly Property RootPage() As Page
             Get
@@ -518,31 +408,10 @@ Namespace Huggle
         End Property
 
         Public Property Sections() As List(Of String)
-            Get
-                Return _Sections
-            End Get
-            Set(ByVal value As List(Of String))
-                _Sections = value
-            End Set
-        End Property
 
         Public Property SectionsKnown() As Boolean
-            Get
-                Return _SectionsKnown
-            End Get
-            Set(ByVal value As Boolean)
-                _SectionsKnown = value
-            End Set
-        End Property
 
         Public Property SessionEdits() As Integer
-            Get
-                Return _SessionEdits
-            End Get
-            Set(ByVal value As Integer)
-                _SessionEdits = value
-            End Set
-        End Property
 
         Public ReadOnly Property Space() As Space
             Get
@@ -598,13 +467,6 @@ Namespace Huggle
         End Property
 
         Public Property TranscludesKnown() As Boolean
-            Get
-                Return _TranscludesKnown
-            End Get
-            Set(ByVal value As Boolean)
-                _TranscludesKnown = value
-            End Set
-        End Property
 
         Public ReadOnly Property Text() As String
             Get
@@ -637,15 +499,15 @@ Namespace Huggle
             Wiki.Pages.All.Remove(Title)
             _Title = NewTitle
             Wiki.Pages.All.Merge(NewTitle, Me)
-            RaiseEvent Moved(Me, New PageMoveEventArgs(OldTitle))
+            RaiseEvent Moved(Me, New PageMoveEventArgs(Me, OldTitle))
         End Sub
 
-        Public Sub OnEdit(ByVal Revision As Revision)
-            RaiseEvent Edited(Me, New EditEventArgs(Revision))
+        Public Sub OnEdit(ByVal rev As Revision)
+            RaiseEvent Edited(Me, New EventArgs(Of Revision)(rev))
         End Sub
 
         Public Sub OnHistoryChanged()
-            RaiseEvent HistoryChanged(Me, EventArgs.Empty)
+            RaiseEvent HistoryChanged(Me, New EventArgs(Of Page)(Me))
         End Sub
 
         Public Sub Process()
@@ -690,7 +552,7 @@ Namespace Huggle
         End Sub
 
         Public Sub RefreshState()
-            RaiseEvent StateChanged(Me, EventArgs.Empty)
+            RaiseEvent StateChanged(Me, New EventArgs(Of Page)(Me))
         End Sub
 
         Public Overrides Function ToString() As String
@@ -731,15 +593,23 @@ Namespace Huggle
 
     Public Class PageMoveEventArgs : Inherits EventArgs
 
-        Private _OldName As String
+        Private _OldTitle As String
+        Private _Page As Page
 
-        Public Sub New(ByVal OldName As String)
-            _OldName = OldName
+        Public Sub New(ByVal page As Page, ByVal oldTitle As String)
+            _OldTitle = oldTitle
+            _Page = page
         End Sub
 
         Public ReadOnly Property OldName() As String
             Get
-                Return _OldName
+                Return _OldTitle
+            End Get
+        End Property
+
+        Public ReadOnly Property Page() As Page
+            Get
+                Return _Page
             End Get
         End Property
 

@@ -1,67 +1,27 @@
-﻿Imports Huggle.Queries
-
-Namespace Huggle.Actions
+﻿Namespace Huggle.Actions
 
     Public Class Edit : Inherits Query
 
-        Private _AllowCreate As Boolean
-        Private _AllowRecreate As Boolean
-        Private _Bot As Boolean
-        Private _Conflict As ConflictAction
         Private _ConflictRetry As Boolean
-        Private _CreateOnly As Boolean
-        Private _Minor As Boolean
         Private _Page As Page
-        Private _Section As String
-        Private _Summary As String
         Private _Text As String
-        Private _UseSummaryTag As Boolean
-        Private _Watch As WatchAction
 
         Private Retrying As Boolean
 
         Public Sub New(ByVal session As Session, ByVal page As Page, ByVal text As String, ByVal summary As String)
             MyBase.New(session, Msg("edit-desc", page))
-            _Page = Page
-            _Summary = Summary
-            _Text = Text
+            _Page = page
+            _Summary = summary
+            _Text = text
         End Sub
 
         Public Property AllowCreate() As Boolean
-            Get
-                Return _AllowCreate
-            End Get
-            Set(ByVal value As Boolean)
-                _AllowCreate = value
-            End Set
-        End Property
 
         Public Property AllowRecreate() As Boolean
-            Get
-                Return _AllowRecreate
-            End Get
-            Set(ByVal value As Boolean)
-                _AllowRecreate = value
-            End Set
-        End Property
 
         Public Property Bot() As Boolean
-            Get
-                Return _Bot
-            End Get
-            Set(ByVal value As Boolean)
-                _Bot = value
-            End Set
-        End Property
 
         Public Property Conflict() As ConflictAction
-            Get
-                Return _Conflict
-            End Get
-            Set(ByVal value As ConflictAction)
-                _Conflict = value
-            End Set
-        End Property
 
         Public ReadOnly Property ConflictRetry() As Boolean
             Get
@@ -70,22 +30,8 @@ Namespace Huggle.Actions
         End Property
 
         Public Property CreateOnly() As Boolean
-            Get
-                Return _CreateOnly
-            End Get
-            Set(ByVal value As Boolean)
-                _CreateOnly = value
-            End Set
-        End Property
 
         Public Property Minor() As Boolean
-            Get
-                Return _Minor
-            End Get
-            Set(ByVal value As Boolean)
-                _Minor = value
-            End Set
-        End Property
 
         Public Property NewSection() As Boolean
             Get
@@ -103,22 +49,8 @@ Namespace Huggle.Actions
         End Property
 
         Public Property Section() As String
-            Get
-                Return _Section
-            End Get
-            Set(ByVal value As String)
-                _Section = value
-            End Set
-        End Property
 
         Public Property Summary() As String
-            Get
-                Return _Summary
-            End Get
-            Set(ByVal value As String)
-                _Summary = value
-            End Set
-        End Property
 
         Public ReadOnly Property Text() As String
             Get
@@ -127,22 +59,8 @@ Namespace Huggle.Actions
         End Property
 
         Public Property UseSummaryTag() As Boolean
-            Get
-                Return _UseSummaryTag
-            End Get
-            Set(ByVal value As Boolean)
-                _UseSummaryTag = value
-            End Set
-        End Property
 
         Public Property Watch() As WatchAction
-            Get
-                Return _Watch
-            End Get
-            Set(ByVal value As WatchAction)
-                _Watch = value
-            End Set
-        End Property
 
         Public Overrides Sub Start()
             'Abort if blocked

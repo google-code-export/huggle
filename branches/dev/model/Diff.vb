@@ -25,8 +25,8 @@ Namespace Huggle
         Private Shared ReadOnly CacheTime As New TimeSpan(0, 10, 0)
         Private Shared WithEvents CacheTimer As New Windows.Forms.Timer
 
-        Public Shared Event [New] As EventHandler(Of Diff, EventArgs)
-        Public Event StateChanged As EventHandler(Of Diff, EventArgs)
+        Public Shared Event [New](ByVal sender As Object, ByVal e As DiffEventArgs)
+        Public Event StateChanged(ByVal sender As Object, ByVal e As DiffEventArgs)
 
         Shared Sub New()
             CacheTimer.Interval = CacheTrimInterval
@@ -51,7 +51,7 @@ Namespace Huggle
             Set(ByVal value As CacheState)
                 _CacheState = value
                 Log.Write("State for " & Page.Name & ":" & NewId & " is " & CacheState.ToString)
-                RaiseEvent StateChanged(Me, EventArgs.Empty)
+                RaiseEvent StateChanged(Me, New DiffEventArgs(Me))
             End Set
         End Property
 
@@ -133,7 +133,7 @@ Namespace Huggle
                 'Format the page
                 _Html = MakeWebPage(_Html, Page.Name)
 
-                RaiseEvent [New](Me, EventArgs.Empty)
+                RaiseEvent [New](Me, New DiffEventArgs(Me))
                 _Exists = True
                 CachedAt = Date.UtcNow
 
@@ -191,7 +191,7 @@ Namespace Huggle
         End Property
 
         Private Sub EditStatesChanged() Handles _Newer.StateChanged, _Older.StateChanged
-            RaiseEvent StateChanged(Me, EventArgs.Empty)
+            RaiseEvent StateChanged(Me, New DiffEventArgs(Me))
         End Sub
 
         Public Overrides Function ToString() As String
@@ -259,6 +259,22 @@ Namespace Huggle
                 If Not _All.ContainsKey("cur|prev|" & page.Title) _
                     Then _All.Add("cur|prev|" & page.Title, New Diff("cur|prev|" & page.Title, Wiki))
                 Return _All(CStr("cur|prev|" & page.Title))
+            End Get
+        End Property
+
+    End Class
+
+    Public Class DiffEventArgs : Inherits EventArgs
+
+        Private _Diff As Diff
+
+        Public Sub New(ByVal diff As Diff)
+            _Diff = diff
+        End Sub
+
+        Public ReadOnly Property Diff As Diff
+            Get
+                Return _Diff
             End Get
         End Property
 

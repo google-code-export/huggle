@@ -76,7 +76,7 @@ Namespace Huggle
                         Return
                     End Try
 
-                    request.AllowAutoRedirect = False
+                    request.AllowAutoRedirect = True
                     request.AutomaticDecompression = DecompressionMethods.GZip
                     request.CookieContainer = Cookies
                     request.KeepAlive = False

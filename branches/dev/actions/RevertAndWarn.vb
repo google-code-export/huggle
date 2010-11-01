@@ -1,4 +1,6 @@
-﻿Namespace Huggle.Actions
+﻿Imports System
+
+Namespace Huggle.Actions
 
     Public Class RevertAndWarn
 
@@ -7,9 +9,9 @@
         Private Revert As Revert
         Private Warn As Warning
 
-        Public Sub New(ByVal Revert As Revert, ByVal Warn As Warning)
-            Me.Revert = Revert
-            Me.Warn = Warn
+        Public Sub New(ByVal revert As Revert, ByVal warn As Warning)
+            Me.Revert = revert
+            Me.Warn = warn
         End Sub
 
         Public Sub Start()
@@ -17,7 +19,7 @@
             Revert.Start()
         End Sub
 
-        Private Sub RevertSuccess()
+        Private Sub RevertSuccess(ByVal sender As Object, ByVal e As EventArgs(Of Process))
             Warn.Start()
         End Sub
 

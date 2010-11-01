@@ -6,32 +6,26 @@ Namespace Huggle.UI
 
     Public Class AccountPreferencesForm : Inherits HuggleForm
 
-        Private _User As User
+        Private Session As Session
 
-        Public Sub New(ByVal user As User)
+        Public Sub New(ByVal session As Session)
             InitializeComponent()
-            _User = user
+            Me.Session = session
         End Sub
-
-        Public ReadOnly Property User() As User
-            Get
-                Return _User
-            End Get
-        End Property
 
         Private Sub _Load() Handles Me.Load
             Try
                 Icon = Resources.Icon
-                Text = Msg("accountprefs-title", User.FullName)
+                Text = Msg("accountprefs-title", Session.User.FullName)
 
                 'Finish loading extra config
-                If Not User.Wiki.Config.ExtraConfigLoaded Then
-                    App.UserWaitForProcess(User.Wiki.Config.ExtraLoader)
-                    If User.Wiki.Config.ExtraLoader.IsFailed _
-                        Then App.ShowError(User.Wiki.Config.ExtraLoader.Result) : Close() : Return
+                If Not Session.User.Wiki.Config.ExtraConfigLoaded Then
+                    App.UserWaitForProcess(Session.User.Wiki.Config.ExtraLoader)
+                    If Session.User.Wiki.Config.ExtraLoader.IsFailed _
+                        Then App.ShowError(Session.User.Wiki.Config.ExtraLoader.Result) : Close() : Return
                 End If
 
-                LoadData(User.Preferences)
+                LoadData(Session.User.Preferences)
 
             Catch ex As SystemException
                 App.ShowError(Result.FromException(ex))
@@ -44,13 +38,13 @@ Namespace Huggle.UI
         End Sub
 
         Private Sub Defaults_Click() Handles Defaults.Click
-            Dim reset As New ResetPreferences(App.Sessions(User))
-            App.UserWaitForProcess(reset)
-            If reset.IsErrored Then App.ShowError(reset.Result)
+            Dim reset As New ResetPreferences(Session)
+            App.UserWaitForProcess(reset, Nothing, True)
+            If reset.IsSuccess Then LoadData(Session.User.Preferences)
         End Sub
 
         Private Sub Save_Click() Handles Save.Click
-            Dim setPrefs As New SetPreferences(App.Sessions(User), StoreData(User.Preferences))
+            Dim setPrefs As New SetPreferences(Session, StoreData(Session.User.Preferences))
             App.UserWaitForProcess(setPrefs)
             If setPrefs.IsErrored Then App.ShowError(setPrefs.Result)
             If setPrefs.IsComplete Then Close()
@@ -69,7 +63,7 @@ Namespace Huggle.UI
             Gender.Items.Add(Msg("a-female"))
             Gender.SelectedIndex = 0
 
-            If prefs.Language Is Nothing Then InterfaceLanguage.SelectedItem = User.Wiki.Language _
+            If prefs.Language Is Nothing Then InterfaceLanguage.SelectedItem = Session.User.Wiki.Language _
                 Else InterfaceLanguage.SelectedItem = App.Languages(prefs.Language.ToLower)
 
             Select Case prefs.Gender
@@ -83,12 +77,12 @@ Namespace Huggle.UI
             EmailAddress.Text = prefs.EmailAddress
 
             'Appearence
-            For Each skin As WikiSkin In User.Wiki.Skins.Values
+            For Each skin As WikiSkin In Session.User.Wiki.Skins.Values
                 Skins.Items.Add(skin)
             Next skin
 
-            If User.Wiki.Skins.ContainsKey(prefs.Skin) Then Skins.SelectedItem = User.Wiki.Skins(prefs.Skin)
-            Skins.Enabled = User.Wiki.Skins.Count > 0
+            If Session.User.Wiki.Skins.ContainsKey(prefs.Skin) Then Skins.SelectedItem = Session.User.Wiki.Skins(prefs.Skin)
+            Skins.Enabled = Session.User.Wiki.Skins.Count > 0
 
             ImageSize.SelectedIndex = prefs.ImageSize
             ThumbnailSize.SelectedIndex = prefs.ThumbnailSize
@@ -105,7 +99,7 @@ Namespace Huggle.UI
             NumberHeadings.Checked = prefs.NumberHeadings
 
             'Gadgets
-            For Each gadget As Gadget In User.Wiki.Gadgets.All
+            For Each gadget As Gadget In Session.User.Wiki.Gadgets.All
                 Dim prefKey As String = "gadget-" & gadget.Code
 
                 Gadgets.Items.Add(gadget.Name)

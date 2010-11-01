@@ -35,10 +35,10 @@ Namespace Huggle
         Private Shared ReadOnly AnonymousRegex As New Regex _
             ("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", RegexOptions.Compiled)
 
-        Public Event Edited As EventHandler(Of User, EditEventArgs)
-        Public Event Renamed As EventHandler(Of User, UserRenamedEventArgs)
-        Public Event StateChanged As EventHandler(Of User, EventArgs)
-        Public Event ContribsChanged As EventHandler(Of User, EventArgs)
+        Public Event Edited As SimpleEventHandler(Of Revision)
+        Public Event Renamed(ByVal sender As Object, ByVal e As UserRenamedEventArgs)
+        Public Event StateChanged As SimpleEventHandler(Of User)
+        Public Event ContribsChanged As SimpleEventHandler(Of User)
 
         Public Sub New(ByVal wiki As Wiki, ByVal name As String)
             _DisplayName = name
@@ -251,7 +251,7 @@ Namespace Huggle
             End Get
             Set(ByVal value As Boolean)
                 _IsIgnored = value
-                RaiseEvent StateChanged(Me, EventArgs.Empty)
+                RaiseEvent StateChanged(Me, New EventArgs(Of User)(Me))
             End Set
         End Property
 
@@ -420,11 +420,11 @@ Namespace Huggle
         End Property
 
         Public Sub OnEdit(ByVal rev As Revision)
-            RaiseEvent Edited(Me, New EditEventArgs(rev))
+            RaiseEvent Edited(Me, New EventArgs(Of Revision)(rev))
         End Sub
 
         Public Sub OnContribsChanged()
-            RaiseEvent ContribsChanged(Me, EventArgs.Empty)
+            RaiseEvent ContribsChanged(Me, New EventArgs(Of User)(Me))
         End Sub
 
         Public Sub Process()
@@ -442,14 +442,14 @@ Namespace Huggle
         End Sub
 
         Public Sub RefreshState()
-            RaiseEvent StateChanged(Me, EventArgs.Empty)
+            RaiseEvent StateChanged(Me, New EventArgs(Of User)(Me))
         End Sub
 
         Public Sub Rename(ByVal newName As String)
             Dim oldName As String = Name
             _Name = newName
             Wiki.Users.Rename(oldName, newName)
-            RaiseEvent Renamed(Me, New UserRenamedEventArgs(oldName))
+            RaiseEvent Renamed(Me, New UserRenamedEventArgs(Me, oldName))
         End Sub
 
         Public Function Can(ByVal featureName As String) As Boolean
@@ -478,14 +478,22 @@ Namespace Huggle
     Public Class UserRenamedEventArgs : Inherits EventArgs
 
         Private _OldName As String
+        Private _User As User
 
-        Public Sub New(ByVal OldName As String)
-            _OldName = OldName
+        Public Sub New(ByVal user As User, ByVal oldName As String)
+            _OldName = oldName
+            _User = user
         End Sub
 
         Public ReadOnly Property OldName() As String
             Get
                 Return _OldName
+            End Get
+        End Property
+
+        Public ReadOnly Property User As User
+            Get
+                Return _User
             End Get
         End Property
 

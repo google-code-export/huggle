@@ -1,4 +1,8 @@
-﻿form-firstrun-language:          Language:
+﻿query-resetprefs-anon:           Cannot reset preferences for anonymous user
+query-resetprefs-desc:           Reset preferences for {0}
+query-resetprefs-progress:       Resetting preferences
+
+form-firstrun-language:          Language:
 form-firstrun-translate:         If your native language is not listed or only partially translated, you can {0}.
 form-firstrun-translatelink:     help with translation
 form-firstrun-proxy:             Connect to the Internet through a proxy server

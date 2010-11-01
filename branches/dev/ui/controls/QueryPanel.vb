@@ -1,5 +1,6 @@
 ﻿Imports Huggle.Actions
 Imports Huggle.Scripting
+Imports System
 
 Namespace Huggle.UI
 
@@ -42,8 +43,8 @@ Namespace Huggle.UI
             End If
         End Sub
 
-        Private Sub Evaluator_Progress(ByVal action As Process)
-            Progress.Text = action.Message
+        Private Sub Evaluator_Progress(ByVal sender As Object, ByVal e As EventArgs(Of Process))
+            Progress.Text = e.Sender.Message
         End Sub
 
         Private Sub Evaluator_Done()

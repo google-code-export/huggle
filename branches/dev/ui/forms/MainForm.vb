@@ -45,8 +45,6 @@ Namespace Huggle.UI
         End Sub
 
         Private Sub SystemLogout_Click() Handles SystemLogout.Click
-            Config.Local.AutoLogin = False
-
             Dim logout As New Logout(Session)
             App.UserWaitForProcess(logout)
             If logout.IsFailed Then App.ShowError(logout.Result)
@@ -61,13 +59,14 @@ Namespace Huggle.UI
         End Sub
 
         Private Sub AccountProperties_Click() Handles AccountProperties.Click
-            Dim form As New AccountPropertiesForm(Session.User)
+            Dim form As New AccountPropertiesForm(Session)
             form.Show()
         End Sub
 
         Private Sub HelpAbout_Click() Handles HelpAbout.Click
-            Dim form As New AboutForm
-            form.ShowDialog()
+            Using form As New AboutForm
+                form.ShowDialog()
+            End Using
         End Sub
 
         Private Sub HelpManual_Click() Handles HelpManual.Click

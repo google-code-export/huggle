@@ -1,5 +1,4 @@
-﻿Imports Huggle.Queries
-Imports System
+﻿Imports System
 Imports System.Drawing
 Imports System.IO
 Imports System.Net

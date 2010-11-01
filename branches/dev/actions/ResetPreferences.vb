@@ -5,13 +5,13 @@ Namespace Huggle.Actions
     Public Class ResetPreferences : Inherits Query
 
         Public Sub New(ByVal session As Session)
-            MyBase.New(session, Msg("resetprefs-desc"))
+            MyBase.New(session, Msg("query-resetprefs-desc", session.User.FullName))
         End Sub
 
         Public Overrides Sub Start()
-            If User.IsAnonymous Then OnFail(Msg("setprefs-anon")) : Return
+            If User.IsAnonymous Then OnFail(Msg("query-resetprefs-anon")) : Return
             OnStarted()
-            OnProgress(Msg("resetprefs-progress", User.FullName))
+            OnProgress(Msg("query-resetprefs-progress"))
 
             'Get token
             If Session.EditToken Is Nothing Then
@@ -21,22 +21,24 @@ Namespace Huggle.Actions
             End If
 
             'Reset preferences, must use UI for this
-            Dim req As New UIRequest(Session, Description, New QueryString("title", "Special:Preferences/reset"), _
+            Dim req As New UIRequest(Session, Description, New QueryString("title", "Special:Preferences/reset"),
                 New QueryString("wpEditToken", Session.EditToken))
 
             req.Start()
             If req.IsFailed Then OnFail(req.Result) : Return
 
-            If Not req.Response.Contains("<div class=""successbox"">") Then OnFail(Msg("error-unknown")) : Return
+            If Not req.Response.Contains("<div class=""successbox"">") Then OnFail(Msg("error-scrape")) : Return
 
             'Load preferences again to see what they were reset to
-            Dim req2 As New ApiRequest(Session, Description, New QueryString( _
-                "action", "query", _
-                "meta", "userinfo", _
+            Dim req2 As New ApiRequest(Session, Description, New QueryString(
+                "action", "query",
+                "meta", "userinfo",
                 "uiprop", "options"))
 
             req2.Start()
+            If req2.IsFailed Then OnFail(req2.Result) : Return
 
+            User.Config.SaveLocal()
             OnSuccess()
         End Sub
 

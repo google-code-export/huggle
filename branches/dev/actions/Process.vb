@@ -3,8 +3,6 @@ Imports System.Collections.Generic
 
 Namespace Huggle.Actions
 
-    Public Delegate Sub ProcessDelegate(ByVal sender As Process)
-
     Public MustInherit Class Process
 
         Private _Description As String
@@ -15,11 +13,11 @@ Namespace Huggle.Actions
 
         Public MustOverride Sub Start()
 
-        Public Event Complete As ProcessDelegate
-        Public Event Fail As ProcessDelegate
-        Public Event Progress As ProcessDelegate
-        Public Event Started()
-        Public Event Success()
+        Public Event Complete As SimpleEventHandler(Of Process)
+        Public Event Fail As SimpleEventHandler(Of Process)
+        Public Event Progress As SimpleEventHandler(Of Process)
+        Public Event Started As SimpleEventHandler(Of Process)
+        Public Event Success As SimpleEventHandler(Of Process)
 
         Protected Sub New()
             _Result = Result.Success
@@ -142,8 +140,8 @@ Namespace Huggle.Actions
         End Sub
 
         Private Sub _OnFail()
-            RaiseEvent Fail(Me)
-            RaiseEvent Complete(Me)
+            RaiseEvent Fail(Me, New EventArgs(Of Process)(Me))
+            RaiseEvent Complete(Me, New EventArgs(Of Process)(Me))
         End Sub
 
         Protected Sub OnProgress(ByVal message As String)
@@ -152,7 +150,7 @@ Namespace Huggle.Actions
         End Sub
 
         Private Sub _OnProgress()
-            RaiseEvent Progress(Me)
+            RaiseEvent Progress(Me, New EventArgs(Of Process)(Me))
         End Sub
 
         Protected Sub OnStarted()
@@ -161,7 +159,7 @@ Namespace Huggle.Actions
         End Sub
 
         Private Sub _OnStarted()
-            RaiseEvent Started()
+            RaiseEvent Started(Me, New EventArgs(Of Process)(Me))
         End Sub
 
         Protected Sub OnSuccess()
@@ -170,8 +168,8 @@ Namespace Huggle.Actions
         End Sub
 
         Private Sub _OnSuccess()
-            RaiseEvent Success()
-            RaiseEvent Complete(Me)
+            RaiseEvent Success(Me, New EventArgs(Of Process)(Me))
+            RaiseEvent Complete(Me, New EventArgs(Of Process)(Me))
         End Sub
 
         Protected Sub SetProgressByProcess(ByVal process As Process)

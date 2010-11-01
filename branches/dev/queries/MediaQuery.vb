@@ -1,5 +1,4 @@
 ﻿Imports System
-Imports System.Security.Cryptography
 Imports System.Text
 
 Namespace Huggle.Actions
@@ -38,8 +37,8 @@ Namespace Huggle.Actions
 
             If Wiki.FileUrl IsNot Nothing Then
                 'Upload location is determined by MD5 hash of file name
-                Dim hash As String = BitConverter.ToString(MD5.Create.ComputeHash _
-                    (Encoding.UTF8.GetBytes(Media.Name))).Remove("-").ToLower
+                Dim hash As String = BitConverter.ToString(MD5Hash(
+                    Encoding.UTF8.GetBytes(Media.Name))).Remove("-").ToLower
                 Dim url As Uri
 
                 If ThumbSize > 0 Then url = New Uri(Wiki.FileUrl.ToString & "thumb/" & hash(0) & "/" & _

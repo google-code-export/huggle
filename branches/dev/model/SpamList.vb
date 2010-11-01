@@ -122,28 +122,29 @@ Namespace Huggle
             Dim result As New List(Of SpamListEntry)
             If text Is Nothing Then Return result
 
-            Dim reader As New StringReader(text)
-            Dim line As String = reader.ReadLine
+            Using reader As New StringReader(text)
+                Dim line As String = reader.ReadLine
 
-            While line IsNot Nothing
-                Dim lineComment As String = Nothing
-                If line.Contains("#") Then lineComment = line.FromFirst("#").Substring(1).Trim
-                Dim pattern As String = line.ToFirst("#").Trim
+                While line IsNot Nothing
+                    Dim lineComment As String = Nothing
+                    If line.Contains("#") Then lineComment = line.FromFirst("#").Substring(1).Trim
+                    Dim pattern As String = line.ToFirst("#").Trim
 
-                If pattern.Length > 0 Then
-                    Try
-                        Dim entry As New SpamListEntry(Me, New Regex(pattern))
-                        entry.Comment = lineComment
-                        entry.DisplayText = pattern.Replace("\.", ".").Remove("\b")
+                    If pattern.Length > 0 Then
+                        Try
+                            Dim entry As New SpamListEntry(Me, New Regex(pattern))
+                            entry.Comment = lineComment
+                            entry.DisplayText = pattern.Replace("\.", ".").Remove("\b")
 
-                    Catch ex As ArgumentException
-                        Log.Debug("Warning: spam blacklist pattern '{0}' on '{1}' is malformed, check syntax".
-                            FormatWith(pattern, Page.FullTitle))
-                    End Try
-                End If
+                        Catch ex As ArgumentException
+                            Log.Debug("Warning: spam blacklist pattern '{0}' on '{1}' is malformed, check syntax".
+                                FormatWith(pattern, Page.FullTitle))
+                        End Try
+                    End If
 
-                line = reader.ReadLine
-            End While
+                    line = reader.ReadLine
+                End While
+            End Using
 
             Return result
         End Function

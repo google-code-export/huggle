@@ -1,6 +1,4 @@
-﻿Imports Huggle.Queries
-
-Namespace Huggle.Actions
+﻿Namespace Huggle.Actions
 
     'Edit an abuse filter
     'TODO: Convert this to use the API if it ever supports editing abuse filters

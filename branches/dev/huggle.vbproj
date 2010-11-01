@@ -133,7 +133,7 @@
     <Compile Include="actions\ResetPreferences.vb" />
     <Compile Include="actions\Unblock.vb" />
     <Compile Include="config\ConfigRead.vb" />
-    <Compile Include="Cloud.vb" />
+    <Compile Include="net\Cloud.vb" />
     <Compile Include="Main.vb" />
     <Compile Include="model\ApiModule.vb" />
     <Compile Include="model\GlobalUserStatusChange.vb" />
@@ -168,23 +168,23 @@
     <Compile Include="actions\VandalReport.vb" />
     <Compile Include="actions\RevertAndWarn.vb" />
     <Compile Include="actions\Watch.vb" />
-    <Compile Include="ApiProcessing.vb" />
+    <Compile Include="net\ApiProcessing.vb" />
     <Compile Include="config\FamilyConfig.vb" />
     <Compile Include="config\GlobalUserConfig.vb" />
     <Compile Include="config\InternalConfig.vb" />
     <Compile Include="config\MessageConfig.vb" />
-    <Compile Include="FileRequest.vb" />
-    <Compile Include="data\Data.vb" />
-    <Compile Include="data\DataView.Designer.vb">
+    <Compile Include="net\FileRequest.vb" />
+    <Compile Include="Data.vb" />
+    <Compile Include="ui\controls\DataView.Designer.vb">
       <DependentUpon>DataView.vb</DependentUpon>
     </Compile>
-    <Compile Include="data\DataView.vb">
+    <Compile Include="ui\controls\DataView.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="data\QueryPanel.Designer.vb">
+    <Compile Include="ui\controls\QueryPanel.Designer.vb">
       <DependentUpon>QueryPanel.vb</DependentUpon>
     </Compile>
-    <Compile Include="data\QueryPanel.vb">
+    <Compile Include="ui\controls\QueryPanel.vb">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="model\Gadget.vb" />
@@ -213,7 +213,7 @@
     <Compile Include="queries_old\ThreadQuery.vb" />
     <Compile Include="queries_old\UsernameCheckQuery.vb" />
     <Compile Include="actions\Warning.vb" />
-    <Compile Include="QueryString.vb" />
+    <Compile Include="net\QueryString.vb" />
     <Compile Include="scripting\Model.vb" />
     <Compile Include="scripting\Parser.vb" />
     <Compile Include="Session.vb" />
@@ -541,7 +541,7 @@
     <Compile Include="model\Diff.vb" />
     <Compile Include="Feature.vb" />
     <Compile Include="Functions.vb" />
-    <Compile Include="Feed.vb" />
+    <Compile Include="net\Feed.vb" />
     <Compile Include="Language.vb" />
     <Compile Include="Log.vb" />
     <Compile Include="model\LogItem.vb" />
@@ -583,16 +583,15 @@
     <Compile Include="queries\Lists.vb">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="queries_old\Query.vb" />
     <Compile Include="queries_old\UpdateQuery.vb" />
     <Compile Include="model\Queue.vb" />
     <Compile Include="model\QueueItem.vb" />
-    <Compile Include="ApiRequest.vb" />
+    <Compile Include="net\ApiRequest.vb" />
     <Compile Include="Extensions.vb" />
     <Compile Include="model\UserRename.vb" />
     <Compile Include="queries\ListQuery.vb" />
     <Compile Include="Result.vb" />
-    <Compile Include="Request.vb" />
+    <Compile Include="net\Request.vb" />
     <Compile Include="model\Review.vb" />
     <Compile Include="model\Revision.vb" />
     <Compile Include="model\Sanction.vb" />
@@ -609,7 +608,7 @@
     <Compile Include="model\Space.vb" />
     <Compile Include="model\Tool.vb" />
     <Compile Include="Translation.vb" />
-    <Compile Include="UIRequest.vb" />
+    <Compile Include="net\UIRequest.vb" />
     <Compile Include="model\Upload.vb" />
     <Compile Include="model\User.vb" />
     <Compile Include="ui\controls\QueuePanel.Designer.vb">
@@ -642,7 +641,7 @@
     <Compile Include="wikitext\Transclusion.vb" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="data\QueryPanel.resx">
+    <EmbeddedResource Include="ui\controls\QueryPanel.resx">
       <DependentUpon>QueryPanel.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources.resx">

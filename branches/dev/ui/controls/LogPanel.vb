@@ -1,4 +1,5 @@
 ﻿Imports Huggle.Actions
+Imports System
 Imports System.Collections.Generic
 Imports System.Drawing
 Imports System.Windows.Forms
@@ -14,7 +15,7 @@ Namespace Huggle.UI
             LogList.BeginUpdate()
 
             For Each msg As LogMessage In New List(Of LogMessage)(Log.Items)
-                Log_Written(msg)
+                Log_Written(Me, New EventArgs(Of LogMessage)(msg))
             Next msg
 
             LogList.EndUpdate()
@@ -28,7 +29,9 @@ Namespace Huggle.UI
             LogList.ContextMenuStrip = If(LogList.SelectedItems.Count = 0, Nothing, LogMenu)
         End Sub
 
-        Private Sub Log_UpdateAction(ByVal action As Process)
+        Private Sub Log_UpdateAction(ByVal sender As Object, ByVal e As EventArgs(Of Process))
+            Dim action As Process = e.Sender
+
             For i As Integer = 0 To LogList.Items.Count - 1
                 If LogList.Items(i).Tag Is action Then
                     If action.IsComplete Then LogList.Items.RemoveAt(i) _
@@ -45,9 +48,9 @@ Namespace Huggle.UI
             End If
         End Sub
 
-        Private Sub Log_Written(ByVal message As LogMessage)
-            If Config.Local.DebugVisible OrElse Not message.IsDebug _
-                Then LogList.InsertRow(0, FullDateString(message.Time), message.Message)
+        Private Sub Log_Written(ByVal sender As Object, ByVal e As EventArgs(Of LogMessage))
+            If Config.Local.DebugVisible OrElse Not e.Sender.IsDebug _
+                Then LogList.InsertRow(0, FullDateString(e.Sender.Time), e.Sender.Message)
         End Sub
 
         Private Sub LogCopy_Click() Handles LogCopy.Click

@@ -5,15 +5,15 @@ Imports System.IO
 
 Namespace Huggle
 
-    Public Class LogClass : Implements IDisposable
+    Public NotInheritable Class LogClass : Implements IDisposable
 
         Private _Items As New List(Of LogMessage)
         Private Writer As StreamWriter
 
         Private Delegate Sub LogDelegate(ByVal message As LogMessage)
 
-        Public Event UpdateProcess(ByVal process As Process)
-        Public Event Written(ByVal message As LogMessage)
+        Public Event UpdateProcess As SimpleEventHandler(Of Process)
+        Public Event Written As SimpleEventHandler(Of LogMessage)
 
         Public ReadOnly Property Items() As List(Of LogMessage)
             Get
@@ -64,9 +64,9 @@ Namespace Huggle
             Write(Msg("log-error", ex.Message))
         End Sub
 
-        Private Sub OnUpdateProcess(ByVal process As Process)
-            If process.IsComplete Then RemoveHandler process.Progress, AddressOf OnUpdateProcess
-            RaiseEvent UpdateProcess(process)
+        Private Sub OnUpdateProcess(ByVal sender As Object, ByVal e As EventArgs(Of Process))
+            If e.Sender.IsComplete Then RemoveHandler e.Sender.Progress, AddressOf OnUpdateProcess
+            RaiseEvent UpdateProcess(Me, New EventArgs(Of Process)(e.Sender))
         End Sub
 
         Private Sub Write(ByVal messageObject As Object)
@@ -86,7 +86,7 @@ Namespace Huggle
                 End Try
             End If
 
-            RaiseEvent Written(message)
+            RaiseEvent Written(Me, New EventArgs(Of LogMessage)(message))
         End Sub
 
         Public Sub Dispose() Implements IDisposable.Dispose

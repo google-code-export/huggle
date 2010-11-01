@@ -5,25 +5,31 @@ Namespace Huggle.UI
 
     Public Class AccountPropertiesForm : Inherits HuggleForm
 
-        Private _User As User
+        Private Session As Session
 
-        Public Sub New(ByVal user As User)
+        Public Sub New(ByVal session As Session)
             InitializeComponent()
-            _User = user
+            Me.Session = session
         End Sub
 
-        Public ReadOnly Property User() As User
+        Private ReadOnly Property User() As User
             Get
-                Return _User
+                Return Session.User
+            End Get
+        End Property
+
+        Private ReadOnly Property Wiki As Wiki
+            Get
+                Return Session.User.Wiki
             End Get
         End Property
 
         Private Sub _Load() Handles Me.Load
             Try
                 'Finish loading extra config
-                If Not User.Wiki.Config.ExtraConfigLoaded Then
+                If Not Wiki.Config.ExtraConfigLoaded Then
                     App.UserWaitForProcess(User.Wiki.Config.ExtraLoader)
-                    If User.Wiki.Config.ExtraLoader.IsFailed Then App.ShowError(User.Wiki.Config.ExtraLoader.Result) : Close() : Return
+                    If Wiki.Config.ExtraLoader.IsFailed Then App.ShowError(Wiki.Config.ExtraLoader.Result) : Close() : Return
                 End If
 
                 Icon = Resources.Icon
@@ -63,18 +69,20 @@ Namespace Huggle.UI
             AccountGlobal.Text = Msg("accountprop-global", If(User.IsUnified, Msg("a-yes"), Msg("a-no")))
             AccountID.Text = Msg("accountprop-id", CStr(User.Id))
             AccountName.Text = User.Name
-            AccountWiki.Text = Msg("accountprop-wiki", User.Wiki.Name)
+            AccountWiki.Text = Msg("accountprop-wiki", Wiki.Name)
 
-            AccountGlobal.Visible = (User.Wiki.Family IsNot Nothing)
+            AccountGlobal.Visible = (Wiki.Family IsNot Nothing)
+
+            ChangeGroups.Visible = User.CanSelfChangeUserRights
         End Sub
 
         Private Sub SetPreferences_LinkClicked() Handles SetPreferences.LinkClicked
-            Dim form As New AccountPreferencesForm(User)
+            Dim form As New AccountPreferencesForm(Session)
             form.ShowDialog()
         End Sub
 
         Private Sub ChangeGroups_LinkClicked() Handles ChangeGroups.LinkClicked
-            Dim form As New UserGroupsForm(App.Sessions(User), User)
+            Dim form As New UserGroupsForm(Session, User)
             form.ShowDialog()
         End Sub
 

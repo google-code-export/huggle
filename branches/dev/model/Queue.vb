@@ -11,23 +11,11 @@ Namespace Huggle
     <Diagnostics.DebuggerDisplay("{Name}")> _
     Public Class Queue
 
-        Private _DefaultMode As QueueMode
-        Private _Enabled As Boolean
         Private _EnabledOnSelect As Boolean
-        Private _Filter As String
         Private _Items As SortedList(Of QueueItem)
         Private _MaximumAge As TimeSpan
-        Private _MaximumSize As Integer
-        Private _Mode As QueueMode
         Private _Name As String
-        Private _Preload As Boolean
-        Private _QueryReAdd As Boolean
-        Private _ReEvaluate As Boolean
         Private _Refreshing As Boolean
-        Private _RemoveContribs As Boolean
-        Private _RemoveHistory As Boolean
-        Private _RemoveViewed As Boolean
-        Private _Selected As Boolean
         Private _SortOrder As QueueSortOrder
         Private WithEvents _Source As IQueueSource
         Private _Wiki As Wiki
@@ -36,7 +24,7 @@ Namespace Huggle
 
         Private Shared WithEvents Timer As New Windows.Forms.Timer
 
-        Public Event ItemsChanged As EventHandler(Of Queue, EventArgs)
+        Public Event ItemsChanged As SimpleEventHandler(Of Queue)
 
         Shared Sub New()
             Timer.Interval = 10000
@@ -58,40 +46,12 @@ Namespace Huggle
         End Sub
 
         Public Property DefaultMode() As QueueMode
-            Get
-                Return _DefaultMode
-            End Get
-            Set(ByVal value As QueueMode)
-                _DefaultMode = value
-            End Set
-        End Property
 
         Public Property Enabled() As Boolean
-            Get
-                Return _Enabled
-            End Get
-            Set(ByVal value As Boolean)
-                _Enabled = value
-            End Set
-        End Property
 
         Public Property EnableOnSelect() As Boolean
-            Get
-                Return _EnabledOnSelect
-            End Get
-            Set(ByVal value As Boolean)
-                _EnabledOnSelect = value
-            End Set
-        End Property
 
         Public Property Filter() As String
-            Get
-                Return _Filter
-            End Get
-            Set(ByVal value As String)
-                _Filter = value
-            End Set
-        End Property
 
         Public ReadOnly Property Items() As SortedList(Of QueueItem)
             Get
@@ -110,22 +70,8 @@ Namespace Huggle
         End Property
 
         Public Property MaximumSize() As Integer
-            Get
-                Return _MaximumSize
-            End Get
-            Set(ByVal value As Integer)
-                _MaximumSize = value
-            End Set
-        End Property
 
         Public Property Mode() As QueueMode
-            Get
-                Return _Mode
-            End Get
-            Set(ByVal value As QueueMode)
-                _Mode = value
-            End Set
-        End Property
 
         Public Property Name() As String
             Get
@@ -138,13 +84,6 @@ Namespace Huggle
         End Property
 
         Public Property Preload() As Boolean
-            Get
-                Return _Preload
-            End Get
-            Set(ByVal value As Boolean)
-                _Preload = value
-            End Set
-        End Property
 
         Public Shared ReadOnly Property Preloads() As Integer
             Get
@@ -153,22 +92,8 @@ Namespace Huggle
         End Property
 
         Public Property QueryReAdd() As Boolean
-            Get
-                Return _QueryReAdd
-            End Get
-            Set(ByVal value As Boolean)
-                _QueryReAdd = value
-            End Set
-        End Property
 
         Public Property ReEvaluate() As Boolean
-            Get
-                Return _ReEvaluate
-            End Get
-            Set(ByVal value As Boolean)
-                _ReEvaluate = value
-            End Set
-        End Property
 
         Public ReadOnly Property Refreshing() As Boolean
             Get
@@ -177,40 +102,12 @@ Namespace Huggle
         End Property
 
         Public Property RemoveContribs() As Boolean
-            Get
-                Return _RemoveContribs
-            End Get
-            Set(ByVal value As Boolean)
-                _RemoveContribs = value
-            End Set
-        End Property
 
         Public Property RemoveHistory() As Boolean
-            Get
-                Return _RemoveHistory
-            End Get
-            Set(ByVal value As Boolean)
-                _RemoveHistory = value
-            End Set
-        End Property
 
         Public Property RemoveViewed() As Boolean
-            Get
-                Return _RemoveViewed
-            End Get
-            Set(ByVal value As Boolean)
-                _RemoveViewed = value
-            End Set
-        End Property
 
         Public Property Selected() As Boolean
-            Get
-                Return _Selected
-            End Get
-            Set(ByVal value As Boolean)
-                _Selected = value
-            End Set
-        End Property
 
         Public Property SortOrder() As QueueSortOrder
             Get
@@ -262,8 +159,8 @@ Namespace Huggle
             CreateThread(AddressOf OnItemsChanged)
         End Sub
 
-        Private Sub EditStateChanged(ByVal rev As Revision, ByVal e As EventArgs)
-            EvaluateItem(rev, False)
+        Private Sub EditStateChanged(ByVal sender As Object, ByVal e As EventArgs(Of Revision))
+            EvaluateItem(e.Sender, False)
         End Sub
 
         Private Sub EvaluateItem(ByVal item As QueueItem, ByVal isNew As Boolean)
@@ -318,10 +215,10 @@ Namespace Huggle
             End If
         End Sub
 
-        Private Sub Source_Action(ByVal sender As Object, ByVal e As QueueItem) Handles _Source.Action
+        Private Sub Source_Action(ByVal sender As Object, ByVal e As EventArgs(Of QueueItem)) Handles _Source.Action
             If Enabled AndAlso (Selected OrElse Not EnableOnSelect) Then
-                If TypeOf e Is Revision Then
-                    Dim rev As Revision = CType(e, Revision)
+                If TypeOf e.Sender Is Revision Then
+                    Dim rev As Revision = CType(e.Sender, Revision)
 
                     If ReEvaluate Then AddHandler rev.StateChanged, AddressOf EditStateChanged
 
@@ -332,7 +229,7 @@ Namespace Huggle
                         AndAlso Items.Contains(rev.PrevByUser) Then Items.Remove(rev.PrevByUser)
                 End If
 
-                EvaluateItem(e, True)
+                EvaluateItem(e.Sender, True)
             End If
         End Sub
 
@@ -346,7 +243,7 @@ Namespace Huggle
         End Sub
 
         Private Sub OnItemsChanged()
-            RaiseEvent ItemsChanged(Me, EventArgs.Empty)
+            RaiseEvent ItemsChanged(Me, New EventArgs(Of Queue)(Me))
         End Sub
 
         Public Overrides Function ToString() As String
