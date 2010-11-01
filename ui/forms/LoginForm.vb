@@ -139,7 +139,7 @@ Namespace Huggle.UI
                 User = Wiki.Users.FromString(Account.Text)
 
                 If User IsNot Nothing Then
-                    If User.Config.IsDefault Then User.Config.LoadLocal()
+                    If Not User.Config.IsLoaded Then User.Config.LoadLocal()
 
                     If User.Password IsNot Nothing Then
                         Password.Text = Unscramble(User.FullName, User.Password, Hash(User))
@@ -185,7 +185,7 @@ Namespace Huggle.UI
                 For Each user As User In Wiki.Users.All
                     If Not user.IsAnonymous AndAlso Not user.IsDefault Then
                         user.Config.LoadLocal()
-                        If Not user.Config.IsDefault Then Account.Items.Add(user)
+                        If user.Config.IsLoaded Then Account.Items.Add(user)
                     End If
                 Next user
 

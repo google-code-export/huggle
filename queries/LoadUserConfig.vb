@@ -17,6 +17,14 @@ Namespace Huggle.Actions
             OnStarted()
             OnProgress(Msg("userconfig-progress", Session.User.FullName))
 
+            'Get cached config from the cloud
+            If InternalConfig.UseCloud Then
+                Wiki.Config.LoadCloud()
+
+                If Wiki.Config.IsCurrent Then Wiki.Config.SaveLocal() _
+                    Else Log.Debug("Outdated in cloud: wiki\{0}".FormatWith(Wiki.Code))
+            End If
+
             Dim query As New QueryString("action", "query")
             Dim lists As New List(Of String)
             Dim meta As New List(Of String)
@@ -69,6 +77,8 @@ Namespace Huggle.Actions
                 query.Add("rvprop", "ids|content|user")
             End If
 
+            If query.Values.Count = 0 Then OnSuccess() : Return
+
             OnStarted()
 
             Dim processes As New List(Of Process)
@@ -90,6 +100,18 @@ Namespace Huggle.Actions
 
             'Load wiki config
             Wiki.Config.Load(Wiki.Pages(Config.Global.WikiConfigPageTitle).Text)
+
+            User.Config.Updated = Date.UtcNow
+            User.Config.SaveLocal()
+            Wiki.Config.Updated = Date.UtcNow
+            Wiki.Config.SaveLocal()
+
+            If User.IsUnified Then
+                User.GlobalUser.Config.Updated = Date.UtcNow
+                User.GlobalUser.Config.SaveLocal()
+            End If
+
+            Wiki.Config.SaveCloud()
 
             OnSuccess()
         End Sub

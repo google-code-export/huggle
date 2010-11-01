@@ -77,6 +77,8 @@ view-wikistats-activeusers:      Active user accounts
 view-usergroup-title:            User groups
 view-usergroup-filterall:        (Any)
 view-usergroup-implicit:         (implicit)
+view-usergroup-count:            {0} groups
+view-usergroup-rightscount:      {0} rights
 
 view-userright-title:            User rights
 view-userright-nobody:           (nobody)
@@ -306,6 +308,7 @@ error-accessdenied:        You are not permitted to use Huggle
 error-account:             Your account is not allowed to do this
 error-alreadydone:         The requested action was already carried out by {0}
 error-apidisabled:         The MediaWiki API is disabled on this wiki
+error-apiformat:           Ignored unrecognized API node '{0}', expected '{1}'
 error-apimoduledisabled:   The MediaWiki API '{0}' module is disabled on this wiki
 error-apiresponse:         Unable to parse MediaWiki API response 
 error-apiunrecognized:     Ignored unrecognized API {0} type '{1}'

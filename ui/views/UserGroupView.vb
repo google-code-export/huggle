@@ -24,13 +24,32 @@ Namespace Huggle.UI
                     Then groupCountString = Msg("view-usergroup-implicit") _
                     Else groupCountString = If(group.Count < 0, Msg("a-unknown"), group.Count.ToString)
 
-                List.AddRow(group.Name, groupCountString, group.Rights.Join(", "))
+                List.AddRow(group.Name, group.Description, groupCountString)
             Next group
 
-            List.EndUpdate()
             List.SortMethods(1) = SortMethod.Integer
             List.SortBy(0)
-            Count.Text = Msg("a-count", List.Items.Count)
+            List.SelectedIndices.Add(0)
+            List.EndUpdate()
+
+            Count.Text = Msg("view-usergroup-count", List.Items.Count)
+        End Sub
+
+        Private Sub List_SelectedIndexChanged() Handles List.SelectedIndexChanged
+            If List.SelectedItems.Count > 0 Then
+                Dim selectedGroup As UserGroup = Wiki.UserGroups(List.SelectedItems(0).Text)
+                GroupName.Text = selectedGroup.Name
+
+                RightsList.BeginUpdate()
+                RightsList.Items.Clear()
+
+                For Each right As String In selectedGroup.Rights
+                    RightsList.AddRow(right)
+                Next right
+
+                RightsCount.Text = Msg("view-usergroup-rightscount", RightsList.Items.Count)
+                RightsList.EndUpdate()
+            End If
         End Sub
 
     End Class

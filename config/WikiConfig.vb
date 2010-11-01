@@ -11,7 +11,6 @@ Namespace Huggle
 
         Private _ExtraLoader As ExtraWikiConfig
 
-        Private LocalMissing As Boolean
         Private Wiki As Wiki
 
         Private ReadOnly IgnoredMessages As String() = {
@@ -115,8 +114,6 @@ Namespace Huggle
 
         Public Property ExtraConfigLoaded() As Boolean
 
-        Public Property IsDefault() As Boolean
-
         Public ReadOnly Property IsMinor(ByVal action As String) As Boolean
             Get
                 Return Minor.Contains(action)
@@ -139,14 +136,9 @@ Namespace Huggle
             Return Path.Combine("wiki", "priority-" & GetValidFileName(Wiki.Code))
         End Function
 
-        Public Overrides Sub LoadLocal()
-            If Not LocalMissing Then MyBase.LoadLocal()
-            If Not IsLoaded Then LocalMissing = True
-        End Sub
-
         Public Overrides Sub Load(ByVal text As String)
             MyBase.Load(text)
-            If IsDefault Then Return
+            If Wiki.IsDefault OrElse text Is Nothing Then Return
 
             ReportPages.Merge(VandalReportPage)
             ReportPages.Merge(ReportUserPage)
@@ -180,7 +172,6 @@ Namespace Huggle
 
         Public Overrides Sub SaveLocal()
             MyBase.SaveLocal()
-            LocalMissing = False
             If Wiki.Pages.Priority IsNot Nothing Then Config.SaveFile(PriorityListLocation, Wiki.Pages.Priority.Join(LF))
         End Sub
 
@@ -205,7 +196,7 @@ Namespace Huggle
 
                                 For Each prop As KeyValuePair(Of String, String) In Config.ParseConfig(source, key & ":" & item.Key, item.Value)
                                     Select Case prop.Key
-                                        Case "actions" : filter.Actions = List(prop.Value.Split(","))
+                                        Case "actions" : filter.Actions = List(prop.Value.Split(",")).Trim
                                         Case "deleted" : filter.IsDeleted = prop.Value.ToBoolean
                                         Case "description" : filter.Description = prop.Value
                                         Case "enabled" : filter.IsEnabled = prop.Value.ToBoolean
@@ -383,12 +374,12 @@ Namespace Huggle
                         Case "files" : Wiki.Files.Count = CInt(value)
                         Case "pages" : Wiki.Pages.Count = CInt(value)
                         Case "revisions" : Wiki.Revisions.Count = CInt(value)
+                        Case "updated" : Updated = value.ToDate
                         Case "users" : Wiki.Users.Count = CInt(value)
-
                     End Select
 
                 Catch ex As SystemException
-                    App.ShowError(Result.FromException(ex).Wrap(Msg("error-configvalue", key, source)))
+                    Log.Write(Result.FromException(ex).Wrap(Msg("error-configvalue", key, source)).LogMessage)
                 End Try
             Next mainProp
         End Sub
@@ -444,7 +435,7 @@ Namespace Huggle
                 For Each abuseFilter As AbuseFilter In Wiki.AbuseFilters.All
                     Dim item As New Dictionary(Of String, Object)
 
-                    If abuseFilter.Actions.Count > 0 Then item.Add("actions", abuseFilter.Actions)
+                    If abuseFilter.Actions.Count > 0 Then item.Add("actions", abuseFilter.Actions.Join(", "))
                     If abuseFilter.Description IsNot Nothing Then item.Add("description", abuseFilter.Description)
                     If abuseFilter.IsDeleted Then item.Add("deleted", True)
                     If abuseFilter.IsEnabled Then item.Add("enabled", True)
@@ -612,6 +603,7 @@ Namespace Huggle
             If Wiki.LicenseUrl <> def.Wiki.LicenseUrl Then items.Add("license-url", Wiki.LicenseUrl)
             If Wiki.MainPage IsNot def.Wiki.MainPage Then items.Add("main-page", Wiki.MainPage)
             If Wiki.Preferences IsNot Nothing Then items.Add("preferences", Wiki.Preferences)
+            If Updated <> Date.MinValue Then items.Add("updated", Updated)
 
             If target = ConfigTarget.Local Then
                 If ExtraConfigLoaded Then items.Add("extra-config-loaded", True)
@@ -624,7 +616,6 @@ Namespace Huggle
         Public Function Copy(ByVal wiki As Wiki) As WikiConfig
             Dim result As New WikiConfig(wiki)
             result.ReadConfig(Config.MakeConfig(WriteConfig(ConfigTarget.Local)))
-            result.IsDefault = IsDefault
             Return result
         End Function
 

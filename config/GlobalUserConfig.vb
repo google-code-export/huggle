@@ -19,10 +19,7 @@ Namespace Huggle
 
         Public Sub New(ByVal globalUser As GlobalUser)
             Me.GlobalUser = globalUser
-            IsDefault = True
         End Sub
-
-        Public Property IsDefault() As Boolean
 
         Protected Overrides ReadOnly Property Location() As String
             Get
@@ -49,11 +46,13 @@ Namespace Huggle
                             Next group
 
                         Case "home" : GlobalUser.PrimaryUser = App.Wikis(value).Users(GlobalUser.Name)
-                        Case "id" : GlobalUser.Id = value.ToInteger
+                        Case "id" : GlobalUser.Id = CInt(value)
 
                         Case "rights"
                             GlobalUser.Rights.Clear()
                             GlobalUser.Rights.AddRange(value.ToList.Trim)
+
+                        Case "updated" : Updated = value.ToDate
 
                         Case "users"
                             GlobalUser.Users.Clear()
@@ -82,38 +81,36 @@ Namespace Huggle
                     Log.Write(Msg("error-configvalue", item.Key, "globaluser"))
                 End Try
             Next item
-
-            If Not GlobalUser.IsDefault Then IsDefault = False
         End Sub
 
         Public Overrides Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
             Dim items As New Dictionary(Of String, Object)
+            If target <> ConfigTarget.Local Then Return items
 
             items.Add("auto-unified-login", AutoUnifiedLogin)
 
-            If target = ConfigTarget.Local Then
-                If GlobalUser.Created > Date.MinValue Then items.Add("created", WikiTimestamp(GlobalUser.Created))
-                If Extra Then items.Add("extra", True)
-                If GlobalUser.GlobalGroups.Count > 0 Then items.Add("groups", GlobalUser.GlobalGroups.Join(","))
-                If GlobalUser.Home IsNot Nothing Then items.Add("home", GlobalUser.Home.Code)
-                If GlobalUser.Id > 0 Then items.Add("id", GlobalUser.Id)
-                If GlobalUser.Rights.Count > 0 Then items.Add("rights", GlobalUser.Rights.Join(","))
+            If GlobalUser.Created > Date.MinValue Then items.Add("created", WikiTimestamp(GlobalUser.Created))
+            If Extra Then items.Add("extra", True)
+            If GlobalUser.GlobalGroups IsNot Nothing Then items.Add("groups", GlobalUser.GlobalGroups.Join(","))
+            If GlobalUser.Home IsNot Nothing Then items.Add("home", GlobalUser.Home.Code)
+            If GlobalUser.Id > 0 Then items.Add("id", GlobalUser.Id)
+            If GlobalUser.Rights IsNot Nothing Then items.Add("rights", GlobalUser.Rights.Join(","))
+            If Updated > Date.MinValue Then items.Add("updated", Updated)
 
-                If GlobalUser.Users.Count > 0 Then
-                    Dim userItems As New Dictionary(Of String, Object)
+            If GlobalUser.Users.Count > 0 Then
+                Dim userItems As New Dictionary(Of String, Object)
 
-                    For Each user As User In GlobalUser.Users
-                        Dim item As New Dictionary(Of String, Object)
+                For Each user As User In GlobalUser.Users
+                    Dim item As New Dictionary(Of String, Object)
 
-                        If user.Contributions > 0 Then item.Add("contribs", user.Contributions)
-                        If user.UnificationDate > Date.MinValue Then item.Add("merged", WikiTimestamp(user.UnificationDate))
-                        If user.UnificationMethod <> "login" Then item.Add("method", user.UnificationMethod)
+                    If user.Contributions > 0 Then item.Add("contribs", user.Contributions)
+                    If user.UnificationDate > Date.MinValue Then item.Add("merged", WikiTimestamp(user.UnificationDate))
+                    If user.UnificationMethod <> "login" Then item.Add("method", user.UnificationMethod)
 
-                        userItems.Add(user.Wiki.Code, item)
-                    Next user
+                    userItems.Add(user.Wiki.Code, item)
+                Next user
 
-                    items.Add("users", userItems)
-                End If
+                items.Add("users", userItems)
             End If
 
             Return items
@@ -122,7 +119,6 @@ Namespace Huggle
         Public Function Copy(ByVal globalUser As GlobalUser) As GlobalUserConfig
             Dim result As New GlobalUserConfig(globalUser)
             result.ReadConfig(Config.MakeConfig(WriteConfig(ConfigTarget.Local)))
-            result.IsDefault = IsDefault
             Return result
         End Function
 

@@ -236,9 +236,9 @@ Namespace Huggle
             End Get
         End Property
 
-        Public ReadOnly Property Message(ByVal Name As String) As String
+        Public ReadOnly Property Message(ByVal name As String) As String
             Get
-                If Messages.ContainsKey(Name) Then Return Messages(Name) Else Return Nothing
+                If Messages.ContainsKey(name) Then Return Messages(name) Else Return Nothing
             End Get
         End Property
 
@@ -424,7 +424,6 @@ Namespace Huggle
 
         Public Sub New()
             _Default = New Wiki("default")
-            _Default.Config.IsDefault = True
             _Default.IsDefault = True
             _Default.IsHidden = True
         End Sub

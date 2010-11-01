@@ -3,7 +3,7 @@ Imports System.Text.RegularExpressions
 
 Namespace Huggle
 
-    'Represents blocking/unblocking of a user
+    'Represents a change in block settings
 
     Public Class Block : Inherits LogItem
 

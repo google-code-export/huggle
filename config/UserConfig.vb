@@ -14,7 +14,6 @@ Namespace Huggle
         Private User As User
 
         Public Sub New(ByVal user As User)
-            _IsDefault = True
             Me.User = user
         End Sub
 
@@ -63,8 +62,6 @@ Namespace Huggle
                 Return PathCombine("user", GetValidFileName(User.FullName))
             End Get
         End Property
-
-        Public Property IsDefault() As Boolean
 
         Public ReadOnly Property IsWatch(ByVal key As String) As Boolean
             Get
@@ -157,6 +154,7 @@ Namespace Huggle
                         Case "revert-rollback" : RevertRollback = value.ToBoolean
                         Case "revert-speedy" : RevertSpeedy = value.ToBoolean
                         Case "semi-ignore-after" : SemiIgnoreAfter = CInt(value)
+                        Case "updated" : Updated = value.ToDate
                         Case "watch"
                     End Select
 
@@ -203,6 +201,7 @@ Namespace Huggle
             If RevertRollback <> def.RevertRollback Then items.Add("revert-rollback", RevertRollback)
             If RevertSpeedy <> def.RevertSpeedy Then items.Add("revert-speedy", RevertSpeedy)
             If SemiIgnoreAfter <> def.SemiIgnoreAfter Then items.Add("semi-ignore-after", SemiIgnoreAfter)
+            If Updated > Date.MinValue Then items.Add("updated", Updated)
 
             If target = ConfigTarget.Local AndAlso Not User.IsDefault Then
                 If User.DisplayName <> User.Name Then items.Add("display-name", User.DisplayName)
@@ -241,19 +240,8 @@ Namespace Huggle
         Public Function Copy(ByVal user As User) As UserConfig
             Dim result As New UserConfig(user)
             result.ReadConfig(Config.MakeConfig(WriteConfig(ConfigTarget.Local)))
-            result.IsDefault = IsDefault
             Return result
         End Function
-
-        Public Overrides Sub LoadLocal()
-            If Not LocalMissing Then MyBase.LoadLocal()
-            If Not IsLoaded Then LocalMissing = True
-        End Sub
-
-        Public Overrides Sub SaveLocal()
-            MyBase.SaveLocal()
-            LocalMissing = False
-        End Sub
 
     End Class
 

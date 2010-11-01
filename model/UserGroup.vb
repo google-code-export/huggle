@@ -20,6 +20,12 @@ Namespace Huggle
         Public Property Count() As Integer = -1
         Public Property IsImplicit As Boolean
 
+        Public ReadOnly Property Description As String
+            Get
+                Return Wiki.Message(Name & "-description")
+            End Get
+        End Property
+
         Public ReadOnly Property Name() As String
             Get
                 Return _Name
