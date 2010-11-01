@@ -40,7 +40,7 @@
 
             If OtherLogin.Checked Then
                 _User = Wiki.Users(OtherLogin.Text)
-                User.Password = Scramble(Password.Text, Hash(User))
+                User.Password = Scramble(User.FullName, Password.Text, Hash(User))
             End If
         End Sub
 

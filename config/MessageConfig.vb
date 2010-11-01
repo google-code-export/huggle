@@ -10,9 +10,11 @@ Namespace Huggle
             Me.Language = language
         End Sub
 
-        Protected Overrides Function Location() As String
-            Return PathCombine("messages", GetValidFileName(Language.Code & ".txt"))
-        End Function
+        Protected Overrides ReadOnly Property Location() As String
+            Get
+                Return PathCombine("messages", GetValidFileName(Language.Code))
+            End Get
+        End Property
 
         Public Overrides Sub Load(ByVal text As String)
             MyBase.Load(text)

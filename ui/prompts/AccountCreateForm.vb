@@ -55,7 +55,7 @@ Namespace Huggle.UI
         Private Sub OK_Click() Handles OK.Click
             _NewUser = Session.Wiki.Users.FromString(Username.Text)
 
-            NewUser.Password = Scramble(Password.Text, Hash(NewUser))
+            NewUser.Password = Scramble(Session.User.FullName, Password.Text, Hash(NewUser))
             If Confirmation IsNot Nothing Then Confirmation.Answer = ConfirmInput.Text
             Session.Wiki.CurrentConfirmation = Nothing
 

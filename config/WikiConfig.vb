@@ -11,6 +11,7 @@ Namespace Huggle
 
         Private _ExtraLoader As ExtraWikiConfig
 
+        Private LocalMissing As Boolean
         Private Wiki As Wiki
 
         Private ReadOnly IgnoredMessages As String() = {
@@ -116,11 +117,15 @@ Namespace Huggle
 
         Public Property IsDefault() As Boolean
 
-        Public Property IsLocalCopy() As Boolean
-
         Public ReadOnly Property IsMinor(ByVal action As String) As Boolean
             Get
                 Return Minor.Contains(action)
+            End Get
+        End Property
+
+        Protected Overrides ReadOnly Property Location() As String
+            Get
+                Return Path.Combine("wiki", GetValidFileName(Wiki.Code))
             End Get
         End Property
 
@@ -131,49 +136,51 @@ Namespace Huggle
         End Property
 
         Private Function PriorityListLocation() As String
-            Return Path.Combine("wiki", "priority-" & GetValidFileName(Wiki.Code) & ".txt")
+            Return Path.Combine("wiki", "priority-" & GetValidFileName(Wiki.Code))
         End Function
 
-        Protected Overrides Function Location() As String
-            Return Path.Combine("wiki", GetValidFileName(Wiki.Code) & ".txt")
-        End Function
+        Public Overrides Sub LoadLocal()
+            If Not LocalMissing Then MyBase.LoadLocal()
+            If Not IsLoaded Then LocalMissing = True
+        End Sub
 
         Public Overrides Sub Load(ByVal text As String)
             MyBase.Load(text)
+            If IsDefault Then Return
 
-            If Not IsDefault Then
-                ReportPages.Merge(VandalReportPage)
-                ReportPages.Merge(ReportUserPage)
+            ReportPages.Merge(VandalReportPage)
+            ReportPages.Merge(ReportUserPage)
 
-                If RevertSummaryRollback IsNot Nothing Then RevertSummaryRollback = RevertSummaryRollback.FormatWith("$1", "$2")
+            If RevertSummaryRollback IsNot Nothing Then RevertSummaryRollback = RevertSummaryRollback.FormatWith("$1", "$2")
 
-                If Wiki.Messages.ContainsKey("undo-summary") Then
-                    RevertPatterns.Add(New Regex(FormatMwMessage(EscapeMwMessage(WikiStripSummary(Wiki.Message("undo-summary"))), _
-                        "(?<rvdrev>.+?)", "(?<rvduser>.+?)"), RegexOptions.Compiled))
+            If Wiki.Messages.ContainsKey("undo-summary") Then
+                RevertPatterns.Add(New Regex(FormatMwMessage(EscapeMwMessage(WikiStripSummary(Wiki.Message("undo-summary"))), _
+                    "(?<rvdrev>.+?)", "(?<rvduser>.+?)"), RegexOptions.Compiled))
 
-                    If RevertSummaryUndo Is Nothing Then RevertSummaryUndo = FormatMwMessage(Wiki.Message("undo-summary"), "{0}", "{1}")
-                End If
-
-                If Wiki.Messages.ContainsKey("revertpage") Then
-                    RevertPatterns.Add(New Regex(FormatMwMessage(EscapeMwMessage(WikiStripSummary(Wiki.Message("revertpage"))), _
-                        "(?<olduser>.+?)", "(?<rvduser>.+?)"), RegexOptions.Compiled))
-                    If RevertSummaryRollback Is Nothing Then RevertSummaryRollback = Wiki.Message("revertpage")
-                End If
-
-                If SummaryTag IsNot Nothing Then SummaryTag = " " & SummaryTag.Trim
-
-                Wiki.Users.Anonymous.Groups.Add(Wiki.UserGroups("*"))
-                Wiki.Users.Anonymous.Rights.AddRange(Wiki.UserGroups("*").Rights)
-
-                Wiki.IsPublicEditable = Wiki.UserGroups("*").Rights.Contains("edit")
-                Wiki.IsPublicReadable = Wiki.UserGroups("*").Rights.Contains("read")
-
-                SetFeedPatterns()
+                If RevertSummaryUndo Is Nothing Then RevertSummaryUndo =
+                    FormatMwMessage(Wiki.Message("undo-summary"), "{0}", "{1}")
             End If
+
+            If Wiki.Messages.ContainsKey("revertpage") Then
+                RevertPatterns.Add(New Regex(FormatMwMessage(EscapeMwMessage(WikiStripSummary(Wiki.Message("revertpage"))),
+                    "(?<olduser>.+?)", "(?<rvduser>.+?)"), RegexOptions.Compiled))
+                If RevertSummaryRollback Is Nothing Then RevertSummaryRollback = Wiki.Message("revertpage")
+            End If
+
+            If SummaryTag IsNot Nothing Then SummaryTag = " " & SummaryTag.Trim
+
+            Wiki.Users.Anonymous.Groups.Add(Wiki.UserGroups("*"))
+            Wiki.Users.Anonymous.Rights.AddRange(Wiki.UserGroups("*").Rights)
+
+            Wiki.IsPublicEditable = Wiki.UserGroups("*").Rights.Contains("edit")
+            Wiki.IsPublicReadable = Wiki.UserGroups("*").Rights.Contains("read")
+
+            SetFeedPatterns()
         End Sub
 
         Public Overrides Sub SaveLocal()
             MyBase.SaveLocal()
+            LocalMissing = False
             If Wiki.Pages.Priority IsNot Nothing Then Config.SaveFile(PriorityListLocation, Wiki.Pages.Priority.Join(LF))
         End Sub
 
@@ -431,7 +438,7 @@ Namespace Huggle
             'This improves startup time
 
             'Abuse filters
-            If target = ConfigTarget.Local AndAlso Wiki.AbuseFilters.All.Count > 0 Then
+            If Wiki.AbuseFilters.All.Count > 0 Then
                 Dim abuseFilters As New Dictionary(Of String, Object)
 
                 For Each abuseFilter As AbuseFilter In Wiki.AbuseFilters.All

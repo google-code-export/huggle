@@ -10,11 +10,15 @@ Namespace Huggle
 
     Public MustInherit Class Config
 
+        Private Shared _BaseLocation As String
+        Private Shared _Global As GlobalConfig
+        Private Shared _Local As LocalConfig
+
         Private _IsLoaded As Boolean
 
-        Private Shared ReadOnly UpdateInterval As New TimeSpan(12, 0, 0)
+        Private Shared ReadOnly UpdateInterval As New TimeSpan(0, 1, 0)
 
-        Protected MustOverride Function Location() As String
+        Protected MustOverride ReadOnly Property Location() As String
         Protected MustOverride Sub ReadConfig(ByVal text As String)
         Public MustOverride Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
 
@@ -22,26 +26,30 @@ Namespace Huggle
 
         Public Shared ReadOnly Property [Global] As GlobalConfig
             Get
-                Static config As New GlobalConfig
-                Return config
+                If _Global Is Nothing Then _Global = New GlobalConfig
+                Return _Global
             End Get
         End Property
 
         Public Shared ReadOnly Property Local As LocalConfig
             Get
-                Static config As New LocalConfig
-                Return config
+                If _Local Is Nothing Then _Local = New LocalConfig
+                Return _Local
             End Get
         End Property
 
-        Public Shared Function BaseLocation() As String
-            Static location As String = DetermineBaseLocation()
-            Return location
-        End Function
+        Public Shared ReadOnly Property BaseLocation() As String
+            Get
+                _BaseLocation = DetermineBaseLocation()
+                Return _BaseLocation
+            End Get
+        End Property
 
         Private Shared Function GetValidCloudKey(ByVal str As String) As String
+            Const validKeyChars As String = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_"
+
             For i As Integer = 0 To str.Length - 1
-                If Not Char.IsLetterOrDigit(str(i)) AndAlso Not str(i) = "-" Then str = str.Replace(str(i), "-")
+                If Not validKeyChars.Contains(str(i)) Then str = str.Replace(str(i), "_")
             Next i
 
             Return str
@@ -204,43 +212,60 @@ Namespace Huggle
         Public Sub LoadCloud()
             Dim cloudQuery As New CloudQuery(Config.GetValidCloudKey(Location))
             cloudQuery.Start()
+
             If cloudQuery.IsFailed Then
-                Log.Write(Msg("config-loaderror", cloudQuery.Result.LogMessage))
+                Log.Write(cloudQuery.Result.LogMessage)
             Else
-                Log.Debug(Msg("config-loadcloud", Config.GetValidCloudKey(Location)))
-                Load(cloudQuery.Value)
+                If cloudQuery.Value Is Nothing Then
+                    Log.Debug("Not found in cloud: {0}".FormatWith(Location))
+                Else
+                    Log.Debug("Load from cloud: {0}".FormatWith(Location))
+                    Load(cloudQuery.Value)
+                End If
             End If
         End Sub
 
-        Public Sub LoadLocal()
+        Public Overridable Sub LoadLocal()
             Load(LoadFile(Location))
         End Sub
 
         Public Overridable Sub Load(ByVal text As String)
-            _IsLoaded = True
+            If text Is Nothing Then Return
+
             ReadConfig(text)
+            _IsLoaded = True
         End Sub
 
         Protected Shared Function LoadFile(ByVal location As String) As String
             Try
-                Dim filePath As String = PathCombine(BaseLocation, location)
-
+                Dim filePath As String = PathCombine(BaseLocation, location & ".txt")
                 Dim contents As String = IO.File.ReadAllText(filePath, Encoding.UTF8)
-                Log.Debug("Loaded config: {0}".FormatWith(location))
+
+                Log.Debug("Load from local: {0}".FormatWith(location))
                 Return contents
 
+            Catch ex As FileNotFoundException
+                Log.Debug("Not found in local: {0}".FormatWith(location))
+
+            Catch ex As DirectoryNotFoundException
+                Log.Debug("Not found in local: {0}".FormatWith(location))
+
             Catch ex As SystemException
-                Log.Write(Result.FromException(ex).Wrap(Msg("config-loaderror", location)).LogMessage)
-                Return Nothing
+                Log.Write(Result.FromException(ex).Wrap(Msg("config-localloaderror", location)).LogMessage)
             End Try
+
+            Return Nothing
         End Function
 
         Public Sub SaveCloud()
             Dim cloudQuery As New CloudStore(Config.GetValidCloudKey(Location), Save(ConfigTarget.Cloud))
             cloudQuery.Start()
-            If cloudQuery.IsFailed _
-                Then Log.Write(Msg("config-saveerror", cloudQuery.Result.LogMessage)) _
-                Else Log.Debug(Msg("config-savecloud", Config.GetValidCloudKey(Location)))
+
+            If cloudQuery.IsFailed Then
+                Log.Write(cloudQuery.Result.LogMessage)
+            Else
+                Log.Debug("Save to cloud: {0}".FormatWith(Location))
+            End If
         End Sub
 
         Public Overridable Sub SaveLocal()
@@ -253,16 +278,16 @@ Namespace Huggle
 
         Protected Shared Sub SaveFile(ByVal location As String, ByVal contents As String)
             Try
-                Dim filePath As String = PathCombine(Config.BaseLocation, location)
+                Dim filePath As String = PathCombine(Config.BaseLocation, location & ".txt")
 
                 If Not Directory.Exists(Path.GetDirectoryName(filePath)) _
                     Then Directory.CreateDirectory(Path.GetDirectoryName(filePath))
 
                 IO.File.WriteAllText(filePath, contents, Encoding.UTF8)
-                Log.Debug("Saved config: {0}".FormatWith(location))
+                Log.Debug("Save to local: {0}".FormatWith(location))
 
             Catch ex As SystemException
-                Log.Write(Result.FromException(ex).Wrap(Msg("config-saveerror", location)).LogMessage)
+                Log.Write(Result.FromException(ex).Wrap(Msg("config-localsaveerror", location)).LogMessage)
             End Try
         End Sub
 

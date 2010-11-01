@@ -24,7 +24,8 @@
             globalUsers.Start()
             If globalUsers.IsFailed Then OnFail(globalUsers.Result) : Return
 
-            GlobalUser.Config.Extra = True
+            Log.Debug("Load from wiki: globaluser\{0}".FormatWith(GlobalUser.FullName))
+            GlobalUser.Config.Updated = Date.UtcNow
             GlobalUser.Config.SaveLocal()
 
             OnSuccess()

@@ -17,8 +17,8 @@ Namespace Huggle.UI
 
             If logo IsNot Nothing Then
                 Try
-                    If logo.ThumbKnown(128) Then
-                        WikiLogo.Image = New Bitmap(logo.Thumb(128))
+                    If logo.ThumbKnown(135) Then
+                        WikiLogo.Image = New Bitmap(logo.Thumb(135))
                         WikiLogo.Height = WikiLogo.Image.Height
                     End If
 

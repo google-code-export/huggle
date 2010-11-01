@@ -38,6 +38,8 @@
             Me.UserToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
             Me.UserChangeGroups = New System.Windows.Forms.ToolStripMenuItem()
             Me.RevisionToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+            Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
+            Me.QueryWindowToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
             Me.HelpToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
             Me.HelpManual = New System.Windows.Forms.ToolStripMenuItem()
             Me.ToolStripSeparator4 = New System.Windows.Forms.ToolStripSeparator()
@@ -45,8 +47,8 @@
             Me.OuterPanel = New System.Windows.Forms.ToolStripContainer()
             Me.LogSplit = New System.Windows.Forms.EnhancedSplitContainer()
             Me.QueueSplit = New System.Windows.Forms.EnhancedSplitContainer()
-            Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
-            Me.QueryWindowToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+            Me.MaintenanceToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+            Me.ClearCloudToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
             Me.MenuBar.SuspendLayout()
             Me.OuterPanel.ContentPanel.SuspendLayout()
             Me.OuterPanel.SuspendLayout()
@@ -65,7 +67,7 @@
             '
             'SystemMenu
             '
-            Me.SystemMenu.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SystemLogout, Me.SystemExit})
+            Me.SystemMenu.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SystemLogout, Me.MaintenanceToolStripMenuItem, Me.SystemExit})
             Me.SystemMenu.Name = "SystemMenu"
             Me.SystemMenu.Size = New System.Drawing.Size(57, 20)
             Me.SystemMenu.Text = "System"
@@ -73,13 +75,13 @@
             'SystemLogout
             '
             Me.SystemLogout.Name = "SystemLogout"
-            Me.SystemLogout.Size = New System.Drawing.Size(115, 22)
+            Me.SystemLogout.Size = New System.Drawing.Size(152, 22)
             Me.SystemLogout.Text = "Log out"
             '
             'SystemExit
             '
             Me.SystemExit.Name = "SystemExit"
-            Me.SystemExit.Size = New System.Drawing.Size(115, 22)
+            Me.SystemExit.Size = New System.Drawing.Size(152, 22)
             Me.SystemExit.Text = "Exit"
             '
             'WikiToolStripMenuItem
@@ -151,6 +153,19 @@
             Me.RevisionToolStripMenuItem.Size = New System.Drawing.Size(63, 20)
             Me.RevisionToolStripMenuItem.Text = "Revision"
             '
+            'ToolStripMenuItem1
+            '
+            Me.ToolStripMenuItem1.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.QueryWindowToolStripMenuItem})
+            Me.ToolStripMenuItem1.Name = "ToolStripMenuItem1"
+            Me.ToolStripMenuItem1.Size = New System.Drawing.Size(51, 20)
+            Me.ToolStripMenuItem1.Text = "Query"
+            '
+            'QueryWindowToolStripMenuItem
+            '
+            Me.QueryWindowToolStripMenuItem.Name = "QueryWindowToolStripMenuItem"
+            Me.QueryWindowToolStripMenuItem.Size = New System.Drawing.Size(153, 22)
+            Me.QueryWindowToolStripMenuItem.Text = "Query Window"
+            '
             'HelpToolStripMenuItem
             '
             Me.HelpToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.HelpManual, Me.ToolStripSeparator4, Me.HelpAbout})
@@ -216,18 +231,18 @@
             Me.QueueSplit.SplitterDistance = 200
             Me.QueueSplit.TabIndex = 0
             '
-            'ToolStripMenuItem1
+            'MaintenanceToolStripMenuItem
             '
-            Me.ToolStripMenuItem1.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.QueryWindowToolStripMenuItem})
-            Me.ToolStripMenuItem1.Name = "ToolStripMenuItem1"
-            Me.ToolStripMenuItem1.Size = New System.Drawing.Size(51, 20)
-            Me.ToolStripMenuItem1.Text = "Query"
+            Me.MaintenanceToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ClearCloudToolStripMenuItem})
+            Me.MaintenanceToolStripMenuItem.Name = "MaintenanceToolStripMenuItem"
+            Me.MaintenanceToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+            Me.MaintenanceToolStripMenuItem.Text = "Maintenance"
             '
-            'QueryWindowToolStripMenuItem
+            'ClearCloudToolStripMenuItem
             '
-            Me.QueryWindowToolStripMenuItem.Name = "QueryWindowToolStripMenuItem"
-            Me.QueryWindowToolStripMenuItem.Size = New System.Drawing.Size(153, 22)
-            Me.QueryWindowToolStripMenuItem.Text = "Query Window"
+            Me.ClearCloudToolStripMenuItem.Name = "ClearCloudToolStripMenuItem"
+            Me.ClearCloudToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+            Me.ClearCloudToolStripMenuItem.Text = "Clear Cloud"
             '
             'MainForm
             '
@@ -276,5 +291,7 @@
         Friend WithEvents AssessPageToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
         Friend WithEvents ToolStripMenuItem1 As System.Windows.Forms.ToolStripMenuItem
         Friend WithEvents QueryWindowToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+        Friend WithEvents MaintenanceToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+        Friend WithEvents ClearCloudToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     End Class
 End Namespace

@@ -59,7 +59,7 @@ Namespace Huggle.Actions
 
             If Not Session.User.IsAnonymous Then
                 'Time zone options
-                If Config.Global.TimeZones.Count = 0 Then
+                If Config.Global.TimeZones IsNot Nothing Then
                     Dim zoneTable As String = Nothing
 
                     If prefsReq.Response.Contains("id=""mw-input-timecorrection""") Then
@@ -73,6 +73,7 @@ Namespace Huggle.Actions
                     End If
 
                     If zoneTable IsNot Nothing Then
+                        Dim zones As New Dictionary(Of String, Integer)
                         zoneTable = zoneTable.FromFirst(">").ToFirst("</select>")
 
                         For Each item As String In zoneTable.Split("<option ")
@@ -81,10 +82,12 @@ Namespace Huggle.Actions
 
                                 If item.StartsWith("ZoneInfo|") Then
                                     item = item.FromFirst("|")
-                                    Config.Global.TimeZones.Merge(item.FromFirst("|"), CInt(item.ToFirst("|")))
+                                    zones.Merge(item.FromFirst("|"), CInt(item.ToFirst("|")))
                                 End If
                             End If
                         Next item
+
+                        Config.Global.TimeZones = zones
                     End If
                 End If
 
@@ -178,12 +181,14 @@ Namespace Huggle.Actions
             End If
 
             Wiki.Config.ExtraConfigLoaded = True
-            User.Config.IsLocalCopy = False
+            Wiki.Config.Updated = Date.UtcNow
+
             User.Config.SaveLocal()
-            Wiki.Config.IsLocalCopy = False
             Wiki.Config.SaveLocal()
             Config.Global.SaveLocal()
-            If User.GlobalUser IsNot Nothing Then User.GlobalUser.Config.SaveLocal()
+            If User.IsUnified Then User.GlobalUser.Config.SaveLocal()
+
+            If InternalConfig.UseCloud Then CreateThread(AddressOf Wiki.Config.SaveCloud)
 
             OnSuccess()
         End Sub

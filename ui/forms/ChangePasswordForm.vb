@@ -28,7 +28,7 @@ Namespace Huggle.UI
         Private Sub OK_Click() Handles OK.Click
             If NewPassword.Text <> RetypePassword.Text Then App.ShowError(New Result(Msg("changepassword-mismatch"))) : Return
 
-            Dim process As New ChangePassword(Session, Scramble(NewPassword.Text, Hash(Session.User)))
+            Dim process As New ChangePassword(Session, Scramble(Session.User.FullName, NewPassword.Text, Hash(Session.User)))
             App.UserWaitForProcess(process)
             If process.IsErrored Then App.ShowError(process.Result)
 

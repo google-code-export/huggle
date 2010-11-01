@@ -79,6 +79,7 @@ Namespace Huggle
 
                     Writer.WriteLine(message.Time.ToShortDateString & " " & message.Time.ToLongTimeString _
                         & "." & message.Time.Millisecond.ToString.PadLeft(3, "0"c) & " - " & message.Message)
+                    Writer.Flush()
 
                 Catch ex As SystemException
                     HandleFileLogError(ex)

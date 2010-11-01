@@ -1,4 +1,5 @@
-﻿Imports System
+﻿Imports Huggle.UI
+Imports System
 Imports System.Collections.Generic
 Imports System.Drawing
 Imports System.IO
@@ -19,7 +20,6 @@ Namespace Huggle
         Public Property Feed As Boolean = True
         Public Property IsFirstRun As Boolean = True
         Public Property LastLogin As User
-        Public Property LoginSecure As Boolean
         Public Property LogToFile As Boolean = True
         Public Property ManualProxySettings As Boolean
         Public Property Proxy As IWebProxy
@@ -27,18 +27,28 @@ Namespace Huggle
         Public Property ProxyPort As Integer
         Public Property RcFeeds As Boolean = True
         Public Property SavePasswords As Boolean = True
+        Public Property SecureLogin As Boolean
         Public Property Uid As String
         Public Property UpdateState As Integer
         Public Property WindowLocation As Point
         Public Property WindowMaximized As Boolean = True
         Public Property WindowSize As Size
 
-        Protected Overrides Function Location() As String
-            Return "config"
-        End Function
+        Protected Overrides ReadOnly Property Location() As String
+            Get
+                Return "config"
+            End Get
+        End Property
 
         Protected Overrides Sub ReadConfig(ByVal text As String)
             If Config.Global.IsLoaded Then LoadAfterGlobal(text) Else LoadBeforeGlobal(text)
+        End Sub
+
+        Public Overrides Sub Load(ByVal text As String)
+            MyBase.Load(text)
+
+            If ManualProxySettings Then Proxy = New WebProxy(ProxyHost, ProxyPort)
+            If Uid Is Nothing Then Uid = Guid.NewGuid.ToString
         End Sub
 
         Private Sub LoadBeforeGlobal(ByVal text As String)
@@ -62,8 +72,6 @@ Namespace Huggle
                     Log.Write(Msg("error-configvalue", name, "local") & ": " & ex.GetType.Name)
                 End Try
             Next item
-
-            If Uid Is Nothing Then Uid = Guid.NewGuid.ToString
         End Sub
 
         Private Sub LoadAfterGlobal(ByVal text As String)
@@ -94,8 +102,8 @@ Namespace Huggle
                                     Else LastLogin = App.Wikis(wikiCode).Users.FromString(user)
                             End If
 
-                        Case "login-secure" : LoginSecure = value.ToBoolean
                         Case "save-passwords" : SavePasswords = value.ToBoolean
+                        Case "secure-login" : SecureLogin = value.ToBoolean
                         Case "window-location" : WindowLocation = New Point(CInt(value.ToFirst(",")), CInt(value.FromFirst(",")))
                         Case "window-maximized" : WindowMaximized = value.ToBoolean
                         Case "window-size" : WindowSize = New Size(CInt(value.ToFirst(",")), CInt(value.FromFirst(",")))
@@ -116,15 +124,13 @@ Namespace Huggle
             items.Add("detect-proxy", DetectProxySettings)
             items.Add("first-run", IsFirstRun)
             items.Add("language", App.Languages.Current.Code)
-            items.Add("login-secure", LoginSecure)
             If LastLogin IsNot Nothing Then items.Add("last-login", LastLogin.FullName)
             items.Add("log-file", LogToFile)
             items.Add("manual-proxy", ManualProxySettings)
             items.Add("save-passwords", SavePasswords)
+            items.Add("secure-login", SecureLogin)
+            items.Add("ui-state", GetUIState)
             items.Add("uid", Uid)
-            items.Add("window-location", WindowLocation.X.ToString & "," & WindowLocation.Y.ToString)
-            items.Add("window-maximized", WindowMaximized)
-            items.Add("window-size", WindowSize.Width.ToString & "," & WindowSize.Width.ToString)
 
             Dim accounts As New Dictionary(Of String, Object)
 
@@ -141,6 +147,19 @@ Namespace Huggle
             If accounts.Count > 0 Then items.Add("accounts", accounts)
 
             Return items
+        End Function
+
+        Private Function GetUIState() As Dictionary(Of String, Object)
+            Dim formConfig As New Dictionary(Of String, Object)
+
+            For Each winForm As Form In Windows.Forms.Application.OpenForms
+                If Not (TypeOf winForm Is HuggleForm) Then Continue For
+
+                Dim form As HuggleForm = CType(winForm, HuggleForm)
+                If form.GetKey IsNot Nothing Then formConfig.Merge(form.GetKey, form.GetState)
+            Next winForm
+
+            Return formConfig
         End Function
 
     End Class

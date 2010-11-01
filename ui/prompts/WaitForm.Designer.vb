@@ -23,32 +23,19 @@
         'Do not modify it using the code editor.
         <System.Diagnostics.DebuggerStepThrough()> _
         Private Sub InitializeComponent()
-            Me.Indicator = New WaitControl
-            Me.Label = New System.Windows.Forms.Label
-            Me.Cancel = New System.Windows.Forms.Button
+            Me.Indicator = New Huggle.UI.WaitControl()
+            Me.Cancel = New System.Windows.Forms.Button()
             Me.SuspendLayout()
             '
             'Indicator
             '
-            Me.Indicator.Location = New System.Drawing.Point(12, 14)
-            Me.Indicator.MaximumSize = New System.Drawing.Size(16, 16)
-            Me.Indicator.MinimumSize = New System.Drawing.Size(16, 16)
+            Me.Indicator.Location = New System.Drawing.Point(12, 12)
             Me.Indicator.Name = "Indicator"
-            Me.Indicator.Size = New System.Drawing.Size(16, 16)
+            Me.Indicator.Size = New System.Drawing.Size(105, 16)
             Me.Indicator.TabIndex = 0
             Me.Indicator.TabStop = False
-            '
-            'Label
-            '
-            Me.Label.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-                        Or System.Windows.Forms.AnchorStyles.Left) _
-                        Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-            Me.Label.AutoSize = True
-            Me.Label.Location = New System.Drawing.Point(34, 15)
-            Me.Label.Name = "Label"
-            Me.Label.Size = New System.Drawing.Size(10, 13)
-            Me.Label.TabIndex = 1
-            Me.Label.Text = " "
+            Me.Indicator.Text = "Foo"
+            Me.Indicator.TextPosition = Huggle.UI.WaitControl.WaitTextPosition.Horizontal
             '
             'Cancel
             '
@@ -68,7 +55,6 @@
             Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
             Me.ClientSize = New System.Drawing.Size(274, 74)
             Me.Controls.Add(Me.Cancel)
-            Me.Controls.Add(Me.Label)
             Me.Controls.Add(Me.Indicator)
             Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog
             Me.KeyPreview = True
@@ -79,11 +65,9 @@
             Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
             Me.Text = "Please wait"
             Me.ResumeLayout(False)
-            Me.PerformLayout()
 
         End Sub
         Private WithEvents Cancel As System.Windows.Forms.Button
         Private WithEvents Indicator As WaitControl
-        Private WithEvents Label As System.Windows.Forms.Label
     End Class
 End Namespace

@@ -9,20 +9,11 @@ Namespace Huggle.UI
 
         Private _Cancelled As Boolean
 
-        Private Available As Boolean
         Private Message As String
 
         Public Sub New(ByVal message As String)
             InitializeComponent()
             Me.Message = message
-        End Sub
-
-        Private Sub _HandleCreated() Handles Me.HandleCreated
-            Available = True
-        End Sub
-
-        Private Sub _HandleDestroyed() Handles Me.HandleDestroyed
-            Available = False
         End Sub
 
         Private Sub _Load() Handles Me.Load
@@ -52,17 +43,15 @@ Namespace Huggle.UI
         End Sub
 
         Public Sub SetMessage(ByVal message As String)
-            If Not Available Then Return
+            If Not IsAvailable Then Return
 
-            Label.Text = message
+            Indicator.Text = message
 
             'Resize to accommodate message
-            Width = Math.Max(280, Label.Width + 60)
-            Height = Math.Max(100, Label.Height + 80)
+            Width = Math.Max(280, Indicator.Width + 60)
+            Height = Math.Max(100, Indicator.Height + 80)
 
-            'Center on screen
-            Left = Screen.FromControl(Me).Bounds.Width \ 2 - Width \ 2
-            Top = Screen.FromControl(Me).Bounds.Height \ 2 - Height \ 2
+            CenterToScreen()
         End Sub
 
         Private Sub Cancel_Click() Handles Cancel.Click

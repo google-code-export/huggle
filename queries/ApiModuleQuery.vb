@@ -29,16 +29,16 @@ Namespace Huggle.Actions
 
             Dim queryModules As New List(Of String)
             'queryModules.Merge(CoreListModules)
-            'queryModules.Merge(CoreMetaModules)
+            queryModules.Merge(CoreMetaModules)
 
             'Extension modules
             If Wiki.Extensions.Contains(Extension.SiteMatrix) Then modules.Merge("sitematrix")
             If Wiki.Extensions.Contains(Extension.OpenSearch) Then modules.Merge("opensearch")
 
             'Extension query modules
-            'If Wiki.Extensions.Contains(Extension.AbuseFilter) Then queryModules.Merge({"abuselog", "abusefilters"})
-            'If Wiki.Extensions.Contains(Extension.GlobalBlocking) Then queryModules.Merge("globalblocks")
-            'If Wiki.Extensions.Contains(Extension.UnifiedLogin) Then queryModules.Merge("globaluserinfo")
+            If Wiki.Extensions.Contains(Extension.AbuseFilter) Then queryModules.Merge({"abuselog", "abusefilters"})
+            If Wiki.Extensions.Contains(Extension.GlobalBlocking) Then queryModules.Merge("globalblocks")
+            If Wiki.Extensions.Contains(Extension.UnifiedLogin) Then queryModules.Merge("globaluserinfo")
 
             'Workaround MediaWiki API bug 25248
             modules.Remove("userrights")

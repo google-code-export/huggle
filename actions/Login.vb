@@ -9,16 +9,17 @@ Namespace Huggle.Actions
 
     Public Class Login : Inherits Query
 
-        Private ForceAnonymous As Boolean
+        Private Anonymous As Boolean
         Private Requester As String
         Private Response As LoginResponse
+        Private SendingToken As Boolean
 
-        Private Shared ReadOnly KnownErrors As String() = _
+        Private Shared ReadOnly KnownErrors As String() =
             {"emptypass", "illegal", "noname", "notexists", "throttled", "wrongpass", "wrongtoken"}
 
         Public Sub New(ByVal session As Session, ByVal requester As String)
             MyBase.New(session, Msg("login-desc"))
-            ForceAnonymous = session.User.IsAnonymous
+            Anonymous = session.User.IsAnonymous
             Me.Requester = requester
         End Sub
 
@@ -31,8 +32,7 @@ Namespace Huggle.Actions
             If Session.IsActive Then OnSuccess() : Return
 
             'Let global config finish preloading. If it wasn't preloading, load it.
-            Config.Global.Loader.Interactive = False
-            If Config.Global.IsDefault Then Config.Global.Loader.Start()
+            If Not Config.Global.IsLoaded Then Config.Global.Loader.Start()
 
             If Config.Global.Loader.IsRunning Then
                 OnProgress(Msg("config-progress"))
@@ -45,7 +45,7 @@ Namespace Huggle.Actions
             If Wiki.Family IsNot Nothing AndAlso Wiki.Family.Feed IsNot Nothing _
                 AndAlso Not Wiki.Family.Feed.ConnectionAttempted Then Wiki.Family.Feed.Connect()
 
-            If Not ForceAnonymous AndAlso Session.User.IsAnonymous Then
+            If Session.User.IsAnonymous AndAlso Not Anonymous Then
                 If Not Interactive Then OnFail(Msg("login-noaccount", Wiki)) : Return
 
                 'Prompt the user to select an account to use
@@ -56,8 +56,8 @@ Namespace Huggle.Actions
             End If
 
             'Load cached config
-            If Wiki.Config.IsDefault Then Wiki.Config.LoadLocal()
-            If User.Config.IsDefault Then User.Config.LoadLocal()
+            If Not Wiki.Config.IsLoaded Then Wiki.Config.LoadLocal()
+            If Not User.Config.IsLoaded Then User.Config.LoadLocal()
 
             'Automatically select a unified account where possible
             If Not Session.User.IsAnonymous AndAlso Session.User.GlobalUser IsNot Nothing _
@@ -85,7 +85,7 @@ Namespace Huggle.Actions
             If Not User.IsAnonymous AndAlso Not Session.IsActive Then DoLogin()
             If IsFailed Then Return
 
-            If User.IsUnified AndAlso User.GlobalUser.Config.IsDefault Then User.GlobalUser.Config.LoadLocal()
+            If User.IsUnified AndAlso Not User.GlobalUser.Config.IsLoaded Then User.GlobalUser.Config.LoadLocal()
 
             'Load config from wiki if necessary
             If Not Wiki.Config.IsCurrent OrElse Not User.Config.IsCurrent Then
@@ -100,17 +100,15 @@ Namespace Huggle.Actions
         End Sub
 
         Private Sub DoLogin()
-            Static sendingToken As Boolean
-
             OnProgress(Msg("login-progress", User.FullName))
 
             'Construct query
-            Dim req As New ApiRequest(Session, Description, New QueryString( _
-                "action", "login", _
-                "lgname", User.Name, _
-                "lgpassword", Unscramble(User.Password, Hash(User))))
+            Dim req As New ApiRequest(Session, Description, New QueryString(
+                "action", "login",
+                "lgname", User.Name,
+                "lgpassword", Unscramble(User.FullName, User.Password, Hash(User))))
 
-            If sendingToken Then req.Query.Add("lgtoken", Response.Token)
+            If Response IsNot Nothing Then req.Query.Add("lgtoken", Response.Token)
 
             'Log in
             req.Start()
@@ -118,31 +116,35 @@ Namespace Huggle.Actions
             Response = req.LoginResponse
 
             'Handle login errors
-            If Response.Result = "needtoken" Then
-                If sendingToken Then
-                    OnFail(Msg("login-error-tokenrejected"))
-                ElseIf Response.Token Is Nothing Then
-                    OnFail(Msg("login-error-notoken"))
-                Else
-                    'Try again, send the token this time
-                    sendingToken = True
-                    DoLogin() : Return
-                End If
+            Select Case Response.Result
+                Case "success"
+                    Session.IsActive = True
 
-            ElseIf Response.Result = "throttled" Then
-                OnFail(Msg("login-error-throttled", FuzzyTime(Response.Wait)))
+                Case "needtoken"
+                    If SendingToken Then
+                        'Our token was not recieved correctly
+                        OnFail(Msg("login-error-tokenrejected"))
 
-            ElseIf KnownErrors.Contains(Response.Result) Then
-                OnFail(Msg("login-error-" & Response.Result))
+                    ElseIf Response.Token Is Nothing Then
+                        'Need token, but they didn't give us one
+                        OnFail(Msg("login-error-notoken"))
+                    Else
+                        'Try again, send the token this time
+                        SendingToken = True
+                        DoLogin() : Return
+                    End If
 
-            ElseIf Response.Result <> "success" Then
-                OnFail(Msg("login-error-unknown", Response.Result))
-            End If
+                Case "throttled"
+                    OnFail(Msg("login-error-throttled", FuzzyTime(Response.Wait)))
 
-            If Response.Result <> "success" Then Session.IsActive = False : Return
+                Case Else : If KnownErrors.Contains(Response.Result) _
+                    Then OnFail(Msg("login-error-" & Response.Result)) _
+                    Else OnFail(Msg("login-error-unknown", Response.Result))
+            End Select
 
+            If IsFailed Then Return
+            
             Log.Debug("Logged in {0}".FormatWith(User.FullName))
-            Session.IsActive = True
 
             'Check cookies for unified account
             If Wiki.Family IsNot Nothing Then
@@ -151,13 +153,14 @@ Namespace Huggle.Actions
                         Dim globalUser As GlobalUser = Wiki.Family.GlobalUsers(User.Name)
                         User.GlobalUser = globalUser
 
-                        If globalUser.Config.IsDefault Then globalUser.Config.LoadLocal()
+                        If Not globalUser.Config.IsLoaded Then globalUser.Config.LoadLocal()
                         globalUser.Cookies.Add(cookie)
                         globalUser.IsActive = True
                         globalUser.Users.Merge(User)
                         globalUser.Wikis.Merge(User.Wiki)
 
                         Wiki.Family.ActiveGlobalUser = User.GlobalUser
+                        Exit For
                     End If
                 Next cookie
             End If
@@ -173,9 +176,10 @@ Namespace Huggle.Actions
                 If Interactive Then
                     Dim copyable As New List(Of User)
 
-                    For Each user As User In Wiki.Users.All
-                        If user.IsUsed AndAlso Not user.IsAnonymous Then copyable.Add(user)
-                    Next user
+                    For Each otherUser As User In Wiki.Users.All
+                        If otherUser.IsUsed AndAlso Not otherUser.IsAnonymous AndAlso otherUser IsNot User _
+                            Then copyable.Add(otherUser)
+                    Next otherUser
 
                     If copyable.Count > 0 Then
                         Dim form As New AccountCopyForm(User)

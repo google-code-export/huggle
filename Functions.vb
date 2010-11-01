@@ -5,6 +5,7 @@ Imports System.Collections
 Imports System.Collections.Generic
 Imports System.Drawing
 Imports System.IO
+Imports System.IO.Compression
 Imports System.Security.Cryptography
 Imports System.Text
 Imports System.Text.RegularExpressions
@@ -14,7 +15,6 @@ Imports System.Windows.Forms
 
 Namespace Huggle
 
-    <Diagnostics.DebuggerStepThrough()>
     Public Module Functions
 
         Public ReadOnly CRLF As String = Convert.ToChar(13) & Convert.ToChar(10)
@@ -41,6 +41,34 @@ Namespace Huggle
         End Function
 
         Public Delegate Function Expression() As Boolean
+
+        Public Function Compress(ByVal data As Byte()) As Byte()
+            Dim output As New MemoryStream
+            Dim compressStream As New GZipStream(output, CompressionMode.Compress)
+            compressStream.Write(data, 0, data.Length)
+            Return output.ToArray
+        End Function
+
+        Public Function Uncompress(ByVal data As Byte()) As Byte()
+            Try
+                Dim decompressStream As New GZipStream(New MemoryStream(data), CompressionMode.Decompress)
+                Dim output() As Byte
+                Dim total As Integer = 0
+                Dim read As Integer = 0
+
+                Do
+                    ReDim Preserve output(total + 256)
+                    read = decompressStream.Read(output, total, 256)
+                    total += read
+                Loop Until read = 0
+
+                ReDim Preserve output(total - 1)
+                Return output
+
+            Catch ex As InvalidDataException
+                Return Nothing
+            End Try
+        End Function
 
         Public Function PathCombine(ByVal ParamArray components As String()) As String
             If components.Length = 0 Then Return ""
@@ -172,12 +200,20 @@ Namespace Huggle
             Diagnostics.Process.Start(url.ToString)
         End Sub
 
-        Public Function Scramble(ByVal data As String, ByVal key As Byte()) As Byte()
-            Return ProtectedData.Protect(Encoding.UTF8.GetBytes(data), key, DataProtectionScope.CurrentUser)
+        Public Function Scramble(ByVal source As String, ByVal data As String, ByVal key As Byte()) As Byte()
+            Return ProtectedData.Protect(Encoding.UTF8.GetBytes(data), key, DataProtectionScope.LocalMachine)
         End Function
 
-        Public Function Unscramble(ByVal data As Byte(), ByVal key As Byte()) As String
-            Return Encoding.UTF8.GetString(ProtectedData.Unprotect(data, key, DataProtectionScope.CurrentUser))
+        Public Function Unscramble(ByVal source As String, ByRef data As Byte(), ByVal key As Byte()) As String
+            If data Is Nothing Then Return Nothing
+
+            Try
+                Return Encoding.UTF8.GetString(ProtectedData.Unprotect(data, key, DataProtectionScope.LocalMachine))
+            Catch ex As CryptographicException
+                Log.Debug("Discarded unreadable stored password for {0}".FormatWith(source))
+                data = Nothing
+                Return Nothing
+            End Try
         End Function
 
         Public Function WikiUrl(ByVal wiki As Wiki, ByVal title As String, ByVal ParamArray params As String()) As Uri

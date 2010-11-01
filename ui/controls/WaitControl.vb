@@ -1,12 +1,15 @@
 ﻿Imports Huggle.Actions
 Imports System
 Imports System.Collections.Generic
+Imports System.ComponentModel
 Imports System.Drawing
 Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Class WaitControl : Inherits UserControl
+    Class WaitControl : Inherits Control
+
+        Private _TextPosition As WaitTextPosition
 
         Private WithEvents Timer As New Timer
 
@@ -22,9 +25,19 @@ Namespace Huggle.UI
         Private Callback As ProcessDelegate
 
         Public Sub New()
-            InitializeComponent()
             TabStop = False
         End Sub
+
+        <DefaultValue(WaitTextPosition.None)>
+        Public Property TextPosition As WaitTextPosition
+            Get
+                Return _TextPosition
+            End Get
+            Set(ByVal value As WaitTextPosition)
+                _TextPosition = value
+                _TextChanged()
+            End Set
+        End Property
 
         Private Sub _HandleCreated() Handles Me.HandleCreated
             CanRender = True
@@ -35,9 +48,6 @@ Namespace Huggle.UI
                     Brushes.Add(pen.Brush)
                 End Using
             Next i
-
-            Gfx = BufferedGraphicsManager.Current.Allocate(CreateGraphics, DisplayRectangle)
-            Gfx.Graphics.SmoothingMode = Drawing2D.SmoothingMode.HighQuality
         End Sub
 
         Private Sub _HandleDestroyed() Handles Me.HandleDestroyed
@@ -50,28 +60,55 @@ Namespace Huggle.UI
             If CanRender Then Gfx.Render()
         End Sub
 
-        Private Sub InitializeComponent()
-            Me.SuspendLayout()
-            Me.Size = New System.Drawing.Size(16, 16)
-            Me.ResumeLayout(False)
+        Private Sub _Resize() Handles Me.Resize
+            Gfx = BufferedGraphicsManager.Current.Allocate(CreateGraphics, DisplayRectangle)
+            Gfx.Graphics.SmoothingMode = Drawing2D.SmoothingMode.HighQuality
+        End Sub
+
+        Private Sub _TextChanged() Handles Me.TextChanged
+            Select Case TextPosition
+                Case WaitTextPosition.None
+                    Width = 16
+                    Height = 16
+
+                Case WaitTextPosition.Horizontal
+                    Width = 80 + TextRenderer.MeasureText(Text, Font).Width
+                    Height = 16
+
+                Case WaitTextPosition.Vertical
+                    Size = TextRenderer.MeasureText(Text, Font, Size.Empty, TextFormatFlags.VerticalCenter)
+            End Select
         End Sub
 
         Private Sub Timer_Tick() Handles Timer.Tick
-            Const Frames As Integer = 8
-
             Gfx.Graphics.Clear(BackColor)
-
-            For i As Integer = 0 To Frames
-                Dim r As Double = (i / Frames) * 2 * Math.PI
-                Dim x As Single = CSng(AnimationSize * (1 + Math.Sin(r)))
-                Dim y As Single = CSng(AnimationSize * (1 + Math.Cos(r)))
-
-                Gfx.Graphics.FillEllipse(Brushes((i + Frame) Mod Frames), x, y, 3.5, 3.5)
-            Next i
-
             Frame = (Frame + 1) Mod Frames
 
+            Select Case TextPosition
+                Case WaitTextPosition.None
+                    DrawSpinner(8, 8)
+
+                Case WaitTextPosition.Horizontal
+                    DrawSpinner(8, 8)
+                    TextRenderer.DrawText(Gfx.Graphics, Text, Font, New Point(20, 1), ForeColor, BackColor)
+
+                Case WaitTextPosition.Vertical
+                    DrawSpinner(Width \ 2, 8)
+                    TextRenderer.DrawText(Gfx.Graphics, Text, Font, New Rectangle(0, 21, Width, Height - 20),
+                        ForeColor, BackColor, TextFormatFlags.VerticalCenter)
+            End Select
+
             If CanRender Then Gfx.Render()
+        End Sub
+
+        Private Sub DrawSpinner(ByVal x As Integer, ByVal y As Integer)
+            For i As Integer = 0 To Frames
+                Dim r As Double = (i / Frames) * 2 * Math.PI
+                Dim ax As Single = x - 8 + CSng(AnimationSize * (1 + Math.Sin(r)))
+                Dim ay As Single = y - 8 + CSng(AnimationSize * (1 + Math.Cos(r)))
+
+                Gfx.Graphics.FillEllipse(Brushes((i + Frame) Mod Frames), ax, ay, 3.5, 3.5)
+            Next i
         End Sub
 
         Public Sub Start()
@@ -103,6 +140,10 @@ Namespace Huggle.UI
             [Stop]()
             Callback(AttachedProcess)
         End Sub
+
+        Public Enum WaitTextPosition As Integer
+            : None : Horizontal : Vertical
+        End Enum
 
     End Class
 

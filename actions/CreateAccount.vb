@@ -45,8 +45,8 @@ Namespace Huggle.Actions
 
             Dim data As New QueryString(
                 "wpName", NewUser.Name,
-                "wpPassword", Unscramble(NewUser.Password, Hash(NewUser)),
-                "wpRetype", Unscramble(NewUser.Password, Hash(NewUser)),
+                "wpPassword", Unscramble(NewUser.FullName, NewUser.Password, Hash(NewUser)),
+                "wpRetype", Unscramble(NewUser.FullName, NewUser.Password, Hash(NewUser)),
                 "wpRemember", 1,
                 "wpCreateaccount", "Create account")
 

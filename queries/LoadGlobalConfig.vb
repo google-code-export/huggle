@@ -20,19 +20,14 @@ Namespace Huggle.Actions
 
             'Get cached config from the cloud
             If InternalConfig.UseCloud Then
-                Dim cloudQuery As New CloudQuery("global")
-                cloudQuery.Start()
+                Config.Global.LoadCloud()
 
-                If cloudQuery.IsFailed Then
-                    Log.Write(Msg("query-cloud-error", cloudQuery.Result.LogMessage))
+                If Config.Global.IsCurrent Then
+                    Config.Global.SaveLocal()
+                    OnSuccess()
+                    Return
                 Else
-                    Config.Global.Load(cloudQuery.Value)
-
-                    If Config.Global.IsCurrent Then
-                        Config.Global.SaveLocal()
-                        OnSuccess()
-                        Return
-                    End If
+                    Log.Debug("Outdated in cloud: global")
                 End If
             End If
 
@@ -65,11 +60,11 @@ Namespace Huggle.Actions
             If wikiRequest.Result.IsError Then OnFail(wikiRequest.Result) : Return
 
             If Not configPage.Exists OrElse String.IsNullOrEmpty(configPage.Text) _
-                Then OnFail(Msg("globalconfig-notfound", Config.Global.PageTitle, App.Wikis.Global)) : Return
+                Then OnFail(Msg("config-globalnotfound")) : Return
 
             Try
                 Config.Global.Load(configPage.Text)
-                Log.Debug("Loaded global config [R]")
+                Log.Debug("Load from wiki: global")
 
             Catch ex As ConfigException
                 OnFail(Result.FromException(ex)) : Return
@@ -78,7 +73,7 @@ Namespace Huggle.Actions
             If languagePage.Exists Then
                 Try
                     App.Languages.Current.GetConfig.Load(languagePage.Text)
-                    Log.Debug("Loaded messages for '{0}' [R]".FormatWith(App.Languages.Current.Name))
+                    Log.Debug("Loaded messages for '{0}' from wiki".FormatWith(App.Languages.Current.Name))
 
                 Catch ex As ConfigException
                     Log.Write(Msg("language-loadfail", App.Languages.Current.Name, _

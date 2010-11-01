@@ -76,6 +76,7 @@ Namespace Huggle
                         Return
                     End Try
 
+                    request.AllowAutoRedirect = False
                     request.AutomaticDecompression = DecompressionMethods.GZip
                     request.CookieContainer = Cookies
                     request.KeepAlive = False
@@ -138,7 +139,8 @@ Namespace Huggle
                                 Case Else
                                     'Get error code description from enum, break it into words
                                     Result = New Result(Msg("error-http", CInt(statusCode),
-                                        Regex.Replace(statusCode.ToString, "([A-Z])", " $1").Trim), "httperror")
+                                        Regex.Replace(statusCode.ToString, "([A-Z])", " $1").Trim),
+                                        "httperror-" & statusCode)
                             End Select
 
                         Case WebExceptionStatus.Timeout
