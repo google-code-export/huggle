@@ -6,9 +6,9 @@ Namespace Huggle
 
     Public Class InternalConfig
 
-        'Settings here are hardcoded and not user-editable; they are kept in a common place for convenience
+        'Settings here are hardcoded and not user-editable
+        'They are kept in a common place for convenience
 
-        Public Shared Property CloudKey As String = "25f3a3bb6875a21508c452345ba61d7e" 'md5("huggle")
         Public Shared Property CloudUrl As New Uri("http://api.openkeyval.org/")
         Public Shared Property DownloadUrl As New Uri("http://code.google.com/p/huggle")
         Public Shared Property FeedbackUrl As New Uri("http://en.wikipedia.org/wiki/Wikipedia:Huggle/Feedback")

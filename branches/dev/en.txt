@@ -1,7 +1,4 @@
-﻿cloud-queryerror:                Cloud query error: {0}
-cloud-storeerror:                Cloud store error: {0}
-
-form-firstrun-language:          Language:
+﻿form-firstrun-language:          Language:
 form-firstrun-translate:         If your native language is not listed or only partially translated, you can {0}.
 form-firstrun-translatelink:     help with translation
 form-firstrun-proxy:             Connect to the Internet through a proxy server
@@ -135,13 +132,17 @@ setprefs-desc:                   Save preferences for {0}
 
 pageinfo-desc:					 Load details of page '{0}'
 
-config-proxy:					 Detecting proxy settings
-config-progress:				     Updating configuration
+config-baddata:                  Discarded unreadable data
 config-desc:			             Update configuration
-config-saveerror:                Error saving configuration '{0}'
-config-loaderror:                Error loading configuration '{0}'
-config-savecloud:                Saved configuration '{0}' to cloud
-config-loadcloud:                Loaded configuration '{0}' from cloud
+config-progress:				     Updating configuration
+config-proxy:					 Detecting proxy settings
+config-localloaderror:           Error loading '{0}' from local storage
+config-localsaveerror:           Error saving '{0}' to local storage
+config-cloudloaderror:           Error loading '{0}' from shared storage
+config-cloudsaveerror:           Error saving '{0}' to shared storage
+config-wikiloaderror:            Error loading '{0}' from wiki
+config-wikisaveerror:            Error saving '{0}' to wiki
+config-globalnotfound:           Unable to locate global configuration
 
 wikiconfig-apimodulesdisabled:   WARNING: The following API modules are disabled on this wiki. Features may be unavailable or fail to work correctly.
 
@@ -1129,7 +1130,6 @@ globalconfig-progress:     Updating configuration
 globalconfig-proxy:        Detecting proxy settings
 globalconfig-fail:         Failed to load global configuration
 globalconfig-savefail:     Failed to save local cache of global configuration: {0}
-globalconfig-notfound:     Global configuration page '{0}' on wiki '{1}' not found
 
 history-fail:              Failed to retrieve history of '{0}'
 history-progress:          Retrieving history of '{0}' ({1})

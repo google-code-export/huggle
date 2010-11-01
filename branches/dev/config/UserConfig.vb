@@ -10,6 +10,7 @@ Namespace Huggle
 
     Public Class UserConfig : Inherits Config
 
+        Private LocalMissing As Boolean
         Private User As User
 
         Public Sub New(ByVal user As User)
@@ -57,13 +58,13 @@ Namespace Huggle
         Public Property SemiIgnoreAfter As Integer
         Public Property Watch As New List(Of String)
 
-        Protected Overrides Function Location() As String
-            Return PathCombine("user", GetValidFileName(User.FullName & ".txt"))
-        End Function
+        Protected Overrides ReadOnly Property Location() As String
+            Get
+                Return PathCombine("user", GetValidFileName(User.FullName))
+            End Get
+        End Property
 
         Public Property IsDefault() As Boolean
-
-        Public Property IsLocalCopy() As Boolean
 
         Public ReadOnly Property IsWatch(ByVal key As String) As Boolean
             Get
@@ -243,6 +244,16 @@ Namespace Huggle
             result.IsDefault = IsDefault
             Return result
         End Function
+
+        Public Overrides Sub LoadLocal()
+            If Not LocalMissing Then MyBase.LoadLocal()
+            If Not IsLoaded Then LocalMissing = True
+        End Sub
+
+        Public Overrides Sub SaveLocal()
+            MyBase.SaveLocal()
+            LocalMissing = False
+        End Sub
 
     End Class
 

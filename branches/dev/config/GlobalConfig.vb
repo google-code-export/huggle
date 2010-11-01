@@ -16,15 +16,19 @@ Namespace Huggle
         Public Property DownloadLocation As String
         Public Property LatestVersion As Version
         Public Property ScaryPattern As Regex
-        Public Property TimeZones As New Dictionary(Of String, Integer)
+        Public Property TimeZones As Dictionary(Of String, Integer)
         Public Property TopWiki As Wiki
         Public Property WikiConfigPageTitle As String
 
         Private _Loader As LoadGlobalConfig
 
-        Public Property IsDefault() As Boolean = True
+        Public Sub New()
+            DownloadLocation = InternalConfig.DownloadUrl.ToString
+            LatestVersion = App.Version
+            WikiConfigPageTitle = "Project:Huggle/Config"
+        End Sub
 
-        Public ReadOnly Property Loader() As LoadGlobalConfig
+        Public ReadOnly Property Loader As LoadGlobalConfig
             Get
                 If _Loader Is Nothing Then _Loader = New LoadGlobalConfig
                 Return _Loader
@@ -37,15 +41,17 @@ Namespace Huggle
             End Get
         End Property
 
+        Protected Overrides ReadOnly Property Location() As String
+            Get
+                Return "global"
+            End Get
+        End Property
+
         Public ReadOnly Property PageTitle() As String
             Get
                 Return "Huggle/test config"
             End Get
         End Property
-
-        Protected Overrides Function Location() As String
-            Return "global"
-        End Function
 
         Protected Overrides Sub ReadConfig(ByVal text As String)
             For Each item As KVP In Config.ParseConfig("global", Nothing, text)
@@ -82,11 +88,13 @@ Namespace Huggle
                         Case "scary-pattern" : ScaryPattern = New Regex(value)
 
                         Case "time-zones"
-                            TimeZones.Clear()
+                            Dim zones As New Dictionary(Of String, Integer)
 
                             For Each zone As KVP In Config.ParseConfig("global", key, value)
-                                TimeZones.Merge(zone.Key, CInt(zone.Value))
+                                zones.Merge(zone.Key, CInt(zone.Value))
                             Next zone
+
+                            TimeZones = zones
 
                         Case "top-wiki" : TopWiki = App.Wikis(value)
                         Case "updated" : Updated = value.ToDate
@@ -99,8 +107,6 @@ Namespace Huggle
                     App.ShowError(Result.FromException(ex).Wrap(Msg("error-configvalue", key, "global")))
                 End Try
             Next item
-
-            _IsDefault = False
         End Sub
 
         Private Sub LoadWikis(ByVal key As String, ByVal value As String)
@@ -166,7 +172,7 @@ Namespace Huggle
             items.Add("auto-unified-login", AutoUnifiedLogin)
             items.Add("download-location", DownloadLocation)
             items.Add("scary-pattern", ScaryPattern)
-            If TimeZones.Count > 0 Then items.Add("time-zones", TimeZones.ToDictionary(Of String, Object))
+            If TimeZones IsNot Nothing Then items.Add("time-zones", TimeZones.ToDictionary(Of String, Object))
             If TopWiki IsNot Nothing Then items.Add("top-wiki", TopWiki.Code)
             items.Add("version", LatestVersion)
             items.Add("wikiconfig-page", WikiConfigPageTitle)

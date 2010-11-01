@@ -17,9 +17,11 @@ Namespace Huggle
             Me.Family = family
         End Sub
 
-        Protected Overrides Function Location() As String
-            Return PathCombine("family", GetValidFileName(Family.Code & ".txt"))
-        End Function
+        Protected Overrides ReadOnly Property Location() As String
+            Get
+                Return PathCombine("family", GetValidFileName(Family.Code))
+            End Get
+        End Property
 
         Public Shared Sub LoadAll()
             For Each family As Family In App.Families.All

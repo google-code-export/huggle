@@ -29,12 +29,6 @@ Namespace Huggle
 
             ServicePointManager.Expect100Continue = False
             ServicePointManager.DefaultConnectionLimit = 4
-            HttpWebRequest.DefaultWebProxy = Nothing
-
-            Config.Global.DownloadLocation = InternalConfig.DownloadUrl.ToString
-            Config.Global.IsDefault = True
-            Config.Global.LatestVersion = Version
-            Config.Global.WikiConfigPageTitle = "Project:Huggle/Config"
 
             'This information needs to be hardcoded so that the global configuration can be located
             Dim metaWiki As Wiki = Wikis("meta")
@@ -61,14 +55,12 @@ Namespace Huggle
             End If
 
             'Detect proxy settings if necessary
-            If Config.Local.DetectProxySettings Then UserWaitForProcess _
-                (New GeneralProcess(Msg("config-proxy"), AddressOf GetProxy))
-
-            If Config.Local.ManualProxySettings Then Config.Local.Proxy =
-                New WebProxy(Config.Local.ProxyHost, Config.Local.ProxyPort)
+            If Config.Local.DetectProxySettings Then UserWaitForProcess(
+                New GeneralProcess(Msg("config-proxy"), AddressOf GetProxy))
 
             'Load global config if out of date
             If Not Config.Global.IsCurrent Then
+                Log.Debug("Outdated in local: global")
                 UserWaitForProcess(Config.Global.Loader, Nothing, True)
                 If Config.Global.Loader.IsFailed Then Return
             End If
@@ -83,6 +75,8 @@ Namespace Huggle
 
             'Login automatically if configured to do so
             If Config.Local.AutoLogin AndAlso Config.Local.LastLogin IsNot Nothing Then
+                Log.Debug("Automatically logging in as {0}".FormatWith(Config.Local.LastLogin.FullName))
+
                 Dim user As User = Config.Local.LastLogin
                 user.Config.LoadLocal()
 
@@ -101,6 +95,8 @@ Namespace Huggle
             While True
                 'Show login form
                 If mainSession Is Nothing Then
+                    Log.Debug("Prompt for login")
+
                     Using loginForm As New LoginForm
                         If loginForm.ShowDialog <> DialogResult.OK Then Return
                         mainSession = loginForm.Session

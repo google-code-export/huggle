@@ -512,7 +512,7 @@
     <Compile Include="queries_old\UserDetailQuery.vb" />
     <Compile Include="scripting\Evaluator.vb" />
     <Compile Include="ui\controls\WaitControl.vb">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="ui\prompts\FirstRunForm.Designer.vb">
       <DependentUpon>FirstRunForm.vb</DependentUpon>

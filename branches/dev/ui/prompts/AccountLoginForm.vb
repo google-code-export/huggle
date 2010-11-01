@@ -16,7 +16,7 @@ Namespace Huggle.UI
 
         Private Sub _FormClosing() Handles Me.FormClosing
             If DialogResult = DialogResult.OK Then
-                User.Password = Scramble(Password.Text, Hash(User))
+                User.Password = Scramble(User.FullName, Password.Text, Hash(User))
                 User.Config.RememberPassword = RememberPassword.Checked
             End If
         End Sub
@@ -34,4 +34,5 @@ Namespace Huggle.UI
         End Sub
 
     End Class
+
 End Namespace

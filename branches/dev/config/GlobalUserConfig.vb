@@ -24,11 +24,11 @@ Namespace Huggle
 
         Public Property IsDefault() As Boolean
 
-        Public Property IsLocalCopy() As Boolean
-
-        Protected Overrides Function Location() As String
-            Return PathCombine("globaluser", GetValidFileName(GlobalUser.FullName & ".txt"))
-        End Function
+        Protected Overrides ReadOnly Property Location() As String
+            Get
+                Return PathCombine("globaluser", GetValidFileName(GlobalUser.FullName))
+            End Get
+        End Property
 
         Protected Overrides Sub ReadConfig(ByVal text As String)
             For Each item As KVP In Config.ParseConfig("globaluser", Nothing, text)

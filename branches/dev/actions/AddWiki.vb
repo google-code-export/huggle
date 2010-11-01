@@ -79,7 +79,7 @@ Namespace Huggle.Actions
                 _User = Wiki.Users.FromString(Username)
 
                 If User Is Nothing Then OnFail(Msg("usernamecheck-invalid"))
-                User.Password = Scramble(Password, Hash(User))
+                User.Password = Scramble(User.FullName, Password, Hash(User))
 
                 Dim login As New Login(App.Sessions(User), "addwiki")
                 login.Start()

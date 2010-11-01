@@ -50,7 +50,7 @@ Namespace Huggle.UI
                 End If
 
                 RememberMe.Checked = Config.Local.AutoLogin
-                Secure.Checked = Config.Local.LoginSecure
+                Secure.Checked = Config.Local.SecureLogin
 
             Catch ex As SystemException
                 App.ShowError(Result.FromException(ex))
@@ -142,7 +142,7 @@ Namespace Huggle.UI
                     If User.Config.IsDefault Then User.Config.LoadLocal()
 
                     If User.Password IsNot Nothing Then
-                        Password.Text = Unscramble(User.Password, Hash(User))
+                        Password.Text = Unscramble(User.FullName, User.Password, Hash(User))
                         Login.Focus()
                     Else
                         Password.Focus()
@@ -223,13 +223,13 @@ Namespace Huggle.UI
                 (New Result(Msg("login-fail", Msg("login-error-badusername")))) : Return Nothing
 
             If user.DisplayName = user.Name Then user.DisplayName = Account.Text
-            user.Password = Scramble(Password.Text, Hash(user))
+            user.Password = Scramble(user.FullName, Password.Text, Hash(user))
 
             Dim session As Session = App.Sessions(user)
             session.IsSecure = (Secure.Enabled AndAlso Secure.Checked)
 
             Config.Local.LastLogin = user
-            Config.Local.LoginSecure = session.IsSecure
+            Config.Local.SecureLogin = session.IsSecure
             Config.Local.SaveLocal()
 
             Dim loginAction As New Login(session, "Login")
@@ -276,7 +276,7 @@ Namespace Huggle.UI
                     Account.Focus()
                 Else
                     Account.Text = form.User.Name
-                    Password.Text = Unscramble(User.Password, Hash(User))
+                    Password.Text = Unscramble(User.FullName, User.Password, Hash(User))
                     Login.Focus()
                 End If
             End If
@@ -295,7 +295,7 @@ Namespace Huggle.UI
                 'Add new account to list
                 If Not Account.Items.Contains(createForm.NewUser) Then Account.Items.Add(createForm.NewUser)
                 Account.SelectedItem = createForm.NewUser
-                Password.Text = Unscramble(createForm.NewUser.Password, Hash(createForm.NewUser))
+                Password.Text = Unscramble(createForm.NewUser.FullName, createForm.NewUser.Password, Hash(createForm.NewUser))
                 Login.Focus()
             End If
 

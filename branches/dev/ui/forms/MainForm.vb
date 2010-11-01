@@ -1,5 +1,6 @@
 ﻿Imports Huggle.Actions
 Imports System
+Imports System.Collections.Generic
 Imports System.Drawing
 Imports System.Windows.Forms
 
@@ -96,6 +97,25 @@ Namespace Huggle.UI
             Dim form As New AssessForm(Session)
             form.Show()
         End Sub
+
+        Private Sub ClearCloudToolStripMenuItem_Click() Handles ClearCloudToolStripMenuItem.Click
+            Dim req As New CloudStore("global", "-")
+            req.Start()
+        End Sub
+
+        Public Overrides Function GetKey() As String
+            Return "main"
+        End Function
+
+        Public Overrides Function GetState() As Dictionary(Of String, Object)
+            Dim result As New Dictionary(Of String, Object)
+
+            result.Add("location", Location.ToString)
+            result.Add("size", Size.ToString)
+            result.Add("maximized", (WindowState = FormWindowState.Maximized))
+
+            Return result
+        End Function
 
     End Class
 

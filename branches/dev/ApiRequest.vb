@@ -128,7 +128,11 @@ Namespace Huggle
             End If
 
             Cookies = Session.Cookies
-            Log.Write(Query.ToString)
+
+            Dim logString As String = Query.ToString
+            If logString.Length > 80 Then logString = logString.Substring(0, 77) & "..."
+            Log.Debug("API request: {0}".FormatWith(logString))
+
             MyBase.Start()
 
             If IsCancelled Then OnFail(Msg("error-cancelled")) : Return
