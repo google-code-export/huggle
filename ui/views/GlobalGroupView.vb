@@ -1,4 +1,6 @@
-﻿Imports System.Collections.Generic
+﻿Imports Huggle.Actions
+Imports System
+Imports System.Collections.Generic
 Imports System.Windows.Forms
 
 Namespace Huggle.UI
@@ -21,8 +23,8 @@ Namespace Huggle.UI
             End If
         End Sub
 
-        Private Sub QueryComplete(ByVal sender As Actions.Process)
-            If sender.IsSuccess Then
+        Private Sub QueryComplete(ByVal sender As Object, ByVal e As EventArgs(Of Process))
+            If e.Sender.IsSuccess Then
                 Wait.Visible = False
                 Display()
             End If

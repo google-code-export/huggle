@@ -22,7 +22,7 @@ Namespace Huggle.UI
         Private Gfx As BufferedGraphics
 
         Private WithEvents AttachedProcess As Process
-        Private Callback As ProcessDelegate
+        Private Callback As SimpleEventHandler(Of Process)
 
         Public Sub New()
             TabStop = False
@@ -124,10 +124,10 @@ Namespace Huggle.UI
             End If
         End Sub
 
-        Public Sub WaitOn(ByVal process As Process, ByVal callback As ProcessDelegate)
+        Public Sub WaitOn(ByVal process As Process, ByVal callback As SimpleEventHandler(Of Process))
             If process.IsComplete Then
                 [Stop]()
-                callback(process)
+                callback(Me, New EventArgs(Of Process)(process))
             Else
                 If Not process.IsRunning Then CreateThread(AddressOf process.Start)
                 Me.Callback = callback
@@ -138,7 +138,7 @@ Namespace Huggle.UI
 
         Private Sub AttachedProcess_Complete() Handles AttachedProcess.Complete
             [Stop]()
-            Callback(AttachedProcess)
+            Callback(Me, New EventArgs(Of Process)(AttachedProcess))
         End Sub
 
         Public Enum WaitTextPosition As Integer

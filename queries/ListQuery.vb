@@ -33,7 +33,7 @@ Namespace Huggle.Actions
 
         Private Shared ReadOnly Cache As New Dictionary(Of String, CacheItem)
 
-        Public Event ListProgress As EventHandler(Of ListQuery, ListProgressEventArgs)
+        Public Event ListProgress(ByVal sender As Object, ByVal e As ListProgressEventArgs)
 
         Protected Sub New(ByVal session As Session, ByVal inputType As String, ByVal name As String, _
             ByVal prefix As String, ByVal query As QueryString, ByVal description As String)
@@ -305,7 +305,7 @@ Namespace Huggle.Actions
         End Sub
 
         Protected Sub OnListProgress(ByVal message As String, ByVal partialResult As List(Of QueueItem))
-            RaiseEvent ListProgress(Me, New ListProgressEventArgs(message, partialResult))
+            RaiseEvent ListProgress(Me, New ListProgressEventArgs(Me, message, partialResult))
         End Sub
 
         Public Sub SetOptions(ByVal options As Dictionary(Of String, String))
@@ -333,10 +333,12 @@ Namespace Huggle.Actions
 
         Private _Message As String
         Private _PartialResult As List(Of QueueItem)
+        Private _Query As ListQuery
 
-        Public Sub New(ByVal message As String, ByVal partialResult As List(Of QueueItem))
+        Public Sub New(ByVal query As ListQuery, ByVal message As String, ByVal partialResult As List(Of QueueItem))
             _Message = message
             _PartialResult = partialResult
+            _Query = query
         End Sub
 
         Public ReadOnly Property Message() As String
@@ -348,6 +350,12 @@ Namespace Huggle.Actions
         Public ReadOnly Property PartialResult() As List(Of QueueItem)
             Get
                 Return _PartialResult
+            End Get
+        End Property
+
+        Public ReadOnly Property Query As ListQuery
+            Get
+                Return _Query
             End Get
         End Property
 

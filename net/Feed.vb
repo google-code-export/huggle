@@ -7,11 +7,11 @@ Imports System.Threading
 
 Namespace Huggle
 
-    <Diagnostics.DebuggerDisplay("{Server}")> _
+    <Diagnostics.DebuggerDisplay("{Server}")>
     Public Class Feed : Implements IDisposable
 
         Public Shared ReadOnly BasePattern As String = _
-            ":[^ ]+ PRIVMSG (\#[^ ]+) :\cC14\[\[\cC07([^\cC]+)\cC14\]\]\cC4 {0}\cC10 \cC02{1}" & _
+            ":[^ ]+ PRIVMSG (\#[^ ]+) :\cC14\[\[\cC07([^\cC]+)\cC14\]\]\cC4 {0}\cC10 \cC02{1}" &
             "\cC \cC5\*\cC \cC03([^\cC]+)\cC \cC5\*\cC {2} \cc10{3}(?:: ([^\cC]+))?\cC?"
 
         Private Shared ReadOnly AllMatch As New Regex _
@@ -35,7 +35,7 @@ Namespace Huggle
 
         Private ProcessTimer As Timer
 
-        Public Event Action As EventHandler(Of QueueItem)
+        Public Event Action As SimpleEventHandler(Of QueueItem)
 
         Public Sub New(ByVal family As Family, ByVal server As String, ByVal port As Integer)
             _Family = family
@@ -148,62 +148,64 @@ Namespace Huggle
             Username = "h_" & (App.Randomness.Next Mod 1000000).ToString
 
             Try
-                Stream = New TcpClient(Server, Port).GetStream
-                Reader = New StreamReader(Stream, Text.Encoding.UTF8)
-                Writer = New StreamWriter(Stream)
+                Using client As New TcpClient(Server, Port)
+                    Dim stream As NetworkStream = client.GetStream
+                    Reader = New StreamReader(stream, Text.Encoding.UTF8)
+                    Writer = New StreamWriter(stream)
 
-                Writer.WriteLine("USER " & Username & " 8 * :" & Username)
-                Writer.WriteLine("NICK " & Username)
-                Writer.Flush()
+                    Writer.WriteLine("USER " & Username & " 8 * :" & Username)
+                    Writer.WriteLine("NICK " & Username)
+                    Writer.Flush()
 
-                For Each wiki As Wiki In Wikis
-                    AddWiki(wiki)
-                Next wiki
+                    For Each wiki As Wiki In Wikis
+                        AddWiki(wiki)
+                    Next wiki
 
-                Dim message As String = ""
+                    Dim message As String = ""
 
-                While True
-                    While Not Reader.EndOfStream
-                        message = Reader.ReadLine
-                        LastMessageTime = Date.UtcNow
+                    While True
+                        While Not Reader.EndOfStream
+                            message = Reader.ReadLine
+                            LastMessageTime = Date.UtcNow
 
-                        If State = FeedState.Disconnecting Then
-                            Reader.Close()
-                            Writer.Close()
-                            Stream.Close()
-                            State = FeedState.Disconnected
-                            Exit Try
+                            If State = FeedState.Disconnecting Then
+                                Reader.Close()
+                                Writer.Close()
+                                stream.Close()
+                                State = FeedState.Disconnected
+                                Exit Try
 
-                        ElseIf State = FeedState.Reconnecting Then
-                            Reader.Close()
-                            Writer.Close()
-                            Stream.Close()
-                            CallOnMainThread(AddressOf Connect)
-                            Exit Try
+                            ElseIf State = FeedState.Reconnecting Then
+                                Reader.Close()
+                                Writer.Close()
+                                stream.Close()
+                                CallOnMainThread(AddressOf Connect)
+                                Exit Try
 
-                        ElseIf message.StartsWith("ERROR ") Then
-                            If State = FeedState.Connected Then Log.Write(Msg("feed-disconnected"))
-                            State = FeedState.Reconnecting
+                            ElseIf message.StartsWith("ERROR ") Then
+                                If State = FeedState.Connected Then Log.Write(Msg("feed-disconnected"))
+                                State = FeedState.Reconnecting
 
-                        ElseIf message.StartsWith(":" & Server & " 001") AndAlso State = FeedState.Connecting Then
-                            State = FeedState.Connected
-                            Log.Write(Msg("feed-connected"))
+                            ElseIf message.StartsWith(":" & Server & " 001") AndAlso State = FeedState.Connecting Then
+                                State = FeedState.Connected
+                                Log.Write(Msg("feed-connected"))
 
-                        ElseIf message.StartsWith(":" & Server & " 403") Then
-                            Log.Write(Msg("feed-nochannel"))
-                            State = FeedState.Disconnected
+                            ElseIf message.StartsWith(":" & Server & " 403") Then
+                                Log.Write(Msg("feed-nochannel"))
+                                State = FeedState.Disconnected
 
-                        ElseIf message.StartsWith("PING ") Then
-                            Writer.WriteLine("PONG " & message.Substring(5))
-                            Writer.Flush()
+                            ElseIf message.StartsWith("PING ") Then
+                                Writer.WriteLine("PONG " & message.Substring(5))
+                                Writer.Flush()
 
-                        ElseIf message.StartsWith(":rc!~rc@") Then
-                            Messages.Enqueue(message)
-                        End If
+                            ElseIf message.StartsWith(":rc!~rc@") Then
+                                Messages.Enqueue(message)
+                            End If
+                        End While
+
+                        Thread.Sleep(50)
                     End While
-
-                    Thread.Sleep(50)
-                End While
+                End Using
 
             Catch ex As SocketException
                 'Server didn't like the connection; give up
@@ -217,7 +219,7 @@ Namespace Huggle
                         Log.Write(New Result({failMsg, Msg("feed-timeout")}).LogMessage)
 
                     Case Else
-                        Log.Write(New Result({failMsg, Msg("feed-socketerror", CInt(ex.SocketErrorCode), _
+                        Log.Write(New Result({failMsg, Msg("feed-socketerror", CInt(ex.SocketErrorCode),
                             ex.SocketErrorCode.ToString)}).LogMessage)
                 End Select
 
@@ -286,14 +288,14 @@ Namespace Huggle
                     result.Add(rev)
 
                     If rev.IsReviewed Then
-                        Dim review As New Review( _
-                            Auto:=True, _
-                            Comment:=Nothing, _
-                            id:=0, _
-                            rcid:=0, _
-                            Revision:=rev, _
-                            Time:=rev.ApproxTime, _
-                            Type:="newpage-patrol", _
+                        Dim review As New Review(
+                            Auto:=True,
+                            Comment:=Nothing,
+                            id:=0,
+                            rcid:=0,
+                            Revision:=rev,
+                            Time:=rev.ApproxTime,
+                            Type:="newpage-patrol",
                             User:=rev.User)
 
                         rev.Review = review
@@ -319,160 +321,160 @@ Namespace Huggle
 
                     Select Case action
                         Case "delete", "restore"
-                            result.Add(New Deletion( _
-                                action:=action, _
-                                Comment:=groups(5).Value, _
-                                id:=0, _
-                                rcid:=0, _
-                                Page:=wiki.Pages(groups(4).Value), _
-                                Time:=wiki.ServerTime, _
+                            result.Add(New Deletion(
+                                action:=action,
+                                Comment:=groups(5).Value,
+                                id:=0,
+                                rcid:=0,
+                                Page:=wiki.Pages(groups(4).Value),
+                                Time:=wiki.ServerTime,
                                 User:=wiki.Users(groups(3).Value)))
 
                         Case "block"
                             'Ignore autoblocks
-                            If Not groups(3).Value.StartsWith("#") Then result.Add(New Block( _
-                                action:=action, _
-                                anonOnly:=groups(4).Value.Contains("anon. only"), _
-                                autoBlock:=Not groups(4).Value.Contains("autoblock disabled"), _
-                                automatic:=MessageMatch(wiki.Message("autoblocker"), groups(6).Value).Success, _
-                                blockCreation:=groups(4).Value.Contains("account creation disabled"), _
-                                blockEmail:=Not groups(4).Value.Contains("e-mail blocked"), _
-                                blockTalk:=groups(4).Value.Contains("cannot edit own talk page"), _
-                                Comment:=groups(6).Value, _
-                                duration:=groups(5).Value, _
-                                expires:=Date.MinValue, _
-                                id:=0, _
-                                rcid:=0, _
-                                target:=groups(3).Value, _
-                                time:=wiki.ServerTime, _
+                            If Not groups(3).Value.StartsWith("#") Then result.Add(New Block(
+                                action:=action,
+                                anonOnly:=groups(4).Value.Contains("anon. only"),
+                                autoBlock:=Not groups(4).Value.Contains("autoblock disabled"),
+                                automatic:=MessageMatch(wiki.Message("autoblocker"), groups(6).Value).Success,
+                                blockCreation:=groups(4).Value.Contains("account creation disabled"),
+                                blockEmail:=Not groups(4).Value.Contains("e-mail blocked"),
+                                blockTalk:=groups(4).Value.Contains("cannot edit own talk page"),
+                                Comment:=groups(6).Value,
+                                duration:=groups(5).Value,
+                                expires:=Date.MinValue,
+                                id:=0,
+                                rcid:=0,
+                                target:=groups(3).Value,
+                                time:=wiki.ServerTime,
                                 User:=wiki.Users(groups(2).Value)))
 
                         Case "reblock"
-                            result.Add(New Block( _
-                                action:=action, _
+                            result.Add(New Block(
+                                action:=action,
                                 automatic:=MessageMatch(wiki.Message("autoblocker"), groups(7).Value).Success, _
                                 anonOnly:=groups(6).Value.Contains("anon. only"), _
                                 autoBlock:=Not groups(6).Value.Contains("autoblock disabled"), _
                                 blockCreation:=groups(6).Value.Contains("account creation disabled"), _
                                 blockEmail:=Not groups(6).Value.Contains("e-mail blocked"), _
                                 blockTalk:=groups(6).Value.Contains("cannot edit own talk page"), _
-                                Comment:=groups(7).Value, _
-                                duration:="", _
-                                expires:=If(groups(5).Value = "indefinite", Date.MaxValue, CDate(groups(5).Value)), _
-                                id:=0, _
-                                rcid:=0, _
-                                time:=wiki.ServerTime, _
-                                target:=groups(4).Value, _
+                                Comment:=groups(7).Value,
+                                duration:="",
+                                expires:=If(groups(5).Value = "indefinite", Date.MaxValue, CDate(groups(5).Value)),
+                                id:=0,
+                                rcid:=0,
+                                time:=wiki.ServerTime,
+                                target:=groups(4).Value,
                                 User:=wiki.Users(groups(3).Value)))
 
                         Case "move"
-                            Dim move As New Move( _
-                                Comment:=groups(6).Value, _
-                                Destination:=groups(4).Value, _
-                                id:=0, _
-                                rcid:=0, _
-                                Source:=groups(3).Value, _
-                                Time:=wiki.ServerTime, _
+                            Dim move As New Move(
+                                Comment:=groups(6).Value,
+                                Destination:=groups(4).Value,
+                                id:=0,
+                                rcid:=0,
+                                Source:=groups(3).Value,
+                                Time:=wiki.ServerTime,
                                 User:=wiki.Users(groups(2).Value))
 
                             wiki.Pages(move.Source).MovedTo(move.Destination)
                             result.Add(move)
 
                         Case "unblock"
-                            result.Add(New Block( _
-                                action:=action, _
-                                anonOnly:=False, _
-                                autoBlock:=False, _
-                                automatic:=False, _
-                                blockCreation:=False, _
-                                blockEmail:=False, _
-                                blockTalk:=False, _
-                                Comment:=groups(6).Value, _
-                                duration:=Nothing, _
-                                expires:=Date.MinValue, _
-                                id:=0, _
-                                rcid:=0, _
-                                Target:=groups(3).Value, _
-                                Time:=wiki.ServerTime, _
+                            result.Add(New Block(
+                                action:=action,
+                                anonOnly:=False,
+                                autoBlock:=False,
+                                automatic:=False,
+                                blockCreation:=False,
+                                blockEmail:=False,
+                                blockTalk:=False,
+                                Comment:=groups(6).Value,
+                                duration:=Nothing,
+                                expires:=Date.MinValue,
+                                id:=0,
+                                rcid:=0,
+                                Target:=groups(3).Value,
+                                Time:=wiki.ServerTime,
                                 User:=wiki.Users(groups(2).Value)))
 
                         Case "upload", "overwrite"
-                            result.Add(New Upload( _
-                                action:=action, _
-                                Comment:=groups(5).Value, _
-                                File:=groups(4).Value, _
-                                id:=0, _
-                                rcid:=0, _
-                                Time:=wiki.ServerTime, _
+                            result.Add(New Upload(
+                                action:=action,
+                                Comment:=groups(5).Value,
+                                File:=groups(4).Value,
+                                id:=0,
+                                rcid:=0,
+                                Time:=wiki.ServerTime,
                                 User:=wiki.Users(groups(3).Value)))
 
                         Case "protect", "modify"
-                            result.Add(New Protection( _
-                                action:=action, _
-                                Cascade:=False, _
-                                Comment:=groups(11).Value, _
-                                Hidden:=False, _
-                                id:=0, _
-                                rcid:=0, _
-                                Page:=wiki.Pages(groups(4).Value), _
-                                Time:=wiki.ServerTime, _
-                                Levels:=groups(5).Value, _
+                            result.Add(New Protection(
+                                action:=action,
+                                Cascade:=False,
+                                Comment:=groups(11).Value,
+                                Hidden:=False,
+                                id:=0,
+                                rcid:=0,
+                                Page:=wiki.Pages(groups(4).Value),
+                                Time:=wiki.ServerTime,
+                                Levels:=groups(5).Value,
                                 User:=wiki.Users(groups(3).Value)))
 
                         Case "unprotect"
-                            result.Add(New Protection( _
-                                action:=action, _
-                                Cascade:=False, _
-                                Comment:=groups(4).Value, _
-                                Hidden:=False, _
-                                id:=0, _
-                                rcid:=0, _
-                                Page:=wiki.Pages(groups(3).Value), _
-                                Time:=wiki.ServerTime, _
-                                Levels:=Nothing, _
+                            result.Add(New Protection(
+                                action:=action,
+                                Cascade:=False,
+                                Comment:=groups(4).Value,
+                                Hidden:=False,
+                                id:=0,
+                                rcid:=0,
+                                Page:=wiki.Pages(groups(3).Value),
+                                Time:=wiki.ServerTime,
+                                Levels:=Nothing,
                                 User:=wiki.Users(groups(2).Value)))
 
                         Case "create", "autocreate"
                             wiki.Users.NewUsers.Add(wiki.Users(groups(2).Value))
 
-                            result.Add(New UserCreation( _
-                                Auto:=(action = "autocreate"), _
-                                id:=0, _
-                                rcid:=0, _
-                                Time:=wiki.ServerTime, _
+                            result.Add(New UserCreation(
+                                Auto:=(action = "autocreate"),
+                                id:=0,
+                                rcid:=0,
+                                Time:=wiki.ServerTime,
                                 User:=wiki.Users(groups(2).Value)))
 
                         Case "create2"
                             wiki.Users.NewUsers.Add(wiki.Users(groups(3).Value))
 
-                            result.Add(New UserCreation( _
-                                Auto:=False, _
-                                id:=0, _
-                                rcid:=0, _
-                                Time:=wiki.ServerTime, _
+                            result.Add(New UserCreation(
+                                Auto:=False,
+                                id:=0,
+                                rcid:=0,
+                                Time:=wiki.ServerTime,
                                 User:=wiki.Users(groups(2).Value)))
 
                         Case "renameuser"
-                            Dim rename As New UserRename( _
-                                Comment:=groups(6).Value, _
-                                Destination:=groups(4).Value, _
-                                id:=0, _
-                                rcid:=0, _
-                                Source:=groups(3).Value, _
-                                Time:=wiki.ServerTime, _
+                            Dim rename As New UserRename(
+                                Comment:=groups(6).Value,
+                                Destination:=groups(4).Value,
+                                id:=0,
+                                rcid:=0,
+                                Source:=groups(3).Value,
+                                Time:=wiki.ServerTime,
                                 User:=wiki.Users(groups(2).Value))
 
                             wiki.Users(rename.Source).Rename(rename.Destination)
                             result.Add(rename)
 
                         Case "rights"
-                            result.Add(New RightsChange( _
-                                Comment:=groups(6).Value, _
-                                id:=0, _
-                                rcid:=0, _
-                                Rights:=groups(5).Value.ToList.Trim, _
-                                TargetUser:=wiki.Users(groups(3).Value), _
-                                Time:=wiki.ServerTime, _
+                            result.Add(New RightsChange(
+                                Comment:=groups(6).Value,
+                                id:=0,
+                                rcid:=0,
+                                Rights:=groups(5).Value.ToList.Trim,
+                                TargetUser:=wiki.Users(groups(3).Value),
+                                Time:=wiki.ServerTime,
                                 User:=wiki.Users(groups(2).Value)))
 
                         Case "patrol"
@@ -481,14 +483,14 @@ Namespace Huggle
                                 Dim page As Page = wiki.Pages(groups(5).Value)
                                 page.IsPatrolled = True
 
-                                result.Add(New Review( _
-                                    Auto:=False, _
-                                    Comment:="", _
-                                    id:=0, _
-                                    rcid:=0, _
-                                    Revision:=page.FirstRev, _
-                                    Time:=wiki.ServerTime, _
-                                    Type:="newpage-patrol", _
+                                result.Add(New Review(
+                                    Auto:=False,
+                                    Comment:="",
+                                    id:=0,
+                                    rcid:=0,
+                                    Revision:=page.FirstRev,
+                                    Time:=wiki.ServerTime,
+                                    Type:="newpage-patrol",
                                     User:=wiki.Users(groups(3).Value)))
 
                             Else
@@ -496,14 +498,14 @@ Namespace Huggle
                                 Dim rev As Revision = wiki.Revisions(CInt(groups(2).Value))
                                 rev.Page = wiki.Pages(groups(2).Value)
 
-                                result.Add(New Review( _
-                                    Auto:=False, _
-                                    Comment:="", _
-                                    id:=0, _
-                                    rcid:=0, _
-                                    Revision:=rev, _
-                                    Time:=wiki.ServerTime, _
-                                    Type:="patrol", _
+                                result.Add(New Review(
+                                    Auto:=False,
+                                    Comment:="",
+                                    id:=0,
+                                    rcid:=0,
+                                    Revision:=rev,
+                                    Time:=wiki.ServerTime,
+                                    Type:="patrol",
                                     User:=wiki.Users(groups(3).Value)))
                             End If
 
@@ -512,14 +514,14 @@ Namespace Huggle
 
                             rev.Page = wiki.Pages(groups(5).Value)
 
-                            result.Add(New Review( _
-                                Auto:=False, _
-                                Comment:=groups(6).Value, _
-                                id:=0, _
-                                rcid:=0, _
-                                Revision:=rev, _
-                                Time:=wiki.ServerTime, _
-                                Type:=groups(2).Value, _
+                            result.Add(New Review(
+                                Auto:=False,
+                                Comment:=groups(6).Value,
+                                id:=0,
+                                rcid:=0,
+                                Revision:=rev,
+                                Time:=wiki.ServerTime,
+                                Type:=groups(2).Value,
                                 User:=wiki.Users(groups(3).Value)))
 
                         Case Else
@@ -528,7 +530,7 @@ Namespace Huggle
                 End If
 
                 For Each item As QueueItem In result
-                    RaiseEvent Action(Me, item)
+                    RaiseEvent Action(Me, New EventArgs(Of QueueItem)(item))
                 Next item
             End While
         End Sub

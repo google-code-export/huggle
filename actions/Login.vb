@@ -1,5 +1,4 @@
 ﻿Imports Huggle.UI
-Imports Huggle.Queries
 Imports System
 Imports System.Collections.Generic
 Imports System.Net
@@ -49,10 +48,10 @@ Namespace Huggle.Actions
                 If Not Interactive Then OnFail(Msg("login-noaccount", Wiki)) : Return
 
                 'Prompt the user to select an account to use
-                Dim form As New AccountSelectForm(Requester, Wiki)
-                If form.ShowDialog = DialogResult.Cancel Then OnFail(Msg("error-cancelled")) : Return
-
-                Session = App.Sessions(form.User)
+                Using form As New AccountSelectForm(Requester, Wiki)
+                    If form.ShowDialog = DialogResult.Cancel Then OnFail(Msg("error-cancelled")) : Return
+                    Session = App.Sessions(form.User)
+                End Using
             End If
 
             'Load cached config
@@ -65,8 +64,9 @@ Namespace Huggle.Actions
 
                 'Prompt the user for permission to use a unified account
                 If Not Interactive AndAlso Not User.GlobalUser.Config.AutoUnifiedLogin Then
-                    Dim form As New AccountAutoUnifiedForm(User, Requester)
-                    If form.ShowDialog = DialogResult.Cancel Then OnFail(Msg("error-cancelled")) : Return
+                    Using form As New AccountAutoUnifiedForm(User, Requester)
+                        If form.ShowDialog = DialogResult.Cancel Then OnFail(Msg("error-cancelled")) : Return
+                    End Using
                 End If
 
                 Session.Cookies.Add(Session.User.GlobalUser.Cookies)
@@ -182,9 +182,10 @@ Namespace Huggle.Actions
                     Next otherUser
 
                     If copyable.Count > 0 Then
-                        Dim form As New AccountCopyForm(User)
-                        form.ShowDialog()
-                        If form.Result IsNot Nothing Then User.Config = form.Result.Config.Copy(User)
+                        Using form As New AccountCopyForm(User)
+                            form.ShowDialog()
+                            If form.Result IsNot Nothing Then User.Config = form.Result.Config.Copy(User)
+                        End Using
                     End If
                 End If
             End If

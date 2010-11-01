@@ -1,5 +1,4 @@
 ﻿Imports Huggle.UI
-Imports Huggle.Queries
 Imports System.Collections.Generic
 Imports System.Windows.Forms
 
@@ -7,10 +6,7 @@ Namespace Huggle.Actions
 
     Public Class Review : Inherits Query
 
-        Private _Levels As Dictionary(Of ReviewFlag, Integer)
         Private _Rev As Revision
-        Private _Summary As String
-        Private _Watch As WatchAction
 
         Public Sub New(ByVal session As Session, ByVal rev As Revision)
             MyBase.New(session, Msg("review-desc"))
@@ -18,13 +14,6 @@ Namespace Huggle.Actions
         End Sub
 
         Public Property Levels() As Dictionary(Of ReviewFlag, Integer)
-            Get
-                Return _Levels
-            End Get
-            Set(ByVal value As Dictionary(Of ReviewFlag, Integer))
-                _Levels = value
-            End Set
-        End Property
 
         Public ReadOnly Property Rev() As Revision
             Get
@@ -33,22 +22,8 @@ Namespace Huggle.Actions
         End Property
 
         Public Property Summary() As String
-            Get
-                Return _Summary
-            End Get
-            Set(ByVal value As String)
-                _Summary = value
-            End Set
-        End Property
 
         Public Property Watch() As WatchAction
-            Get
-                Return _Watch
-            End Get
-            Set(ByVal value As WatchAction)
-                _Watch = value
-            End Set
-        End Property
 
         Public Overrides Sub Start()
             If User.Can("review") Then
@@ -80,10 +55,10 @@ Namespace Huggle.Actions
                 End If
 
                 'Create query string
-                Dim query As New QueryString( _
-                    "action", "review", _
-                    "revid", Rev, _
-                    "comment", Summary, _
+                Dim query As New QueryString(
+                    "action", "review",
+                    "revid", Rev,
+                    "comment", Summary,
                     "token", Session.EditToken)
 
                 For Each level As KeyValuePair(Of ReviewFlag, Integer) In Levels
@@ -103,11 +78,13 @@ Namespace Huggle.Actions
                 Return
 
             ElseIf User.Can("patrolnew") Then
-                Dim req As New PatrolQuery(User, Rev.Page, User.Config.IsWatch("patrol"))
+                Dim req As New PatrolQuery(Session, Rev.Page)
+                req.Watch = Watch
                 req.Start()
 
             ElseIf User.Can("patrol") Then
-                Dim req As New PatrolQuery(User, Rev, Watch:=User.Config.IsWatch("patrol"))
+                Dim req As New PatrolQuery(Session, Rev)
+                req.Watch = Watch
                 req.Start()
 
             Else

@@ -44,7 +44,8 @@ Namespace Huggle.UI
                     If Config.Local.LastLogin.IsAnonymous Then
                         If Wiki.AnonymousLogin Then Account.SelectedItem = Msg("form-login-anonymous")
                     Else
-                        If Not Account.Items.Contains(Config.Local.LastLogin) Then Account.Items.Add(Config.Local.LastLogin)
+                        If Not Account.Items.Contains(Config.Local.LastLogin) _
+                            Then Account.Items.Add(Config.Local.LastLogin)
                         Account.SelectedItem = Config.Local.LastLogin
                     End If
                 End If
@@ -85,10 +86,12 @@ Namespace Huggle.UI
 
         Private Sub Credentials_TextChanged() Handles Password.TextChanged, Account.TextChanged
             Password.Enabled = (Account.Text <> Msg("form-login-anonymous"))
-            Login.Enabled = (Account.Text = Msg("form-login-anonymous") OrElse (Account.Text <> "" AndAlso Password.Text <> ""))
-            If (Account.SelectedIndex = -1 OrElse Account.SelectedIndex >= 2) AndAlso Account.Text.Length > 0 _
-                Then User = Wiki.Users.FromString(Account.Text)
-            Account.ForeColor = If(Account.Text = Msg("form-login-anonymous"), SystemColors.GrayText, SystemColors.ControlText)
+            Login.Enabled = (Account.Text = Msg("form-login-anonymous") _
+                OrElse (Account.Text <> "" AndAlso Password.Text <> ""))
+            If (Account.SelectedIndex = -1 OrElse Account.SelectedIndex >= 2) _
+                AndAlso Account.Text.Length > 0 Then User = Wiki.Users.FromString(Account.Text)
+            Account.ForeColor = If(Account.Text = Msg("form-login-anonymous"),
+                SystemColors.GrayText, SystemColors.ControlText)
         End Sub
 
         Private Sub Login_Click() Handles Login.Click
@@ -262,44 +265,45 @@ Namespace Huggle.UI
         End Sub
 
         Private Sub AddWiki_LinkClicked() Handles AddWiki.LinkClicked
-            Dim form As New WikiAddForm()
-            form.ShowDialog()
+            Using form As New WikiAddForm()
+                form.ShowDialog()
 
-            If form.Wiki Is Nothing Then
-                WikiSelector.SelectedItem = LastSelectedWiki
-            Else
-                PopulateSelectors()
-                FamilySelector.SelectedItem = WikiTypeName(form.Wiki)
-                WikiSelector.SelectedItem = form.Wiki
-
-                If form.User Is Nothing Then
-                    Account.Focus()
+                If form.Wiki Is Nothing Then
+                    WikiSelector.SelectedItem = LastSelectedWiki
                 Else
-                    Account.Text = form.User.Name
-                    Password.Text = Unscramble(User.FullName, User.Password, Hash(User))
-                    Login.Focus()
+                    PopulateSelectors()
+                    FamilySelector.SelectedItem = WikiTypeName(form.Wiki)
+                    WikiSelector.SelectedItem = form.Wiki
+
+                    If form.User Is Nothing Then
+                        Account.Focus()
+                    Else
+                        Account.Text = form.User.Name
+                        Password.Text = Unscramble(User.FullName, User.Password, Hash(User))
+                        Login.Focus()
+                    End If
                 End If
-            End If
+            End Using
         End Sub
 
         Private Sub CreateAccount_LinkClicked() Handles CreateAccount.LinkClicked
-            Dim createForm As New AccountCreateForm(App.Sessions(Wiki.Users.Anonymous))
+            Using form As New AccountCreateForm(App.Sessions(Wiki.Users.Anonymous))
+                If form.ShowDialog = DialogResult.Cancel Then
+                    Account.SelectedItem = Nothing
 
-            If createForm.ShowDialog = DialogResult.Cancel Then
-                Account.SelectedItem = Nothing
+                    'Restore previous selection
+                    If User IsNot Nothing Then _
+                        If User.IsAnonymous Then Account.SelectedIndex = 0 Else Account.Text = User.Name
+                Else
+                    'Add new account to list
+                    If Not Account.Items.Contains(form.NewUser) Then Account.Items.Add(form.NewUser)
+                    Account.SelectedItem = form.NewUser
+                    Password.Text = Unscramble(form.NewUser.FullName, form.NewUser.Password, Hash(form.NewUser))
+                    Login.Focus()
+                End If
 
-                'Restore previous selection
-                If User IsNot Nothing Then _
-                    If User.IsAnonymous Then Account.SelectedIndex = 0 Else Account.Text = User.Name
-            Else
-                'Add new account to list
-                If Not Account.Items.Contains(createForm.NewUser) Then Account.Items.Add(createForm.NewUser)
-                Account.SelectedItem = createForm.NewUser
-                Password.Text = Unscramble(createForm.NewUser.FullName, createForm.NewUser.Password, Hash(createForm.NewUser))
-                Login.Focus()
-            End If
-
-            If Not Wiki.IsPublicEditable Then WikiSelector_SelectedIndexChanged()
+                If Not Wiki.IsPublicEditable Then WikiSelector_SelectedIndexChanged()
+            End Using
         End Sub
 
     End Class

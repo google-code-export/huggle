@@ -1,6 +1,4 @@
-﻿Imports Huggle.Queries
-
-Namespace Huggle.Actions
+﻿Namespace Huggle.Actions
 
     Public Class Stabilize : Inherits Query
 

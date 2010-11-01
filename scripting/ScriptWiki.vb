@@ -1,5 +1,4 @@
 ﻿Imports Huggle.Actions
-Imports Huggle.Queries
 Imports Huggle.Wikitext
 Imports System
 Imports System.Collections

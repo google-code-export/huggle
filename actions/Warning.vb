@@ -1,5 +1,4 @@
-﻿Imports Huggle.Queries
-Imports Huggle.Wikitext
+﻿Imports Huggle.Wikitext
 Imports System.Collections.Generic
 Imports System.Globalization
 

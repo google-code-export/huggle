@@ -1,6 +1,4 @@
-﻿Imports Huggle.Queries
-
-Namespace Huggle.Actions
+﻿Namespace Huggle.Actions
 
     Public Class SaveConfig : Inherits Query
 
@@ -9,8 +7,8 @@ Namespace Huggle.Actions
 
         Public Sub New(ByVal session As Session, ByVal config As WikiConfig, ByVal protect As Boolean)
             MyBase.New(session, Msg("saveconfig-desc"))
-            Me.Config = Config
-            Me.Protect = Protect
+            Me.Config = config
+            Me.Protect = protect
         End Sub
 
         Public Overrides Sub Start()

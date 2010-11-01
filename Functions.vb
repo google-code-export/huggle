@@ -40,30 +40,39 @@ Namespace Huggle
             Return App.Languages.Current.Message(name, params)
         End Function
 
+        Public Function MD5Hash(ByVal data As Byte()) As Byte()
+            Using hasher As HashAlgorithm = MD5.Create
+                Return hasher.ComputeHash(data)
+            End Using
+        End Function
+
         Public Delegate Function Expression() As Boolean
 
         Public Function Compress(ByVal data As Byte()) As Byte()
-            Dim output As New MemoryStream
-            Dim compressStream As New GZipStream(output, CompressionMode.Compress)
-            compressStream.Write(data, 0, data.Length)
-            Return output.ToArray
+            Using output As New MemoryStream
+                Dim compressStream As New GZipStream(output, CompressionMode.Compress)
+                compressStream.Write(data, 0, data.Length)
+                Return output.ToArray
+            End Using
         End Function
 
         Public Function Uncompress(ByVal data As Byte()) As Byte()
             Try
-                Dim decompressStream As New GZipStream(New MemoryStream(data), CompressionMode.Decompress)
-                Dim output() As Byte
-                Dim total As Integer = 0
-                Dim read As Integer = 0
+                Using input As New MemoryStream(data)
+                    Dim decompressStream As New GZipStream(input, CompressionMode.Decompress)
+                    Dim output() As Byte
+                    Dim total As Integer = 0
+                    Dim read As Integer = 0
 
-                Do
-                    ReDim Preserve output(total + 256)
-                    read = decompressStream.Read(output, total, 256)
-                    total += read
-                Loop Until read = 0
+                    Do
+                        ReDim Preserve output(total + 256)
+                        read = decompressStream.Read(output, total, 256)
+                        total += read
+                    Loop Until read = 0
 
-                ReDim Preserve output(total)
-                Return output
+                    ReDim Preserve output(total)
+                    Return output
+                End Using
 
             Catch ex As InvalidDataException
                 Return Nothing

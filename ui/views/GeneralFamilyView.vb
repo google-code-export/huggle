@@ -24,11 +24,8 @@ Namespace Huggle.UI
 
                 If Not logo.ContentKnown Then
                     Dim logoQuery As New MediaQuery(App.Sessions(Family.FileWiki), logo, 96)
-                    Dim form As New WaitForm(Msg("extraconfig-progress"))
-                    AddHandler logoQuery.Complete, AddressOf form.CloseByProcess
-                    CreateThread(AddressOf logoQuery.Start)
-                    form.ShowDialog()
-                    If form.Cancelled Then Return
+                    App.UserWaitForProcess(logoQuery)
+                    If logoQuery.IsFailed Then Return
                 End If
 
                 Try

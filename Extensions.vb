@@ -26,10 +26,23 @@ End Namespace
 Namespace System
 
     Public Delegate Sub Action()
+    Public Delegate Sub SimpleEventHandler(Of T)(ByVal sender As Object, ByVal e As EventArgs(Of T))
 
-    'Generic event handler type with additional type parameter for the sender
-    Public Delegate Sub EventHandler(Of TSender, TEventArgs As EventArgs) _
-        (ByVal sender As TSender, ByVal e As TEventArgs)
+    Public Class EventArgs(Of T) : Inherits EventArgs
+
+        Private _Sender As T
+
+        Public Sub New(ByVal sender As T)
+            _Sender = sender
+        End Sub
+
+        Public ReadOnly Property Sender As T
+            Get
+                Return _Sender
+            End Get
+        End Property
+
+    End Class
 
 End Namespace
 

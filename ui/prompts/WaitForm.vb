@@ -34,12 +34,12 @@ Namespace Huggle.UI
             End Get
         End Property
 
-        Public Sub CloseByProcess(ByVal process As Process)
+        Public Sub CloseByProcess(ByVal sender As Object, ByVal e As EventArgs(Of Process))
             Done()
         End Sub
 
-        Public Sub UpdateByProcess(ByVal process As Process)
-            SetMessage(process.Message)
+        Public Sub UpdateByProcess(ByVal sender As Object, ByVal e As EventArgs(Of Process))
+            SetMessage(e.Sender.Message)
         End Sub
 
         Public Sub SetMessage(ByVal message As String)

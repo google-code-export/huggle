@@ -12,7 +12,7 @@ Namespace Huggle
 
         Public Interface IQueueSource
 
-            Event Action As EventHandler(Of QueueItem)
+            Event Action As SimpleEventHandler(Of QueueItem)
             Event Resetting As EventHandler
             Event Update As EventHandler
 
@@ -25,7 +25,7 @@ Namespace Huggle
 
         Public Class RcSource : Implements IQueueSource
 
-            Public Event Action As EventHandler(Of QueueItem) Implements IQueueSource.Action
+            Public Event Action As SimpleEventHandler(Of QueueItem) Implements IQueueSource.Action
             Public Event Resetting As EventHandler Implements IQueueSource.Resetting
             Public Event Update As EventHandler Implements IQueueSource.Update
 
@@ -134,12 +134,11 @@ Namespace Huggle
 
         Public Class ListSource : Implements IQueueSource
 
-            Public Event Action As EventHandler(Of QueueItem) Implements IQueueSource.Action
+            Public Event Action As SimpleEventHandler(Of QueueItem) Implements IQueueSource.Action
             Public Event Resetting As EventHandler Implements IQueueSource.Resetting
             Public Event Update As EventHandler Implements IQueueSource.Update
 
             Private _Enabled As Boolean
-            Private _List As List(Of QueueItem)
             Private PendingItems As New List(Of QueueItem)
             Private WithEvents InfoRequest As PageInfoQuery
 
@@ -157,21 +156,14 @@ Namespace Huggle
             End Property
 
             Public Property List() As List(Of QueueItem)
-                Get
-                    Return _List
-                End Get
-                Set(ByVal value As List(Of QueueItem))
-                    _List = value
-                End Set
-            End Property
 
             Private Sub InfoRequest_Done() Handles InfoRequest.Complete
-                For Each Item As Page In PendingItems
-                    If Item.LastRev IsNot Nothing Then
-                        PendingItems.Remove(Item)
-                        RaiseEvent Action(Nothing, Item.LastRev)
+                For Each page As Page In PendingItems
+                    If page.LastRev IsNot Nothing Then
+                        PendingItems.Remove(page)
+                        RaiseEvent Action(Me, New EventArgs(Of QueueItem)(page.LastRev))
                     End If
-                Next Item
+                Next page
 
                 RaiseEvent Update(Me, EventArgs.Empty)
 
@@ -193,11 +185,10 @@ Namespace Huggle
 
         Public Class QuerySource : Implements IQueueSource
 
-            Public Event Action As EventHandler(Of QueueItem) Implements IQueueSource.Action
+            Public Event Action As SimpleEventHandler(Of QueueItem) Implements IQueueSource.Action
             Public Event Resetting As EventHandler Implements IQueueSource.Resetting
             Public Event Update As EventHandler Implements IQueueSource.Update
 
-            Private _Enabled As Boolean
             Private _Query As String
 
             Public Sub New(ByVal query As String)
@@ -205,13 +196,6 @@ Namespace Huggle
             End Sub
 
             Public Property Enabled() As Boolean Implements IQueueSource.Enabled
-                Get
-                    Return _Enabled
-                End Get
-                Set(ByVal value As Boolean)
-                    _Enabled = value
-                End Set
-            End Property
 
             Public ReadOnly Property Query() As String
                 Get

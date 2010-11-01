@@ -43,7 +43,7 @@ Namespace Huggle
         Private _UserGroups As UserGroupCollection
         Private _Users As UserCollection
 
-        Public Event Action As EventHandler(Of QueueItem)
+        Public Event Action As SimpleEventHandler(Of QueueItem)
 
         Public Sub New(ByVal code As String)
             _Code = code

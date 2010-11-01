@@ -126,11 +126,11 @@ Namespace Huggle.UI
             UpdateStatus()
         End Sub
 
-        Private Sub CheckDone(ByVal sender As Process)
+        Private Sub CheckDone(ByVal sender As Object, ByVal e As EventArgs(Of Process))
             Indicator.Stop()
 
-            If sender Is CurrentQuery Then
-                Status = CType(sender, UsernameCheckQuery).Status
+            If e.Sender Is CurrentQuery Then
+                Status = CType(e.Sender, UsernameCheckQuery).Status
                 UpdateStatus()
                 If Status <> CheckStatus.Error Then CheckResults.Merge(UserCollection.SanitizeName(Username.Text), Status)
                 InputChanged()

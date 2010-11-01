@@ -13,7 +13,7 @@ Namespace Huggle
 
     Public Class LocalConfig : Inherits Config
 
-        Public Property AutoLogin As Boolean
+        Public Property AutoLogin As Boolean = True
         Public Property DebugEnabled As Boolean = True
         Public Property DebugVisible As Boolean
         Public Property DetectProxySettings As Boolean

@@ -16,10 +16,10 @@ Namespace Huggle.UI
 
         Private WithEvents _Queue As Queue
 
-        Public Event ItemsChanged As EventHandler(Of Queue, EventArgs)
-        Public Event ItemSelected As EventHandler(Of Queue, QueuePanelItemSelectedEventArgs)
-        Public Event OptionsClicked As EventHandler(Of QueuePanel, EventArgs)
-        Public Event SelectedQueueChanged As EventHandler(Of QueuePanel, EventArgs)
+        Public Event ItemsChanged As SimpleEventHandler(Of Queue)
+        Public Event ItemSelected As EventHandler(Of QueuePanelItemSelectedEventArgs)
+        Public Event OptionsClicked As SimpleEventHandler(Of QueuePanel)
+        Public Event SelectedQueueChanged As SimpleEventHandler(Of QueuePanel)
 
         Public Sub New(ByVal wiki As Wiki)
             InitializeComponent()
@@ -82,7 +82,7 @@ Namespace Huggle.UI
                 Dim Index As Integer = (e.Y - 2 - Count.Bottom) \ 20 + ScrollBar.Value
 
                 If Index > -1 AndAlso Index < Queue.Items.Count _
-                    Then RaiseEvent ItemSelected(Queue, New QueuePanelItemSelectedEventArgs(Queue.Items(Index)))
+                    Then RaiseEvent ItemSelected(Queue, New QueuePanelItemSelectedEventArgs(Queue, Queue.Items(Index)))
             End If
         End Sub
 
@@ -114,7 +114,7 @@ Namespace Huggle.UI
                 End Using
 
                 Using labelFont As New Font(Font, Item.LabelStyle)
-                    Gfx.Graphics.DrawString(Item.Label, labelFont, Brushes.Black, _
+                    Gfx.Graphics.DrawString(Item.Label, labelFont, Brushes.Black,
                         New Rectangle(4, Y + 1, X - 3, 14), StringFormat)
                 End Using
 
@@ -144,11 +144,11 @@ Namespace Huggle.UI
         End Sub
 
         Private Sub Options_Click() Handles Options.Click
-            RaiseEvent OptionsClicked(Me, EventArgs.Empty)
+            RaiseEvent OptionsClicked(Me, New EventArgs(Of QueuePanel)(Me))
         End Sub
 
         Private Sub Queue_ItemsChanged() Handles _Queue.ItemsChanged
-            RaiseEvent ItemsChanged(Queue, EventArgs.Empty)
+            RaiseEvent ItemsChanged(Me, New EventArgs(Of Queue)(Queue))
 
             'Preload revisions
             If Queue.Selected AndAlso Queue.Preload Then
@@ -188,7 +188,7 @@ Namespace Huggle.UI
 
         Private Sub Queues_SelectedIndexChanged() Handles Queues.SelectedIndexChanged
             Queue = CType(Queues.SelectedItem, Queue)
-            RaiseEvent SelectedQueueChanged(Me, EventArgs.Empty)
+            RaiseEvent SelectedQueueChanged(Me, New EventArgs(Of QueuePanel)(Me))
             UpdateItems()
         End Sub
 
@@ -235,14 +235,22 @@ Namespace Huggle.UI
     Class QueuePanelItemSelectedEventArgs : Inherits EventArgs
 
         Private _Item As QueueItem
+        Private _Queue As Queue
 
-        Public Sub New(ByVal Item As QueueItem)
-            _Item = Item
+        Public Sub New(ByVal queue As Queue, ByVal item As QueueItem)
+            _Item = item
+            _Queue = queue
         End Sub
 
         Public ReadOnly Property Item() As QueueItem
             Get
                 Return _Item
+            End Get
+        End Property
+
+        Public ReadOnly Property Queue As Queue
+            Get
+                Return _Queue
             End Get
         End Property
 

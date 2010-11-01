@@ -40,11 +40,11 @@ Namespace Huggle
 
         Public Shared ReadOnly Null As New Revision(Nothing, -1)
 
-        Public Event StateChanged As EventHandler(Of Revision, EventArgs)
+        Public Event StateChanged As SimpleEventHandler(Of Revision)
 
-        Public Shared Event [New] As EventHandler(Of Revision, EventArgs)
-        Public Shared Event Processed As EventHandler(Of Revision, EventArgs)
-        Public Shared Event Sighted As EventHandler(Of Revision, EventArgs)
+        Public Shared Event [New] As SimpleEventHandler(Of Revision)
+        Public Shared Event Processed As SimpleEventHandler(Of Revision)
+        Public Shared Event Sighted As SimpleEventHandler(Of Revision)
 
         Shared Sub New()
             Timer.Interval = TrimInterval
@@ -409,7 +409,7 @@ Namespace Huggle
         End Property
 
         Private Sub OnStateChanged(ByVal o As Object)
-            RaiseEvent StateChanged(Me, EventArgs.Empty)
+            RaiseEvent StateChanged(Me, New EventArgs(Of Revision)(Me))
         End Sub
 
         Public Sub Process()
@@ -533,7 +533,7 @@ Namespace Huggle
             If Not IsRevert AndAlso _Change > Integer.MinValue AndAlso (-_Change / Prev._Bytes) > 0.9 Then IsReplace = True
 
             IsProcessed = True
-            RaiseEvent Processed(Me, EventArgs.Empty)
+            RaiseEvent Processed(Me, New EventArgs(Of Revision)(Me))
         End Sub
 
         Public Sub ProcessRevert()
@@ -670,7 +670,7 @@ Namespace Huggle
             Page.OnEdit(Me)
             User.OnEdit(Me)
 
-            RaiseEvent [New](Me, EventArgs.Empty)
+            RaiseEvent [New](Me, New EventArgs(Of Revision)(Me))
         End Sub
 
         Public Sub ProcessHtml()
@@ -871,22 +871,6 @@ Namespace Huggle
                     "section", If(Section, ""),
                     "change", If(Change = Integer.MinValue, Nothing, Change)
                     }.ToDictionary(Of String, Object)()
-            End Get
-        End Property
-
-    End Class
-
-    Public Class EditEventArgs : Inherits EventArgs
-
-        Private _Rev As Revision
-
-        Public Sub New(ByVal rev As Revision)
-            _Rev = rev
-        End Sub
-
-        Public ReadOnly Property Rev() As Revision
-            Get
-                Return _Rev
             End Get
         End Property
 

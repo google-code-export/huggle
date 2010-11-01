@@ -458,7 +458,7 @@
             Me.Gadgets.IntegralHeight = False
             Me.Gadgets.Location = New System.Drawing.Point(6, 35)
             Me.Gadgets.Name = "Gadgets"
-            Me.Gadgets.Size = New System.Drawing.Size(430, 214)
+            Me.Gadgets.Size = New System.Drawing.Size(430, 252)
             Me.Gadgets.Sorted = True
             Me.Gadgets.TabIndex = 0
             '

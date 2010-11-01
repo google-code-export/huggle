@@ -75,7 +75,7 @@ Namespace Huggle.UI
             Location = New Drawing.Point(Location.X, Screen.FromControl(Me).Bounds.Height - Height - 60)
         End Sub
 
-        Private Sub AddButton(ByVal Text As String)
+        Private Sub AddButton(ByVal text As String)
             'Dim NewButton As New TaskDialogButton
             'NewButton.Width = ButtonPanel.Width
             'NewButton.Label = Text
@@ -93,26 +93,27 @@ Namespace Huggle.UI
             Close()
         End Sub
 
-        Public Overloads Shared Function Show _
-            (ByVal Title As String, ByVal LargeText As String, ByVal SmallText As String, _
-            ByVal DefaultButton As Integer, ByVal ParamArray Buttons As String()) As Integer
+        Public Overloads Shared Function Show(
+            ByVal title As String, ByVal largeText As String, ByVal smallText As String,
+            ByVal defaultButton As Integer, ByVal ParamArray buttons As String()) As Integer
 
-            Dim NewDialog As New Prompt
-            NewDialog.Text = Title
-            Dim InitialTitleHeight As Integer = NewDialog.Title.Height
+            Using prompt As New Prompt
+                prompt.Text = Title
+                Dim InitialTitleHeight As Integer = prompt.Title.Height
 
-            NewDialog.Title.Text = LargeText
-            NewDialog.Height += (NewDialog.Title.Height - InitialTitleHeight)
-            NewDialog.Subtitle.Text = SmallText
-            If String.IsNullOrEmpty(SmallText) Then NewDialog.Subtitle.Text = Nothing
-            NewDialog.SelectedButton = DefaultButton
+                prompt.Title.Text = largeText
+                prompt.Height += (prompt.Title.Height - InitialTitleHeight)
+                prompt.Subtitle.Text = smallText
+                If String.IsNullOrEmpty(smallText) Then prompt.Subtitle.Text = Nothing
+                prompt.SelectedButton = defaultButton
 
-            For Each Item As String In Buttons
-                If Item IsNot Nothing Then NewDialog.AddButton(Item)
-            Next Item
+                For Each button As String In buttons
+                    If button IsNot Nothing Then prompt.AddButton(button)
+                Next button
 
-            NewDialog.ShowDialog()
-            Return NewDialog.SelectedButton
+                prompt.ShowDialog()
+                Return prompt.SelectedButton
+            End Using
         End Function
 
     End Class

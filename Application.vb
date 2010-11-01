@@ -232,7 +232,7 @@ Namespace Huggle
             en.IsLocalized = True
             en.Name = "English"
             en.GetConfig.Load(Resources.en)
-            
+
             App.Languages.Default = en
             App.Languages.Current = en
 

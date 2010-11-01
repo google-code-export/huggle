@@ -1,25 +1,28 @@
-﻿Namespace Huggle.Queries
+﻿Namespace Huggle.Actions
 
     'Patrol a revision or page
 
-    Class PatrolQuery : Inherits OldQuery
+    Class PatrolQuery : Inherits Query
 
-        Private Rev As Revision, Page As Page, Watch As Boolean
+        Private Page As Page
+        Private Rev As Revision
 
-        Public Sub New(ByVal Account As User, ByVal Rev As Revision, ByVal Watch As Boolean)
-            MyBase.New(Account)
-            Me.Rev = Rev
-            Me.Page = Rev.Page
+        Public Sub New(ByVal session As Session, ByVal rev As Revision)
+            MyBase.New(session, Msg("query-patrol-desc"))
+            Me.Rev = rev
+            Me.Page = rev.Page
             Me.Watch = Watch
         End Sub
 
-        Public Sub New(ByVal Account As User, ByVal Page As Page, ByVal Watch As Boolean)
-            MyBase.New(Account)
-            Me.Page = Page
-            Me.Watch = Watch
+        Public Sub New(ByVal session As Session, ByVal page As Page)
+            MyBase.New(session, Msg("query-patrol-desc"))
+            Me.Page = page
+            Me.Watch = watch
         End Sub
 
-        Protected Overrides Function Process() As Result
+        Public Property Watch As WatchAction
+
+        Public Overrides Sub Start()
             'Dim FailMsg As String = Msg("patrol-fail", Page)
 
             'DoProgress(Msg("patrol-progress", Page))
@@ -80,8 +83,8 @@
 
             'DoProgress(Msg("patrol-done", Page))
 
-            Return Result.Success
-        End Function
+            OnSuccess()
+        End Sub
 
     End Class
 
