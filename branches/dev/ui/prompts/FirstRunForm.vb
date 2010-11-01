@@ -54,7 +54,7 @@ Namespace Huggle.UI
             ProxyLayout.Enabled = ManualProxy.Checked
         End Sub
 
-        Private Sub TranslateLabel_LinkClicked() Handles Translate.LinkClicked
+        Private Shared Sub TranslateLabel_LinkClicked() Handles Translate.LinkClicked
             OpenWebBrowser(InternalConfig.TranslationUrl)
         End Sub
 

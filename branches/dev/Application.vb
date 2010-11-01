@@ -10,7 +10,7 @@ Imports System.Windows.Forms
 
 Namespace Huggle
 
-    Public Class Application
+    Public Module App
 
         Private _Families As FamilyCollection
         Private _Languages As LanguageCollection
@@ -172,13 +172,14 @@ Namespace Huggle
         End Property
 
         Public Function ShowError(ByVal result As Result, Optional ByVal showRetry As Boolean = False) As DialogResult
+
             Using form As New ErrorForm(result.ErrorMessage, showRetry)
                 Return form.ShowDialog()
             End Using
         End Function
 
-        Public Function ShowPrompt _
-            (ByVal title As String, ByVal largeText As String, ByVal smallText As String, _
+        Public Function ShowPrompt(
+            ByVal title As String, ByVal largeText As String, ByVal smallText As String,
             ByVal defaultButton As Integer, ByVal ParamArray buttons As String()) As Integer
 
             Return Prompt.Show(title, largeText, smallText, defaultButton, buttons)
@@ -253,7 +254,7 @@ Namespace Huggle
             Log.Debug("Loaded messages [L]")
         End Sub
 
-    End Class
+    End Module
 
     Public NotInheritable Class Icons
 

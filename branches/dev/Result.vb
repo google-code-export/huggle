@@ -125,21 +125,21 @@ Namespace Huggle
                 'Alternative hardcoded error messages in case an unhandled exception
                 'occurs before we've loaded the message files
                 If Not inner Then
-                    If App IsNot Nothing AndAlso App.Languages.Current IsNot Nothing AndAlso _
+                    If App.Languages.Current IsNot Nothing AndAlso _
                         App.Languages.Current.Messages.ContainsKey("error-exception") _
                         Then message = Msg("error-exception") Else message = "An unexpected error occured."
                 End If
 
                 If ex.StackTrace IsNot Nothing Then
                     If Not inner Then
-                        If App IsNot Nothing AndAlso App.Languages.Current IsNot Nothing AndAlso _
+                        If App.Languages.Current IsNot Nothing AndAlso _
                             App.Languages.Current.Messages.ContainsKey("error-info") _
                             Then message &= CRLF & CRLF & Msg("error-info") _
                             Else message &= CRLF & CRLF & "If reporting this error, please include the following information:"
                     End If
 
-                    message &= CRLF & CRLF & ex.GetType.Name.Remove("Exception") _
-                        & CRLF & FormatStackTrace(New StackTrace(ex, True))
+                    message &= CRLF & CRLF & ex.GetType.Name.Remove("Exception") &
+                        CRLF & FormatStackTrace(New StackTrace(ex, True))
                 End If
             End If
 

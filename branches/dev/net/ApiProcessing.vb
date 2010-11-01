@@ -15,9 +15,11 @@ Namespace Huggle
 
                 For Each node As XmlNode In rootNode.ChildNodes
                     Select Case node.Name
-                        Case "block"
-                        Case "changerights"
-                        Case "delete"
+                        Case "block" 'Action
+
+                        Case "changerights" 'Action
+
+                        Case "delete" 'Action
 
                         Case "edit"
                             If node.Attribute("result") = "Success" Then
@@ -30,7 +32,7 @@ Namespace Huggle
                                 old.Next = rev
                             End If
 
-                        Case "emailuser"
+                        Case "emailuser" 'Action
 
                         Case "error"
                             Dim errorCode As String = node.Attribute("code")
@@ -73,8 +75,10 @@ Namespace Huggle
                                 flag.QualityLevel = CInt(flagNode.Attribute("tier2"))
                             Next flagNode
 
-                        Case "import"
+                        Case "import" 'Action
+
                         Case "limits"
+                            '''
 
                         Case "login"
                             _LoginResponse = New LoginResponse
@@ -87,7 +91,8 @@ Namespace Huggle
                             'Clear saved password if it's wrong
                             If LoginResponse.Result = "wrongpass" Then User.Password = Nothing
 
-                        Case "move"
+                        Case "move" 'Action
+
                         Case "paraminfo" : ProcessParamInfo(node)
                         Case "parse" : ProcessParse(node)
 
@@ -97,8 +102,10 @@ Namespace Huggle
                             If Wiki.RecentChanges.ContainsKey(rcid) _
                                 Then CType(Wiki.RecentChanges(rcid), Revision).IsReviewed = True
 
-                        Case "protect"
-                        Case "purge"
+                        Case "protect" 'Action
+
+                        Case "purge" 'Action
+
                         Case "query" : ProcessQuery(node)
 
                         Case "query-continue"
@@ -114,7 +121,7 @@ Namespace Huggle
                                 Continues.Merge(name, value)
                             Next qcNode
 
-                        Case "review"
+                        Case "review" 'Action
 
                         Case "rollback"
                             Dim rev As Revision = Wiki.Revisions(CInt(node.Attribute("revid")))
@@ -135,9 +142,12 @@ Namespace Huggle
                             End If
 
                         Case "sitematrix" : ProcessSiteMatrix(node)
-                        Case "stabilize"
-                        Case "undelete"
-                        Case "upload"
+
+                        Case "stabilize" 'Action
+
+                        Case "undelete" 'Action
+
+                        Case "upload" 'Action
 
                         Case "warnings"
                             Warnings.Clear()
@@ -146,7 +156,7 @@ Namespace Huggle
                                 Warnings.Add(warningNode.InnerText)
                             Next warningNode
 
-                        Case "watch"
+                        Case "watch" 'Action
 
                         Case Else : Log.Debug(Msg("error-apiunrecognized", "result", node.Name))
                     End Select
@@ -160,12 +170,14 @@ Namespace Huggle
         Private Sub ProcessQuery(ByVal queryNode As XmlNode)
             For Each node As XmlNode In queryNode.ChildNodes
                 Select Case node.Name
-
                     Case "abusefilters" : ProcessAbuseFilters(node)
+
                     Case "abuselog" : ProcessAbuseLog(node)
 
                     Case "allcategories"
                         For Each c As XmlNode In node.ChildNodes
+                            AssertApi(c.Name, "c")
+
                             If IsSimple Then
                                 Strings.Add(c.Value)
                             Else
@@ -177,14 +189,18 @@ Namespace Huggle
                         Next c
 
                     Case "alllinks"
+                        '''
 
                     Case "allmessages"
                         For Each message As XmlNode In node.ChildNodes
+                            AssertApi(message.Name, "message")
                             Wiki.Messages.Merge(message.Attribute("name"), message.InnerText)
                         Next message
 
                     Case "allpages"
                         For Each p As XmlNode In node.ChildNodes
+                            AssertApi(p.Name, "p")
+
                             If IsSimple Then
                                 Strings.Add(p.Attribute("title"))
                             Else
@@ -196,6 +212,8 @@ Namespace Huggle
 
                     Case "allusers"
                         For Each u As XmlNode In node.ChildNodes
+                            AssertApi(u.Name, "u")
+
                             If IsSimple Then
                                 Strings.Add(u.Attribute("name"))
                             Else
@@ -207,12 +225,13 @@ Namespace Huggle
                         Next u
 
                     Case "articleassessment"
-                        'todo: implement...
+                        '''
 
                     Case "backlinks"
                         Dim sourcePage As Page = Wiki.Pages.FromString(CStr(Query("bltitle")))
 
                         For Each bl As XmlNode In node.ChildNodes
+                            AssertApi(bl.Name, "bl")
                             Dim page As Page = Wiki.Pages(CInt(bl.Attribute("ns")), bl.Attribute("title"))
                             page.Id = CInt(bl.Attribute("pageid"))
 
@@ -325,6 +344,7 @@ Namespace Huggle
                         Next ext
 
                     Case "filearchive"
+                        '''
 
                     Case "fileextensions"
                         Wiki.FileExtensions.Clear()
@@ -376,6 +396,7 @@ Namespace Huggle
                         Next iw
 
                     Case "languages"
+                        '''
 
                     Case "logevents"
                         For Each item As XmlNode In node.ChildNodes
@@ -424,6 +445,7 @@ Namespace Huggle
                         Next ns
 
                     Case "normalized"
+                        '''
 
                     Case "oldreviewedpages", "reviewedpages", "unreviewedpages"
                         For Each p As XmlNode In node.ChildNodes
@@ -458,6 +480,8 @@ Namespace Huggle
                         Next pt
 
                     Case "random"
+                        '''
+
                     Case "recentchanges" : ProcessRecentChanges(node)
 
                     Case "redirects"
@@ -471,8 +495,13 @@ Namespace Huggle
                         If Not String.IsNullOrEmpty(node.Attribute("url")) Then Wiki.LicenseUrl = New Uri(node.Attribute("url"))
 
                     Case "searchinfo"
+                        '''
+
                     Case "search"
+                        '''
+
                     Case "specialpagealiases"
+                        '''
 
                     Case "statistics"
                         Wiki.ActiveUsers = CInt(node.Attribute("activeusers"))
@@ -535,9 +564,14 @@ Namespace Huggle
                         End If
 
                     Case "userinfo" : ProcessUserInfo(node)
+
                     Case "users" : ProcessUsers(node)
+
                     Case "watchlist"
+                        '''
+
                     Case "watchlistraw"
+                        '''
 
                     Case Else : Log.Write(Msg("error-apiunrecognized", "query", node.Name))
                 End Select
@@ -644,7 +678,7 @@ Namespace Huggle
                         Next account
 
                     Case "unattached"
-                        'ignore
+                        '''
 
                     Case Else : Log.Write(Msg("error-apiunrecognized", "globaluserinfo", node.Name))
                 End Select
@@ -1677,7 +1711,7 @@ Namespace Huggle
             Next node
         End Sub
 
-        Private Sub AssertApi(ByVal nodeValue As String, ByVal expectedValue As String)
+        Private Shared Sub AssertApi(ByVal nodeValue As String, ByVal expectedValue As String)
             If nodeValue <> expectedValue Then Log.Write(Msg("error-apiformat", nodeValue, expectedValue))
         End Sub
 

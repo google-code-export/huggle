@@ -179,7 +179,7 @@ Namespace Huggle
             cookies.Add(url, old)
         End Sub
 
-        Protected Function CheckForWikiError(ByVal response As String) As Result
+        Protected Shared Function CheckForWikiError(ByVal response As String) As Result
             'Check page title for error page
             If Not (response.Contains("<title>") AndAlso response.Contains("</title>")) Then Return Result.Success
             Dim title As String = response.FromFirst("<title>").ToFirst("</title>")

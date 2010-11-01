@@ -22,14 +22,7 @@ Namespace Huggle
 
     Public Module Main
 
-        Private _App As Application
         Private _Log As LogClass
-
-        Public ReadOnly Property App As Application
-            Get
-                Return _App
-            End Get
-        End Property
 
         Public Property Handle As Form
 
@@ -50,7 +43,6 @@ Namespace Huggle
                 Log.Initialize()
                 Log.Debug("Session started")
 
-                _App = New Application
                 App.Run()
 
                 Config.Local.SaveLocal()
@@ -77,7 +69,7 @@ Namespace Huggle
 
         Private Sub HandleException(ByVal ex As Exception)
             Dim result As Result = result.FromException(ex)
-            If App IsNot Nothing Then App.ShowError(result)
+            App.ShowError(result)
             If Log IsNot Nothing Then Log.Write(result.LogMessage)
         End Sub
 

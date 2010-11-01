@@ -103,7 +103,7 @@ Namespace Huggle.UI
             CheckValid()
         End Sub
 
-        Private Sub SetAll(ByVal control As CheckedListBox, ByVal state As Boolean)
+        Private Shared Sub SetAll(ByVal control As CheckedListBox, ByVal state As Boolean)
             For i As Integer = 0 To control.Items.Count - 1
                 control.SetItemChecked(i, state)
             Next i

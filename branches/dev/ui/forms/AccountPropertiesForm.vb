@@ -43,7 +43,7 @@ Namespace Huggle.UI
             End Try
         End Sub
 
-        Private Function FuzzyContribCount(ByVal contribs As Integer) As String
+        Private Shared Function FuzzyContribCount(ByVal contribs As Integer) As String
             Select Case contribs
                 Case 0 : Return "none"
                 Case Is < 10 : Return "few"

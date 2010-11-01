@@ -51,8 +51,8 @@ Namespace Huggle.Wikitext
         Private Document As Document
         Private Items As New List(Of CategoryLink)
 
-        Public Sub New(ByVal Document As Document)
-            Me.Document = Document
+        Public Sub New(ByVal document As Document)
+            Me.Document = document
             Parse()
         End Sub
 
@@ -62,9 +62,9 @@ Namespace Huggle.Wikitext
             End Get
         End Property
 
-        Public ReadOnly Property Contains(ByVal Category As Category) As Boolean
+        Public ReadOnly Property Contains(ByVal category As Category) As Boolean
             Get
-                Return (Item(Category) IsNot Nothing)
+                Return (Item(category) IsNot Nothing)
             End Get
         End Property
 
@@ -74,31 +74,31 @@ Namespace Huggle.Wikitext
             End Get
         End Property
 
-        Default Public ReadOnly Property Item(ByVal Category As Category) As CategoryLink
+        Default Public ReadOnly Property Item(ByVal category As Category) As CategoryLink
             Get
                 For Each link As CategoryLink In Items
-                    If link.Category Is Category Then Return link
+                    If link.Category Is category Then Return link
                 Next link
 
                 Return Nothing
             End Get
         End Property
 
-        Public Sub Add(ByVal Category As Category, Optional ByVal Sortkey As String = Nothing)
+        Public Sub Add(ByVal category As Category, Optional ByVal sortkey As String = Nothing)
 
             'Don't add if already present
-            If Contains(Category) Then Return
+            If Contains(category) Then Return
 
             If Items.Count = 0 Then
                 'Insert at end of page
-                Document.Text &= LF & Category.ToString
+                Document.Text &= LF & category.ToString
             Else
                 'Insert after existing categories
-                Document.Text.Insert(Items(Items.Count - 1).Selection.End, LF & Category.ToString)
+                Document.Text.Insert(Items(Items.Count - 1).Selection.End, LF & category.ToString)
             End If
         End Sub
 
-        Public Sub Remove(ByVal Category As Category)
+        Public Sub Remove(ByVal category As Category)
 
         End Sub
 

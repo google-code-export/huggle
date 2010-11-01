@@ -4,7 +4,7 @@ Namespace Huggle.Actions
 
     'Purge one or more pages
 
-    Class Purge : Inherits Query
+    Public Class Purge : Inherits Query
 
         Private _Pages As List(Of Page)
         Private _Watch As WatchAction
@@ -16,7 +16,7 @@ Namespace Huggle.Actions
 
         Public Sub New(ByVal session As Session, ByVal pages As List(Of Page))
             MyBase.New(session, Msg("purge-desc"))
-            _Pages = Pages
+            _Pages = pages
         End Sub
 
         Public ReadOnly Property Pages() As List(Of Page)

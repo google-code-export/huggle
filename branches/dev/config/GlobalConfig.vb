@@ -35,7 +35,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Public ReadOnly Property LocalizationPageName(ByVal code As String) As String
+        Public Shared ReadOnly Property LocalizationPageName(ByVal code As String) As String
             Get
                 Return "Huggle/messages/" & code
             End Get
@@ -47,7 +47,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Public ReadOnly Property PageTitle() As String
+        Public Shared ReadOnly Property PageTitle() As String
             Get
                 Return "Huggle/test config"
             End Get
@@ -109,12 +109,12 @@ Namespace Huggle
             Next item
         End Sub
 
-        Private Sub LoadWikis(ByVal key As String, ByVal value As String)
+        Private Shared Sub LoadWikis(ByVal key As String, ByVal value As String)
             For Each node As KVP In Config.ParseConfig("global", key, value)
                 Dim wiki As Wiki = App.Wikis(node.Key)
                 wiki.Exists = True
 
-                Dim props As Dictionary(Of String, String) = _
+                Dim props As Dictionary(Of String, String) =
                     Config.ParseConfig("global", node.Key & ":" & wiki.Code, node.Value)
 
                 'Load Wikimedia defaults
