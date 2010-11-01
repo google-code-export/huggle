@@ -210,8 +210,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="queries\AbuseFiltersQuery.vb" />
-    <Compile Include="queries_old\ThreadQuery.vb" />
-    <Compile Include="queries_old\UsernameCheckQuery.vb" />
+    <Compile Include="queries\ThreadQuery.vb" />
+    <Compile Include="queries\UsernameCheckQuery.vb" />
     <Compile Include="actions\Warning.vb" />
     <Compile Include="net\QueryString.vb" />
     <Compile Include="scripting\Model.vb" />
@@ -500,16 +500,16 @@
     <Compile Include="queries\AbuseDetailQuery.vb" />
     <Compile Include="queries\AbuseInfoQuery.vb" />
     <Compile Include="queries\ChangesQuery.vb" />
-    <Compile Include="queries_old\DiffQuery.vb" />
-    <Compile Include="queries_old\UserInfoQuery.vb" />
-    <Compile Include="queries_old\PageDetailQuery.vb" />
-    <Compile Include="queries_old\ExpandTemplatesQuery.vb" />
-    <Compile Include="queries_old\PageInfoQuery.vb" />
+    <Compile Include="queries\DiffQuery.vb" />
+    <Compile Include="queries\UserInfoQuery.vb" />
+    <Compile Include="queries\PageDetailQuery.vb" />
+    <Compile Include="queries\ExpandTemplatesQuery.vb" />
+    <Compile Include="queries\PageInfoQuery.vb" />
     <Compile Include="queries\ParseRevisionQuery.vb" />
-    <Compile Include="queries_old\RedirectsQuery.vb" />
-    <Compile Include="queries_old\RevisionInfoQuery.vb" />
-    <Compile Include="queries_old\RevisionDetailQuery.vb" />
-    <Compile Include="queries_old\UserDetailQuery.vb" />
+    <Compile Include="queries\RedirectsQuery.vb" />
+    <Compile Include="queries\RevisionInfoQuery.vb" />
+    <Compile Include="queries\RevisionDetailQuery.vb" />
+    <Compile Include="queries\UserDetailQuery.vb" />
     <Compile Include="scripting\Evaluator.vb" />
     <Compile Include="ui\controls\WaitControl.vb">
       <SubType>Component</SubType>
@@ -557,7 +557,7 @@
     <Compile Include="actions\Email.vb">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="queries_old\PatrolQuery.vb">
+    <Compile Include="queries\PatrolQuery.vb">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="model\Protect.vb">
@@ -566,24 +566,24 @@
     <Compile Include="actions\Purge.vb">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="queries_old\RestoreQuery.vb">
+    <Compile Include="queries\RestoreQuery.vb">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="queries_old\ReviewQuery.vb">
+    <Compile Include="queries\ReviewQuery.vb">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="actions\UserRights.vb">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="queries_old\ProtectionReqQuery.vb" />
-    <Compile Include="queries_old\TagQuery.vb" />
+    <Compile Include="queries\ProtectionReqQuery.vb" />
+    <Compile Include="queries\TagQuery.vb" />
     <Compile Include="queries\TokenQuery.vb" />
-    <Compile Include="queries_old\UserMessageQuery.vb" />
-    <Compile Include="queries_old\XfdQuery.vb" />
+    <Compile Include="queries\UserMessageQuery.vb" />
+    <Compile Include="queries\XfdQuery.vb" />
     <Compile Include="queries\Lists.vb">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="queries_old\UpdateQuery.vb" />
+    <Compile Include="queries\UpdateQuery.vb" />
     <Compile Include="model\Queue.vb" />
     <Compile Include="model\QueueItem.vb" />
     <Compile Include="net\ApiRequest.vb" />

@@ -104,7 +104,7 @@ Namespace Huggle.UI
             FilterCount.Text = Msg("a-count", FilterList.Items.Count)
         End Sub
 
-        Private Function GetFilterStatus(ByVal filter As AbuseFilter) As String
+        Private Shared Function GetFilterStatus(ByVal filter As AbuseFilter) As String
             Return Msg("view-abusefilter-" & If(filter.IsPrivate, "private", "public")) & ", " &
                 Msg("view-abusefilter-" & If(filter.IsDeleted, "deleted", If(filter.IsEnabled, "enabled", "disabled")))
         End Function

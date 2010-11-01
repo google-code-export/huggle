@@ -149,7 +149,7 @@ Namespace Huggle
             Return items
         End Function
 
-        Private Function GetUIState() As Dictionary(Of String, Object)
+        Private Shared Function GetUIState() As Dictionary(Of String, Object)
             Dim formConfig As New Dictionary(Of String, Object)
 
             For Each winForm As Form In Windows.Forms.Application.OpenForms

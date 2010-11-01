@@ -100,7 +100,7 @@ Namespace Huggle.Actions
             OnFail(Msg("error-undefined", key))
         End Sub
 
-        Protected Function MakeConfirmation(ByVal messages As List(Of String)) As String
+        Protected Shared Function MakeConfirmation(ByVal messages As List(Of String)) As String
             If messages.Count = 1 Then
                 Return messages(0)
             Else

@@ -12,7 +12,7 @@ Namespace Huggle.UI
             Me.Session = session
         End Sub
 
-        Private Sub _Load()
+        Private Sub _Load() Handles Me.Load
             AccountDisplay.Text = Session.User.FullName
         End Sub
 

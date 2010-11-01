@@ -632,35 +632,35 @@ Namespace Huggle
             Wiki.FeedPatterns.Add("new", New Regex(Feed.BasePattern.FormatWith("(!?)N(M?)(B?)", _
                 "[^ ]+oldid=(\d+)(?:&rcid=(\d+))?", "\((.+?)\)", "(.+?)", ""), RegexOptions.Compiled))
 
-            AddLogPattern(Wiki, "autocreate", "newuserlog-autocreate-entry")
-            AddLogPattern(Wiki, "create", "newuserlog-create-entry")
-            AddLogPattern(Wiki, "approve", "review-logentry-app", "\cC02([^\cC]+)\cC10", "(\d+)")
-            AddLogPattern(Wiki, "block", "blocklogentry", "User:(.+?) \((.+?)\)", "(.+?)", "(.+?)")
-            AddLogPattern(Wiki, "create2", "newuserlog-create2-entry", "User:(.+?)")
-            AddLogPattern(Wiki, "delete", "deletedarticle", "\cC02([^\cC]+)\cC10")
-            AddLogPattern(Wiki, "modify", "modifiedarticleprotection", "\[\[\cC02([^\cC]+)\cC10\]\]")
-            AddLogPattern(Wiki, "move", "1movedto2", "\cC02([^\cC]+)\cC10", "(.+?)")
-            AddLogPattern(Wiki, "move_redir", "1movedto2_redir", "\cC02([^\cC]+)\cC10", "(.+?)")
-            AddLogPattern(Wiki, "overwrite", "overwroteimage", "\cC02([^\cC]+)\cC10")
-            AddLogPattern(Wiki, "patrol", "patrol-log-line", "(r(\d+))", "\[\[\cC02([^\cC]+)\cC10\]\]", "(.+?)")
-            AddLogPattern(Wiki, "protect", "protectedarticle", "\cC02([^\cC]+)\cC10")
-            AddLogPattern(Wiki, "reblock", "reblock-logentry", "\cC02User:([^\cC]+)\cC10", "(.+?)", "\((.+?)\)")
-            AddLogPattern(Wiki, "restore", "undeletedarticle", "\cC02([^\cC]+)\cC10")
-            AddLogPattern(Wiki, "renameuser", "renameuserlogentry", "(.+?)", "(.+?)", _
+            AddLogPattern("autocreate", "newuserlog-autocreate-entry")
+            AddLogPattern("create", "newuserlog-create-entry")
+            AddLogPattern("approve", "review-logentry-app", "\cC02([^\cC]+)\cC10", "(\d+)")
+            AddLogPattern("block", "blocklogentry", "User:(.+?) \((.+?)\)", "(.+?)", "(.+?)")
+            AddLogPattern("create2", "newuserlog-create2-entry", "User:(.+?)")
+            AddLogPattern("delete", "deletedarticle", "\cC02([^\cC]+)\cC10")
+            AddLogPattern("modify", "modifiedarticleprotection", "\[\[\cC02([^\cC]+)\cC10\]\]")
+            AddLogPattern("move", "1movedto2", "\cC02([^\cC]+)\cC10", "(.+?)")
+            AddLogPattern("move_redir", "1movedto2_redir", "\cC02([^\cC]+)\cC10", "(.+?)")
+            AddLogPattern("overwrite", "overwroteimage", "\cC02([^\cC]+)\cC10")
+            AddLogPattern("patrol", "patrol-log-line", "(r(\d+))", "\[\[\cC02([^\cC]+)\cC10\]\]", "(.+?)")
+            AddLogPattern("protect", "protectedarticle", "\cC02([^\cC]+)\cC10")
+            AddLogPattern("reblock", "reblock-logentry", "\cC02User:([^\cC]+)\cC10", "(.+?)", "\((.+?)\)")
+            AddLogPattern("restore", "undeletedarticle", "\cC02([^\cC]+)\cC10")
+            AddLogPattern("renameuser", "renameuserlogentry", "(.+?)", "(.+?)", _
                 MwMessagePattern(Wiki.Message("renameuser-log"), ".+?", "(.+?)"))
-            AddLogPattern(Wiki, "rights", "rightslogentry", "(.+?)", "(.+?)", "(.+?)")
-            AddLogPattern(Wiki, "unapprove", "review-logentry-app", "\cC02([^\cC]+)\cC10", "(\d+)")
-            AddLogPattern(Wiki, "unblock", "unblocklogentry", "User:(.+?)")
-            AddLogPattern(Wiki, "unprotect", "unprotectedarticle", "(.+?)")
-            AddLogPattern(Wiki, "upload", "uploadedimage", "\cC02([^\cC]+)\cC10")
+            AddLogPattern("rights", "rightslogentry", "(.+?)", "(.+?)", "(.+?)")
+            AddLogPattern("unapprove", "review-logentry-app", "\cC02([^\cC]+)\cC10", "(\d+)")
+            AddLogPattern("unblock", "unblocklogentry", "User:(.+?)")
+            AddLogPattern("unprotect", "unprotectedarticle", "(.+?)")
+            AddLogPattern("upload", "uploadedimage", "\cC02([^\cC]+)\cC10")
         End Sub
 
-        Private Sub AddLogPattern(ByVal wiki As Wiki, ByVal action As String, _
+        Private Sub AddLogPattern(ByVal action As String,
             ByVal message As String, ByVal ParamArray paramPatterns As String())
 
-            If wiki.Message(message) IsNot Nothing Then wiki.FeedPatterns.Add _
+            If Wiki.Message(message) IsNot Nothing Then Wiki.FeedPatterns.Add _
                 (action, New Regex(Feed.BasePattern.FormatWith(Regex.Escape(action), "", "", MwMessagePattern _
-                (wiki.Message(message), paramPatterns)), RegexOptions.Compiled))
+                (Wiki.Message(message), paramPatterns)), RegexOptions.Compiled))
         End Sub
 
     End Class

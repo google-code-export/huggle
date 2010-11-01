@@ -21,7 +21,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Private ReadOnly Property Path() As String
+        Private Shared ReadOnly Property Path() As String
             Get
                 Return PathCombine(Environment.CurrentDirectory, "log.txt")
             End Get

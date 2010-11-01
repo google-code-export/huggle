@@ -7,7 +7,7 @@ Namespace Huggle.Actions
 
     Namespace Lists
 
-        Class AllPagesQuery : Inherits ListQuery
+        Public Class AllPagesQuery : Inherits ListQuery
 
             Sub New(ByVal session As Session, ByVal space As Space)
                 MyBase.New(session, "list", "allpages", "ap", _
@@ -26,7 +26,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Class BacklinksQuery : Inherits ListQuery
+        Public Class BacklinksQuery : Inherits ListQuery
 
             'Get pages that link to another page
 
@@ -44,7 +44,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Class CategoryQuery : Inherits ListQuery
+        Public Class CategoryQuery : Inherits ListQuery
 
             'Get the contents of a category
 
@@ -67,7 +67,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Class ContribsQuery : Inherits ListQuery
+        Public Class ContribsQuery : Inherits ListQuery
 
             'Get user's contributions
 
@@ -88,7 +88,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Class DeletedContribsQuery : Inherits ListQuery
+        Public Class DeletedContribsQuery : Inherits ListQuery
 
             'Get a user's deleted contributions
 
@@ -99,7 +99,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Class DeletedHistoryQuery : Inherits ListQuery
+        Public Class DeletedHistoryQuery : Inherits ListQuery
 
             'Get deleted history for page
 
@@ -110,7 +110,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Class ExternalLinkUsageQuery : Inherits ListQuery
+        Public Class ExternalLinkUsageQuery : Inherits ListQuery
 
             'Get pages that use an external link
 
@@ -128,7 +128,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Class FileQuery : Inherits ListQuery
+        Public Class FileQuery : Inherits ListQuery
 
             'Read list from a file
 
@@ -166,7 +166,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Class GlobalBlocksQuery : Inherits ListQuery
+        Public Class GlobalBlocksQuery : Inherits ListQuery
 
             'Get global blocks
 
@@ -177,7 +177,7 @@ Namespace Huggle.Actions
             End Sub
         End Class
 
-        Class GlobalMediaUsageQuery : Inherits ListQuery
+        Public Class GlobalMediaUsageQuery : Inherits ListQuery
 
             'Get global media usage
 
@@ -193,7 +193,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Class HistoryQuery : Inherits ListQuery
+        Public Class HistoryQuery : Inherits ListQuery
 
             'Get history of a page
 
@@ -213,7 +213,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Class LinksQuery : Inherits ListQuery
+        Public Class LinksQuery : Inherits ListQuery
 
             'Get links on a page
 
@@ -224,7 +224,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Class LogsQuery : Inherits ListQuery
+        Public Class LogsQuery : Inherits ListQuery
 
             Sub New(ByVal session As Session)
                 MyBase.New(session, "list", "logevents", "le", Nothing, Msg("listdesc-logs"))
@@ -258,7 +258,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Class ManualQuery : Inherits ListQuery
+        Public Class ManualQuery : Inherits ListQuery
 
             'Request that just echoes an input list of titles
 
@@ -284,7 +284,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Class MediaQuery : Inherits ListQuery
+        Public Class MediaQuery : Inherits ListQuery
 
             'Get files on a page
 
@@ -295,13 +295,13 @@ Namespace Huggle.Actions
 
         End Class
 
-        Class MediaUsageQuery : Inherits ListQuery
+        Public Class MediaUsageQuery : Inherits ListQuery
 
             'Get pages that include a file
 
             Sub New(ByVal session As Session, ByVal media As File)
                 MyBase.New(session, "list", "imageusage", "iu", _
-                    New QueryString("iutitle", Media), Msg("listdesc-mediausage", Media.Name))
+                    New QueryString("iutitle", media), Msg("listdesc-mediausage", media.Name))
             End Sub
 
             Protected Overrides Sub SetOption(ByVal name As String, ByVal value As String)
@@ -313,7 +313,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Class PrefixQuery : Inherits ListQuery
+        Public Class PrefixQuery : Inherits ListQuery
 
             Sub New(ByVal session As Session, ByVal space As Space, ByVal prefix As String)
                 MyBase.New(session, "list", "allpages", "ap", _
@@ -323,7 +323,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Class ProtectedPagesRequest : Inherits ListQuery
+        Public Class ProtectedPagesRequest : Inherits ListQuery
 
             Sub New(ByVal session As Session, ByVal space As Space)
                 MyBase.New(session, "list", "allpages", "ap", _
@@ -344,7 +344,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Class ProtectedTitlesRequest : Inherits ListQuery
+        Public Class ProtectedTitlesRequest : Inherits ListQuery
 
             Sub New(ByVal session As Session)
                 MyBase.New(session, "list", "protectedtitles", "pt", _
@@ -359,7 +359,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Class RandomQuery : Inherits ListQuery
+        Public Class RandomQuery : Inherits ListQuery
 
             'Get random pages
 
@@ -375,7 +375,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Class RedirectsQuery : Inherits ListQuery
+        Public Class RedirectsQuery : Inherits ListQuery
 
             'Get redirects to a page
 
@@ -386,7 +386,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Class SearchQuery : Inherits ListQuery
+        Public Class SearchQuery : Inherits ListQuery
 
             'Get search results
 
@@ -404,7 +404,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Class SubcatsQuery : Inherits ListQuery
+        Public Class SubcatsQuery : Inherits ListQuery
 
             Sub New(ByVal session As Session, ByVal category As Category)
                 MyBase.New(session, "list", "categorymembers", "cm", _
@@ -424,7 +424,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Class TransclusionsQuery : Inherits ListQuery
+        Public Class TransclusionsQuery : Inherits ListQuery
 
             'Get pages that transclude another page
 
@@ -442,7 +442,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Class UnreviewedQuery : Inherits ListQuery
+        Public Class UnreviewedQuery : Inherits ListQuery
 
             'Get pages with unreviewed revisions
 
@@ -452,7 +452,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Class UserGroupQuery : Inherits ListQuery
+        Public Class UserGroupQuery : Inherits ListQuery
 
             'Get members of a user group
 
@@ -469,7 +469,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Class UsersQuery : Inherits ListQuery
+        Public Class UsersQuery : Inherits ListQuery
 
             'Get all users
 
@@ -485,7 +485,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Class WatchlistQuery : Inherits ListQuery
+        Public Class WatchlistQuery : Inherits ListQuery
 
             'Get contents of user's watchlist
 

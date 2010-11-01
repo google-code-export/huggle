@@ -539,12 +539,6 @@ Namespace Huggle
             Return _Server
         End Function
 
-        Private Function ParseExpiry(ByVal str As String) As Date
-            If String.IsNullOrEmpty(str) Then Return Date.MinValue
-            If str = "indefinite" Then Return Date.MaxValue
-            Return CDate(str.FromFirst(" ").Remove(" (UTC)"))
-        End Function
-
         Private Enum FeedState As Integer
             : Disconnected : Connecting : Connected : Disconnecting : Reconnecting
         End Enum

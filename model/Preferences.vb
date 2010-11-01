@@ -246,7 +246,7 @@ Namespace Huggle
             Return prefs
         End Function
 
-        Private Function BoolStr(ByVal value As Boolean) As String
+        Private Shared Function BoolStr(ByVal value As Boolean) As String
             If value Then Return "1" Else Return "0"
         End Function
 

@@ -576,11 +576,11 @@ Namespace Huggle.Actions
         End Sub
 
         Private Sub DoDelete()
-
+            '
         End Sub
 
         Private Sub DoSpeedy()
-
+            '
         End Sub
 
         Private ReadOnly Property CanRollback() As Boolean

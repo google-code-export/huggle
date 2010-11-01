@@ -63,13 +63,13 @@ Namespace Huggle.UI
             form.Show()
         End Sub
 
-        Private Sub HelpAbout_Click() Handles HelpAbout.Click
+        Private Shared Sub HelpAbout_Click() Handles HelpAbout.Click
             Using form As New AboutForm
                 form.ShowDialog()
             End Using
         End Sub
 
-        Private Sub HelpManual_Click() Handles HelpManual.Click
+        Private Shared Sub HelpManual_Click() Handles HelpManual.Click
             OpenWebBrowser(InternalConfig.ManualUrl)
         End Sub
 
@@ -97,7 +97,7 @@ Namespace Huggle.UI
             form.Show()
         End Sub
 
-        Private Sub ClearCloudToolStripMenuItem_Click() Handles ClearCloudToolStripMenuItem.Click
+        Private Shared Sub ClearCloudToolStripMenuItem_Click() Handles ClearCloudToolStripMenuItem.Click
             Dim req As New CloudStore("global", "-")
             req.Start()
         End Sub

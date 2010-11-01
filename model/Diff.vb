@@ -238,8 +238,8 @@ Namespace Huggle
             Get
                 Dim key As String = CStr(Math.Max(first.Id, second.Id) & "|" & Math.Min(first.Id, second.Id))
 
-                'If Not _All.ContainsKey(key) Then _All.Add(key, New Diff(key, Wiki))
-                'Return _All(key)
+                If Not _All.ContainsKey(key) Then _All.Add(key, New Diff(key, Wiki))
+                Return _All(key)
                 Return Nothing
             End Get
         End Property

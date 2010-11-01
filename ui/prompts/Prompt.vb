@@ -78,7 +78,7 @@ Namespace Huggle.UI
         Private Sub AddButton(ByVal text As String)
             'Dim NewButton As New TaskDialogButton
             'NewButton.Width = ButtonPanel.Width
-            'NewButton.Label = Text
+            'NewButton.Label = text
             'ButtonPanel.Controls.Add(NewButton)
             'AddHandler NewButton.Click, AddressOf ButtonClicked
             'Height += NewButton.Height

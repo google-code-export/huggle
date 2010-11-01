@@ -5,7 +5,7 @@ Namespace Huggle.Actions
 
     'Get redirect targets
 
-    Class RedirectsQuery : Inherits Query
+    Public Class RedirectsQuery : Inherits Query
 
         Private Pages As List(Of Page)
 

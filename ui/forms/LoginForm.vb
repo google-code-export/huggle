@@ -60,7 +60,7 @@ Namespace Huggle.UI
             End Try
         End Sub
 
-        Private Function WikiTypeName(ByVal wiki As Wiki) As String
+        Private Shared Function WikiTypeName(ByVal wiki As Wiki) As String
             If wiki.Family Is Nothing Then Return Msg("wikitype-other")
             If wiki.Type Is Nothing Then Return wiki.Family.Name
             If App.Languages.Current.Messages.ContainsKey("wikitype-" & wiki.Type.ToLower) _
@@ -68,7 +68,7 @@ Namespace Huggle.UI
             Return UcFirst(wiki.Type)
         End Function
 
-        Private Function IsShown(ByVal wiki As Wiki) As Boolean
+        Private Shared Function IsShown(ByVal wiki As Wiki) As Boolean
             Return Not wiki.IsHidden AndAlso wiki.IsPublicReadable AndAlso wiki.IsPublicEditable
         End Function
 

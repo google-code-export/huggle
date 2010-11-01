@@ -7,11 +7,11 @@
             Logo.Image = Resources.HuggleLogo
         End Sub
 
-        Private Sub PictureBox1_Click() Handles MediaWiki.Click
+        Private Shared Sub MediaWiki_Click() Handles MediaWiki.Click
             OpenWebBrowser(InternalConfig.MediaWikiUrl)
         End Sub
 
-        Private Sub ManualLink_LinkClicked() Handles ManualLink.LinkClicked
+        Private Shared Sub ManualLink_LinkClicked() Handles ManualLink.LinkClicked
             OpenWebBrowser(InternalConfig.ManualUrl)
         End Sub
 
@@ -19,7 +19,7 @@
             OpenWebBrowser(InternalConfig.FeedbackUrl)
         End Sub
 
-        Private Sub SourceLink_LinkClicked() Handles SourceLink.LinkClicked
+        Private Shared Sub SourceLink_LinkClicked() Handles SourceLink.LinkClicked
             OpenWebBrowser(InternalConfig.SourceUrl)
         End Sub
 
