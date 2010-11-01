@@ -60,7 +60,7 @@ Namespace Huggle
 
             'Load global config if out of date
             If Not Config.Global.IsCurrent Then
-                Log.Debug("Outdated in local: global")
+                If Config.Global.IsLoaded Then Log.Debug("Outdated in local: global")
                 UserWaitForProcess(Config.Global.Loader, Nothing, True)
                 If Config.Global.Loader.IsFailed Then Return
             End If
@@ -70,6 +70,7 @@ Namespace Huggle
             'As connection to IRC feed can take several seconds, anticipate the user selecting a
             'Wikimedia wiki, and try to make the feed available as soon as possible
             If Config.Local.RcFeeds AndAlso Families.Wikimedia.Feed IsNot Nothing Then Families.Wikimedia.Feed.Connect()
+            Config.Local.SaveLocal()
 
             Dim mainSession As Session = Nothing
 
@@ -289,6 +290,19 @@ Namespace Huggle
         Friend Shared ReadOnly Warning2 As Image = Resources.blob_warning_2
         Friend Shared ReadOnly Warning3 As Image = Resources.blob_warning_3
         Friend Shared ReadOnly Warning4 As Image = Resources.blob_warning_4
+
+    End Class
+
+    <Serializable()>
+    Public Class HuggleException : Inherits ApplicationException
+
+        Public Sub New(ByVal message As String)
+            MyBase.New(message)
+        End Sub
+
+        Public Sub New(ByVal message As String, ByVal innerException As Exception)
+            MyBase.New(message, innerException)
+        End Sub
 
     End Class
 

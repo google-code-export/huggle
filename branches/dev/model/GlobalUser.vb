@@ -15,8 +15,6 @@ Namespace Huggle
         Private _Blocks As List(Of GlobalBlock)
         Private _Config As GlobalUserConfig
         Private _Cookies As CookieCollection
-        Private _GlobalGroups As List(Of GlobalGroup)
-        Private _Rights As List(Of String)
         Private _Users As List(Of User)
         Private _Wikis As List(Of Wiki)
 
@@ -67,12 +65,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Public ReadOnly Property GlobalGroups() As List(Of GlobalGroup)
-            Get
-                If _GlobalGroups Is Nothing Then _GlobalGroups = New List(Of GlobalGroup)
-                Return _GlobalGroups
-            End Get
-        End Property
+        Public Property GlobalGroups() As List(Of GlobalGroup)
 
         Public ReadOnly Property HasAccountOn(ByVal wiki As Wiki) As Boolean
             Get
@@ -108,12 +101,7 @@ Namespace Huggle
 
         Public Property PrimaryUser() As User
 
-        Public ReadOnly Property Rights() As List(Of String)
-            Get
-                If _Rights Is Nothing Then _Rights = New List(Of String)
-                Return _Rights
-            End Get
-        End Property
+        Public Property Rights() As List(Of String)
 
         Public ReadOnly Property UserOn(ByVal wiki As Wiki) As User
             Get

@@ -62,7 +62,7 @@ Namespace Huggle
                     total += read
                 Loop Until read = 0
 
-                ReDim Preserve output(total - 1)
+                ReDim Preserve output(total)
                 Return output
 
             Catch ex As InvalidDataException

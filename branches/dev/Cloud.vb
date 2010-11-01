@@ -72,7 +72,9 @@ Namespace Huggle.Actions
             End Try
 
             'Check for expected prefix
-            If Not _Value.StartsWith(KeyPrefix) Then
+            If _Value.StartsWith(KeyPrefix) Then
+                _Value = _Value.Substring(KeyPrefix.Length)
+            Else
                 _Value = Nothing
                 OnFail(failResult) : Return
             End If
@@ -99,7 +101,7 @@ Namespace Huggle.Actions
             req.Url = New Uri(InternalConfig.CloudUrl.ToString)
 
             'Prefix data as a rudimentary guard against tampering
-            Value = CloudQuery.KeyPrefix & LF & Value
+            Value = CloudQuery.KeyPrefix & Value
 
             Dim header As Byte() = Encoding.UTF8.GetBytes(UrlEncode(CloudQuery.KeyPrefix & Key) & "=")
             Dim uncompressedValue As Byte() = Encoding.UTF8.GetBytes(Value)

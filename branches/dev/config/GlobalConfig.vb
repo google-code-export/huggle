@@ -183,10 +183,7 @@ Namespace Huggle
             Dim familyConfigs As New Dictionary(Of String, Object)
 
             For Each family As Family In App.Families.All
-                Dim config As New Dictionary(Of String, Object)
-                config.Add("name", family.Name)
-
-                familyConfigs.Add(family.Code, config)
+                familyConfigs.Add(family.Code, family.Config.WriteConfig(target))
             Next family
 
             items.Add("families", familyConfigs)

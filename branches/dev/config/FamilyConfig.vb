@@ -11,7 +11,7 @@ Namespace Huggle
 
         Private Family As Family
 
-        Public Property Logo As String = "Wikimedia.png"
+        Public Property Logo As String
 
         Public Sub New(ByVal family As Family)
             Me.Family = family
@@ -22,18 +22,6 @@ Namespace Huggle
                 Return PathCombine("family", GetValidFileName(Family.Code))
             End Get
         End Property
-
-        Public Shared Sub LoadAll()
-            For Each family As Family In App.Families.All
-                family.Config.LoadLocal()
-            Next family
-        End Sub
-
-        Public Shared Sub SaveAll()
-            For Each family As Family In App.Families.All
-                family.Config.SaveLocal()
-            Next family
-        End Sub
 
         Protected Overrides Sub ReadConfig(ByVal text As String)
             For Each item As KVP In Config.ParseConfig("family", Nothing, text)

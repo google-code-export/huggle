@@ -122,7 +122,7 @@ Namespace Huggle
             items.Add("debug-enabled", DebugEnabled)
             items.Add("debug-visible", DebugVisible)
             items.Add("detect-proxy", DetectProxySettings)
-            items.Add("first-run", IsFirstRun)
+            If Not IsFirstRun Then items.Add("first-run", IsFirstRun)
             items.Add("language", App.Languages.Current.Code)
             If LastLogin IsNot Nothing Then items.Add("last-login", LastLogin.FullName)
             items.Add("log-file", LogToFile)

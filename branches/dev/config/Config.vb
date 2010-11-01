@@ -16,7 +16,9 @@ Namespace Huggle
 
         Private _IsLoaded As Boolean
 
-        Private Shared ReadOnly UpdateInterval As New TimeSpan(0, 1, 0)
+        Private LocalMissing As Boolean
+
+        Private Shared ReadOnly UpdateInterval As New TimeSpan(12, 0, 0)
 
         Protected MustOverride ReadOnly Property Location() As String
         Protected MustOverride Sub ReadConfig(ByVal text As String)
@@ -97,6 +99,7 @@ Namespace Huggle
                 result.Append(str.Replace(CRLF, CRLF & Tab) & CRLF)
             Next key
 
+            result.Append(CRLF & CRLF)
             Return result.ToString
         End Function
 
@@ -226,7 +229,8 @@ Namespace Huggle
         End Sub
 
         Public Overridable Sub LoadLocal()
-            Load(LoadFile(Location))
+            If Not LocalMissing Then Load(LoadFile(Location))
+            If Not IsLoaded Then LocalMissing = True
         End Sub
 
         Public Overridable Sub Load(ByVal text As String)
@@ -270,6 +274,7 @@ Namespace Huggle
 
         Public Overridable Sub SaveLocal()
             Config.SaveFile(Location, Save(ConfigTarget.Local))
+            LocalMissing = False
         End Sub
 
         Protected Function Save(ByVal target As ConfigTarget) As String
