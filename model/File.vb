@@ -27,7 +27,7 @@ Namespace Huggle
                 Try
                     If IO.File.Exists(FilePath) Then Return New MemoryStream(IO.File.ReadAllBytes(FilePath))
                 Catch ex As IOException
-                    Log.Write("Failed to load file '{0}'".FormatWith(Name))
+                    Log.Write("Failed to load file '{0}'".FormatI(Name))
                 End Try
 
                 Return Nothing
@@ -36,7 +36,7 @@ Namespace Huggle
                 Try
                     WriteFile(FilePath, value)
                 Catch ex As IOException
-                    Log.Write("Failed to save file '{0}'".FormatWith(Name))
+                    Log.Write("Failed to save file '{0}'".FormatI(Name))
                 End Try
             End Set
         End Property
@@ -97,7 +97,7 @@ Namespace Huggle
                 Try
                     If IO.File.Exists(ThumbPath(size)) Then Return New MemoryStream(IO.File.ReadAllBytes(ThumbPath(size)))
                 Catch ex As IOException
-                    Log.Write("Failed to load file '{0}'".FormatWith(Name))
+                    Log.Write("Failed to load file '{0}'".FormatI(Name))
                 End Try
 
                 Return Nothing
@@ -106,7 +106,7 @@ Namespace Huggle
                 Try
                     WriteFile(ThumbPath(size), value)
                 Catch ex As IOException
-                    Log.Write("Failed to save file '{0}'".FormatWith(Name))
+                    Log.Write("Failed to save file '{0}'".FormatI(Name))
                 End Try
             End Set
         End Property
@@ -133,7 +133,7 @@ Namespace Huggle
         Public ReadOnly Property Type() As String
             Get
                 If Not Name.Contains(".") Then Return Nothing
-                Return Name.FromLast(".").ToLower
+                Return Name.FromLast(".").ToLowerI
             End Get
         End Property
 
@@ -163,16 +163,15 @@ Namespace Huggle
             If Not Directory.Exists(Path.GetDirectoryName(fileName)) _
                 Then Directory.CreateDirectory(Path.GetDirectoryName(fileName))
 
-            Dim fileStream As FileStream = IO.File.OpenWrite(fileName)
-            Dim buffer(255) As Byte, size As Integer
-            stream.Seek(0, SeekOrigin.Begin)
+            Using fileStream As FileStream = IO.File.OpenWrite(fileName)
+                Dim buffer(255) As Byte, size As Integer
+                stream.Seek(0, SeekOrigin.Begin)
 
-            Do
-                size = stream.Read(buffer, 0, buffer.Length)
-                fileStream.Write(buffer, 0, size)
-            Loop While size > 0
-
-            fileStream.Close()
+                Do
+                    size = stream.Read(buffer, 0, buffer.Length)
+                    fileStream.Write(buffer, 0, size)
+                Loop While size > 0
+            End Using
         End Sub
 
     End Class

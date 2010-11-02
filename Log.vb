@@ -77,8 +77,8 @@ Namespace Huggle
                 Try
                     If Writer Is Nothing Then Writer = New StreamWriter(Path, True, Text.Encoding.UTF8)
 
-                    Writer.WriteLine(message.Time.ToShortDateString & " " & message.Time.ToLongTimeString _
-                        & "." & message.Time.Millisecond.ToString.PadLeft(3, "0"c) & " - " & message.Message)
+                    Writer.WriteLine(message.Time.ToShortDateString & " " & message.Time.ToLongTimeString &
+                        "." & message.Time.Millisecond.ToStringI.PadLeft(3, "0"c) & " - " & message.Message)
                     Writer.Flush()
 
                 Catch ex As SystemException

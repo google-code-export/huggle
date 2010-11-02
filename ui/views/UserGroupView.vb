@@ -22,7 +22,7 @@ Namespace Huggle.UI
 
                 If group.IsImplicit _
                     Then groupCountString = Msg("view-usergroup-implicit") _
-                    Else groupCountString = If(group.Count < 0, Msg("a-unknown"), group.Count.ToString)
+                    Else groupCountString = If(group.Count < 0, Msg("a-unknown"), group.Count.ToStringForUser)
 
                 List.AddRow(group.Name, group.Description, groupCountString)
             Next group

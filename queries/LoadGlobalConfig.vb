@@ -30,8 +30,8 @@ Namespace Huggle.Actions
                 End If
             End If
 
-            Dim configPage As Page = Wiki.Pages(Config.Global.PageTitle)
-            Dim languagePage As Page = Wiki.Pages(Config.Global.LocalizationPageName(App.Languages.Current.Code))
+            Dim configPage As Page = Wiki.Pages(GlobalConfig.PageTitle)
+            Dim languagePage As Page = Wiki.Pages(GlobalConfig.LocalizationPageName(App.Languages.Current.Code))
 
             'Parts to global configuration:
             '* the configuration page itself
@@ -44,17 +44,13 @@ Namespace Huggle.Actions
             If Wiki.Family.GlobalTitleBlacklist IsNot Nothing _
                 Then configRequest.Pages.Merge(Wiki.Family.GlobalTitleBlacklist.Location)
 
-            Dim wikiRequest As New ApiRequest _
-                (App.Sessions(App.Wikis.Global.Users.Anonymous), Description, New QueryString("action", "sitematrix"))
-            Dim closedRequest As New FileRequest _
-                (App.Sessions(App.Wikis.Global.Users.Anonymous), InternalConfig.WikimediaClosedWikisPath)
+            Dim wikiRequest As New ApiRequest(
+                App.Sessions(App.Wikis.Global.Users.Anonymous), Description, New QueryString("action", "sitematrix"))
+            Dim closedRequest As New FileRequest(
+                App.Sessions(App.Wikis.Global.Users.Anonymous), InternalConfig.WikimediaClosedWikisPath)
 
-            'Run requests in parallel
-            CreateThread(AddressOf configRequest.Start)
-            CreateThread(AddressOf wikiRequest.Start)
-            CreateThread(AddressOf closedRequest.Start)
-            App.WaitFor(Function() configRequest.IsComplete AndAlso wikiRequest.IsComplete AndAlso closedRequest.IsComplete)
-
+            App.DoParallel({configRequest, wikiRequest, closedRequest})
+            
             If configRequest.Result.IsError Then OnFail(configRequest.Result) : Return
             If wikiRequest.Result.IsError Then OnFail(wikiRequest.Result) : Return
 
@@ -72,10 +68,10 @@ Namespace Huggle.Actions
             If languagePage.Exists Then
                 Try
                     App.Languages.Current.GetConfig.Load(languagePage.Text)
-                    Log.Debug("Loaded messages for '{0}' from wiki".FormatWith(App.Languages.Current.Name))
+                    Log.Debug("Loaded messages for '{0}' from wiki".FormatI(App.Languages.Current.Name))
 
                 Catch ex As ConfigException
-                    Log.Write(Msg("language-loadfail", App.Languages.Current.Name, _
+                    Log.Write(Msg("language-loadfail", App.Languages.Current.Name,
                         Msg("error-config", Nothing, "messages-" & App.Languages.Current.Code)))
                 End Try
             End If
@@ -90,7 +86,7 @@ Namespace Huggle.Actions
                     End If
                 Next code
             Else
-                Log.Debug("Error loading closed wiki list: {0}".FormatWith(closedRequest.Result.LogMessage))
+                Log.Debug("Error loading closed wiki list: {0}".FormatI(closedRequest.Result.LogMessage))
             End If
 
             'Save configuration

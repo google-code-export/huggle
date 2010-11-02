@@ -23,45 +23,40 @@
         'Do not modify it using the code editor.
         <System.Diagnostics.DebuggerStepThrough()> _
         Private Sub InitializeComponent()
-            Dim FlagNameColumn As System.Windows.Forms.ColumnHeader
-            Dim FlagDisplayNameColumn As System.Windows.Forms.ColumnHeader
-            Dim FlagLevelsColumn As System.Windows.Forms.ColumnHeader
-            Dim FlagQualityLevelColumn As System.Windows.Forms.ColumnHeader
-            Dim PristineLevelColumn As System.Windows.Forms.ColumnHeader
+            Me.NameColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+            Me.DisplayNameColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+            Me.LevelsColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+            Me.QualityLevelColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+            Me.PristineLevelColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.Count = New System.Windows.Forms.Label()
             Me.List = New System.Windows.Forms.EnhancedListView()
             Me.Title = New System.Windows.Forms.Label()
-            FlagNameColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
-            FlagDisplayNameColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
-            FlagLevelsColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
-            FlagQualityLevelColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
-            PristineLevelColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.SuspendLayout()
             '
-            'FlagNameColumn
+            'NameColumn
             '
-            FlagNameColumn.Text = "Name"
-            FlagNameColumn.Width = 99
+            Me.NameColumn.Text = "Name"
+            Me.NameColumn.Width = 99
             '
-            'FlagDisplayNameColumn
+            'DisplayNameColumn
             '
-            FlagDisplayNameColumn.Text = "Display name"
-            FlagDisplayNameColumn.Width = 239
+            Me.DisplayNameColumn.Text = "Display name"
+            Me.DisplayNameColumn.Width = 239
             '
-            'FlagLevelsColumn
+            'LevelsColumn
             '
-            FlagLevelsColumn.Text = "Levels"
-            FlagLevelsColumn.Width = 48
+            Me.LevelsColumn.Text = "Levels"
+            Me.LevelsColumn.Width = 48
             '
-            'FlagQualityLevelColumn
+            'QualityLevelColumn
             '
-            FlagQualityLevelColumn.Text = """Quality"" level"
-            FlagQualityLevelColumn.Width = 81
+            Me.QualityLevelColumn.Text = """Quality"" level"
+            Me.QualityLevelColumn.Width = 81
             '
             'PristineLevelColumn
             '
-            PristineLevelColumn.Text = """Pristine"" level"
-            PristineLevelColumn.Width = 83
+            Me.PristineLevelColumn.Text = """Pristine"" level"
+            Me.PristineLevelColumn.Width = 83
             '
             'Count
             '
@@ -78,7 +73,7 @@
             Me.List.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
                         Or System.Windows.Forms.AnchorStyles.Left) _
                         Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-            Me.List.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {FlagNameColumn, FlagDisplayNameColumn, FlagLevelsColumn, FlagQualityLevelColumn, PristineLevelColumn})
+            Me.List.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.NameColumn, Me.DisplayNameColumn, Me.LevelsColumn, Me.QualityLevelColumn, Me.PristineLevelColumn})
             Me.List.FlexibleColumn = 1
             Me.List.FullRowSelect = True
             Me.List.GridLines = True
@@ -116,6 +111,11 @@
         Private WithEvents Count As System.Windows.Forms.Label
         Private WithEvents List As System.Windows.Forms.EnhancedListView
         Private WithEvents Title As System.Windows.Forms.Label
+        Private WithEvents NameColumn As System.Windows.Forms.ColumnHeader
+        Private WithEvents DisplayNameColumn As System.Windows.Forms.ColumnHeader
+        Private WithEvents LevelsColumn As System.Windows.Forms.ColumnHeader
+        Private WithEvents QualityLevelColumn As System.Windows.Forms.ColumnHeader
+        Private WithEvents PristineLevelColumn As System.Windows.Forms.ColumnHeader
 
     End Class
 End Namespace

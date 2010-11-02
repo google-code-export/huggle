@@ -11,6 +11,42 @@ Namespace Huggle
 
     Public Module WikiFunctions
 
+        Public Function ParseWikiUrl(ByVal uri As Uri) As Dictionary(Of String, String)
+            Dim params As New Dictionary(Of String, String)
+            Dim url As String = uri.ToString
+
+            If url.Contains("wiki/") OrElse url.Contains("/index.php/") Then
+
+                If url.Contains("wiki/") Then url = url.Substring(url.IndexOfI("wiki/") + 5) _
+                    Else url = url.Substring(url.IndexOfI("/index.php/") + 12)
+
+                If url.Contains("?") Then
+                    Dim title As String = url.Substring(0, url.IndexOfI("?"))
+
+                    If title.Contains("#") Then title = title.Substring(0, title.IndexOfI("#"))
+                    params.Add("title", UrlDecode(title.Replace("_", " ")))
+                    url = url.Substring(url.IndexOfI("?") + 1)
+                Else
+                    If url.Contains("#") Then url = url.Substring(0, url.IndexOfI("#"))
+                    params.Add("title", UrlDecode(url.Replace("_", " ")))
+                    url = ""
+                End If
+
+            ElseIf url.Contains("/index.php?") Then
+                url = url.Substring(url.IndexOfI("/index.php?") + 12)
+
+            ElseIf url.Contains("/wiki.phtml?") Then
+                url = url.Substring(url.IndexOfI("/wiki.phtml?") + 13)
+            End If
+
+            For Each param As String In url.Split("&"c)
+                If param.Contains("=") Then params.Merge(param.Substring(0, param.IndexOfI("=")),
+                    UrlDecode(param.Substring(param.IndexOfI("=") + 1)))
+            Next param
+
+            Return params
+        End Function
+
         Public Function WikiStripMarkup(ByVal text As String) As String
             If text Is Nothing Then Return Nothing
 
@@ -19,7 +55,7 @@ Namespace Huggle
                 "<([a-z]+) [^/>]*?style *= *[""']display: *none[""'][^/>]*?/?>", RegexOptions.Compiled)
 
             For Each item As Match In hiddenPattern.Matches(text)
-                If item.Value.EndsWith("/>") Then
+                If item.Value.EndsWithI("/>") Then
                     text = text.Remove(">")
                 Else
                     Dim hiddenText As String = item.Value
@@ -44,12 +80,12 @@ Namespace Huggle
             Next item
 
             'Strip wikilinks
-            While text.Contains("[[") AndAlso text.IndexOf("[[") < text.IndexOf("]]")
+            While text.Contains("[[") AndAlso text.IndexOfI("[[") < text.IndexOfI("]]")
                 Dim title As String = text.FromFirst("[[")
 
                 If title.Contains("|") AndAlso (Not title.Contains("]]") _
-                    OrElse title.IndexOf("|") < title.IndexOf("]]")) _
-                    Then If title.StartsWith("File:") OrElse title.StartsWith("Image:") _
+                    OrElse title.IndexOfI("|") < title.IndexOfI("]]")) _
+                    Then If title.StartsWithI("File:") OrElse title.StartsWithI("Image:") _
                     Then title = title.ToFirst("|") Else title = title.FromFirst("|")
 
                 title = title.ToFirst("]]")
@@ -57,12 +93,12 @@ Namespace Huggle
             End While
 
             'Strip HTML
-            While text.Contains("<") AndAlso text.IndexOf("<") < text.IndexOf(">")
+            While text.Contains("<") AndAlso text.IndexOfI("<") < text.IndexOfI(">")
                 text = text.ToFirst("<") & text.FromFirst(">")
             End While
 
             'Strip references
-            While text.Contains("{{cite") AndAlso text.IndexOf("}}", text.IndexOf("{{cite")) > -1
+            While text.Contains("{{cite") AndAlso text.IndexOfI("}}", text.IndexOfI("{{cite")) > -1
                 text = text.ToFirst("{{cite") & text.FromFirst("{{cite").FromFirst("}}")
             End While
 
@@ -72,11 +108,11 @@ Namespace Huggle
         Public Function WikiStripSummary(ByVal summary As String) As String
             If summary Is Nothing Then Return Nothing
 
-            While summary.IndexOf("[[") > -1 AndAlso summary.IndexOf("[[") < summary.IndexOf("]]")
+            While summary.IndexOfI("[[") > -1 AndAlso summary.IndexOfI("[[") < summary.IndexOfI("]]")
                 Dim title As String = summary.FromFirst("[[")
 
                 If title.Contains("|") AndAlso (Not title.Contains("]]") _
-                    OrElse title.IndexOf("|") < title.IndexOf("]]")) Then title = title.FromFirst("|")
+                    OrElse title.IndexOfI("|") < title.IndexOfI("]]")) Then title = title.FromFirst("|")
 
                 title = title.ToFirst("]]")
                 summary = summary.ToFirst("[[") & title & summary.FromFirst("]]")
@@ -101,39 +137,41 @@ Namespace Huggle
             Return text
         End Function
 
+        'Converts a timestamp from MediaWiki's internal format
         Public Function FromWikiTimestamp(ByVal ts As String) As Date
-            Return New Date(CInt(ts.Substring(0, 4)), CInt(ts.Substring(4, 2)), CInt(ts.Substring(6, 2)), _
+            Return New Date(CInt(ts.Substring(0, 4)), CInt(ts.Substring(4, 2)), CInt(ts.Substring(6, 2)),
                 CInt(ts.Substring(8, 2)), CInt(ts.Substring(10, 2)), CInt(ts.Substring(12, 2)), DateTimeKind.Utc)
         End Function
 
+        'Returns a timestamp in MediaWiki's internal format
         Public Function WikiTimestamp(ByVal time As Date) As String
             If time = Date.MaxValue Then Return "never"
             time = time.ToUniversalTime
 
-            Return time.Year.ToString & time.Month.ToString.PadLeft(2, "0"c) & time.Day.ToString.PadLeft(2, "0"c) & _
-                time.Hour.ToString.PadLeft(2, "0"c) & time.Minute.ToString.PadLeft(2, "0"c) & _
-                time.Second.ToString.PadLeft(2, "0"c)
+            Return time.Year.ToStringI & time.Month.ToStringI.PadLeft(2, "0"c) & time.Day.ToStringI.PadLeft(2, "0"c) &
+                time.Hour.ToStringI.PadLeft(2, "0"c) & time.Minute.ToStringI.PadLeft(2, "0"c) &
+                time.Second.ToStringI.PadLeft(2, "0"c)
         End Function
 
-        Public Function WikiUrlEncode(ByVal Text As String) As String
-            Return UrlEncode(Text.Replace(" ", "_"))
+        Public Function WikiUrlEncode(ByVal text As String) As String
+            Return UrlEncode(text.Replace(" ", "_"))
         End Function
 
         'Determines whether a string corresponds to a MediaWiki
         'message and extracts the values of any parameters
-        Public Function MessageMatch(ByVal Message As String, ByVal Text As String) As Match
-            Static NoMatch As Match = Regex.Match("", ".", RegexOptions.Compiled)
+        Public Function MessageMatch(ByVal message As String, ByVal text As String) As Match
+            Static noMatch As Match = Regex.Match("", ".", RegexOptions.Compiled)
 
-            If Message Is Nothing Then Return NoMatch
-            Dim Pattern As String = EscapeMwMessage(Message)
+            If message Is Nothing Then Return noMatch
+            Dim pattern As String = EscapeMwMessage(message)
             Dim i As Integer = 1
 
-            While Pattern.Contains("$" & CStr(i))
-                Pattern = Pattern.Replace("$" & CStr(i), "(?<m" & CStr(i) & ">.+?)")
+            While pattern.Contains("$" & CStr(i))
+                pattern = pattern.Replace("$" & CStr(i), "(?<m" & CStr(i) & ">.+?)")
                 i += 1
             End While
 
-            Return Regex.Match(Text, Pattern)
+            Return Regex.Match(text, pattern)
         End Function
 
         Public Function FormatMwMessage(ByVal message As String, ByVal ParamArray Params() As Object) As String

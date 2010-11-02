@@ -14,8 +14,8 @@ Namespace Huggle.UI
             List.Items.Clear()
 
             For Each flag As ReviewFlag In Wiki.ReviewFlags.All
-                List.AddRow(flag.Name, flag.DisplayName, _
-                    flag.Levels.ToString, flag.QualityLevel.ToString, flag.PristineLevel.ToString)
+                List.AddRow(flag.Name, flag.DisplayName,
+                    flag.Levels.ToStringForUser, flag.QualityLevel.ToStringForUser, flag.PristineLevel.ToStringForUser)
             Next flag
 
             List.EndUpdate()

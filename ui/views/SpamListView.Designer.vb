@@ -23,8 +23,8 @@
         'Do not modify it using the code editor.
         <System.Diagnostics.DebuggerStepThrough()> _
         Private Sub InitializeComponent()
-            Dim PatternColumn As System.Windows.Forms.ColumnHeader
-            Dim TypeColumn As System.Windows.Forms.ColumnHeader
+            Me.PatternColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+            Me.TypeColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.TypeFilter = New System.Windows.Forms.ComboBox()
             Me.Entries = New System.Windows.Forms.EnhancedListView()
             Me.EmptyNote = New System.Windows.Forms.Label()
@@ -33,19 +33,17 @@
             Me.Title = New System.Windows.Forms.Label()
             Me.Count = New System.Windows.Forms.Label()
             Me.ActionFilter = New System.Windows.Forms.ComboBox()
-            PatternColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
-            TypeColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.SuspendLayout()
             '
             'PatternColumn
             '
-            PatternColumn.Text = "Pattern"
-            PatternColumn.Width = 329
+            Me.PatternColumn.Text = "Pattern"
+            Me.PatternColumn.Width = 329
             '
             'TypeColumn
             '
-            TypeColumn.Text = "Type"
-            TypeColumn.Width = 120
+            Me.TypeColumn.Text = "Type"
+            Me.TypeColumn.Width = 120
             '
             'TypeFilter
             '
@@ -62,7 +60,7 @@
             Me.Entries.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
                         Or System.Windows.Forms.AnchorStyles.Left) _
                         Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-            Me.Entries.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {PatternColumn, TypeColumn})
+            Me.Entries.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.PatternColumn, Me.TypeColumn})
             Me.Entries.FlexibleColumn = 0
             Me.Entries.FullRowSelect = True
             Me.Entries.GridLines = True
@@ -170,6 +168,8 @@
         Private WithEvents Title As System.Windows.Forms.Label
         Private WithEvents Count As System.Windows.Forms.Label
         Private WithEvents ActionFilter As System.Windows.Forms.ComboBox
+        Private WithEvents PatternColumn As System.Windows.Forms.ColumnHeader
+        Private WithEvents TypeColumn As System.Windows.Forms.ColumnHeader
 
     End Class
 End Namespace

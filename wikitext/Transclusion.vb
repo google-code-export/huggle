@@ -3,7 +3,7 @@ Imports System.Collections.Generic
 
 Namespace Huggle.Wikitext
 
-    <Diagnostics.DebuggerDisplay("{Wikitext}")> _
+    <Diagnostics.DebuggerDisplay("{Wikitext}")>
     Public Class Transclusion
 
         Private Document As Document
@@ -16,15 +16,15 @@ Namespace Huggle.Wikitext
         Private _Spaces As Boolean
         Private _Subst As Boolean
 
-        Public Sub New(ByVal Document As Document, ByVal Page As Page, ByVal Parameters As List(Of Parameter))
-            Me.Document = Document
-            _Page = Page
-            _Parameters = New ParameterCollection(Me, Parameters)
+        Public Sub New(ByVal document As Document, ByVal page As Page, ByVal parameters As List(Of Parameter))
+            Me.Document = document
+            _Page = page
+            _Parameters = New ParameterCollection(Me, parameters)
         End Sub
 
-        Public Sub New(ByVal Wiki As Wiki, ByVal TemplateName As String, ByVal ParamArray Parameters As Object())
-            _Page = Wiki.Pages(Wiki.Spaces.Template, TemplateName)
-            _Parameters = New ParameterCollection(Me, Parameters)
+        Public Sub New(ByVal wiki As Wiki, ByVal templateName As String, ByVal ParamArray parameters As Object())
+            _Page = wiki.Pages(wiki.Spaces.Template, templateName)
+            _Parameters = New ParameterCollection(Me, parameters)
         End Sub
 
         Public Property Linebreaks() As Boolean
@@ -34,8 +34,8 @@ Namespace Huggle.Wikitext
             Set(ByVal value As Boolean)
                 _Linebreaks = value
 
-                Document.Text.Remove(Selection)
-                Document.Text.Insert(Selection.Start, Wikitext)
+                Document.Text = Document.Text.Remove(Selection)
+                Document.Text = Document.Text.Insert(Selection.Start, Wikitext)
             End Set
         End Property
 
@@ -70,8 +70,8 @@ Namespace Huggle.Wikitext
             Set(ByVal value As Boolean)
                 _Spaces = value
 
-                Document.Text.Remove(Selection)
-                Document.Text.Insert(Selection.Start, Wikitext)
+                Document.Text = Document.Text.Remove(Selection)
+                Document.Text = Document.Text.Insert(Selection.Start, Wikitext)
             End Set
         End Property
 
@@ -82,40 +82,40 @@ Namespace Huggle.Wikitext
             Set(ByVal value As Boolean)
                 _Subst = value
 
-                Document.Text.Remove(Selection)
-                Document.Text.Insert(Selection.Start, Wikitext)
+                Document.Text = Document.Text.Remove(Selection)
+                Document.Text = Document.Text.Insert(Selection.Start, Wikitext)
             End Set
         End Property
 
         Public ReadOnly Property Wikitext() As String
             Get
-                Dim Result As String = "{{"
-                If Subst Then Result &= "subst:"
-                Result &= Parsing.TransclusionName(Page)
+                Dim result As String = "{{"
+                If Subst Then result &= "subst:"
+                result &= Parsing.TransclusionName(Page)
 
-                If Linebreaks Then Result &= LF
+                If Linebreaks Then result &= LF
 
                 For i As Integer = 0 To Parameters.Count
-                    Result &= "|"
+                    result &= "|"
 
-                    Dim Name As String = Parameters(i).Name
-                    Dim Value As String = Parameters(i).Value
+                    Dim name As String = Parameters(i).Name
+                    Dim value As String = Parameters(i).Value
                     Dim p As Integer
 
                     'Determine whether parameter is numbered
                     'Use explicit number for numbered parameter if needed
-                    If Name Is Nothing Then Name = CStr(i + 1)
+                    If name Is Nothing Then name = CStr(i + 1)
 
-                    If Not (Integer.TryParse(Name, p) AndAlso p = i + 1 AndAlso Not Value.Contains("=")) _
-                        Then Result &= Name & "="
+                    If Not (Integer.TryParse(name, p) AndAlso p = i + 1 AndAlso Not value.Contains("=")) _
+                        Then result &= name & "="
 
-                    Result &= Value
-                    If Linebreaks Then Result &= LF
+                    result &= value
+                    If Linebreaks Then result &= LF
                 Next i
 
-                Result &= "}}"
+                result &= "}}"
 
-                Return Result
+                Return result
             End Get
         End Property
 
@@ -130,8 +130,8 @@ Namespace Huggle.Wikitext
         Private Document As Document
         Private Items As List(Of Transclusion)
 
-        Public Sub New(ByVal Document As Document)
-            Me.Document = Document
+        Public Sub New(ByVal document As Document)
+            Me.Document = document
         End Sub
 
         Public ReadOnly Property All() As IList(Of Transclusion)
@@ -140,15 +140,15 @@ Namespace Huggle.Wikitext
             End Get
         End Property
 
-        Public ReadOnly Property Contains(ByVal Item As Transclusion) As Boolean
+        Public ReadOnly Property Contains(ByVal item As Transclusion) As Boolean
             Get
-                Return (Items.Contains(Item))
+                Return (Items.Contains(item))
             End Get
         End Property
 
-        Public ReadOnly Property Contains(ByVal Page As Page) As Boolean
+        Public ReadOnly Property Contains(ByVal page As Page) As Boolean
             Get
-                Return (First(Page) IsNot Nothing)
+                Return (First(page) IsNot Nothing)
             End Get
         End Property
 
@@ -158,41 +158,41 @@ Namespace Huggle.Wikitext
             End Get
         End Property
 
-        Public ReadOnly Property First(ByVal Page As Page) As Transclusion
+        Public ReadOnly Property First(ByVal page As Page) As Transclusion
             Get
-                For Each Item As Transclusion In Items
-                    If Item.Page Is Page Then Return Item
-                Next Item
+                For Each transclusion As Transclusion In Items
+                    If transclusion.Page Is page Then Return transclusion
+                Next transclusion
 
                 Return Nothing
             End Get
         End Property
 
-        Default Public ReadOnly Property Item(ByVal Index As Integer) As Transclusion
+        Default Public ReadOnly Property Item(ByVal index As Integer) As Transclusion
             Get
-                If Items.Count > Index Then Return Items(Index) Else Return Nothing
+                If Items.Count > index Then Return Items(index) Else Return Nothing
             End Get
         End Property
 
-        Public Sub Append(ByVal Transclusion As Transclusion)
-            Insert(Transclusion, Document.Text.Length)
+        Public Sub Append(ByVal transclusion As Transclusion)
+            Insert(transclusion, Document.Text.Length)
         End Sub
 
-        Public Sub Insert(ByVal Transclusion As Transclusion, ByVal Index As Integer)
+        Public Sub Insert(ByVal transclusion As Transclusion, ByVal index As Integer)
 
         End Sub
 
-        Public Sub Prepend(ByVal Transclusion As Transclusion)
-            Insert(Transclusion, 0)
+        Public Sub Prepend(ByVal transclusion As Transclusion)
+            Insert(transclusion, 0)
         End Sub
 
-        Public Sub Remove(ByVal Index As Integer)
-            Document.Text = Document.Text.Remove(Items(Index).Selection)
+        Public Sub Remove(ByVal index As Integer)
+            Document.Text = Document.Text.Remove(Items(index).Selection)
         End Sub
 
     End Class
 
-    <Diagnostics.DebuggerDisplay("{Wikitext}")> _
+    <Diagnostics.DebuggerDisplay("{Wikitext}")>
     Public Class Parameter
 
         Private Document As Document
@@ -201,19 +201,19 @@ Namespace Huggle.Wikitext
         Private _Selection As Selection
         Private _Value As String
 
-        Public Sub New(ByVal Name As String, ByVal Value As String)
-            _Name = Name
-            _Value = Value
+        Public Sub New(ByVal name As String, ByVal value As String)
+            _Name = name
+            _Value = value
         End Sub
 
-        Public Sub New(ByVal Document As Document, ByVal Name As String, _
-            ByVal Value As String, ByVal Selection As Selection)
+        Public Sub New(ByVal document As Document, ByVal name As String,
+            ByVal value As String, ByVal selection As Selection)
 
-            Me.Document = Document
+            Me.Document = document
 
-            _Name = Name
-            _Selection = Selection
-            _Value = Value
+            _Name = name
+            _Selection = selection
+            _Value = value
         End Sub
 
         Public ReadOnly Property Name() As String
@@ -251,9 +251,9 @@ Namespace Huggle.Wikitext
         Private Document As Document
         Private Items As List(Of Parameter)
 
-        Public Sub New(ByVal Document As Document, ByVal Items As List(Of Parameter))
-            Me.Document = Document
-            If Items Is Nothing Then Me.Items = New List(Of Parameter) Else Me.Items = Items
+        Public Sub New(ByVal document As Document, ByVal items As List(Of Parameter))
+            Me.Document = document
+            If items Is Nothing Then Me.Items = New List(Of Parameter) Else Me.Items = items
         End Sub
 
         Public Sub New(ByVal ParamArray Values() As Object)
@@ -268,9 +268,9 @@ Namespace Huggle.Wikitext
             End Get
         End Property
 
-        Public ReadOnly Property Contains(ByVal Name As String) As Boolean
+        Public ReadOnly Property Contains(ByVal name As String) As Boolean
             Get
-                Return (Item(Name) IsNot Nothing)
+                Return (Item(name) IsNot Nothing)
             End Get
         End Property
 
@@ -280,29 +280,29 @@ Namespace Huggle.Wikitext
             End Get
         End Property
 
-        Default Public ReadOnly Property Item(ByVal Index As Integer) As Parameter
+        Default Public ReadOnly Property Item(ByVal index As Integer) As Parameter
             Get
-                If Items.Count > Index Then Return Items(Index) Else Return Nothing
+                If Items.Count > index Then Return Items(index) Else Return Nothing
             End Get
         End Property
 
-        Default Public ReadOnly Property Item(ByVal Name As String) As Parameter
+        Default Public ReadOnly Property Item(ByVal name As String) As Parameter
             Get
-                For Each Param As Parameter In Items
-                    If Param.Name = Name Then Return Param
-                Next Param
+                For Each param As Parameter In Items
+                    If param.Name = name Then Return param
+                Next param
 
                 Return Nothing
             End Get
         End Property
 
-        Public Sub Remove(ByVal Name As String)
-            If Item(Name) Is Nothing Then Return
+        Public Sub Remove(ByVal name As String)
+            If Item(name) Is Nothing Then Return
 
 
         End Sub
 
-        Public Sub [Set](ByVal Name As String, ByVal Value As String)
+        Public Sub [Set](ByVal name As String, ByVal value As String)
 
         End Sub
 

@@ -110,14 +110,14 @@ Namespace Huggle
             'Extract protection levels and expiry of each level from MediaWiki's internal representation
             If str Is Nothing Then Return ProtectionPart.None
 
-            For Each Item As Match In ProtectionLevelsMatch.Matches(str)
-                If Item.Groups(1).Value = type Then
+            For Each match As Match In ProtectionLevelsMatch.Matches(str)
+                If match.Groups(1).Value = type Then
                     Dim expiry As Date
-                    Date.TryParse(Item.Groups(3).Value, expiry)
+                    Date.TryParse(match.Groups(3).Value, expiry)
                     If expiry = Date.MinValue Then expiry = Date.MaxValue
-                    Return New ProtectionPart(expiry, Item.Groups(2).Value)
+                    Return New ProtectionPart(expiry, match.Groups(2).Value)
                 End If
-            Next Item
+            Next match
 
             Return ProtectionPart.None
         End Function

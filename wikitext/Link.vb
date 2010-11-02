@@ -2,19 +2,21 @@
 
 Namespace Huggle.Wikitext
 
-    <Diagnostics.DebuggerDisplay("{Page}")> _
+    <Diagnostics.DebuggerDisplay("{Page}")>
     Public Class Link
 
         Private Document As Document
-        Private _Page As Page, _Selection As Selection, _Text As String
+        Private _Page As Page
+        Private _Selection As Selection
+        Private _Text As String
 
-        Public Sub New(ByVal Document As Document, ByVal Page As Page, _
-            ByVal Selection As Selection, ByVal Text As String)
+        Public Sub New(ByVal document As Document, ByVal page As Page,
+            ByVal selection As Selection, ByVal text As String)
 
-            Me.Document = Document
-            _Page = Page
-            _Selection = Selection
-            _Text = Text
+            Me.Document = document
+            _Page = page
+            _Selection = selection
+            _Text = text
         End Sub
 
         Public ReadOnly Property Page() As Page
@@ -45,8 +47,8 @@ Namespace Huggle.Wikitext
 
         Private Document As Document
 
-        Public Sub New(ByVal Document As Document)
-            Me.Document = Document
+        Public Sub New(ByVal document As Document)
+            Me.Document = document
         End Sub
 
     End Class

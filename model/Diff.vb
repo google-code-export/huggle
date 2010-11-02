@@ -25,8 +25,8 @@ Namespace Huggle
         Private Shared ReadOnly CacheTime As New TimeSpan(0, 10, 0)
         Private Shared WithEvents CacheTimer As New Windows.Forms.Timer
 
-        Public Shared Event [New](ByVal sender As Object, ByVal e As DiffEventArgs)
-        Public Event StateChanged(ByVal sender As Object, ByVal e As DiffEventArgs)
+        Public Shared Event [New] As SimpleEventHandler(Of Diff)
+        Public Event StateChanged As SimpleEventHandler(Of Diff)
 
         Shared Sub New()
             CacheTimer.Interval = CacheTrimInterval
@@ -51,7 +51,7 @@ Namespace Huggle
             Set(ByVal value As CacheState)
                 _CacheState = value
                 Log.Write("State for " & Page.Name & ":" & NewId & " is " & CacheState.ToString)
-                RaiseEvent StateChanged(Me, New DiffEventArgs(Me))
+                RaiseEvent StateChanged(Me, New EventArgs(Of Diff)(Me))
             End Set
         End Property
 
@@ -71,28 +71,28 @@ Namespace Huggle
             End Get
             Set(ByVal value As String)
                 'Namespace colouring
-                Dim HeaderColor As String
+                Dim headerColor As String
 
                 Select Case Newer.Page.Space
-                    Case Wiki.Spaces.Article : HeaderColor = "ffffff"
-                    Case Wiki.Spaces.User, Wiki.Spaces.UserTalk : HeaderColor = "d7d7ff"
-                    Case Wiki.Spaces.Project, Wiki.Spaces.ProjectTalk : HeaderColor = "ffd2ff"
-                    Case Wiki.Spaces.Talk : HeaderColor = "cdffcd"
-                    Case Else : HeaderColor = "ffe6d2"
+                    Case Wiki.Spaces.Article : headerColor = "ffffff"
+                    Case Wiki.Spaces.User, Wiki.Spaces.UserTalk : headerColor = "d7d7ff"
+                    Case Wiki.Spaces.Project, Wiki.Spaces.ProjectTalk : headerColor = "ffd2ff"
+                    Case Wiki.Spaces.Talk : headerColor = "cdffcd"
+                    Case Else : headerColor = "ffe6d2"
                 End Select
 
                 'Change size
-                Dim EditChange As String = ""
+                Dim editChange As String = ""
 
                 If Change > Integer.MinValue Then
-                    EditChange = CStr(Change)
-                    If Change > 0 Then EditChange = "+" & EditChange
+                    editChange = CStr(Change)
+                    If Change > 0 Then editChange = "+" & editChange
                 End If
 
                 'Filter info
-                Dim FilterInfo As String = ""
+                Dim filterInfo As String = ""
 
-                If Newer.Abuse IsNot Nothing Then FilterInfo = Msg("diff-filterinfo", _
+                If Newer.Abuse IsNot Nothing Then filterInfo = Msg("diff-filterinfo", _
                     Newer.Abuse.Filter.Id, Newer.Abuse.Filter.Description)
 
                 '_Html = My.Resources.DiffPage _
@@ -105,39 +105,39 @@ Namespace Huggle
                 '    .Replace("$FILTERINFO", FilterInfo)
 
                 'Extract changes from diff
-                Dim Pos As Integer = _Html.IndexOf("class=""diff-addedline""")
+                Dim pos As Integer = _Html.IndexOfI("class=""diff-addedline""")
 
-                While Pos >= 0
-                    Dim Line As String = _Html.Substring(Pos).FromFirst(">").ToFirst("<")
+                While pos >= 0
+                    Dim line As String = _Html.Substring(pos).FromFirst(">").ToFirst("<")
 
-                    If Line.Contains("class=""diffchange""") Then
+                    If line.Contains("class=""diffchange""") Then
                         'Concatenate contents of 'diffchange' spans
-                        While Line.Contains("class=""diffchange""")
+                        While line.Contains("class=""diffchange""")
                             _AddedText &= HtmlDecode(StripHtml _
-                                (Line.FromFirst("class=""diffchange""").FromFirst(">").ToFirst("<"))) & LF
-                            Line = Line.Substring(Line.IndexOf("class=""diffchange""") + 1)
+                                (line.FromFirst("class=""diffchange""").FromFirst(">").ToFirst("<"))) & LF
+                            line = line.Substring(line.IndexOfI("class=""diffchange""") + 1)
                         End While
 
-                    ElseIf Line.Length > 0 Then
+                    ElseIf line.Length > 0 Then
                         'No 'diffchange' spans and nothing on the other side => the whole line was added
-                        Dim RowStart As String = _Html.Substring(Html.Substring(0, Pos).LastIndexOf("<tr>")) _
+                        Dim rowStart As String = _Html.Substring(Html.Substring(0, pos).LastIndexOfI("<tr>")) _
                             .ToFirst("class=""diff-addedline""")
 
-                        If RowStart.Contains("<td colspan=""2"">&nbsp;</td>") _
-                            Then _AddedText &= HtmlDecode(StripHtml(Line)) & LF
+                        If rowStart.Contains("<td colspan=""2"">&nbsp;</td>") _
+                            Then _AddedText &= HtmlDecode(StripHtml(line)) & LF
                     End If
 
-                    Pos = _Html.IndexOf("class=""diff-addedline""", Pos + 1)
+                    pos = _Html.IndexOfI("class=""diff-addedline""", pos + 1)
                 End While
 
                 'Format the page
                 _Html = MakeWebPage(_Html, Page.Name)
 
-                RaiseEvent [New](Me, New DiffEventArgs(Me))
+                RaiseEvent [New](Me, New EventArgs(Of Diff)(Me))
                 _Exists = True
                 CachedAt = Date.UtcNow
 
-                Dim newKey As String = Newer.Id.ToString & "|" & Older.Id.ToString
+                Dim newKey As String = Newer.Id.ToStringI & "|" & Older.Id.ToStringI
 
                 Wiki.Diffs.Rekey(Me, newKey)
                 _Key = newKey
@@ -191,7 +191,7 @@ Namespace Huggle
         End Property
 
         Private Sub EditStatesChanged() Handles _Newer.StateChanged, _Older.StateChanged
-            RaiseEvent StateChanged(Me, New DiffEventArgs(Me))
+            RaiseEvent StateChanged(Me, New EventArgs(Of Diff)(Me))
         End Sub
 
         Public Overrides Function ToString() As String
@@ -259,22 +259,6 @@ Namespace Huggle
                 If Not _All.ContainsKey("cur|prev|" & page.Title) _
                     Then _All.Add("cur|prev|" & page.Title, New Diff("cur|prev|" & page.Title, Wiki))
                 Return _All(CStr("cur|prev|" & page.Title))
-            End Get
-        End Property
-
-    End Class
-
-    Public Class DiffEventArgs : Inherits EventArgs
-
-        Private _Diff As Diff
-
-        Public Sub New(ByVal diff As Diff)
-            _Diff = diff
-        End Sub
-
-        Public ReadOnly Property Diff As Diff
-            Get
-                Return _Diff
             End Get
         End Property
 

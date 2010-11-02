@@ -38,7 +38,7 @@
 '            Dim Text As String = Result.Edit.Text
 '            If Text Is Nothing Then Text = ""
 
-'            If Avoid IsNot Nothing AndAlso Text.ToLower.Contains(Avoid.ToLower) _
+'            If Avoid IsNot Nothing AndAlso Text.ToLowerI.Contains(Avoid.ToLowerI) _
 '                Then Return Failed(FailMsg, Msg("usermessage-duplicate"))
 
 '            Text &= LF & LF

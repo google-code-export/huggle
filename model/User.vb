@@ -588,7 +588,7 @@ Namespace Huggle
         Public Shared Function SanitizeName(ByVal name As String) As String
             If String.IsNullOrEmpty(name) Then Return Nothing
 
-            'Remove illegal characters
+            'Remove navigation fragment
             If name.Contains("#") Then name = name.ToFirst("#")
 
             name = name.Remove(Tab, CR, LF).Replace("_", " ").Trim
@@ -603,18 +603,20 @@ Namespace Huggle
                 If name.Contains(badchar) Then Return Nothing
             Next badchar
 
+            'Disallow path syntax
             If name = "." OrElse name = ".." Then Return Nothing
-            If name.StartsWith(":") OrElse name.StartsWith("./") OrElse name.StartsWith("../") Then Return Nothing
+            If name.StartsWithI(":") OrElse name.StartsWithI("./") OrElse name.StartsWithI("../") Then Return Nothing
             If name.Contains("/./") OrElse name.Contains("/../") Then Return Nothing
-            If name.EndsWith("/.") OrElse name.EndsWith("/..") Then Return Nothing
+            If name.EndsWithI("/.") OrElse name.EndsWithI("/..") Then Return Nothing
 
+            'Disallow HTML entities
             Static HtmlEntityPattern As New Regex("&[a-zA-z0-9];", RegexOptions.Compiled)
             If HtmlEntityPattern.IsMatch(name) Then Return Nothing
 
             If Encoding.UTF8.GetBytes(name).Length > 255 Then Return Nothing
 
             'Capitalize
-            If name.Length > 1 Then name = name(0).ToString.ToUpper & name.Substring(1) Else name = name.ToUpper
+            name = UcFirst(name)
 
             Return name
         End Function

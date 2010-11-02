@@ -1,6 +1,7 @@
 ﻿Imports Huggle.Actions
 Imports System
 Imports System.Collections.Generic
+Imports System.Globalization
 Imports System.IO
 Imports System.Text
 Imports System.Text.RegularExpressions
@@ -88,9 +89,9 @@ Namespace Huggle
                 ElseIf TypeOf item Is List(Of String) Then
                     str = CType(item, List(Of String)).Join(", ")
                 ElseIf TypeOf item Is Date Then
-                    str = DirectCast(item, DateTime).ToString("u")
+                    str = DirectCast(item, DateTime).ToString("u", CultureInfo.InvariantCulture)
                 ElseIf TypeOf item Is Boolean Then
-                    str = CBool(item).ToString.ToLower
+                    str = CType(item, Boolean).ToString.ToLowerI
                 Else
                     str = Escape(item.ToString)
                 End If
@@ -114,14 +115,14 @@ Namespace Huggle
         End Function
 
         Protected Shared Function EscapeWs(ByVal value As String) As String
-            If value.StartsWith(" "c) Then value = "\@" & value
-            If value.EndsWith(" "c) Then value = value & "\@"
+            If value.StartsWithI(" "c) Then value = "\@" & value
+            If value.EndsWithI(" "c) Then value = value & "\@"
             Return value
         End Function
 
         Protected Shared Function UnescapeWs(ByVal value As String) As String
-            If value.StartsWith("\@") Then value = value.Substring(2)
-            If value.EndsWith("\@") Then value = value.Substring(0, value.Length - 2)
+            If value.StartsWithI("\@") Then value = value.Substring(2)
+            If value.EndsWithI("\@") Then value = value.Substring(0, value.Length - 2)
             Return value
         End Function
 
@@ -132,48 +133,49 @@ Namespace Huggle
             If text Is Nothing Then Return result
 
             Try
-                Dim reader As New StringReader(text)
-                Dim line As String = reader.ReadLine
-                Dim currentItem As New StringBuilder
-                Dim items As New List(Of String)
-                Dim indent As Integer
+                Using reader As New StringReader(text)
+                    Dim line As String = reader.ReadLine
+                    Dim currentItem As New StringBuilder
+                    Dim items As New List(Of String)
+                    Dim indent As Integer
 
-                While line IsNot Nothing
-                    Dim firstNonSpace As Integer = line.Length
+                    While line IsNot Nothing
+                        Dim firstNonSpace As Integer = line.Length
 
-                    For j As Integer = 0 To line.Length - 1
-                        If Not Char.IsWhiteSpace(line(j)) Then firstNonSpace = j : Exit For
-                    Next j
+                        For j As Integer = 0 To line.Length - 1
+                            If Not Char.IsWhiteSpace(line(j)) Then firstNonSpace = j : Exit For
+                        Next j
 
-                    If Not (firstNonSpace = line.Length OrElse line(firstNonSpace) = "#") Then
-                        Dim commentTest As Integer = line.Remove("\#").IndexOf("#")
-                        If commentTest > -1 Then line = line.Substring(0, commentTest)
+                        If Not (firstNonSpace = line.Length OrElse line(firstNonSpace) = "#") Then
+                            Dim commentTest As Integer = line.Remove("\#").IndexOfI("#")
+                            If commentTest > -1 Then line = line.Substring(0, commentTest)
 
-                        If Char.IsWhiteSpace(line(0)) AndAlso firstNonSpace >= indent Then
-                            If indent = 0 Then indent = firstNonSpace
-                            currentItem.Append(LF & line.Substring(indent))
+                            If Char.IsWhiteSpace(line(0)) AndAlso firstNonSpace >= indent Then
+                                If indent = 0 Then indent = firstNonSpace
+                                currentItem.Append(LF & line.Substring(indent))
 
-                        ElseIf line.Contains(":") Then
-                            indent = 0
-                            If currentItem.Length > 0 Then items.Add(currentItem.ToString)
-                            currentItem = New StringBuilder(line.Trim)
+                            ElseIf line.Contains(":") Then
+                                indent = 0
+                                If currentItem.Length > 0 Then items.Add(currentItem.ToString)
+                                currentItem = New StringBuilder(line.Trim)
+                            End If
                         End If
-                    End If
 
-                    line = reader.ReadLine
-                End While
+                        line = reader.ReadLine
+                    End While
 
-                If currentItem.Length > 0 Then items.Add(currentItem.ToString)
+                    If currentItem.Length > 0 Then items.Add(currentItem.ToString)
 
-                For Each item As String In items
-                    Dim name As String = item.ToFirst(":").Trim
-                    Dim value As String = Unescape(item.FromFirst(":").Trim)
+                    For Each item As String In items
+                        Dim name As String = item.ToFirst(":").Trim
+                        Dim value As String = Unescape(item.FromFirst(":").Trim)
 
-                    If result.ContainsKey(name) Then Log.Debug("Duplicate definition of '{0}' in {1} config" _
-                        .FormatWith(If(context Is Nothing, name, context & ":" & name), source))
+                        If result.ContainsKey(name) Then Log.Debug("Duplicate definition of '{0}' in {1} config" _
+                            .FormatI(If(context Is Nothing, name, context & ":" & name), source))
 
-                    result.Merge(name, value)
-                Next item
+                        result.Merge(name, value)
+                    Next item
+                End Using
 
             Catch ex As SystemException
                 Throw New ConfigException(Msg("error-config", context, source), ex)
@@ -220,9 +222,9 @@ Namespace Huggle
                 Log.Write(cloudQuery.Result.LogMessage)
             Else
                 If cloudQuery.Value Is Nothing Then
-                    Log.Debug("Not found in cloud: {0}".FormatWith(Location))
+                    Log.Debug("Not found in cloud: {0}".FormatI(Location))
                 Else
-                    Log.Debug("Load from cloud: {0}".FormatWith(Location))
+                    Log.Debug("Load from cloud: {0}".FormatI(Location))
                     Load(cloudQuery.Value)
                 End If
             End If
@@ -245,14 +247,14 @@ Namespace Huggle
                 Dim filePath As String = PathCombine(BaseLocation, location & ".txt")
                 Dim contents As String = IO.File.ReadAllText(filePath, Encoding.UTF8)
 
-                Log.Debug("Load from local: {0}".FormatWith(location))
+                Log.Debug("Load from local: {0}".FormatI(location))
                 Return contents
 
             Catch ex As FileNotFoundException
-                Log.Debug("Not found in local: {0}".FormatWith(location))
+                Log.Debug("Not found in local: {0}".FormatI(location))
 
             Catch ex As DirectoryNotFoundException
-                Log.Debug("Not found in local: {0}".FormatWith(location))
+                Log.Debug("Not found in local: {0}".FormatI(location))
 
             Catch ex As SystemException
                 Log.Write(Result.FromException(ex).Wrap(Msg("config-localloaderror", location)).LogMessage)
@@ -268,7 +270,7 @@ Namespace Huggle
             If cloudQuery.IsFailed Then
                 Log.Write(cloudQuery.Result.LogMessage)
             Else
-                Log.Debug("Save to cloud: {0}".FormatWith(Location))
+                Log.Debug("Save to cloud: {0}".FormatI(Location))
             End If
         End Sub
 
@@ -289,7 +291,7 @@ Namespace Huggle
                     Then Directory.CreateDirectory(Path.GetDirectoryName(filePath))
 
                 IO.File.WriteAllText(filePath, contents, Encoding.UTF8)
-                Log.Debug("Save to local: {0}".FormatWith(location))
+                Log.Debug("Save to local: {0}".FormatI(location))
 
             Catch ex As SystemException
                 Log.Write(Result.FromException(ex).Wrap(Msg("config-localsaveerror", location)).LogMessage)

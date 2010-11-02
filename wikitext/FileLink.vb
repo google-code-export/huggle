@@ -3,15 +3,17 @@ Imports System.Collections.Generic
 
 Namespace Huggle.Wikitext
 
+    <Diagnostics.DebuggerDisplay("{File}")>
     Public Class FileLink
 
         'Represents a file link
 
-        Private _File As File, _Selection As Selection
+        Private _File As File
+        Private _Selection As Selection
 
-        Public Sub New(ByVal File As File, ByVal Selection As Selection)
-            _File = File
-            _Selection = Selection
+        Public Sub New(ByVal file As File, ByVal selection As Selection)
+            _File = file
+            _Selection = selection
         End Sub
 
         Public ReadOnly Property File() As File
@@ -37,8 +39,8 @@ Namespace Huggle.Wikitext
         Private Document As Document
         Private Items As List(Of FileLink)
 
-        Public Sub New(ByVal Document As Document)
-            Me.Document = Document
+        Public Sub New(ByVal document As Document)
+            Me.Document = document
         End Sub
 
         Public ReadOnly Property All() As IList(Of FileLink)
@@ -47,9 +49,9 @@ Namespace Huggle.Wikitext
             End Get
         End Property
 
-        Public ReadOnly Property Contains(ByVal Item As FileLink) As Boolean
+        Public ReadOnly Property Contains(ByVal item As FileLink) As Boolean
             Get
-                Return (Items.Contains(Item))
+                Return (Items.Contains(item))
             End Get
         End Property
 
@@ -59,14 +61,14 @@ Namespace Huggle.Wikitext
             End Get
         End Property
 
-        Default Public ReadOnly Property Item(ByVal Index As Integer) As FileLink
+        Default Public ReadOnly Property Item(ByVal index As Integer) As FileLink
             Get
-                If Items.Count > Index Then Return Items(Index) Else Return Nothing
+                If Items.Count > index Then Return Items(index) Else Return Nothing
             End Get
         End Property
 
-        Public Sub Remove(ByVal Index As Integer)
-            Document.Text = Document.Text.Remove(All(Index).Selection)
+        Public Sub Remove(ByVal index As Integer)
+            Document.Text = Document.Text.Remove(All(index).Selection)
         End Sub
 
     End Class

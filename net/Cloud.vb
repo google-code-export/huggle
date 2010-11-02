@@ -72,7 +72,7 @@ Namespace Huggle.Actions
             End Try
 
             'Check for expected prefix
-            If _Value.StartsWith(KeyPrefix) Then
+            If _Value.StartsWithI(KeyPrefix) Then
                 _Value = _Value.Substring(KeyPrefix.Length)
             Else
                 _Value = Nothing

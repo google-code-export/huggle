@@ -64,7 +64,7 @@ Namespace Huggle.UI
             Gender.SelectedIndex = 0
 
             If prefs.Language Is Nothing Then InterfaceLanguage.SelectedItem = Session.User.Wiki.Language _
-                Else InterfaceLanguage.SelectedItem = App.Languages(prefs.Language.ToLower)
+                Else InterfaceLanguage.SelectedItem = App.Languages(prefs.Language.ToLowerI)
 
             Select Case prefs.Gender
                 Case "unknown" : Gender.SelectedIndex = 0

@@ -5,19 +5,24 @@ Imports System.Text.RegularExpressions
 
 Namespace Huggle.Wikitext
 
-    <Diagnostics.DebuggerDisplay("{Title}")> _
+    <Diagnostics.DebuggerDisplay("{Title}")>
     Public Class Section
 
         'Represents a wikitext document section
 
         Private Document As Document
-        Private _Title As String, _Level As Integer, _Selection As Selection
 
-        Public Sub New(ByVal Document As Document, ByVal Title As String, ByVal Level As Integer, ByVal Selection As Selection)
-            Me.Document = Document
-            _Title = Title
-            _Level = Level
-            _Selection = Selection
+        Private _Level As Integer
+        Private _Selection As Selection
+        Private _Title As String
+
+        Public Sub New(ByVal document As Document, ByVal title As String,
+            ByVal level As Integer, ByVal selection As Selection)
+
+            Me.Document = document
+            _Title = title
+            _Level = level
+            _Selection = selection
         End Sub
 
         Public ReadOnly Property Level() As Integer
@@ -39,7 +44,7 @@ Namespace Huggle.Wikitext
             Set(ByVal value As String)
                 Document.Text = Document.Text.Remove(Selection.Start, Selection.Length)
                 Document.Text = Document.Text.Insert(Selection.Start, value)
-                Selection.Length = value.Length
+                _Selection = New Selection(Selection.Start, value.Length)
             End Set
         End Property
 
@@ -49,12 +54,12 @@ Namespace Huggle.Wikitext
             End Get
         End Property
 
-        Public Sub Append(ByVal Text As String)
-            Document.Text = Document.Text.Insert(Selection.Start + Selection.Length, Text)
+        Public Sub Append(ByVal text As String)
+            Document.Text = Document.Text.Insert(Selection.Start + Selection.Length, text)
         End Sub
 
-        Public Sub Prepend(ByVal Text As String)
-            Document.Text = Document.Text.Insert(Selection.Start + Me.Text.IndexOf(LF) + 1, Text)
+        Public Sub Prepend(ByVal text As String)
+            Document.Text = Document.Text.Insert(Selection.Start + Me.Text.IndexOfI(LF) + 1, text)
         End Sub
 
     End Class
@@ -66,26 +71,26 @@ Namespace Huggle.Wikitext
         Private Document As Document
         Private Items As New List(Of Section)
 
-        Public Sub New(ByVal Document As Document)
-            Me.Document = Document
+        Public Sub New(ByVal document As Document)
+            Me.Document = document
 
-            Dim Matches As MatchCollection = Parsing.SectionPattern.Matches(Document.Text)
+            Dim matches As MatchCollection = Parsing.SectionPattern.Matches(document.Text)
 
             'Text before any actual sections is "section 0"
-            Items.Add(New Section(Document, Nothing, 0, _
-                New Selection(0, If(Matches.Count = 0, Document.Length, Matches(0).Index))))
+            Items.Add(New Section(document, Nothing, 0,
+                New Selection(0, If(matches.Count = 0, document.Length, matches(0).Index))))
 
-            For i As Integer = 0 To Matches.Count - 2
-                Items.Add(New Section(Document, Matches(i).Groups(1).Value, Matches(i).Groups(2).Value.Length - 1, _
-                    New Selection(Matches(i).Index, Matches(i + 1).Index - Matches(i).Index)))
+            For i As Integer = 0 To matches.Count - 2
+                Items.Add(New Section(document, matches(i).Groups(1).Value, matches(i).Groups(2).Value.Length - 1,
+                    New Selection(matches(i).Index, matches(i + 1).Index - matches(i).Index)))
             Next i
 
             'Treat last section as extending to the end of the page
             'even though in articles it often semantically doesn't (categories, interwikis etc.)
-            If Matches.Count > 0 Then
-                Dim LastMatch As Match = Matches(Matches.Count - 1)
-                Items.Add(New Section(Document, LastMatch.Groups(1).Value, LastMatch.Groups(2).Value.Length - 1, _
-                    New Selection(LastMatch.Index, Document.Length - LastMatch.Index)))
+            If matches.Count > 0 Then
+                Dim LastMatch As Match = matches(matches.Count - 1)
+                Items.Add(New Section(document, LastMatch.Groups(1).Value, LastMatch.Groups(2).Value.Length - 1,
+                    New Selection(LastMatch.Index, document.Length - LastMatch.Index)))
             End If
         End Sub
 
@@ -95,9 +100,9 @@ Namespace Huggle.Wikitext
             End Get
         End Property
 
-        Public ReadOnly Property Contains(ByVal Title As String) As Boolean
+        Public ReadOnly Property Contains(ByVal title As String) As Boolean
             Get
-                Return (Item(Title) IsNot Nothing)
+                Return (Item(title) IsNot Nothing)
             End Get
         End Property
 
@@ -107,41 +112,41 @@ Namespace Huggle.Wikitext
             End Get
         End Property
 
-        Default Public ReadOnly Property Item(ByVal Title As String) As Section
+        Default Public ReadOnly Property Item(ByVal title As String) As Section
             Get
                 For Each section As Section In All
-                    If section.Title = Title Then Return section
+                    If section.Title = title Then Return section
                 Next section
 
                 Return Nothing
             End Get
         End Property
 
-        Default Public ReadOnly Property Item(ByVal Index As Integer) As Section
+        Default Public ReadOnly Property Item(ByVal index As Integer) As Section
             Get
-                If All.Count > Index Then Return All(Index) Else Return Nothing
+                If All.Count > index Then Return All(index) Else Return Nothing
             End Get
         End Property
 
-        Public Sub Append(ByVal Title As String, ByVal Text As String, Optional ByVal Level As Integer = 1)
-            Insert(Title, Text, -1, Level)
+        Public Sub Append(ByVal title As String, ByVal text As String, Optional ByVal level As Integer = 1)
+            Insert(title, text, -1, level)
         End Sub
 
-        Public Sub Insert(ByVal Title As String, ByVal Text As String, _
-            ByVal Index As Integer, Optional ByVal Level As Integer = 1)
+        Public Sub Insert(ByVal title As String, ByVal text As String,
+            ByVal index As Integer, Optional ByVal level As Integer = 1)
 
-            Dim HeaderMarkup As String = (New StringBuilder).Append("=", 0, Level + 1).ToString
-            Dim SectionString As String = HeaderMarkup & " " & Title & " " & HeaderMarkup & LF & LF & Text
+            Dim HeaderMarkup As String = (New StringBuilder).Append("=", 0, level + 1).ToString
+            Dim SectionString As String = HeaderMarkup & " " & title & " " & HeaderMarkup & LF & LF & text
 
-            If Index = -1 OrElse Index >= All.Count Then
-                Text &= LF & LF & SectionString
+            If index = -1 OrElse index >= All.Count Then
+                text &= LF & LF & SectionString
             Else
-                Text = Text.Insert(All(Index).Selection.Start, SectionString & LF & LF)
+                text = text.Insert(All(index).Selection.Start, SectionString & LF & LF)
             End If
         End Sub
 
-        Public Sub Remove(ByVal Index As Integer)
-            Document.Text = Document.Text.Remove(All(Index).Selection.Start, All(Index).Selection.Length)
+        Public Sub Remove(ByVal index As Integer)
+            Document.Text = Document.Text.Remove(All(index).Selection.Start, All(index).Selection.Length)
         End Sub
 
     End Class

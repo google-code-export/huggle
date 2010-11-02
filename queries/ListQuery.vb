@@ -229,7 +229,7 @@ Namespace Huggle.Actions
                 Query = New QueryString
 
                 For Each item As KeyValuePair(Of String, Object) In values
-                    If item.Key.StartsWith(Prefix) Then Query.Add("g" & item.Key, item.Value) _
+                    If item.Key.StartsWithI(Prefix) Then Query.Add("g" & item.Key, item.Value) _
                         Else Query.Add(item.Key, item.Value)
                 Next item
             Else
@@ -317,7 +317,7 @@ Namespace Huggle.Actions
                     Case "limit" : Limit = CInt(item.Value)
                     Case "simple" : Simple = item.Value.ToBoolean
                     Case "stop" : StopAt = item.Value
-                    Case "type" : OutputType = item.Value.ToLower
+                    Case "type" : OutputType = item.Value.ToLowerI
                 End Select
 
                 SetOption(item.Key, item.Value)

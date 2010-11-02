@@ -103,7 +103,7 @@ Namespace Huggle
             Dim graphics As Graphics = control.CreateGraphics
 
             For Each item As Object In control.Items
-                width = Math.Max(width, CInt(graphics.MeasureString(item.ToString, control.Font).Width) + 8)
+                width = Math.Max(width, CInt(TextRenderer.MeasureText(graphics, item.ToString, control.Font).Width) + 8)
             Next item
 
             control.DropDownWidth = width
@@ -219,7 +219,7 @@ Namespace Huggle
             Try
                 Return Encoding.UTF8.GetString(ProtectedData.Unprotect(data, key, DataProtectionScope.LocalMachine))
             Catch ex As CryptographicException
-                Log.Debug("Discarded unreadable stored password for {0}".FormatWith(source))
+                Log.Debug("Discarded unreadable stored password for {0}".FormatI(source))
                 data = Nothing
                 Return Nothing
             End Try
@@ -293,12 +293,13 @@ Namespace Huggle
 
         Public Function LcFirst(ByVal str As String) As String
             If str Is Nothing Then Return Nothing
-            Return str.Substring(0, 1).ToLower & str.Substring(1)
+            Return str.Substring(0, 1).ToLowerI & str.Substring(1)
         End Function
 
         Public Function UcFirst(ByVal str As String) As String
             If str Is Nothing Then Return Nothing
-            Return str.Substring(0, 1).ToUpper & str.Substring(1)
+            If str.Length = 1 Then Return str.ToUpperI
+            Return str.Substring(0, 1).ToUpperI & str.Substring(1)
         End Function
 
         Public Function ValueListToRegex(ByVal List As List(Of String)) As Regex
@@ -313,7 +314,9 @@ Namespace Huggle
             Return New Regex("(" & String.Join("|", Patterns.ToArray) & ")", RegexOptions.Compiled)
         End Function
 
-        Public Function GetHtmlAttributeFromName(ByVal html As String, ByVal name As String, ByVal attribute As String) As String
+        Public Function GetHtmlAttributeFromName(ByVal html As String,
+            ByVal name As String, ByVal attribute As String) As String
+
             Dim pattern As New Regex("<[^ ]+ name=""" & Regex.Escape(name) & """[^>]+" &
                 Regex.Escape(attribute) & "=""([^""]+)""", RegexOptions.Compiled Or RegexOptions.IgnoreCase)
 
@@ -331,70 +334,34 @@ Namespace Huggle
             Return Nothing
         End Function
 
-        Public Function ParseUrl(ByVal uri As Uri) As Dictionary(Of String, String)
-            Dim params As New Dictionary(Of String, String)
-            Dim url As String = uri.ToString
+        Function MakeString(ByVal item As Object) As String
+            If item Is Nothing Then Return String.Empty
 
-            If url.Contains("wiki/") OrElse url.Contains("/index.php/") Then
+            If TypeOf item Is ArrayList Then
+                Dim list As ArrayList = CType(item, ArrayList)
+                Dim strs(list.Count - 1) As String
 
-                If url.Contains("wiki/") Then url = url.Substring(url.IndexOf("wiki/") + 5) _
-                    Else url = url.Substring(url.IndexOf("/index.php/") + 12)
-
-                If url.Contains("?") Then
-                    Dim Title As String = url.Substring(0, url.IndexOf("?"))
-
-                    If Title.Contains("#") Then Title = Title.Substring(0, Title.IndexOf("#"))
-                    params.Add("title", UrlDecode(Title.Replace("_", " ")))
-                    url = url.Substring(url.IndexOf("?") + 1)
-                Else
-                    If url.Contains("#") Then url = url.Substring(0, url.IndexOf("#"))
-                    params.Add("title", UrlDecode(url.Replace("_", " ")))
-                    url = ""
-                End If
-
-            ElseIf url.Contains("/index.php?") Then
-                url = url.Substring(url.IndexOf("/index.php?") + 12)
-
-            ElseIf url.Contains("/wiki.phtml?") Then
-                url = url.Substring(url.IndexOf("/wiki.phtml?") + 13)
-            End If
-
-            For Each item As String In url.Split("&"c)
-                If item.Contains("=") Then params.Merge(item.Substring(0, item.IndexOf("=")), _
-                    UrlDecode(item.Substring(item.IndexOf("=") + 1)))
-            Next item
-
-            Return params
-        End Function
-
-        Function MakeString(ByVal Item As Object) As String
-            If Item Is Nothing Then Return String.Empty
-
-            If TypeOf Item Is ArrayList Then
-                Dim List As ArrayList = CType(Item, ArrayList)
-                Dim Strs(List.Count - 1) As String
-
-                For i As Integer = 0 To List.Count - 1
-                    Strs(i) = List(i).ToString
+                For i As Integer = 0 To list.Count - 1
+                    strs(i) = list(i).ToString
                 Next i
 
-                Return String.Join(", ", Strs)
+                Return String.Join(", ", strs)
 
-            ElseIf TypeOf Item Is Table Then
-                Dim Table As Table = CType(Item, Table)
-                Dim Result As String = "Table ["
+            ElseIf TypeOf item Is Table Then
+                Dim table As Table = CType(item, Table)
+                Dim result As String = "Table ["
 
-                For Each Column As TableColumn In Table.Columns
-                    Result &= Column.Cells(0).Content & ", "
-                Next Column
+                For Each column As TableColumn In table.Columns
+                    result &= column.Cells(0).Content & ", "
+                Next column
 
-                Result = Result.Substring(0, Result.Length - 2)
-                Result &= "] (" & Table.Rows.Count & " items)"
+                result = result.Substring(0, result.Length - 2)
+                result &= "] (" & table.Rows.Count & " items)"
 
-                Return Result
+                Return result
             End If
 
-            Return Item.ToString
+            Return item.ToString
         End Function
 
         Public Enum CacheState As Integer
@@ -411,7 +378,8 @@ Namespace Huggle
 
         Public Function ComparePairs(ByVal x As Pair, ByVal y As Pair) As Integer
             If TypeOf x.First Is Integer AndAlso TypeOf y.First Is Integer Then Return CInt(y.First) - CInt(x.First)
-            If TypeOf x.First Is String AndAlso TypeOf y.First Is String Then Return String.Compare(CStr(x.First), CStr(y.First))
+            If TypeOf x.First Is String AndAlso TypeOf y.First Is String _
+                Then Return String.Compare(CStr(x.First), CStr(y.First), StringComparison.Ordinal)
             Return 0
         End Function
 
@@ -435,9 +403,10 @@ Namespace Huggle
 
         End Structure
 
-        Public Class Selection
+        Public Structure Selection
 
-            Private _Start, _Length As Integer
+            Private _Length As Integer
+            Private _Start As Integer
 
             Public Shared ReadOnly Empty As New Selection(-1, 0)
 
@@ -458,25 +427,19 @@ Namespace Huggle
                 End Get
             End Property
 
-            Public Property Start() As Integer
+            Public ReadOnly Property Start() As Integer
                 Get
                     Return _Start
                 End Get
-                Set(ByVal value As Integer)
-                    _Start = value
-                End Set
             End Property
 
-            Public Property Length() As Integer
+            Public ReadOnly Property Length() As Integer
                 Get
                     Return _Length
                 End Get
-                Set(ByVal value As Integer)
-                    _Length = value
-                End Set
             End Property
 
-        End Class
+        End Structure
 
         Public Function ColorFromHSL(ByVal H As Double, ByVal S As Double, ByVal L As Double) As Color
             Dim R, G, B As Double
@@ -588,7 +551,7 @@ Namespace Huggle
                     ex = ex.InnerException
                 End While
 
-                If Not result.EndsWith(".") Then result &= "."
+                If Not result.EndsWithI(".") Then result &= "."
                 Return result
             End Get
         End Property
@@ -603,7 +566,7 @@ Namespace Huggle
                     ex = ex.InnerException
                 End While
 
-                If Not result.EndsWith(".") Then result &= "."
+                If Not result.EndsWithI(".") Then result &= "."
                 Return result
             End Get
         End Property

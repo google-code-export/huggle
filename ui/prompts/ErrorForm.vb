@@ -19,7 +19,7 @@ Namespace Huggle.UI
             Dim line As String
 
             While startPos < message.Length
-                endPos = message.IndexOf(CRLF, startPos)
+                endPos = message.IndexOfI(CRLF, startPos)
 
                 If endPos - startPos < maxLength Then
                     If endPos = -1 Then

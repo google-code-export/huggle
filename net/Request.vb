@@ -2,12 +2,10 @@
 Imports System
 Imports System.Collections
 Imports System.Collections.Generic
+Imports System.Globalization
 Imports System.IO
 Imports System.Net
 Imports System.Reflection
-Imports System.Security
-Imports System.Security.Cryptography
-Imports System.Text
 Imports System.Text.RegularExpressions
 Imports System.Threading
 Imports System.Web.HttpUtility
@@ -19,11 +17,12 @@ Namespace Huggle
     Public Class Request : Inherits Process
 
         Private _Response As MemoryStream
+        Private _ResponseTime As TimeSpan
         Private ReadOnly _Session As Session
 
         Private Shared ReadOnly MaxAttempts As Integer = 3
         Private Shared ReadOnly RetryInterval As New TimeSpan(0, 0, 3)
-        Private Shared ReadOnly Timeout As New TimeSpan(0, 0, 15)
+        Private Shared ReadOnly DefaultTimeout As New TimeSpan(0, 0, 30)
 
         Public Sub New(ByVal session As Session)
             _Session = session
@@ -46,13 +45,19 @@ Namespace Huggle
             End Set
         End Property
 
-        Public Property ResponseTime() As TimeSpan
+        Public ReadOnly Property ResponseTime() As TimeSpan
+            Get
+                Return _ResponseTime
+            End Get
+        End Property
 
         Public ReadOnly Property Session() As Session
             Get
                 Return _Session
             End Get
         End Property
+
+        Public Property Timeout As TimeSpan = DefaultTimeout
 
         Public Property Url() As Uri
 
@@ -112,7 +117,7 @@ Namespace Huggle
                         Loop While size > 0
                     End Using
 
-                    ResponseTime = (Date.Now - startTime)
+                    _ResponseTime = (Date.Now - startTime)
                     If Not App.IsMono AndAlso Cookies IsNot Nothing Then FixCookieContainer(Cookies, Url)
 
                     OnSuccess()
@@ -170,10 +175,10 @@ Namespace Huggle
 
             Dim domainTable As Hashtable = CType(GetType(CookieContainer).InvokeMember("m_domainTable",
                 BindingFlags.NonPublic Or BindingFlags.GetField Or BindingFlags.Instance,
-                Nothing, cookies, Nothing), Hashtable)
+                Nothing, cookies, Nothing, CultureInfo.InvariantCulture), Hashtable)
 
             For Each key As String In New ArrayList(domainTable.Keys)
-                If key.StartsWith(".") Then domainTable(key.Substring(1)) = domainTable(key)
+                If key.StartsWithI(".") Then domainTable(key.Substring(1)) = domainTable(key)
             Next key
 
             cookies.Add(url, old)

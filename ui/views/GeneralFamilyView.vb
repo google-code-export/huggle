@@ -31,7 +31,7 @@ Namespace Huggle.UI
                 Try
                     If logo.ThumbKnown(96) Then FamilyLogo.Image = New Bitmap(logo.Thumb(96))
                 Catch ex As SystemException
-                    Log.Write("Logo for {0} not in recognized format".FormatWith(Family.Name))
+                    Log.Write("Logo for {0} not in recognized format".FormatI(Family.Name))
                 End Try
             End If
 

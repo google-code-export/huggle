@@ -152,7 +152,7 @@ Namespace Huggle.Actions
                 Items.Clear()
 
                 For Each title As String In IO.File.ReadAllLines(Filename)
-                    If title.StartsWith("*[[") OrElse title.StartsWith("* [[") Then title = title.Substring(1)
+                    If title.StartsWithI("*[[") OrElse title.StartsWithI("* [[") Then title = title.Substring(1)
                     title = Wiki.Pages.SanitizeTitle(title)
                     If title IsNot Nothing Then Items.Add(Wiki.Pages(title))
                 Next title

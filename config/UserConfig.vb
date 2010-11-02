@@ -134,14 +134,14 @@ Namespace Huggle
                                 User.GroupChanges(User.Wiki.UserGroups(group)).CanRemoveSelf = True
                             Next group
 
-                        Case "id" : User.Id = value.ToInteger
+                        Case "id" : User.Id = CInt(value)
                         Case "minor"
                         Case "password"
                             If Config.Local.SavePasswords AndAlso Not User.IsAnonymous Then
                                 Try
                                     User.Password = Convert.FromBase64String(value)
                                 Catch ex As FormatException
-                                    Log.Debug("Ignored saved password for {0}, bad format".FormatWith(User))
+                                    Log.Debug("Ignored saved password for {0}, bad format".FormatI(User))
                                 End Try
                             End If
 
@@ -165,74 +165,77 @@ Namespace Huggle
         End Sub
 
         Public Overrides Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
-            Dim def As UserConfig = User.Wiki.Users.Default.Config
-
             Dim items As New Dictionary(Of String, Object)
 
-            If ConfirmBlock <> def.ConfirmBlock Then items.Add("confirm-block", ConfirmBlock)
-            If ConfirmBlocked <> def.ConfirmBlocked Then items.Add("confirm-blocked", ConfirmBlocked)
-            If ConfirmBlockIgnored <> def.ConfirmBlockIgnored Then items.Add("confirm-blockignored", ConfirmBlockIgnored)
-            If ConfirmBlockReported <> def.ConfirmBlockReported Then items.Add("confirm-blockreported", ConfirmBlockReported)
-            If ConfirmBlockScary <> def.ConfirmBlockScary Then items.Add("confirm-blockscary", ConfirmBlockScary)
-            If ConfirmBlockWarned <> def.ConfirmBlockWarned Then items.Add("confirm-blockwarned", ConfirmBlockWarned)
-            If ConfirmIgnoredPage <> def.ConfirmIgnoredPage Then items.Add("confirm-ignoredpage", ConfirmIgnoredPage)
-            If ConfirmIgnoredUser <> def.ConfirmIgnoredUser Then items.Add("confirm-ignoreduser", ConfirmIgnoredUser)
-            If ConfirmMultiple <> def.ConfirmMultiple Then items.Add("confirm-multiple", ConfirmMultiple)
-            If ConfirmPartialSeries <> def.ConfirmPartialSeries Then items.Add("confirm-partialseries", ConfirmPartialSeries)
-            If ConfirmRange <> def.ConfirmRange Then items.Add("confirm-range", ConfirmRange)
-            If ConfirmReport <> def.ConfirmReport Then items.Add("confirm-report", ConfirmReport)
-            If ConfirmReportIgnored <> def.ConfirmReportIgnored Then items.Add("confirm-reportignored", ConfirmReportIgnored)
-            If ConfirmReportUnwarned <> def.ConfirmReportUnwarned Then items.Add("confirm-reportignored", ConfirmReportUnwarned)
-            If ConfirmRevertedRev <> def.ConfirmRevertedRev Then items.Add("confirm-reportignored", ConfirmRevertedRev)
-            If ConfirmRevertedUser <> def.ConfirmRevertedUser Then items.Add("confirm-reportignored", ConfirmRevertedUser)
-            If ConfirmSameUser <> def.ConfirmSameUser Then items.Add("confirm-reportignored", ConfirmSameUser)
-            If ConfirmSelf <> def.ConfirmSelf Then items.Add("confirm-reportignored", ConfirmSelf)
-            If ConfirmSemiIgnored <> def.ConfirmSemiIgnored Then items.Add("confirm-semiignored", ConfirmSemiIgnored)
-            If ConfirmUseful <> def.ConfirmUseful Then items.Add("confirm-reportignored", ConfirmUseful)
-            If ConfirmWarnedRev <> def.ConfirmWarnedRev Then items.Add("confirm-reportignored", ConfirmWarnedRev)
-            If ConfirmWarnedUser <> def.ConfirmWarnedUser Then items.Add("confirm-reportignored", ConfirmWarnedUser)
-            If User.Contributions > -1 Then items.Add("contributions", User.Contributions)
-            If User.Created > Date.MinValue Then items.Add("created", User.Created)
-            If EmailAuthenticated > Date.MinValue Then items.Add("email-authenticated", EmailAuthenticated)
-            If AutoIgnoreAfter <> def.AutoIgnoreAfter Then items.Add("ignore-autoafter", AutoIgnoreAfter)
-            If RevertAlwaysBlank <> def.RevertAlwaysBlank Then items.Add("revert-blank", RevertAlwaysBlank)
-            If RevertCheckRollbackTarget <> def.RevertCheckRollbackTarget Then items.Add("revert-checkrollbacktarget", RevertCheckRollbackTarget)
-            If RevertDelete <> def.RevertDelete Then items.Add("revert-delete", RevertDelete)
-            If RevertRollback <> def.RevertRollback Then items.Add("revert-rollback", RevertRollback)
-            If RevertSpeedy <> def.RevertSpeedy Then items.Add("revert-speedy", RevertSpeedy)
-            If SemiIgnoreAfter <> def.SemiIgnoreAfter Then items.Add("semi-ignore-after", SemiIgnoreAfter)
-            If Updated > Date.MinValue Then items.Add("updated", Updated)
-
-            If target = ConfigTarget.Local AndAlso Not User.IsDefault Then
+            If target = ConfigTarget.Local Then
                 If User.DisplayName <> User.Name Then items.Add("display-name", User.DisplayName)
 
                 If Config.Local.SavePasswords AndAlso Not User.IsAnonymous AndAlso User.Password IsNot Nothing _
                     Then items.Add("password", Convert.ToBase64String(User.Password.ToArray))
 
-                If User.Groups.Count > 0 Then items.Add("groups", User.Groups.Join(","))
+                Dim def As UserConfig = User.Wiki.Users.Default.Config
 
-                Dim canAdd As New List(Of UserGroup)
-                Dim canAddSelf As New List(Of UserGroup)
-                Dim canRemove As New List(Of UserGroup)
-                Dim canRemoveSelf As New List(Of UserGroup)
-
-                For Each groupChange As UserGroupChange In User.GroupChanges.All
-                    If groupChange.CanAdd Then canAdd.Add(groupChange.Group)
-                    If groupChange.CanAddSelf Then canAddSelf.Add(groupChange.Group)
-                    If groupChange.CanRemove Then canRemove.Add(groupChange.Group)
-                    If groupChange.CanRemoveSelf Then canRemoveSelf.Add(groupChange.Group)
-                Next groupChange
-
-                If canAdd.Count > 0 Then items.Add("groups-add", canAdd.Join(","))
-                If canAddSelf.Count > 0 Then items.Add("groups-add-self", canAddSelf.Join(","))
-                If canRemove.Count > 0 Then items.Add("groups-remove", canRemove.Join(","))
-                If canRemoveSelf.Count > 0 Then items.Add("groups-remove-self", canRemoveSelf.Join(","))
-
-                items.Add("preferences", User.Preferences.ToMwFormat.ToDictionary(Of String, Object))
-
-                If User.UnificationDate > Date.MinValue Then items.Add("unification-date", User.UnificationDate)
-                If User.UnificationMethod IsNot Nothing Then items.Add("unification-method", User.UnificationMethod)
+                If ConfirmBlock <> def.ConfirmBlock Then items.Add("confirm-block", ConfirmBlock)
+                If ConfirmBlocked <> def.ConfirmBlocked Then items.Add("confirm-blocked", ConfirmBlocked)
+                If ConfirmBlockIgnored <> def.ConfirmBlockIgnored Then items.Add("confirm-blockignored", ConfirmBlockIgnored)
+                If ConfirmBlockReported <> def.ConfirmBlockReported Then items.Add("confirm-blockreported", ConfirmBlockReported)
+                If ConfirmBlockScary <> def.ConfirmBlockScary Then items.Add("confirm-blockscary", ConfirmBlockScary)
+                If ConfirmBlockWarned <> def.ConfirmBlockWarned Then items.Add("confirm-blockwarned", ConfirmBlockWarned)
+                If ConfirmIgnoredPage <> def.ConfirmIgnoredPage Then items.Add("confirm-ignoredpage", ConfirmIgnoredPage)
+                If ConfirmIgnoredUser <> def.ConfirmIgnoredUser Then items.Add("confirm-ignoreduser", ConfirmIgnoredUser)
+                If ConfirmMultiple <> def.ConfirmMultiple Then items.Add("confirm-multiple", ConfirmMultiple)
+                If ConfirmPartialSeries <> def.ConfirmPartialSeries Then items.Add("confirm-partialseries", ConfirmPartialSeries)
+                If ConfirmRange <> def.ConfirmRange Then items.Add("confirm-range", ConfirmRange)
+                If ConfirmReport <> def.ConfirmReport Then items.Add("confirm-report", ConfirmReport)
+                If ConfirmReportIgnored <> def.ConfirmReportIgnored Then items.Add("confirm-reportignored", ConfirmReportIgnored)
+                If ConfirmReportUnwarned <> def.ConfirmReportUnwarned Then items.Add("confirm-reportignored", ConfirmReportUnwarned)
+                If ConfirmRevertedRev <> def.ConfirmRevertedRev Then items.Add("confirm-reportignored", ConfirmRevertedRev)
+                If ConfirmRevertedUser <> def.ConfirmRevertedUser Then items.Add("confirm-reportignored", ConfirmRevertedUser)
+                If ConfirmSameUser <> def.ConfirmSameUser Then items.Add("confirm-reportignored", ConfirmSameUser)
+                If ConfirmSelf <> def.ConfirmSelf Then items.Add("confirm-reportignored", ConfirmSelf)
+                If ConfirmSemiIgnored <> def.ConfirmSemiIgnored Then items.Add("confirm-semiignored", ConfirmSemiIgnored)
+                If ConfirmUseful <> def.ConfirmUseful Then items.Add("confirm-reportignored", ConfirmUseful)
+                If ConfirmWarnedRev <> def.ConfirmWarnedRev Then items.Add("confirm-reportignored", ConfirmWarnedRev)
+                If ConfirmWarnedUser <> def.ConfirmWarnedUser Then items.Add("confirm-reportignored", ConfirmWarnedUser)
+                If AutoIgnoreAfter <> def.AutoIgnoreAfter Then items.Add("ignore-autoafter", AutoIgnoreAfter)
+                If RevertAlwaysBlank <> def.RevertAlwaysBlank Then items.Add("revert-blank", RevertAlwaysBlank)
+                If RevertCheckRollbackTarget <> def.RevertCheckRollbackTarget Then items.Add("revert-checkrollbacktarget", RevertCheckRollbackTarget)
+                If RevertDelete <> def.RevertDelete Then items.Add("revert-delete", RevertDelete)
+                If RevertRollback <> def.RevertRollback Then items.Add("revert-rollback", RevertRollback)
+                If RevertSpeedy <> def.RevertSpeedy Then items.Add("revert-speedy", RevertSpeedy)
+                If SemiIgnoreAfter <> def.SemiIgnoreAfter Then items.Add("semi-ignore-after", SemiIgnoreAfter)
             End If
+
+            If User.IsDefault Then Return items
+
+            If User.Contributions > -1 Then items.Add("contributions", User.Contributions)
+            If User.Created > Date.MinValue Then items.Add("created", User.Created)
+            If EmailAuthenticated > Date.MinValue Then items.Add("email-authenticated", EmailAuthenticated)
+            If Updated > Date.MinValue Then items.Add("updated", Updated)
+
+            If User.Groups.Count > 0 Then items.Add("groups", User.Groups.Join(","))
+
+            Dim canAdd As New List(Of UserGroup)
+            Dim canAddSelf As New List(Of UserGroup)
+            Dim canRemove As New List(Of UserGroup)
+            Dim canRemoveSelf As New List(Of UserGroup)
+
+            For Each groupChange As UserGroupChange In User.GroupChanges.All
+                If groupChange.CanAdd Then canAdd.Add(groupChange.Group)
+                If groupChange.CanAddSelf Then canAddSelf.Add(groupChange.Group)
+                If groupChange.CanRemove Then canRemove.Add(groupChange.Group)
+                If groupChange.CanRemoveSelf Then canRemoveSelf.Add(groupChange.Group)
+            Next groupChange
+
+            If canAdd.Count > 0 Then items.Add("groups-add", canAdd.Join(","))
+            If canAddSelf.Count > 0 Then items.Add("groups-add-self", canAddSelf.Join(","))
+            If canRemove.Count > 0 Then items.Add("groups-remove", canRemove.Join(","))
+            If canRemoveSelf.Count > 0 Then items.Add("groups-remove-self", canRemoveSelf.Join(","))
+
+            items.Add("preferences", User.Preferences.ToMwFormat.ToDictionary(Of String, Object))
+
+            If User.UnificationDate > Date.MinValue Then items.Add("unification-date", User.UnificationDate)
+            If User.UnificationMethod IsNot Nothing Then items.Add("unification-method", User.UnificationMethod)
 
             Return items
         End Function

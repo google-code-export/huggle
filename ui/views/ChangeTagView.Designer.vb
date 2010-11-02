@@ -25,9 +25,9 @@
         Private Sub InitializeComponent()
             Me.Count = New System.Windows.Forms.Label()
             Me.List = New System.Windows.Forms.EnhancedListView()
-            Me.TagNameColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
-            Me.TagDescriptionColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
-            Me.TagCountColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+            Me.NameColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+            Me.DescriptionColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+            Me.CountColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.Title = New System.Windows.Forms.Label()
             Me.SuspendLayout()
             '
@@ -46,7 +46,7 @@
             Me.List.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
                         Or System.Windows.Forms.AnchorStyles.Left) _
                         Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-            Me.List.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.TagNameColumn, Me.TagDescriptionColumn, Me.TagCountColumn})
+            Me.List.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.NameColumn, Me.DescriptionColumn, Me.CountColumn})
             Me.List.FlexibleColumn = 1
             Me.List.FullRowSelect = True
             Me.List.GridLines = True
@@ -59,20 +59,20 @@
             Me.List.UseCompatibleStateImageBehavior = False
             Me.List.View = System.Windows.Forms.View.Details
             '
-            'TagNameColumn
+            'NameColumn
             '
-            Me.TagNameColumn.Text = "Name"
-            Me.TagNameColumn.Width = 156
+            Me.NameColumn.Text = "Name"
+            Me.NameColumn.Width = 156
             '
-            'TagDescriptionColumn
+            'DescriptionColumn
             '
-            Me.TagDescriptionColumn.Text = "Description"
-            Me.TagDescriptionColumn.Width = 285
+            Me.DescriptionColumn.Text = "Description"
+            Me.DescriptionColumn.Width = 285
             '
-            'TagCountColumn
+            'CountColumn
             '
-            Me.TagCountColumn.Text = "Count"
-            Me.TagCountColumn.Width = 50
+            Me.CountColumn.Text = "Count"
+            Me.CountColumn.Width = 50
             '
             'Title
             '
@@ -97,9 +97,9 @@
         End Sub
         Private WithEvents Count As System.Windows.Forms.Label
         Private WithEvents List As System.Windows.Forms.EnhancedListView
-        Private WithEvents TagNameColumn As System.Windows.Forms.ColumnHeader
-        Private WithEvents TagDescriptionColumn As System.Windows.Forms.ColumnHeader
-        Private WithEvents TagCountColumn As System.Windows.Forms.ColumnHeader
+        Private WithEvents NameColumn As System.Windows.Forms.ColumnHeader
+        Private WithEvents DescriptionColumn As System.Windows.Forms.ColumnHeader
+        Private WithEvents CountColumn As System.Windows.Forms.ColumnHeader
         Private WithEvents Title As System.Windows.Forms.Label
 
     End Class

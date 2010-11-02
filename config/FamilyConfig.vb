@@ -107,7 +107,7 @@ Namespace Huggle
                     Dim entries As New Dictionary(Of String, Object)
 
                     For i As Integer = 0 To Family.GlobalTitleBlacklist.Entries.Count - 1
-                        entries.Add(i.ToString.PadLeft(4, "0"c), Family.GlobalTitleBlacklist.Entries(i))
+                        entries.Add(i.ToStringI.PadLeft(4, "0"c), Family.GlobalTitleBlacklist.Entries(i))
                     Next i
 
                     items.Add("title-blacklist-entries", entries)

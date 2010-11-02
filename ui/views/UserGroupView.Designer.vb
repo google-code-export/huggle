@@ -23,9 +23,9 @@
         'Do not modify it using the code editor.
         <System.Diagnostics.DebuggerStepThrough()> _
         Private Sub InitializeComponent()
-            Dim GroupColumn As System.Windows.Forms.ColumnHeader
-            Dim DescriptionColumn As System.Windows.Forms.ColumnHeader
-            Dim CountColumn As System.Windows.Forms.ColumnHeader
+            Me.GroupColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+            Me.DescriptionColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+            Me.CountColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.Count = New System.Windows.Forms.Label()
             Me.List = New System.Windows.Forms.EnhancedListView()
             Me.Title = New System.Windows.Forms.Label()
@@ -34,9 +34,6 @@
             Me.GroupName = New System.Windows.Forms.Label()
             Me.Splitter = New System.Windows.Forms.EnhancedSplitContainer()
             Me.RightsCount = New System.Windows.Forms.Label()
-            GroupColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
-            DescriptionColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
-            CountColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.Splitter.Panel1.SuspendLayout()
             Me.Splitter.Panel2.SuspendLayout()
             Me.Splitter.SuspendLayout()
@@ -44,18 +41,18 @@
             '
             'GroupColumn
             '
-            GroupColumn.Text = "Group"
-            GroupColumn.Width = 113
+            Me.GroupColumn.Text = "Group"
+            Me.GroupColumn.Width = 113
             '
             'DescriptionColumn
             '
-            DescriptionColumn.Text = "Description"
-            DescriptionColumn.Width = 161
+            Me.DescriptionColumn.Text = "Description"
+            Me.DescriptionColumn.Width = 141
             '
             'CountColumn
             '
-            CountColumn.Text = "Size"
-            CountColumn.Width = 58
+            Me.CountColumn.Text = "Size"
+            Me.CountColumn.Width = 58
             '
             'Count
             '
@@ -72,7 +69,7 @@
             Me.List.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
                         Or System.Windows.Forms.AnchorStyles.Left) _
                         Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-            Me.List.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {GroupColumn, DescriptionColumn, CountColumn})
+            Me.List.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.GroupColumn, Me.DescriptionColumn, Me.CountColumn})
             Me.List.FlexibleColumn = 1
             Me.List.FullRowSelect = True
             Me.List.GridLines = True
@@ -184,6 +181,9 @@
         Private WithEvents RightColumn As System.Windows.Forms.ColumnHeader
         Private WithEvents Splitter As System.Windows.Forms.EnhancedSplitContainer
         Private WithEvents RightsCount As System.Windows.Forms.Label
+        Private WithEvents GroupColumn As System.Windows.Forms.ColumnHeader
+        Private WithEvents DescriptionColumn As System.Windows.Forms.ColumnHeader
+        Private WithEvents CountColumn As System.Windows.Forms.ColumnHeader
 
     End Class
 End Namespace

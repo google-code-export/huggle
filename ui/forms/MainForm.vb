@@ -74,8 +74,8 @@ Namespace Huggle.UI
         End Sub
 
         Private Sub AccountGlobalProperties_Click() Handles AccountGlobalProperties.Click
-            If Session.User.GlobalUser IsNot Nothing Then
-                Dim form As New GlobalUserPropertiesForm(Session.User.GlobalUser)
+            If Session.User.IsUnified Then
+                Dim form As New GlobalUserPropertiesForm(Session)
                 form.Show()
             End If
         End Sub

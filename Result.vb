@@ -53,7 +53,7 @@ Namespace Huggle
                 item = item.Inner
             End While
 
-            If Not result.EndsWith(".") Then result &= "."
+            If Not result.EndsWithI(".") Then result &= "."
             Return result
         End Function
 
@@ -158,9 +158,9 @@ Namespace Huggle
                 Dim method As String = frame.GetMethod.Name
 
                 'Ignore framework methods
-                If method.Contains("$__") OrElse type.FullName.StartsWith("System") Then Continue For
+                If method.Contains("$__") OrElse type.FullName.StartsWithI("System") Then Continue For
 
-                Dim msg As String = " - {0}.{1}".FormatWith(type.Name, method.Replace(".ctor", "New"))
+                Dim msg As String = " - {0}.{1}".FormatI(type.Name, method.Replace(".ctor", "New"))
                 If frame.GetFileLineNumber > 0 Then msg &= ":" & CStr(frame.GetFileLineNumber)
                 resultLines.Add(msg)
             Next frame

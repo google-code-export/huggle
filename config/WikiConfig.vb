@@ -143,7 +143,7 @@ Namespace Huggle
             ReportPages.Merge(VandalReportPage)
             ReportPages.Merge(ReportUserPage)
 
-            If RevertSummaryRollback IsNot Nothing Then RevertSummaryRollback = RevertSummaryRollback.FormatWith("$1", "$2")
+            If RevertSummaryRollback IsNot Nothing Then RevertSummaryRollback = RevertSummaryRollback.FormatForUser("$1", "$2")
 
             If Wiki.Messages.ContainsKey("undo-summary") Then
                 RevertPatterns.Add(New Regex(FormatMwMessage(EscapeMwMessage(WikiStripSummary(Wiki.Message("undo-summary"))), _
@@ -316,9 +316,9 @@ Namespace Huggle
                                 Next prop
                             Next item
 
-                        Case "page-size-transition" : PageSizeTransition = value.ToInteger
+                        Case "page-size-transition" : PageSizeTransition = CInt(value)
                         Case "preferences" : Wiki.Preferences = value.ToList.Trim
-                        Case "priority-cache-time" : PriorityCacheTime = New TimeSpan(0, value.ToInteger, 0)
+                        Case "priority-cache-time" : PriorityCacheTime = New TimeSpan(0, CInt(value), 0)
                         Case "priority-query" : PriorityQuery = value
 
                         Case "review-flags"
@@ -415,7 +415,7 @@ Namespace Huggle
                     If queue.RemoveContribs <> defQueue.RemoveContribs Then item.Add("remove-contribs", queue.RemoveContribs)
                     If queue.RemoveHistory <> defQueue.RemoveHistory Then item.Add("remove-history", queue.RemoveHistory)
                     If queue.RemoveViewed <> defQueue.RemoveViewed Then item.Add("remove-viewed", queue.RemoveViewed)
-                    If queue.SourceType <> defQueue.SourceType Then item.Add("source-type", queue.SourceType.ToString.ToLower)
+                    If queue.SourceType <> defQueue.SourceType Then item.Add("source-type", queue.SourceType.ToString.ToLowerI)
 
                     queues.Add(queue.Name, item)
                 Next queue
@@ -626,10 +626,10 @@ Namespace Huggle
             Wiki.FeedPatterns.Clear()
             If Wiki.Messages.Count = 0 Then Return
 
-            Wiki.FeedPatterns.Add("edit", New Regex(Feed.BasePattern.FormatWith("(!?)(M?)(B?)", _
+            Wiki.FeedPatterns.Add("edit", New Regex(Feed.BasePattern.FormatI("(!?)(M?)(B?)",
                 "[^ ]+diff=(\d+)&oldid=(\d+)(?:&rcid=(\d+))?", "\(\cB?(.+?)\cB?\)", "(.+?)", ""), RegexOptions.Compiled))
 
-            Wiki.FeedPatterns.Add("new", New Regex(Feed.BasePattern.FormatWith("(!?)N(M?)(B?)", _
+            Wiki.FeedPatterns.Add("new", New Regex(Feed.BasePattern.FormatI("(!?)N(M?)(B?)",
                 "[^ ]+oldid=(\d+)(?:&rcid=(\d+))?", "\((.+?)\)", "(.+?)", ""), RegexOptions.Compiled))
 
             AddLogPattern("autocreate", "newuserlog-autocreate-entry")
@@ -646,7 +646,7 @@ Namespace Huggle
             AddLogPattern("protect", "protectedarticle", "\cC02([^\cC]+)\cC10")
             AddLogPattern("reblock", "reblock-logentry", "\cC02User:([^\cC]+)\cC10", "(.+?)", "\((.+?)\)")
             AddLogPattern("restore", "undeletedarticle", "\cC02([^\cC]+)\cC10")
-            AddLogPattern("renameuser", "renameuserlogentry", "(.+?)", "(.+?)", _
+            AddLogPattern("renameuser", "renameuserlogentry", "(.+?)", "(.+?)",
                 MwMessagePattern(Wiki.Message("renameuser-log"), ".+?", "(.+?)"))
             AddLogPattern("rights", "rightslogentry", "(.+?)", "(.+?)", "(.+?)")
             AddLogPattern("unapprove", "review-logentry-app", "\cC02([^\cC]+)\cC10", "(\d+)")
@@ -658,9 +658,9 @@ Namespace Huggle
         Private Sub AddLogPattern(ByVal action As String,
             ByVal message As String, ByVal ParamArray paramPatterns As String())
 
-            If Wiki.Message(message) IsNot Nothing Then Wiki.FeedPatterns.Add _
-                (action, New Regex(Feed.BasePattern.FormatWith(Regex.Escape(action), "", "", MwMessagePattern _
-                (Wiki.Message(message), paramPatterns)), RegexOptions.Compiled))
+            If Wiki.Message(message) IsNot Nothing Then Wiki.FeedPatterns.Add(
+                action, New Regex(Feed.BasePattern.FormatI(Regex.Escape(action), "", "", MwMessagePattern(
+                Wiki.Message(message), paramPatterns)), RegexOptions.Compiled))
         End Sub
 
     End Class

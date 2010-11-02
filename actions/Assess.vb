@@ -28,7 +28,7 @@ Namespace Huggle.Actions
                 "revid", Page.LastRev.Id)
 
             For i As Integer = 0 To Ratings.Count - 1
-                query.Add("r" & (i + 1).ToString, Ratings(i))
+                query.Add("r" & (i + 1).ToStringI, Ratings(i))
             Next i
 
             Dim assessReq As New ApiRequest(Session, Description, query)

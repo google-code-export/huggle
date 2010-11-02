@@ -2,6 +2,7 @@
 Imports System.Collections
 Imports System.Collections.Generic
 Imports System.Drawing
+Imports System.Globalization
 Imports System.Runtime.CompilerServices
 Imports System.Web.HttpUtility
 Imports System.Text.RegularExpressions
@@ -143,25 +144,13 @@ Namespace Huggle
         End Sub
 
         <Extension()>
-        Function FormatWith(ByVal str As String, ByVal ParamArray params As Object()) As String
-            If str Is Nothing Then Return Nothing
-            If params Is Nothing OrElse params.Length = 0 Then Return str
-
-            Try
-                Return String.Format(str, params)
-            Catch ex As FormatException
-                Return str
-            End Try
-        End Function
-
-        <Extension()>
         Function FromFirst(ByVal str As String, ByVal value As String,
             Optional ByVal include As Boolean = False) As String
 
             If str Is Nothing OrElse value Is Nothing Then Return Nothing
             If Not str.Contains(value) Then Return Nothing
-            If include Then Return str.Substring(str.IndexOf(value)) _
-                Else Return str.Substring(str.IndexOf(value) + value.Length)
+            If include Then Return str.Substring(str.IndexOfI(value)) _
+                Else Return str.Substring(str.IndexOfI(value) + value.Length)
         End Function
 
         <Extension()>
@@ -170,8 +159,8 @@ Namespace Huggle
 
             If str Is Nothing OrElse value Is Nothing Then Return Nothing
             If Not str.Contains(value) Then Return Nothing
-            If include Then Return str.Substring(str.LastIndexOf(value)) _
-                Else Return str.Substring(str.LastIndexOf(value) + value.Length)
+            If include Then Return str.Substring(str.LastIndexOfI(value)) _
+                Else Return str.Substring(str.LastIndexOfI(value) + value.Length)
         End Function
 
         <Extension()>
@@ -310,9 +299,9 @@ Namespace Huggle
             Dim result As Boolean
             If Boolean.TryParse(str, result) Then Return result
 
-            Select Case str.ToLower
-                Case "yes", "y", Msg("yes").ToLower : Return True
-                Case "no", "n", Msg("no").ToLower : Return False
+            Select Case str.ToLowerI
+                Case "yes", "y", Msg("yes").ToLowerI : Return True
+                Case "no", "n", Msg("no").ToLowerI : Return False
             End Select
 
             Return CBool(str)
@@ -396,13 +385,8 @@ Namespace Huggle
 
             If str Is Nothing OrElse value Is Nothing Then Return Nothing
             If Not str.Contains(value) Then Return str
-            If include Then Return str.Substring(0, str.IndexOf(value) + value.Length) _
-                Else Return str.Substring(0, str.IndexOf(value))
-        End Function
-
-        <Extension()>
-        Function ToInteger(ByVal str As String) As Integer
-            Return Convert.ToInt32(Str)
+            If include Then Return str.Substring(0, str.IndexOfI(value) + value.Length) _
+                Else Return str.Substring(0, str.IndexOfI(value))
         End Function
 
         <Extension()>
@@ -411,8 +395,8 @@ Namespace Huggle
 
             If str Is Nothing OrElse value Is Nothing Then Return Nothing
             If Not str.Contains(value) Then Return str
-            If Include Then Return str.Substring(0, str.LastIndexOf(value) + value.Length) _
-                Else Return str.Substring(0, str.LastIndexOf(value))
+            If Include Then Return str.Substring(0, str.LastIndexOfI(value) + value.Length) _
+                Else Return str.Substring(0, str.LastIndexOfI(value))
         End Function
 
         <Extension()>
@@ -514,6 +498,88 @@ Namespace Huggle
         Sub Unmerge(Of TKey, TValue)(ByVal items As Dictionary(Of TKey, TValue), ByVal item As TKey)
             If items.ContainsKey(item) Then items.Remove(item)
         End Sub
+
+    End Module
+
+    Module StringExtensions
+
+        'Basic string manipulating functions using invariant casing rules
+        'because typing out System.Globalization.CultureInfo.InvariantCulture every time is a pain
+
+        <Extension()>
+        Function EndsWithI(ByVal this As String, ByVal value As String) As Boolean
+            Return this.EndsWith(value, StringComparison.Ordinal)
+        End Function
+
+        <Extension()>
+        Function EqualsI(ByVal this As String, ByVal value As String) As Boolean
+            Return this.Equals(value, StringComparison.Ordinal)
+        End Function
+
+        <Extension()>
+        Function EqualsIgnoreCase(ByVal this As String, ByVal value As String) As Boolean
+            Return this.Equals(value, StringComparison.OrdinalIgnoreCase)
+        End Function
+
+        <Extension()>
+        Function FormatForUser(ByVal format As String, ByVal ParamArray args As Object()) As String
+            Return String.Format(CultureInfo.CurrentCulture, format, args)
+        End Function
+
+        <Extension()>
+        Function FormatI(ByVal format As String, ByVal ParamArray args As Object()) As String
+            Return String.Format(CultureInfo.InvariantCulture, format, args)
+        End Function
+
+        <Extension()>
+        Function IndexOfI(ByVal this As String, ByVal value As String) As Integer
+            Return this.IndexOf(value, StringComparison.Ordinal)
+        End Function
+
+        <Extension()>
+        Function IndexOfI(ByVal this As String, ByVal value As String, ByVal startIndex As Integer) As Integer
+            Return this.IndexOf(value, startIndex, StringComparison.Ordinal)
+        End Function
+
+        <Extension()>
+        Function IndexOfIgnoreCase(ByVal this As String, ByVal value As String) As Integer
+            Return this.IndexOf(value, StringComparison.OrdinalIgnoreCase)
+        End Function
+
+        <Extension()>
+        Function StartsWithI(ByVal this As String, ByVal value As String) As Boolean
+            Return this.StartsWith(value, StringComparison.Ordinal)
+        End Function
+
+        <Extension()>
+        Function StartsWithIgnoreCase(ByVal this As String, ByVal value As String) As Boolean
+            Return this.StartsWith(value, StringComparison.OrdinalIgnoreCase)
+        End Function
+
+        <Extension()>
+        Function LastIndexOfI(ByVal this As String, ByVal value As String) As Integer
+            Return this.LastIndexOf(value, StringComparison.Ordinal)
+        End Function
+
+        <Extension()>
+        Function ToLowerI(ByVal this As String) As String
+            Return this.ToLower(CultureInfo.InvariantCulture)
+        End Function
+
+        <Extension()>
+        Function ToUpperI(ByVal this As String) As String
+            Return this.ToUpper(CultureInfo.InvariantCulture)
+        End Function
+
+        <Extension()>
+        Function ToStringI(ByVal this As IFormattable) As String
+            Return this.ToString(Nothing, CultureInfo.InvariantCulture)
+        End Function
+
+        <Extension()>
+        Function ToStringForUser(ByVal this As IFormattable) As String
+            Return this.ToString(Nothing, CultureInfo.CurrentCulture)
+        End Function
 
     End Module
 

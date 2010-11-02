@@ -45,15 +45,15 @@ Namespace Huggle
             _Command = command
 
             If Not String.IsNullOrEmpty(shortcutString) Then
-                shortcutString = shortcutString.ToLower
+                shortcutString = shortcutString.ToLowerI
                 _Control = (shortcutString.Contains("ctrl"))
                 _Alt = (shortcutString.Contains("alt"))
                 _Shift = (shortcutString.Contains("shift"))
 
                 If shortcutString.Contains(" ") Then shortcutString = shortcutString.FromLast(" ")
-                If shortcutString.Contains("-") AndAlso Not shortcutString.EndsWith("-") _
+                If shortcutString.Contains("-") AndAlso Not shortcutString.EndsWithI("-") _
                     Then shortcutString = shortcutString.FromLast("-")
-                If shortcutString.Contains("+") AndAlso Not shortcutString.EndsWith("+") _
+                If shortcutString.Contains("+") AndAlso Not shortcutString.EndsWithI("+") _
                     Then shortcutString = shortcutString.FromLast("+")
 
                 For i As Integer = 0 To KeyNames.Length - 2 Step 2

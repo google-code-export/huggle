@@ -1,4 +1,6 @@
-﻿Namespace Huggle.Actions
+﻿Imports System
+
+Namespace Huggle.Actions
 
     'Load non-essential global user configuration
 
@@ -21,10 +23,11 @@
                 "guiprop", "groups|rights|merged|unattached", _
                 "guiuser", GlobalUser.Name))
 
+            globalUsers.Timeout = New TimeSpan(0, 0, 30)
             globalUsers.Start()
             If globalUsers.IsFailed Then OnFail(globalUsers.Result) : Return
 
-            Log.Debug("Load from wiki: globaluser\{0}".FormatWith(GlobalUser.FullName))
+            Log.Debug("Load from wiki: globaluser\{0}".FormatI(GlobalUser.FullName))
             GlobalUser.Config.Updated = Date.UtcNow
             GlobalUser.Config.SaveLocal()
 

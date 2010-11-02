@@ -121,7 +121,7 @@ Namespace Huggle
             Next item
 
             If IsMultipart Then
-                Boundary = "----------" & App.Randomness.Next.ToString
+                Boundary = "----------" & App.Randomness.Next.ToStringI
                 Data = Query.ToMultipart(Filename, Boundary)
             Else
                 Data = Encoding.UTF8.GetBytes(Query.ToUrlString)
@@ -131,7 +131,7 @@ Namespace Huggle
 
             Dim logString As String = Query.ToString
             If logString.Length > 80 Then logString = logString.Substring(0, 77) & "..."
-            Log.Debug("API request: {0}".FormatWith(logString))
+            Log.Debug("API request: {0}".FormatI(logString))
 
             MyBase.Start()
 
@@ -151,10 +151,10 @@ Namespace Huggle
             MyBase.Response.Close()
 
             'Check for disabled API
-            If responseText.StartsWith("MediaWiki API is not enabled") Then OnFail(Msg("error-apidisabled")) : Return
+            If responseText.StartsWithI("MediaWiki API is not enabled") Then OnFail(Msg("error-apidisabled")) : Return
 
             'Check for PHP source code output
-            If responseText.StartsWith("<?php") Then OnFail(Msg("error-serverconfig", Wiki)) : Return
+            If responseText.StartsWithI("<?php") Then OnFail(Msg("error-serverconfig", Wiki)) : Return
 
             'Check for MediaWiki/Wikimedia error message
             Dim errorCheck As Result = CheckForWikiError(responseText)

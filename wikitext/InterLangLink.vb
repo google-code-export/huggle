@@ -4,16 +4,18 @@ Imports System.Text.RegularExpressions
 
 Namespace Huggle.Wikitext
 
-    <Diagnostics.DebuggerDisplay("{Name}")> _
+    <Diagnostics.DebuggerDisplay("{Name}")>
     Public Class InterLangLink
 
         'Represents an interlanguage link
 
-        Private _Page As Page, _Selection As Selection, _Source As Wiki
+        Private _Page As Page
+        Private _Selection As Selection
+        Private _Source As Wiki
 
-        Public Sub New(ByVal Source As Wiki, ByVal Page As Page, ByVal Selection As Selection)
-            _Page = Page
-            _Selection = Selection
+        Public Sub New(ByVal source As Wiki, ByVal page As Page, ByVal selection As Selection)
+            _Page = page
+            _Selection = selection
         End Sub
 
         Public ReadOnly Property Code() As String
@@ -63,14 +65,14 @@ Namespace Huggle.Wikitext
         Private Document As Document
         Private Items As List(Of InterLangLink)
 
-        Public Sub New(ByVal Document As Document)
-            Me.Document = Document
+        Public Sub New(ByVal document As Document)
+            Me.Document = document
 
-            For Each match As Match In Regex.Matches(Document.ParseableText, Parsing.BaseInterlangPattern(Document.Wiki))
-                Dim page As Page = Document.Wiki.Pages.FromString(match.Groups(1).Value)
+            For Each match As Match In Regex.Matches(document.ParseableText, Parsing.BaseInterlangPattern(document.Wiki))
+                Dim page As Page = document.Wiki.Pages.FromString(match.Groups(1).Value)
 
-                If page IsNot Nothing AndAlso page.Wiki IsNot Document.Wiki Then
-                    Items.Add(New InterLangLink(Document.Wiki, page, New Selection(match.Index, match.Length)))
+                If page IsNot Nothing AndAlso page.Wiki IsNot document.Wiki Then
+                    Items.Add(New InterLangLink(document.Wiki, page, New Selection(match.Index, match.Length)))
                 End If
             Next match
         End Sub
@@ -81,16 +83,16 @@ Namespace Huggle.Wikitext
             End Get
         End Property
 
-        Public ReadOnly Property Contains(ByVal Item As InterLangLink) As Boolean
+        Public ReadOnly Property Contains(ByVal item As InterLangLink) As Boolean
             Get
-                Return (Items.Contains(Item))
+                Return (Items.Contains(item))
             End Get
         End Property
 
-        Public ReadOnly Property Contains(ByVal Page As Page) As Boolean
+        Public ReadOnly Property Contains(ByVal page As Page) As Boolean
             Get
                 For Each Item As InterLangLink In Items
-                    If Item.Page Is Page Then Return True
+                    If Item.Page Is page Then Return True
                 Next Item
 
                 Return False
@@ -103,37 +105,37 @@ Namespace Huggle.Wikitext
             End Get
         End Property
 
-        Default Public ReadOnly Property Item(ByVal Wiki As Wiki) As InterLangLink
+        Default Public ReadOnly Property Item(ByVal wiki As Wiki) As InterLangLink
             Get
                 For Each interwiki As InterLangLink In Items
-                    If interwiki.Destination Is Wiki Then Return interwiki
+                    If interwiki.Destination Is wiki Then Return interwiki
                 Next interwiki
 
                 Return Nothing
             End Get
         End Property
 
-        Default Public ReadOnly Property Item(ByVal Index As Integer) As InterLangLink
+        Default Public ReadOnly Property Item(ByVal index As Integer) As InterLangLink
             Get
-                If Items.Count > Index Then Return Items(Index) Else Return Nothing
+                If Items.Count > index Then Return Items(index) Else Return Nothing
             End Get
         End Property
 
-        Public Sub Add(ByVal Page As Page)
+        Public Sub Add(ByVal page As Page)
             'Don't add if already present
-            If Contains(Page) Then Return
+            If Contains(page) Then Return
 
             If Items.Count = 0 Then
                 'Insert at end of page
-                Document.Text &= LF & Document.InterlanguageLink(Page)
+                Document.Text &= LF & Document.InterlanguageLink(page)
             Else
                 'Insert after existing links
-                Document.Text.Insert(Items(Items.Count - 1).Selection.End, LF & Document.InterlanguageLink(Page))
+                Document.Text = Document.Text.Insert(Items(Items.Count - 1).Selection.End, LF & Document.InterlanguageLink(page))
             End If
         End Sub
 
-        Public Sub Remove(ByVal Index As Integer)
-            Dim sel As Selection = All(Index).Selection
+        Public Sub Remove(ByVal index As Integer)
+            Dim sel As Selection = All(index).Selection
             Document.Text = Document.Text.Remove(sel.Start, If(Document.Text(sel.End + 1) = LF, sel.Length + 1, sel.Length))
         End Sub
 

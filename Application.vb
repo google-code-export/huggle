@@ -76,7 +76,7 @@ Namespace Huggle
 
             'Login automatically if configured to do so
             If Config.Local.AutoLogin AndAlso Config.Local.LastLogin IsNot Nothing Then
-                Log.Debug("Automatically logging in as {0}".FormatWith(Config.Local.LastLogin.FullName))
+                Log.Debug("Automatically logging in as {0}".FormatI(Config.Local.LastLogin.FullName))
 
                 Dim user As User = Config.Local.LastLogin
                 user.Config.LoadLocal()
@@ -94,9 +94,8 @@ Namespace Huggle
             End If
 
             While True
-                'Show login form
                 If mainSession Is Nothing Then
-                    Log.Debug("Prompt for login")
+                    Log.Debug("Showing login form")
 
                     Using loginForm As New LoginForm
                         If loginForm.ShowDialog <> DialogResult.OK Then Return
@@ -104,7 +103,8 @@ Namespace Huggle
                     End Using
                 End If
 
-                'Show main form
+                Log.Debug("Showing main form")
+
                 Using mainForm As New MainForm(mainSession)
                     If mainForm.ShowDialog() <> DialogResult.OK Then Return
                 End Using
@@ -217,10 +217,30 @@ Namespace Huggle
             Loop
         End Sub
 
-        Public Sub WaitFor(ByVal condition As Expression)
+        Private Sub WaitFor(ByVal condition As Expression)
             While Not condition()
                 Threading.Thread.Sleep(200)
             End While
+        End Sub
+
+        Public Sub WaitOn(ByVal process As Process)
+            WaitFor(Function() process.IsComplete)
+        End Sub
+
+        Public Sub DoParallel(ByVal processes As IEnumerable(Of Process))
+            For Each process As Process In processes
+                If Not process.IsRunning Then CreateThread(AddressOf process.Start)
+            Next process
+
+            WaitFor(
+                Function()
+                    For Each process As Process In processes
+                        If Not process.IsComplete Then Return False
+                    Next process
+
+                    Return True
+                End Function
+            )
         End Sub
 
         Private Sub GetProxy()

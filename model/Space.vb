@@ -113,7 +113,7 @@ Namespace Huggle
         End Function
 
         Public Overrides Function ToString() As String
-            If _Name IsNot Nothing Then Return _Name Else Return _Number.ToString
+            If _Name IsNot Nothing Then Return _Name Else Return _Number.ToStringI
         End Function
 
     End Class
@@ -207,7 +207,7 @@ Namespace Huggle
                 If name Is Nothing Then Return Nothing
 
                 For Each space As Space In All
-                    If space.Name IsNot Nothing AndAlso space.Name.ToLower = name.ToLower Then Return space
+                    If space.Name IsNot Nothing AndAlso space.Name.EqualsIgnoreCase(name) Then Return space
                     If space.Aliases.Contains(name) Then Return space
                 Next space
 

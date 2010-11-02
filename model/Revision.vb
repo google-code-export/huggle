@@ -38,7 +38,7 @@ Namespace Huggle
 
         Private Shared WithEvents Timer As New Windows.Forms.Timer
 
-        Public Shared ReadOnly Null As New Revision(Nothing, -1)
+        Public Shared Null As New Revision(Nothing, -1)
 
         Public Event StateChanged As SimpleEventHandler(Of Revision)
 
@@ -335,7 +335,7 @@ Namespace Huggle
         Public ReadOnly Property Section() As String
             Get
                 If _Summary Is Nothing Then Return Nothing
-                If _Summary.StartsWith("/* ") AndAlso Summary.Contains(" */") _
+                If _Summary.StartsWithI("/* ") AndAlso Summary.Contains(" */") _
                     Then Return _Summary.FromFirst("/* ").ToFirst(" */") Else Return Nothing
             End Get
         End Property
@@ -428,7 +428,7 @@ Namespace Huggle
 
                 If replaceMatch.Success Then
                     IsReplace = True
-                    If Not replaceMatch.Groups(1).Value.EndsWith("...") _
+                    If Not replaceMatch.Groups(1).Value.EndsWithI("...") _
                         AndAlso Text Is Nothing Then Text = replaceMatch.Groups(1).Value
                 End If
 
@@ -436,7 +436,7 @@ Namespace Huggle
 
                 If (Prev Is Nothing OrElse IsCreation) AndAlso creationMatch.Success Then
                     IsCreation = True
-                    If Not creationMatch.Groups(1).Value.EndsWith("...") _
+                    If Not creationMatch.Groups(1).Value.EndsWithI("...") _
                         AndAlso Text Is Nothing Then Text = creationMatch.Groups(1).Value
                 End If
             End If
@@ -699,7 +699,7 @@ Namespace Huggle
                 'Sections
                 If Not Page.SectionsKnown Then
                     Page.Sections.Clear()
-                    Dim pos As Integer = Html.IndexOf("<h2>")
+                    Dim pos As Integer = Html.IndexOfI("<h2>")
 
                     While pos > -1
                         Dim header As String = Html.Substring(pos).FromFirst("<h2>").ToFirst("</h2>")
@@ -707,7 +707,7 @@ Namespace Huggle
                         If header.Contains("<span class=""mw-headline"">") _
                             Then Page.Sections.Add(HtmlDecode(header.FromFirst("<span class=""mw-headline"">").ToFirst("</span>")))
 
-                        pos = Html.IndexOf("<h2>", Html.IndexOf("</h2>", pos))
+                        pos = Html.IndexOfI("<h2>", Html.IndexOfI("</h2>", pos))
                     End While
 
                     Page.SectionsKnown = True
@@ -754,10 +754,9 @@ Namespace Huggle
         Private Sub ProcessUserTalk()
 
             'Shared IP address
-
             If Page.Owner.IsAnonymous AndAlso Wiki.Config.SharedTemplates IsNot Nothing Then
                 For Each item As Page In Wiki.Config.SharedTemplates
-                    Dim i As Integer = Text.ToLower.IndexOf("{{" & Page.Name.ToLower & "|")
+                    Dim i As Integer = Text.IndexOfIgnoreCase("{{" & Page.Name & "|")
 
                     If i >= 0 Then
                         Page.Owner.IsShared = True
@@ -776,11 +775,11 @@ Namespace Huggle
         End Sub
 
         Public Overrides Function ToString() As String
-            Return Id.ToString
+            Return Id.ToStringI
         End Function
 
         Public Shared Function CompareByPageName(ByVal x As Revision, ByVal y As Revision) As Integer
-            Return String.Compare(x._Page.Name, y._Page.Name)
+            Return String.Compare(x._Page.Name, y._Page.Name, StringComparison.Ordinal)
         End Function
 
         Public Shared Function CompareByQuality(ByVal x As Revision, ByVal y As Revision) As Integer
@@ -834,7 +833,7 @@ Namespace Huggle
 
             If x.Random <> y.Random Then Return Math.Sign(y.Random - x.Random)
 
-            Return String.Compare(x.Page.Name, y.Page.Name)
+            Return String.Compare(x.Page.Name, y.Page.Name, StringComparison.Ordinal)
         End Function
 
         Public Shared Function CompareByTime(ByVal x As Revision, ByVal y As Revision) As Integer

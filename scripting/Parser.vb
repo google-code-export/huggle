@@ -43,7 +43,7 @@ Namespace Huggle.Scripting
 
             While pos >= 0
                 If pos > 0 Then escaped &= expr.Substring(endpos + 1, pos - endpos - 1)
-                endpos = expr.IndexOf(expr(pos), pos + 1)
+                endpos = expr.IndexOfI(expr(pos), pos + 1)
                 If endpos = -1 Then Throw New ScriptException(Msg("query-delimiters"))
 
                 Dim token As String = expr.Substring(pos, endpos - pos + 1)
@@ -103,11 +103,11 @@ Namespace Huggle.Scripting
                     token.Value = doubleValue
                     token.Type = TokenType.Constant
 
-                ElseIf str.ToLower = "true" Then
+                ElseIf str.ToLowerI = "true" Then
                     token.Value = True
                     token.Type = TokenType.Constant
 
-                ElseIf str.ToLower = "false" Then
+                ElseIf str.ToLowerI = "false" Then
                     token.Value = False
                     token.Type = TokenType.Constant
 
@@ -163,7 +163,7 @@ Namespace Huggle.Scripting
                         token.Type = TokenType.GroupStart
 
                         If previous IsNot Nothing AndAlso (previous.Type = TokenType.Identifier _
-                            OrElse previous.Type = TokenType.Operator) AndAlso Char.IsLetter(previous.String(0)) Then
+                            OrElse previous.Type = TokenType.Operator) AndAlso Char.IsLetter(previous.AsString(0)) Then
 
                             previous.Type = TokenType.Function
                             add = False
@@ -190,7 +190,7 @@ Namespace Huggle.Scripting
             Next i
 
             If tokens.Count > 0 AndAlso tokens(tokens.Count - 1).Type = TokenType.Operator _
-                AndAlso tokens(tokens.Count - 1).String = ";" Then tokens.RemoveAt(tokens.Count - 1)
+                AndAlso tokens(tokens.Count - 1).AsString = ";" Then tokens.RemoveAt(tokens.Count - 1)
 
             'Convert infix to postfix
             Dim conditionStack As New Stack(Of Token)
@@ -309,7 +309,7 @@ Namespace Huggle.Scripting
                             CurrentNode = Token
 
                         Case TokenType.ArgCount
-                            If CurrentNode.Number = 0 Then
+                            If CurrentNode.AsNumber = 0 Then
                                 CurrentNode.Parent.NextSibling = Token
                                 Token.Parent = CurrentNode.Parent.Parent
                                 CurrentNode = Token
@@ -337,11 +337,11 @@ Namespace Huggle.Scripting
                             CurrentNode = Token
 
                         Case TokenType.Function
-                            If Token.Type = TokenType.ArgCount AndAlso Token.Number = 0 Then
+                            If Token.Type = TokenType.ArgCount AndAlso Token.AsNumber = 0 Then
                                 CurrentNode.Type = TokenType.EmptyFunction
 
                             ElseIf Token.Type = TokenType.ArgCount Then
-                                CountStack.Push(CInt(Token.Number))
+                                CountStack.Push(CInt(Token.AsNumber))
                                 Token.Parent = CurrentNode
                                 CurrentNode = Token
                             Else

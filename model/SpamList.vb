@@ -117,7 +117,7 @@ Namespace Huggle
         End Sub
 
         Private Function Parse(ByVal text As String) As List(Of SpamListEntry)
-            Log.Debug("Parsing spam blacklist '{0}'".FormatWith(Page.FullTitle))
+            Log.Debug("Parsing spam blacklist '{0}'".FormatI(Page.FullTitle))
 
             Dim result As New List(Of SpamListEntry)
             If text Is Nothing Then Return result
@@ -138,7 +138,7 @@ Namespace Huggle
 
                         Catch ex As ArgumentException
                             Log.Debug("Warning: spam blacklist pattern '{0}' on '{1}' is malformed, check syntax".
-                                FormatWith(pattern, Page.FullTitle))
+                                FormatI(pattern, Page.FullTitle))
                         End Try
                     End If
 

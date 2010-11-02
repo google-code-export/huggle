@@ -7,26 +7,17 @@ Namespace Huggle.Wikitext
 
     Public Class Table
 
-        Private _Caption As String
         Private _Columns As New List(Of TableColumn)
         Private _Rows As New List(Of TableRow)
         Private _Selection As Selection
-        Private _Style As String = ""
 
         Public Sub New()
         End Sub
 
-        Public Sub New(ByVal Wikitext As String, ByVal Selection As String)
+        Public Sub New(ByVal wikitext As String, ByVal selection As String)
         End Sub
 
         Public Property Caption() As String
-            Get
-                Return _Caption
-            End Get
-            Set(ByVal value As String)
-                _Caption = value
-            End Set
-        End Property
 
         Public ReadOnly Property Columns() As List(Of TableColumn)
             Get
@@ -47,20 +38,13 @@ Namespace Huggle.Wikitext
         End Property
 
         Public Property Style() As String
-            Get
-                Return _Style
-            End Get
-            Set(ByVal value As String)
-                _Style = value
-            End Set
-        End Property
 
         Public Function ToHtml() As String
             Dim result As New StringBuilder
 
 
             result.Append("<table")
-            If Style.Length > 0 Then result.Append(" " & Style)
+            If Not String.IsNullOrEmpty(Style) Then result.Append(" " & Style)
 
             If Rows.Count = 0 Then
                 result.Append("/>" & LF)
@@ -154,11 +138,9 @@ Namespace Huggle.Wikitext
     Public Class TableRow
 
         Private _Cells As New List(Of TableCell)
-        Private _IsHeader As Boolean
-        Private _Style As String
 
-        Public Sub New(Optional ByVal Style As String = "")
-            _Style = Style
+        Public Sub New(Optional ByVal style As String = Nothing)
+            _Style = style
         End Sub
 
         Public ReadOnly Property Cells() As List(Of TableCell)
@@ -168,22 +150,8 @@ Namespace Huggle.Wikitext
         End Property
 
         Public Property IsHeader() As Boolean
-            Get
-                Return _IsHeader
-            End Get
-            Set(ByVal value As Boolean)
-                _IsHeader = value
-            End Set
-        End Property
 
         Public Property Style() As String
-            Get
-                Return _Style
-            End Get
-            Set(ByVal value As String)
-                _Style = value
-            End Set
-        End Property
 
     End Class
 
@@ -191,10 +159,9 @@ Namespace Huggle.Wikitext
 
         Private _Cells As List(Of TableCell)
         Private _IsHeader As Boolean
-        Private _Style As String
 
-        Public Sub New(Optional ByVal Style As String = "")
-            _Style = Style
+        Public Sub New(Optional ByVal style As String = Nothing)
+            _Style = style
         End Sub
 
         Public ReadOnly Property Cells() As List(Of TableCell)
@@ -209,41 +176,20 @@ Namespace Huggle.Wikitext
             End Get
         End Property
 
-        Public ReadOnly Property Style() As String
-            Get
-                Return _Style
-            End Get
-        End Property
+        Public Property Style() As String
 
     End Class
 
     Public Class TableCell
 
-        Private _Content As String
-        Private _Style As String
-
-        Public Sub New(ByVal content As String, Optional ByVal style As String = "")
+        Public Sub New(ByVal content As String, Optional ByVal style As String = Nothing)
             _Content = content
             _Style = style
         End Sub
 
         Public Property Content() As String
-            Get
-                Return _Content
-            End Get
-            Set(ByVal value As String)
-                _Content = value
-            End Set
-        End Property
 
         Public Property Style() As String
-            Get
-                Return _Style
-            End Get
-            Set(ByVal value As String)
-                _Style = value
-            End Set
-        End Property
 
     End Class
 
@@ -252,12 +198,12 @@ Namespace Huggle.Wikitext
         Private Document As Document
         Private Tables As List(Of Table)
 
-        Public Sub New(ByVal Document As Document)
-            Me.Document = Document
+        Public Sub New(ByVal document As Document)
+            Me.Document = document
 
-            Dim Matches As MatchCollection = Parsing.SectionPattern.Matches(Document.Text)
+            Dim matches As MatchCollection = Parsing.SectionPattern.Matches(document.Text)
 
-            
+
         End Sub
 
         Public ReadOnly Property All() As IList(Of Table)
@@ -272,31 +218,31 @@ Namespace Huggle.Wikitext
             End Get
         End Property
 
-        Default Public ReadOnly Property Item(ByVal Index As Integer) As Table
+        Default Public ReadOnly Property Item(ByVal index As Integer) As Table
             Get
-                If All.Count > Index Then Return All(Index) Else Return Nothing
+                If All.Count > index Then Return All(index) Else Return Nothing
             End Get
         End Property
 
-        Public Sub Append(ByVal Title As String, ByVal Text As String, Optional ByVal Level As Integer = 1)
-            Insert(Title, Text, -1, Level)
+        Public Sub Append(ByVal Title As String, ByVal text As String, Optional ByVal level As Integer = 1)
+            Insert(Title, text, -1, level)
         End Sub
 
-        Public Sub Insert(ByVal Title As String, ByVal Text As String, _
-            ByVal Index As Integer, Optional ByVal Level As Integer = 1)
+        Public Sub Insert(ByVal title As String, ByVal text As String,
+            ByVal index As Integer, Optional ByVal level As Integer = 1)
 
-            Dim HeaderMarkup As String = (New StringBuilder).Append("=", 0, Level + 1).ToString
-            Dim SectionString As String = HeaderMarkup & " " & Title & " " & HeaderMarkup & LF & LF & Text
+            Dim headerMarkup As String = (New StringBuilder).Append("=", 0, level + 1).ToString
+            Dim sectionString As String = headerMarkup & " " & title & " " & headerMarkup & LF & LF & text
 
-            If Index = -1 OrElse Index >= All.Count Then
-                Text &= LF & LF & SectionString
+            If index = -1 OrElse index >= All.Count Then
+                text &= LF & LF & sectionString
             Else
-                Text = Text.Insert(All(Index).Selection.Start, SectionString & LF & LF)
+                text = text.Insert(All(index).Selection.Start, sectionString & LF & LF)
             End If
         End Sub
 
-        Public Sub Remove(ByVal Index As Integer)
-            Document.Text = Document.Text.Remove(All(Index).Selection)
+        Public Sub Remove(ByVal index As Integer)
+            Document.Text = Document.Text.Remove(All(index).Selection)
         End Sub
 
     End Class

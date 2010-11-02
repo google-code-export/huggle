@@ -8,13 +8,19 @@ Namespace Huggle.UI
 
     Public Class GlobalUserPropertiesForm : Inherits HuggleForm
 
-        Private GlobalUser As GlobalUser
+        Private Session As Session
         Private HoveredItem As ListViewItem.ListViewSubItem
 
-        Public Sub New(ByVal user As GlobalUser)
+        Public Sub New(ByVal session As Session)
             InitializeComponent()
-            Me.GlobalUser = user
+            Me.Session = session
         End Sub
+
+        Private ReadOnly Property GlobalUser As GlobalUser
+            Get
+                Return Session.User.GlobalUser
+            End Get
+        End Property
 
         Private Sub _Load() Handles Me.Load
             Try
@@ -83,8 +89,8 @@ Namespace Huggle.UI
         End Sub
 
         Private Sub SetGlobalPreferences_LinkClicked() Handles SetGlobalPreferences.LinkClicked
-            Dim globalPrefs As New GlobalPreferencesForm(App.Sessions(GlobalUser))
-            globalPrefs.Show()
+            Dim form As New GlobalPreferencesForm(App.Sessions(GlobalUser))
+            form.Show()
         End Sub
 
     End Class

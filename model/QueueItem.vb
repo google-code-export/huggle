@@ -7,7 +7,7 @@ Namespace Huggle
     'Abstract class for objects that can be added to queues,
     'this includes pages, revisions, users and log entries.
 
-    Public MustInherit Class QueueItem : Inherits EventArgs
+    Public MustInherit Class QueueItem
 
         Protected Sub New()
         End Sub
@@ -51,22 +51,6 @@ Namespace Huggle
         End Property
 
         Public MustOverride ReadOnly Property Wiki() As Wiki
-
-    End Class
-
-    Public Class QueueItemEventArgs : Inherits EventArgs
-
-        Private _Item As QueueItem
-
-        Public Sub New(ByVal Item As QueueItem)
-            _Item = Item
-        End Sub
-
-        Public ReadOnly Property Item() As QueueItem
-            Get
-                Return _Item
-            End Get
-        End Property
 
     End Class
 

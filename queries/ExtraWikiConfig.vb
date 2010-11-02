@@ -48,14 +48,7 @@ Namespace Huggle.Actions
             Dim prefsReq As New UIRequest(Session, Description, New QueryString("title", "Special:Preferences"), Nothing)
             reqs.Add(prefsReq)
 
-            If reqs.Count > 0 Then
-                For Each query As Process In reqs
-                    CreateThread(AddressOf query.Start)
-                Next query
-
-                'Wait for queries
-                App.WaitFor(New Expression(Function() reqs.TrueForAll(Function(query As Process) query.IsComplete)))
-            End If
+            App.DoParallel(reqs)
 
             If Not Session.User.IsAnonymous Then
                 'Time zone options
@@ -80,7 +73,7 @@ Namespace Huggle.Actions
                             If item.Contains("value=""") Then
                                 item = item.FromFirst("value=""").ToFirst("""")
 
-                                If item.StartsWith("ZoneInfo|") Then
+                                If item.StartsWithI("ZoneInfo|") Then
                                     item = item.FromFirst("|")
                                     zones.Merge(item.FromFirst("|"), CInt(item.ToFirst("|")))
                                 End If
@@ -124,7 +117,7 @@ Namespace Huggle.Actions
                         descPages.Merge(Wiki.Pages("MediaWiki:Gadget-section-" & type))
 
                         For Each line As String In section.Text.Split(LF)
-                            If line.StartsWith("*") Then
+                            If line.StartsWithI("*") Then
                                 Dim gadget As Gadget = Wiki.Gadgets(line.FromFirst("*").ToFirst("|").Trim)
                                 gadget.Type = type
 
@@ -175,7 +168,7 @@ Namespace Huggle.Actions
 
                 Wiki.Pages.Priority.Clear()
 
-                For Each item As Object In eval.Value.List
+                For Each item As Object In eval.Value.AsList
                     Wiki.Pages.Priority.Add(item.ToString)
                 Next item
             End If

@@ -25,10 +25,10 @@ Namespace Huggle.UI
 
         Private Sub UpdateDisplay() Handles FilterList.SelectedIndexChanged
             If FilterList.SelectedItems.Count = 0 Then
-                AbuseFilterSplit.Panel2Collapsed = True
+                Splitter.Panel2Collapsed = True
                 CurrentFilter = Nothing
             Else
-                AbuseFilterSplit.Panel2Collapsed = False
+                Splitter.Panel2Collapsed = False
                 CurrentFilter = Wiki.AbuseFilters(CInt(FilterList.SelectedItems(0).Text))
                 GetDetails()
 
@@ -59,14 +59,14 @@ Namespace Huggle.UI
             RestrictedIcon.Visible = False
 
             If full Then
-                FilterDetails.Visible = True
+                Details.Visible = True
                 Progress.Text = Nothing
                 Indicator.Stop()
             Else
                 Dim privilegedSession As Session = App.Sessions.GetUserWithRight(Wiki, "abusefilter-private")
 
                 If CurrentFilter.IsPrivate AndAlso privilegedSession Is Nothing Then
-                    FilterDetails.Visible = False
+                    Details.Visible = False
                     Restricted.Visible = True
                     RestrictedIcon.Visible = True
                     Return
@@ -93,8 +93,8 @@ Namespace Huggle.UI
 
             For Each filter As AbuseFilter In Wiki.AbuseFilters.All
                 If MatchesFilter(filter) Then FilterList.AddRow(
-                    filter.Id.ToString, filter.Description, GetFilterStatus(filter),
-                    filter.Actions.Join(", "), filter.TotalHits.ToString)
+                    filter.Id.ToStringForUser, filter.Description, GetFilterStatus(filter),
+                    filter.Actions.Join(", "), filter.TotalHits.ToStringForUser)
             Next filter
 
             FilterList.SortMethods(0) = SortMethod.Integer
@@ -140,7 +140,7 @@ Namespace Huggle.UI
         End Sub
 
         Private Sub Description_LinkClicked() Handles Description.LinkClicked
-            OpenWebBrowser(Wiki.Pages.FromNsAndName(Wiki.Spaces.Special, "AbuseFilter/" & CurrentFilter.Id.ToString).Url)
+            OpenWebBrowser(Wiki.Pages.FromNsAndName(Wiki.Spaces.Special, "AbuseFilter/" & CurrentFilter.Id.ToStringI).Url)
         End Sub
 
     End Class

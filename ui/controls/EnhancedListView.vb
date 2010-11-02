@@ -60,7 +60,7 @@ Namespace System.Windows.Forms
                         End Function
 
                     Case SortMethod.Date : comparison = Function(x As String, y As String) Date.Compare(CDate(x), CDate(y))
-                    Case SortMethod.String : comparison = Function(x As String, y As String) String.Compare(x, y)
+                    Case SortMethod.String : comparison = Function(x As String, y As String) String.Compare(x, y, StringComparison.Ordinal)
                 End Select
             End If
 

@@ -62,9 +62,8 @@ Namespace Huggle.UI
             e.DrawBackground()
             e.DrawFocusRectangle()
 
-            Using pen As New Pen(e.ForeColor), format As New StringFormat With {.LineAlignment = StringAlignment.Center}
-                e.Graphics.DrawString(Views.Items(e.Index).ToString, Views.Font, pen.Brush, e.Bounds, format)
-            End Using
+            TextRenderer.DrawText(e.Graphics, Views.Items(e.Index).ToString,
+                Views.Font, e.Bounds, e.ForeColor, e.BackColor, TextFormatFlags.VerticalCenter)
         End Sub
 
     End Class

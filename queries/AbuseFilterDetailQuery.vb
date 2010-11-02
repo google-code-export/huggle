@@ -32,7 +32,7 @@ Namespace Huggle.Actions
             OnStarted()
 
             Dim req As New UIRequest(Session, Description, New QueryString("title", "Special:AbuseFilter/" &
-                If(Filter.Id = 0, "new", Filter.Id.ToString)), Nothing)
+                If(Filter.Id = 0, "new", Filter.Id.ToStringI)), Nothing)
 
             req.Start()
             If req.IsFailed Then OnFail(req.Result) : Return
