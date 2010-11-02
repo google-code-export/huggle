@@ -13,7 +13,7 @@ Namespace Huggle.Scripting
         Private Function SpecialFunc _
             (ByVal Context As Object, ByVal Func As Token, ByVal Arg As Token()) As Token
 
-            Select Case Func.String
+            Select Case Func.AsString
                 'Property accessor
                 Case "." : Return EvalProperty(Context, Arg(0), Arg(1))
 
@@ -21,7 +21,7 @@ Namespace Huggle.Scripting
                     Dim NewFunc As New Func
 
                     For i As Integer = 0 To Arg.Length - 2
-                        NewFunc.ArgNames.Add(Arg(i).String)
+                        NewFunc.ArgNames.Add(Arg(i).AsString)
                     Next i
 
                     NewFunc.Token = Arg(Arg.Length - 1)
@@ -32,7 +32,7 @@ Namespace Huggle.Scripting
                         Arg.ToList.GetRange(1, Arg.Length - 1).ToArray)
 
                 Case "assign", ":="
-                    Dim Identifier As String = Arg(0).String
+                    Dim Identifier As String = Arg(0).AsString
                     Dim Value As Object = EvalToken(Context, Arg(1)).Value
 
                     Identifiers.Merge(Identifier, Value)
@@ -46,22 +46,22 @@ Namespace Huggle.Scripting
                     Return EvalToken(Context, Arg(Arg.Length - 1))
 
                 Case "increment", "+="
-                    Dim Identifier As String = Arg(0).String
-                    Dim Result As Object = CDbl(Identifiers(Identifier)) + EvalToken(Context, Arg(1)).Number
+                    Dim Identifier As String = Arg(0).AsString
+                    Dim Result As Object = CDbl(Identifiers(Identifier)) + EvalToken(Context, Arg(1)).AsNumber
 
                     Identifiers.Merge(Identifier, Result)
                     Return New Token(Result)
 
                 Case "decrement", "-="
-                    Dim Identifier As String = Arg(0).String
-                    Dim Result As Object = CDbl(Identifiers(Identifier)) - EvalToken(Context, Arg(1)).Number
+                    Dim Identifier As String = Arg(0).AsString
+                    Dim Result As Object = CDbl(Identifiers(Identifier)) - EvalToken(Context, Arg(1)).AsNumber
 
                     Identifiers.Merge(Identifier, Result)
                     Return New Token(Result)
 
                 Case "&="
-                    Dim Identifier As String = Arg(0).String
-                    Dim Result As String = Identifiers(Identifier).ToString & EvalToken(Context, Arg(1)).String
+                    Dim Identifier As String = Arg(0).AsString
+                    Dim Result As String = Identifiers(Identifier).ToString & EvalToken(Context, Arg(1)).AsString
                     Identifiers.Merge(Identifier, Result)
                     Return New Token(Result)
 
@@ -72,7 +72,7 @@ Namespace Huggle.Scripting
                     Return New Token(New TransformPipe(Me, CheckType(Of IEnumerable)("map", EvalToken(Context, Arg(0)).Value), Arg(1)))
 
                 Case "fold"
-                    Dim List As ArrayList = EvalToken(Context, Arg(0)).List
+                    Dim List As ArrayList = EvalToken(Context, Arg(0)).AsList
                     Dim FoldFunc As Token = EvalToken(Context, Arg(1))
                     Dim Result As Token = Nothing
 
@@ -99,7 +99,7 @@ Namespace Huggle.Scripting
                     Dim headerStrs As New List(Of String)
 
                     For Each header As Object In headers
-                        headerStrs.Add(New Token(header).String)
+                        headerStrs.Add(New Token(header).AsString)
                     Next header
 
                     Dim columnCount As Integer
@@ -128,7 +128,7 @@ Namespace Huggle.Scripting
                     Return New Token(result)
 
                 Case "groupby"
-                    Dim List As ArrayList = EvalToken(Context, Arg(0)).List
+                    Dim List As ArrayList = EvalToken(Context, Arg(0)).AsList
                     Dim Result As New ScriptTable
                     Result.Columns = New List(Of String)
                     Result.Columns.Add("Item")
@@ -166,7 +166,7 @@ Namespace Huggle.Scripting
                     Return New Token(Result)
 
                 Case "if"
-                    If EvalToken(Context, Arg(0)).Bool Then Return EvalToken(Context, Arg(1)) _
+                    If EvalToken(Context, Arg(0)).AsBool Then Return EvalToken(Context, Arg(1)) _
                         Else If Arg.Length = 2 Then Return New Token(False) Else Return EvalToken(Context, Arg(2))
 
                 Case "switch"

@@ -10,178 +10,84 @@ Namespace Huggle.Scripting
 
         'Represents a symbol or value during parsing and evaluation
 
-        Private _FirstChild, _NextSibling, _Parent As Token
-        Private _RightAssociative As Boolean
-        Private _Arguments As Integer
-        Private _Precedence As Integer
-        Private _Type As TokenType
-        Private _Value As Object
-
         Public Sub New(ByVal value As Object, Optional ByVal type As TokenType = TokenType.Constant)
             Me.Value = value
             Me.Type = type
         End Sub
 
         Public Property Arguments() As Integer
-            Get
-                Return _Arguments
-            End Get
-            Set(ByVal value As Integer)
-                _Arguments = value
-            End Set
-        End Property
 
-        Public ReadOnly Property Bool() As Boolean
-            Get
-                If TypeOf Value Is Boolean Then Return CBool(Value)
-                If Value.ToString = "undefined" Then Return False
-                Throw New ScriptException(Msg("query-typemismatch", "Boolean", ValueType.ToString))
-            End Get
-        End Property
+        Public Function AsBool() As Boolean
+            Return [As](Of Boolean)()
+        End Function
 
-        Public ReadOnly Property Dictionary() As Hashtable
-            Get
-                If TypeOf Value Is Hashtable Then Return CType(Value, Hashtable)
-                Throw New ScriptException(Msg("query-typemismatch", "Dictionary", ValueType.ToString))
-            End Get
-        End Property
+        Public Function AsDictionary() As Hashtable
+            Return [As](Of Hashtable)()
+        End Function
+
+        Public Function AsList() As ArrayList
+            Return [As](Of ArrayList)()
+        End Function
+
+        Public Function AsMedia() As File
+            Return [As](Of File)()
+        End Function
+
+        Public Function AsNumber() As Double            
+            If TypeOf Value Is Double Then Return CDbl(Value)
+            If TypeOf Value Is Integer Then Return CInt(Value)
+            If TypeOf Value Is Long Then Return CLng(Value)
+            Throw New ScriptException(Msg("query-typemismatch", "Number", ValueType.ToString))
+        End Function
+
+        Public Function AsPage() As Page
+            Return [As](Of Page)()
+        End Function
+
+        Public Function AsQItem() As QueueItem
+            Return [As](Of QueueItem)()
+        End Function
+
+        Public Function AsRevision() As Revision
+            Return [As](Of Revision)()
+        End Function
+
+        Public Function AsSpace() As Space
+            Return [As](Of Space)()
+        End Function
+
+        Public Function AsString() As String
+            If TypeOf Value Is String Then Return CStr(Value)
+            If Value IsNot Nothing Then Return Value.ToString
+            Throw New ScriptException(Msg("query-typemismatch", "String", ValueType.ToString))
+        End Function
+
+        Public Function AsTime() As Date
+            Return [As](Of Date)()
+        End Function
+
+        Public Function AsUser() As User
+            Return [As](Of User)()
+        End Function
 
         Public Property FirstChild() As Token
-            Get
-                Return _FirstChild
-            End Get
-            Set(ByVal value As Token)
-                _FirstChild = value
-            End Set
-        End Property
-
-        Public ReadOnly Property List() As ArrayList
-            Get
-                If TypeOf Value Is ArrayList Then Return CType(Value, ArrayList)
-
-                Throw New ScriptException(Msg("query-typemismatch", "List", ValueType.ToString))
-            End Get
-        End Property
-
-        Public ReadOnly Property Media() As File
-            Get
-                If TypeOf Value Is File Then Return CType(Value, File)
-                Throw New ScriptException(Msg("query-typemismatch", "Page", ValueType.ToString))
-            End Get
-        End Property
 
         Public Property NextSibling() As Token
-            Get
-                Return _NextSibling
-            End Get
-            Set(ByVal value As Token)
-                _NextSibling = value
-            End Set
-        End Property
-
-        Public ReadOnly Property Number() As Double
-            Get
-                If TypeOf Value Is Double Then Return CDbl(Value)
-                If TypeOf Value Is Integer Then Return CInt(Value)
-                If TypeOf Value Is Long Then Return CLng(Value)
-                Throw New ScriptException(Msg("query-typemismatch", "Number", ValueType.ToString))
-            End Get
-        End Property
-
-        Public ReadOnly Property Page() As Page
-            Get
-                If TypeOf Value Is Page Then Return CType(Value, Page)
-                Throw New ScriptException(Msg("query-typemismatch", "Page", ValueType.ToString))
-            End Get
-        End Property
 
         Public Property Parent() As Token
-            Get
-                Return _Parent
-            End Get
-            Set(ByVal value As Token)
-                _Parent = value
-            End Set
-        End Property
 
         Public Property Precedence() As Integer
-            Get
-                Return _Precedence
-            End Get
-            Set(ByVal value As Integer)
-                _Precedence = value
-            End Set
-        End Property
-
-        Public ReadOnly Property QItem() As QueueItem
-            Get
-                If TypeOf Value Is QueueItem Then Return CType(Value, QueueItem)
-                Throw New ScriptException(Msg("query-typemismatch", "queue item", ValueType.ToString))
-            End Get
-        End Property
-
-        Public ReadOnly Property Revision() As Revision
-            Get
-                If TypeOf Value Is Revision Then Return CType(Value, Revision)
-                Throw New ScriptException(Msg("query-typemismatch", "Revision", ValueType.ToString))
-            End Get
-        End Property
 
         Public Property RightAssociative() As Boolean
-            Get
-                Return _RightAssociative
-            End Get
-            Set(ByVal value As Boolean)
-                _RightAssociative = value
-            End Set
-        End Property
-
-        Public ReadOnly Property Space() As Space
-            Get
-                If TypeOf Value Is Space Then Return CType(Value, Space)
-                Throw New ScriptException(Msg("query-typemismatch", "Space", ValueType.ToString))
-            End Get
-        End Property
-
-        Public ReadOnly Property [String]() As String
-            Get
-                If TypeOf Value Is String Then Return CStr(Value)
-                If Value IsNot Nothing Then Return Value.ToString
-                Throw New ScriptException(Msg("query-typemismatch", "String", ValueType.ToString))
-            End Get
-        End Property
-
-        Public ReadOnly Property Time() As Date
-            Get
-                If TypeOf Value Is Date Then Return CDate(Value)
-                Throw New ScriptException(Msg("query-typemismatch", "Time", ValueType.ToString))
-            End Get
-        End Property
 
         Public Property Type() As TokenType
-            Get
-                Return _Type
-            End Get
-            Set(ByVal value As TokenType)
-                _Type = value
-            End Set
-        End Property
 
-        Public ReadOnly Property User() As User
-            Get
-                If TypeOf Value Is User Then Return CType(Value, User)
-                Throw New ScriptException(Msg("query-typemismatch", "User", ValueType.ToString))
-            End Get
-        End Property
+        Private Function [As](Of T)() As T
+            If TypeOf Value Is T Then Return CType(Value, T)
+            Throw New ScriptException(Msg("query-typemismatch", GetType(T).Name, ValueType.ToString))
+        End Function
 
         Public Property Value() As Object
-            Get
-                Return _Value
-            End Get
-            Set(ByVal value As Object)
-                _Value = value
-            End Set
-        End Property
 
         Public ReadOnly Property ValueType() As String
             Get
@@ -209,7 +115,7 @@ Namespace Huggle.Scripting
 
         Public Function Compare(ByVal x As Object, ByVal y As Object) As Integer Implements IComparer.Compare
 
-            If TypeOf x Is String Then Return String.Compare(CStr(x), CStr(y))
+            If TypeOf x Is String Then Return String.Compare(CStr(x), CStr(y), StringComparison.Ordinal)
             If TypeOf x Is Boolean Then If CBool(x) Then Return 1 Else If CBool(y) Then Return -1 Else Return 0
 
             If (TypeOf x Is Short OrElse TypeOf x Is Integer OrElse TypeOf x Is Long OrElse TypeOf x Is Single _
@@ -220,7 +126,7 @@ Namespace Huggle.Scripting
             If TypeOf x Is Range AndAlso TypeOf y Is Range _
                 Then Return Math.Sign(CType(x, Range).Lower - CType(y, Range).Lower)
 
-            Return String.Compare(x.ToString, y.ToString)
+            Return String.Compare(x.ToString, y.ToString, StringComparison.Ordinal)
         End Function
 
     End Class
@@ -526,7 +432,7 @@ Namespace Huggle.Scripting
 
         Public Overrides Function MoveNext() As Boolean
             While Source.MoveNext
-                If Evaluator.EvalToken(Source.Current, Filter).Bool Then
+                If Evaluator.EvalToken(Source.Current, Filter).AsBool Then
                     _Current = Source.Current
                     Return True
                 End If

@@ -2,12 +2,14 @@
 
     Public Class Reference
 
-        Private _Name, _Text As String, _Selection As Selection
+        Private _Name As String
+        Private _Selection As Selection
+        Private _Text As String
 
-        Public Sub New(ByVal Name As String, ByVal Text As String, ByVal Selection As Selection)
-            _Name = Name
-            _Text = Text
-            _Selection = Selection
+        Public Sub New(ByVal name As String, ByVal text As String, ByVal selection As Selection)
+            _Name = name
+            _Text = text
+            _Selection = selection
         End Sub
 
         Public ReadOnly Property Name() As String

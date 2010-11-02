@@ -10,12 +10,12 @@ Namespace Huggle
     <Diagnostics.DebuggerDisplay("{Server}")>
     Public Class Feed : Implements IDisposable
 
-        Public Shared ReadOnly BasePattern As String = _
+        Public Shared ReadOnly BasePattern As String =
             ":[^ ]+ PRIVMSG (\#[^ ]+) :\cC14\[\[\cC07([^\cC]+)\cC14\]\]\cC4 {0}\cC10 \cC02{1}" &
             "\cC \cC5\*\cC \cC03([^\cC]+)\cC \cC5\*\cC {2} \cc10{3}(?:: ([^\cC]+))?\cC?"
 
-        Private Shared ReadOnly AllMatch As New Regex _
-            (BasePattern.FormatWith("([^\cC]+)", ".*?", ".*?", ".*?"), RegexOptions.Compiled)
+        Private Shared ReadOnly AllMatch As New Regex(
+            BasePattern.FormatI("([^\cC]+)", ".*?", ".*?", ".*?"), RegexOptions.Compiled)
 
         Private _ConnectionAttempted As Boolean
         Private _Family As Family
@@ -50,13 +50,10 @@ Namespace Huggle
             End Get
         End Property
 
-        Public Property ConnectionAttempted() As Boolean
+        Public ReadOnly Property ConnectionAttempted() As Boolean
             Get
                 Return _ConnectionAttempted
             End Get
-            Private Set(ByVal value As Boolean)
-                _ConnectionAttempted = value
-            End Set
         End Property
 
         Public ReadOnly Property Family() As Family
@@ -119,7 +116,7 @@ Namespace Huggle
             If Server Is Nothing Then Return
 
             Log.Debug("Connecting to recent changes feed")
-            ConnectionAttempted = True
+            _ConnectionAttempted = True
             If State <> FeedState.Disconnected Then Disconnect()
             If ProcessTimer IsNot Nothing Then ProcessTimer.Dispose()
             ProcessTimer = New Timer(AddressOf ProcessCallback, Nothing, 0, 100)
@@ -145,7 +142,7 @@ Namespace Huggle
             State = FeedState.Connecting
 
             'Username in RC feed channels is "h_" followed by random 6-digit number
-            Username = "h_" & (App.Randomness.Next Mod 1000000).ToString
+            Username = "h_" & (App.Randomness.Next Mod 1000000).ToStringI
 
             Try
                 Using client As New TcpClient(Server, Port)
@@ -182,23 +179,23 @@ Namespace Huggle
                                 CallOnMainThread(AddressOf Connect)
                                 Exit Try
 
-                            ElseIf message.StartsWith("ERROR ") Then
+                            ElseIf message.StartsWithI("ERROR ") Then
                                 If State = FeedState.Connected Then Log.Write(Msg("feed-disconnected"))
                                 State = FeedState.Reconnecting
 
-                            ElseIf message.StartsWith(":" & Server & " 001") AndAlso State = FeedState.Connecting Then
+                            ElseIf message.StartsWithI(":" & Server & " 001") AndAlso State = FeedState.Connecting Then
                                 State = FeedState.Connected
                                 Log.Write(Msg("feed-connected"))
 
-                            ElseIf message.StartsWith(":" & Server & " 403") Then
+                            ElseIf message.StartsWithI(":" & Server & " 403") Then
                                 Log.Write(Msg("feed-nochannel"))
                                 State = FeedState.Disconnected
 
-                            ElseIf message.StartsWith("PING ") Then
+                            ElseIf message.StartsWithI("PING ") Then
                                 Writer.WriteLine("PONG " & message.Substring(5))
                                 Writer.Flush()
 
-                            ElseIf message.StartsWith(":rc!~rc@") Then
+                            ElseIf message.StartsWithI(":rc!~rc@") Then
                                 Messages.Enqueue(message)
                             End If
                         End While
@@ -332,7 +329,7 @@ Namespace Huggle
 
                         Case "block"
                             'Ignore autoblocks
-                            If Not groups(3).Value.StartsWith("#") Then result.Add(New Block(
+                            If Not groups(3).Value.StartsWithI("#") Then result.Add(New Block(
                                 action:=action,
                                 anonOnly:=groups(4).Value.Contains("anon. only"),
                                 autoBlock:=Not groups(4).Value.Contains("autoblock disabled"),

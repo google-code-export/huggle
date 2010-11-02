@@ -390,7 +390,7 @@ Namespace Huggle.Actions
                 Then Return Wiki.Config.RevertSummaryRollback & Wiki.Config.SummaryTag
 
             If IsSelf Then Return User.Config.RevertSelfSummary
-            If IsUndo Then Return Wiki.Config.RevertSummaryUndo.FormatWith(Rev.Id, Rev.User) & Wiki.Config.SummaryTag
+            If IsUndo Then Return Wiki.Config.RevertSummaryUndo.FormatForUser(Rev.Id, Rev.User) & Wiki.Config.SummaryTag
 
             Dim count As Integer = 0
             Dim users As New List(Of User)
@@ -403,18 +403,18 @@ Namespace Huggle.Actions
             End While
 
             Dim countStr As String = If(r Is Target, Wiki.Config.RevertSummaryMultipleRevs, _
-                Wiki.Config.RevertSummaryUnknownRevs).FormatWith(count)
+                Wiki.Config.RevertSummaryUnknownRevs).FormatForUser(count)
 
             Dim usersStr As String = NaturalLanguageList(Rev.Wiki.Language, users)
 
             Dim targetStr As String = If(users.Contains(Rev.User), Wiki.Config.RevertSummaryPreviousVersion, _
-                Wiki.Config.RevertSummaryLastVersion).FormatWith(Rev.User)
+                Wiki.Config.RevertSummaryLastVersion).FormatForUser(Rev.User)
 
             'Ensure the summary isn't too long
-            If (Wiki.Config.RevertSummary.FormatWith(countStr, usersStr, targetStr) & Wiki.Config.SummaryTag).Length > 255 _
-                Then usersStr = Wiki.Config.RevertSummaryMultipleUsers.FormatWith(users.Count)
+            If (Wiki.Config.RevertSummary.FormatForUser(countStr, usersStr, targetStr) & Wiki.Config.SummaryTag).Length > 255 _
+                Then usersStr = Wiki.Config.RevertSummaryMultipleUsers.FormatForUser(users.Count)
 
-            Return Wiki.Config.RevertSummary.FormatWith(countStr, usersStr, targetStr) & Wiki.Config.SummaryTag
+            Return Wiki.Config.RevertSummary.FormatForUser(countStr, usersStr, targetStr) & Wiki.Config.SummaryTag
         End Function
 
         Private Sub DoRevert()

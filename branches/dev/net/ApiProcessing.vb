@@ -39,8 +39,8 @@ Namespace Huggle
                             Dim errorInfo As String = node.Attribute("info")
 
                             'Tidy internal API error messages
-                            If errorCode.StartsWith("internal_api_error_") Then
-                                errorCode = errorCode.FromFirst("internal_api_error_").ToLower
+                            If errorCode.StartsWithI("internal_api_error_") Then
+                                errorCode = errorCode.FromFirst("internal_api_error_").ToLowerI
                                 errorInfo = errorInfo.Remove("Exception Caught: ")
 
                                 OnFail(Msg("error-internal", "Internal API error"), errorInfo) : Return
@@ -83,7 +83,7 @@ Namespace Huggle
                         Case "login"
                             _LoginResponse = New LoginResponse
 
-                            If node.HasAttribute("result") Then LoginResponse.Result = node.Attribute("result").ToLower
+                            If node.HasAttribute("result") Then LoginResponse.Result = node.Attribute("result").ToLowerI
                             If LoginResponse.Result = "wrongpluginpass" Then LoginResponse.Result = "wrongpass"
                             If node.HasAttribute("token") Then LoginResponse.Token = node.Attribute("token")
                             If node.HasAttribute("wait") Then LoginResponse.Wait = New TimeSpan(0, 0, CInt(node.Attribute("wait")))
@@ -410,19 +410,21 @@ Namespace Huggle
 
                             Dim name As String = magicword.Attribute("name")
 
-                            For Each subNode As XmlNode In magicword.ChildNodes
-                                If subNode.Name = "aliases" Then
+                            For Each aliases As XmlNode In magicword.ChildNodes
+                                AssertApi(aliases.Name, "aliases")
+
+                                If aliases.ChildNodes.Count > 0 Then
                                     'Assume first item in the list returned is the preferred localised form
                                     '(the last always seems to be the canonical non-localised form)
                                     'TODO: MediaWiki should be more explicit about this
-                                    If subNode.ChildNodes.Count > 0 _
-                                        Then Wiki.MagicWords.Merge(name, subNode.ChildNodes(0).Value.ToLower)
+                                    Wiki.MagicWords.Merge(name, aliases.ChildNodes(0).Value.ToLowerI)
 
-                                    For Each [alias] As XmlNode In subNode.ChildNodes
-                                        Wiki.MagicWordAliases.Merge([alias].Value, name)
-                                    Next [alias]
+                                    For Each aliasNode As XmlNode In aliases.ChildNodes
+                                        AssertApi(aliasNode.Name, "alias")
+                                        Wiki.MagicWordAliases.Merge(aliasNode.Value, name)
+                                    Next aliasNode
                                 End If
-                            Next subNode
+                            Next aliases
                         Next magicword
 
                     Case "namespaces"
@@ -827,7 +829,7 @@ Namespace Huggle
 
                     newItem = New Protection(
                         action:=action,
-                        Cascade:=(level IsNot Nothing AndAlso level.EndsWith("[cascading]")),
+                        Cascade:=(level IsNot Nothing AndAlso level.EndsWithI("[cascading]")),
                         Comment:=node.Attribute("comment"),
                         Hidden:=node.HasAttribute("actionhidden"),
                         id:=id,
@@ -1006,7 +1008,7 @@ Namespace Huggle
                     rev.Page.Id = CInt(node.Attribute("pageid"))
 
                     newItem = New Review(
-                        Auto:=(action.EndsWith("a")),
+                        Auto:=(action.EndsWithI("a")),
                         Comment:=node.Attribute("comment"),
                         Revision:=rev,
                         id:=id,
@@ -1478,11 +1480,11 @@ Namespace Huggle
                             If special.HasAttribute("fishbowl") Then wiki.IsPublicEditable = False
 
                             'Generate friendly names for some Wikimedia wikis
-                            If wiki.Code.Contains("-") AndAlso wiki.Code.EndsWith("labswikimedia") Then
+                            If wiki.Code.Contains("-") AndAlso wiki.Code.EndsWithI("labswikimedia") Then
                                 wiki.Name = "Wikimedia Labs (" & wiki.Code.ToFirst("-") & ")"
-                            ElseIf wiki.Code.EndsWith("wikimedia") Then
+                            ElseIf wiki.Code.EndsWithI("wikimedia") Then
                                 wiki.Name = "Wikimedia (" & wiki.Code.ToFirst("wikimedia") & ")"
-                                wiki.Type = "Wikimedia"
+                                wiki.Type = "wikimedia"
                             End If
                         Next special
 

@@ -9,7 +9,7 @@ Namespace Huggle.Scripting
 
         Private Function ListFunc(ByVal Context As Object, ByVal Func As Token, ByVal Arg As Token()) As Token
 
-            Select Case Func.String
+            Select Case Func.AsString
                 Case "list"
                     Dim Result As New ArrayList
 
@@ -20,7 +20,7 @@ Namespace Huggle.Scripting
                     Return New Token(Result)
 
                 Case "sort"
-                    Dim Result As ArrayList = Arg(0).List
+                    Dim Result As ArrayList = Arg(0).AsList
 
                     Try
                         Result.Sort(Comparer)
@@ -34,7 +34,7 @@ Namespace Huggle.Scripting
                     Dim Result As New ArrayList
                     Dim Strs As New List(Of String)
 
-                    For Each Item As Object In Arg(0).List
+                    For Each Item As Object In Arg(0).AsList
                         Dim Str As String = MakeString(Item)
 
                         If Not Strs.Contains(Str) Then
@@ -82,27 +82,27 @@ Namespace Huggle.Scripting
                     '    Return New Token(Result)
 
                 Case "exclude"
-                    Dim Result As ArrayList = Arg(0).List
+                    Dim Result As ArrayList = Arg(0).AsList
 
-                    For Each Item As Object In Arg(1).List
+                    For Each Item As Object In Arg(1).AsList
                         If Result.Contains(Item) Then Result.Remove(Item)
                     Next Item
 
                     Return New Token(Result)
 
                 Case "union"
-                    Dim Result As ArrayList = Arg(0).List
-                    Result.AddRange(Arg(1).List)
+                    Dim Result As ArrayList = Arg(0).AsList
+                    Result.AddRange(Arg(1).AsList)
                     Return New Token(Result)
 
                 Case "append"
-                    Dim Result As ArrayList = Arg(0).List
+                    Dim Result As ArrayList = Arg(0).AsList
                     Result.Add(Arg(1).Value)
                     Return New Token(Result)
 
                 Case "containsany"
-                    Dim First As ArrayList = Arg(0).List
-                    Dim Second As ArrayList = Arg(1).List
+                    Dim First As ArrayList = Arg(0).AsList
+                    Dim Second As ArrayList = Arg(1).AsList
 
                     For Each Item As Object In First
                         If Second.Contains(Item) Then Return New Token(True)
@@ -111,8 +111,8 @@ Namespace Huggle.Scripting
                     Return New Token(False)
 
                 Case "containspattern"
-                    Dim List As ArrayList = Arg(0).List
-                    Dim Pattern As New Regex("^" & Arg(1).String & "$")
+                    Dim List As ArrayList = Arg(0).AsList
+                    Dim Pattern As New Regex("^" & Arg(1).AsString & "$")
 
                     For Each Item As Object In List
                         If Pattern.IsMatch(Item.ToString) Then Return New Token(True)
@@ -121,8 +121,8 @@ Namespace Huggle.Scripting
                     Return New Token(False)
 
                 Case "join"
-                    Dim List As ArrayList = Arg(0).List
-                    Dim Separator As String = Arg(1).String
+                    Dim List As ArrayList = Arg(0).AsList
+                    Dim Separator As String = Arg(1).AsString
                     Dim Result As String = ""
 
                     For Each Item As Object In List
@@ -132,25 +132,25 @@ Namespace Huggle.Scripting
                     If Result <> "" Then Result = Result.Substring(0, Result.Length - Separator.Length)
                     Return New Token(Result)
 
-                Case "first" : Return New Token(Arg(0).List(0))
-                Case "item" : Return New Token(Arg(0).List(CInt(Arg(1).Number)))
+                Case "first" : Return New Token(Arg(0).AsList(0))
+                Case "item" : Return New Token(Arg(0).AsList(CInt(Arg(1).AsNumber)))
 
                 Case "rest"
-                    Dim List As ArrayList = Arg(0).List
+                    Dim List As ArrayList = Arg(0).AsList
                     If List.Count = 0 Then Throw New ScriptException(Msg("query-listempty", Func.ToString))
                     Return New Token(List.GetRange(1, List.Count - 1))
 
                 Case "last"
-                    Dim List As ArrayList = Arg(0).List
+                    Dim List As ArrayList = Arg(0).AsList
                     Return New Token(List(List.Count - 1))
 
                 Case "limit"
-                    Dim List As ArrayList = Arg(0).List
-                    Return New Token(List.GetRange(0, CInt(Arg(1).Number)))
+                    Dim List As ArrayList = Arg(0).AsList
+                    Return New Token(List.GetRange(0, CInt(Arg(1).AsNumber)))
 
                 Case "range"
-                    Dim List As ArrayList = Arg(0).List
-                    Return New Token(List.GetRange(CInt(Arg(1).Number), CInt(Arg(2).Number)))
+                    Dim List As ArrayList = Arg(0).AsList
+                    Return New Token(List.GetRange(CInt(Arg(1).AsNumber), CInt(Arg(2).AsNumber)))
 
                     'Case "reverse"
                     '    If Arg(0).ValueType = "List" Then
@@ -164,9 +164,9 @@ Namespace Huggle.Scripting
                     '    End If
 
                 Case "movingavg"
-                    Dim List As ArrayList = Arg(0).List
+                    Dim List As ArrayList = Arg(0).AsList
                     Dim Result As New ArrayList
-                    Dim Size As Integer = CInt(Arg(1).Number)
+                    Dim Size As Integer = CInt(Arg(1).AsNumber)
 
                     For i As Integer = Size - 1 To List.Count - 1
                         Dim Sum As Double = 0
@@ -186,7 +186,7 @@ Namespace Huggle.Scripting
                     '    Dim Column As Integer
 
                     '    If Arg(1).ValueType = "Number" Then Column = CInt(Arg(1).Number - 1) _
-                    '        Else Column = Table.Columns.IndexOf(Arg(1).String)
+                    '        Else Column = Table.Columns.IndexOfI(Arg(1).String)
 
                     '    If Column = -1 Then
                     '        For i As Integer = 0 To Table.Columns.Count - 1
@@ -207,7 +207,7 @@ Namespace Huggle.Scripting
                     '    Dim Column As Integer
 
                     '    If Arg(1).ValueType = "Number" Then Column = CInt(Arg(1).Number - 1) _
-                    '        Else Column = Table.Columns.IndexOf(Arg(1).String)
+                    '        Else Column = Table.Columns.IndexOfI(Arg(1).String)
 
                     '    If Column = -1 Then
                     '        For i As Integer = 0 To Table.Columns.Count - 1

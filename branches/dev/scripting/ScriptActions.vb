@@ -8,9 +8,9 @@ Namespace Huggle.Scripting
         Private Function ActionFunc(ByVal Context As Object, ByVal Func As Token, _
             ByVal Arg As Token(), ByVal Params As Dictionary(Of String, Token)) As Token
 
-            Select Case Func.String
+            Select Case Func.AsString
                 Case "edit"
-                    If Arg(0).Page.Text = Arg(1).String _
+                    If Arg(0).AsPage.Text = Arg(1).AsString _
                         Then Return New Token("Ignored as no change to text")
 
                     'Dim Result As New Edit _

@@ -17,12 +17,34 @@ Namespace Huggle.Actions
             OnStarted()
             OnProgress(Msg("userconfig-progress", Session.User.FullName))
 
+            Dim updateWiki As Boolean = (Not Wiki.Config.IsCurrent)
+            Dim updateUser As Boolean = (Not Wiki.Config.IsCurrent)
+            Dim updateGlobalUser As Boolean = (User.IsUnified AndAlso Not User.GlobalUser.Config.IsCurrent)
+
             'Get cached config from the cloud
             If InternalConfig.UseCloud Then
-                Wiki.Config.LoadCloud()
+                Dim loaders As New List(Of Process)
 
-                If Wiki.Config.IsCurrent Then Wiki.Config.SaveLocal() _
-                    Else Log.Debug("Outdated in cloud: wiki\{0}".FormatWith(Wiki.Code))
+                If updateWiki Then loaders.Add(New GeneralProcess("", AddressOf Wiki.Config.LoadCloud))
+                If updateUser Then loaders.Add(New GeneralProcess("", AddressOf User.Config.LoadCloud))
+                If updateGlobalUser Then loaders.Add(New GeneralProcess("", AddressOf User.GlobalUser.Config.LoadCloud))
+
+                App.DoParallel(loaders)
+
+                If updateWiki Then
+                    If Wiki.Config.IsCurrent Then Wiki.Config.SaveLocal() _
+                        Else Log.Debug("Outdated in cloud: wiki\{0}".FormatI(Wiki.Code))
+                End If
+                
+                If updateUser Then
+                    If User.Config.IsCurrent Then User.Config.SaveLocal() _
+                        Else Log.Debug("Outdated in cloud: user\{0}".FormatI(User.FullName))
+                End If
+
+                If updateGlobalUser Then
+                    If User.GlobalUser.Config.IsCurrent Then User.GlobalUser.Config.SaveLocal() _
+                        Else Log.Debug("Outdated in cloud: globaluser\{0}".FormatI(User.GlobalUser.FullName))
+                End If
             End If
 
             Dim query As New QueryString("action", "query")
@@ -31,7 +53,7 @@ Namespace Huggle.Actions
             Dim titles As New List(Of String)
 
             If Not User.Config.IsCurrent Then
-                Log.Debug("Load from wiki: {0}".FormatWith("user\" & User.FullName))
+                Log.Debug("Load from wiki: {0}".FormatI("user\" & User.FullName))
 
                 lists.Add("users")
                 meta.Add("userinfo")
@@ -41,7 +63,7 @@ Namespace Huggle.Actions
             End If
 
             If User.IsUnified AndAlso Not User.GlobalUser.Config.IsCurrent Then
-                If User.IsUnified Then Log.Debug("Load from wiki: {0}".FormatWith(
+                If User.IsUnified Then Log.Debug("Load from wiki: {0}".FormatI(
                         "globaluser\" & User.GlobalUser.FullName))
 
                 meta.Add("globaluserinfo")
@@ -49,7 +71,7 @@ Namespace Huggle.Actions
             End If
 
             If Not Wiki.Config.IsCurrent Then
-                Log.Debug("Load from wiki: {0}".FormatWith("wiki\" & Wiki.Code))
+                Log.Debug("Load from wiki: {0}".FormatI("wiki\" & Wiki.Code))
 
                 lists.Add("tags")
                 meta.Add("siteinfo", "allmessages")
@@ -84,15 +106,13 @@ Namespace Huggle.Actions
             Dim processes As New List(Of Process)
             Dim mainReq As New ApiRequest(Session, Description, query)
             processes.Add(mainReq)
-            CreateThread(AddressOf mainReq.DoMultiple)
 
             If Not Wiki.Config.IsCurrent Then
                 Dim moduleReq As New ApiModuleQuery(Session)
                 processes.Add(moduleReq)
-                CreateThread(AddressOf moduleReq.Start)
             End If
 
-            App.WaitFor(Function() processes.TrueForAll(Function(p As Process) p.IsComplete))
+            App.DoParallel(processes)
 
             For Each process As Process In processes
                 If process.IsFailed Then OnFail(process.Result) : Return
@@ -101,17 +121,23 @@ Namespace Huggle.Actions
             'Load wiki config
             Wiki.Config.Load(Wiki.Pages(Config.Global.WikiConfigPageTitle).Text)
 
-            User.Config.Updated = Date.UtcNow
-            User.Config.SaveLocal()
-            Wiki.Config.Updated = Date.UtcNow
-            Wiki.Config.SaveLocal()
-
-            If User.IsUnified Then
-                User.GlobalUser.Config.Updated = Date.UtcNow
-                User.GlobalUser.Config.SaveLocal()
+            If Not User.Config.IsCurrent Then
+                User.Config.Updated = Date.UtcNow
+                User.Config.SaveLocal()
+                If InternalConfig.UseCloud Then User.Config.SaveCloud()
             End If
 
-            Wiki.Config.SaveCloud()
+            If Not Wiki.Config.IsCurrent Then
+                Wiki.Config.Updated = Date.UtcNow
+                Wiki.Config.SaveLocal()
+                If InternalConfig.UseCloud Then Wiki.Config.SaveCloud()
+            End If
+
+            If User.IsUnified AndAlso Not User.GlobalUser.Config.IsCurrent Then
+                User.GlobalUser.Config.Updated = Date.UtcNow
+                User.GlobalUser.Config.SaveLocal()
+                If InternalConfig.UseCloud Then User.GlobalUser.Config.SaveCloud()
+            End If
 
             OnSuccess()
         End Sub

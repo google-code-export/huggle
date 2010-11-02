@@ -23,25 +23,23 @@
         'Do not modify it using the code editor.
         <System.Diagnostics.DebuggerStepThrough()> _
         Private Sub InitializeComponent()
-            Dim GroupColumn As System.Windows.Forms.ColumnHeader
-            Dim NameColumn As System.Windows.Forms.ColumnHeader
+            Me.GroupColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+            Me.NameColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.Count = New System.Windows.Forms.Label()
             Me.List = New System.Windows.Forms.EnhancedListView()
             Me.Title = New System.Windows.Forms.Label()
             Me.Wait = New Huggle.UI.WaitControl()
-            GroupColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
-            NameColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.SuspendLayout()
             '
             'GroupColumn
             '
-            GroupColumn.Text = "Group"
-            GroupColumn.Width = 113
+            Me.GroupColumn.Text = "Group"
+            Me.GroupColumn.Width = 113
             '
             'NameColumn
             '
-            NameColumn.Text = "Name"
-            NameColumn.Width = 340
+            Me.NameColumn.Text = "Name"
+            Me.NameColumn.Width = 397
             '
             'Count
             '
@@ -59,7 +57,7 @@
             Me.List.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
                         Or System.Windows.Forms.AnchorStyles.Left) _
                         Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-            Me.List.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {GroupColumn, NameColumn})
+            Me.List.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.GroupColumn, Me.NameColumn})
             Me.List.FlexibleColumn = 1
             Me.List.FullRowSelect = True
             Me.List.GridLines = True
@@ -91,6 +89,7 @@
             Me.Wait.Size = New System.Drawing.Size(16, 16)
             Me.Wait.TabIndex = 24
             Me.Wait.TabStop = False
+            Me.Wait.TextPosition = Huggle.UI.WaitControl.WaitTextPosition.None
             '
             'GlobalGroupView
             '
@@ -108,6 +107,8 @@
         Private WithEvents List As System.Windows.Forms.EnhancedListView
         Private WithEvents Title As System.Windows.Forms.Label
         Friend WithEvents Wait As Huggle.UI.WaitControl
+        Private WithEvents GroupColumn As System.Windows.Forms.ColumnHeader
+        Private WithEvents NameColumn As System.Windows.Forms.ColumnHeader
 
     End Class
 End Namespace

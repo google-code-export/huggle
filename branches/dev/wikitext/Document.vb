@@ -10,7 +10,7 @@ Namespace Huggle.Wikitext
 
     'Represents a wikitext document
 
-    <Diagnostics.DebuggerDisplay("{Text}")> _
+    <Diagnostics.DebuggerDisplay("{Text}")>
     Public Class Document
 
         Private _Page As Page
@@ -27,15 +27,15 @@ Namespace Huggle.Wikitext
         Private _Threads As CommentCollection
         Private _Transclusions As TransclusionCollection
 
-        Public Sub New(ByVal Page As Page, Optional ByVal Text As String = Nothing)
-            _Page = Page
-            _Text = If(Text, If(Page.Text, ""))
-            _Wiki = Page.Wiki
+        Public Sub New(ByVal page As Page, Optional ByVal text As String = Nothing)
+            _Page = page
+            _Text = If(text, If(page.Text, ""))
+            _Wiki = page.Wiki
         End Sub
 
-        Public Sub New(ByVal Wiki As Wiki, ByVal Text As String)
-            _Text = Text
-            _Wiki = Wiki
+        Public Sub New(ByVal wiki As Wiki, ByVal text As String)
+            _Text = text
+            _Wiki = wiki
         End Sub
 
         Public ReadOnly Property Bytes() As Integer
@@ -176,8 +176,8 @@ Namespace Huggle.Wikitext
 
                 _ParseableText = Text
 
-                Dim spos As Integer = _ParseableText.IndexOf("<nowiki>", 0)
-                Dim epos As Integer = _ParseableText.IndexOf("</nowiki>", Math.Max(spos, 0))
+                Dim spos As Integer = _ParseableText.IndexOfI("<nowiki>", 0)
+                Dim epos As Integer = _ParseableText.IndexOfI("</nowiki>", Math.Max(spos, 0))
 
                 While spos > -1 AndAlso epos > spos
                     _ParseableText = _ParseableText.Remove(spos, epos - spos).Insert(spos, _
@@ -206,7 +206,7 @@ Namespace Huggle.Wikitext
 
             If TypeOf data Is Revision Then
                 Dim Rev As Revision = DirectCast(data, Revision)
-                Return New Document(Rev.Wiki, "[" & Rev.Wiki.ShortUrl.ToString & "?diff=" & _
+                Return New Document(Rev.Wiki, "[" & Rev.Wiki.ShortUrl.ToString & "?diff=" &
                     CStr(Rev.Id) & " " & CStr(Rev.Id) & "]")
             End If
 
@@ -259,8 +259,8 @@ Namespace Huggle.Wikitext
             Return "[" & url.ToString & If(display Is Nothing, "", " " & display) & "]"
         End Function
 
-        Public Function InternalLink _
-            (ByVal page As Page, ByVal display As String, ByVal ParamArray params() As String) As String
+        Public Function InternalLink(ByVal page As Page, ByVal display As String,
+            ByVal ParamArray params() As String) As String
 
             Dim result As String = "["
             Dim title As String = page.Title.Replace(" ", "_")
@@ -306,9 +306,9 @@ Namespace Huggle.Wikitext
 
         Public Function UserLink(ByVal user As User) As String
             If user.IsAnonymous AndAlso Wiki.Config.UserLinkAnon IsNot Nothing _
-                Then Return Wiki.Config.UserLinkAnon.FormatWith(user)
+                Then Return Wiki.Config.UserLinkAnon.FormatI(user)
 
-            If Wiki.Config.UserLink IsNot Nothing Then Return Wiki.Config.UserLink.FormatWith(user)
+            If Wiki.Config.UserLink IsNot Nothing Then Return Wiki.Config.UserLink.FormatI(user)
             Return Link(user.Userpage, user.Name)
         End Function
 

@@ -24,7 +24,7 @@ Namespace Huggle.UI
         Private Sub _Load() Handles Me.Load
             Try
                 Icon = Resources.Icon
-                Request.Text = Request.Text.FormatWith(Requester, User.FullName, User.GlobalUser.FullName)
+                Request.Text = Request.Text.FormatForUser(Requester, User.FullName, User.GlobalUser.FullName)
 
             Catch ex As SystemException
                 App.ShowError(Result.FromException(ex))

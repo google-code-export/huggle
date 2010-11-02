@@ -23,24 +23,22 @@
         'Do not modify it using the code editor.
         <System.Diagnostics.DebuggerStepThrough()> _
         Private Sub InitializeComponent()
-            Dim RightColumn As System.Windows.Forms.ColumnHeader
-            Dim GrantedColumn As System.Windows.Forms.ColumnHeader
+            Me.RightColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+            Me.GrantedColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.Count = New System.Windows.Forms.Label()
             Me.List = New System.Windows.Forms.EnhancedListView()
             Me.Title = New System.Windows.Forms.Label()
-            RightColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
-            GrantedColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.SuspendLayout()
             '
             'RightColumn
             '
-            RightColumn.Text = "Right"
-            RightColumn.Width = 169
+            Me.RightColumn.Text = "Right"
+            Me.RightColumn.Width = 169
             '
             'GrantedColumn
             '
-            GrantedColumn.Text = "Granted to"
-            GrantedColumn.Width = 353
+            Me.GrantedColumn.Text = "Granted to"
+            Me.GrantedColumn.Width = 341
             '
             'Count
             '
@@ -57,7 +55,7 @@
             Me.List.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
                         Or System.Windows.Forms.AnchorStyles.Left) _
                         Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-            Me.List.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {RightColumn, GrantedColumn})
+            Me.List.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.RightColumn, Me.GrantedColumn})
             Me.List.FlexibleColumn = 1
             Me.List.FullRowSelect = True
             Me.List.GridLines = True
@@ -94,6 +92,8 @@
         Private WithEvents Count As System.Windows.Forms.Label
         Private WithEvents List As System.Windows.Forms.EnhancedListView
         Private WithEvents Title As System.Windows.Forms.Label
+        Private WithEvents RightColumn As System.Windows.Forms.ColumnHeader
+        Private WithEvents GrantedColumn As System.Windows.Forms.ColumnHeader
 
     End Class
 End Namespace

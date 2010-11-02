@@ -35,7 +35,7 @@ Namespace Huggle.Actions
 
             If Config.Global.Loader.IsRunning Then
                 OnProgress(Msg("config-progress"))
-                App.WaitFor(Function() Config.Global.Loader.IsComplete)
+                App.WaitOn(Config.Global.Loader)
             End If
 
             If Config.Global.Loader.IsFailed Then OnFail(Config.Global.Loader.Result)
@@ -74,8 +74,9 @@ Namespace Huggle.Actions
 
             ElseIf Not Session.User.IsAnonymous AndAlso Session.User.Password Is Nothing Then
                 'Prompt for account password
-                Dim form As New AccountLoginForm(User, Requester)
-                If form.ShowDialog = DialogResult.Cancel Then OnFail(Msg("error-cancelled")) : Return
+                Using form As New AccountLoginForm(User, Requester)
+                    If form.ShowDialog = DialogResult.Cancel Then OnFail(Msg("error-cancelled")) : Return
+                End Using
             End If
 
             CreateThread(AddressOf Process, AddressOf SaveConfig)
@@ -144,12 +145,12 @@ Namespace Huggle.Actions
 
             If IsFailed Then Return
             
-            Log.Debug("Logged in {0}".FormatWith(User.FullName))
+            Log.Debug("Logged in {0}".FormatI(User.FullName))
 
             'Check cookies for unified account
             If Wiki.Family IsNot Nothing Then
                 For Each cookie As Cookie In Session.Cookies.GetCookies(Wiki.Url)
-                    If cookie.Name.StartsWith("centralauth") Then
+                    If cookie.Name.StartsWithI("centralauth") Then
                         Dim globalUser As GlobalUser = Wiki.Family.GlobalUsers(User.Name)
                         User.GlobalUser = globalUser
 

@@ -67,8 +67,8 @@ Namespace Huggle
                 If TypeOf value Is Boolean Then value = If(CBool(value), 1, 0)
 
                 'Hide passwords/tokens in debug log
-                If key.ToLower.EndsWith("password") OrElse key.ToLower.EndsWith("retype") _
-                    OrElse key.ToLower.EndsWith("token") Then value = "******"
+                If key.ToLowerI.EndsWithI("password") OrElse key.ToLowerI.EndsWithI("retype") _
+                    OrElse key.ToLowerI.EndsWithI("token") Then value = "******"
 
                 If value.ToString = "" Then items.Add(key) Else items.Add(key & "=" & value.ToString)
             Next key

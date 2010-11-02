@@ -72,7 +72,7 @@ Namespace Huggle.Actions
                 Dim evaluator As New Scripting.Evaluator(Session, "Math captcha", expression)
                 evaluator.Start()
                 If evaluator.Result.IsError Then OnFail("createaccount-brokenconfirm")
-                Confirmation.Answer = CStr(CInt(evaluator.Value.Number))
+                Confirmation.Answer = CStr(CInt(evaluator.Value.AsNumber))
                 OnSuccess()
 
             ElseIf req.Response.Contains("<form name=""userlogin2""") Then

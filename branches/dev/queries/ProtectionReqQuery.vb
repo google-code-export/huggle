@@ -39,8 +39,8 @@
 '                Case "semi" : Header &= "'''Semi-protection'''. "
 '            End Select
 
-'            Text = Text.Substring(0, Text.IndexOf("====")) & Header & _Reason & " ~~~~" _
-'                & LF & LF & Text.Substring(Text.IndexOf("===="))
+'            Text = Text.Substring(0, Text.IndexOfI("====")) & Header & _Reason & " ~~~~" _
+'                & LF & LF & Text.Substring(Text.IndexOfI("===="))
 
 '            Dim ProtectionLevel As String
 

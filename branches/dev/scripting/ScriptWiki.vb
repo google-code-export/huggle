@@ -3,17 +3,18 @@ Imports Huggle.Wikitext
 Imports System
 Imports System.Collections
 Imports System.Collections.Generic
+Imports System.Globalization
 
 Namespace Huggle.Scripting
 
     Partial Class Evaluator
 
-        Private Function WikiFunc(ByVal context As Object, ByVal func As Token, _
+        Private Function WikiFunc(ByVal context As Object, ByVal func As Token,
             ByVal arg As Token(), ByVal original As Token()) As Token
 
-            If TypeOf arg(0).Value Is Revision Then Return New Token(GetRevisionProperty(func.String.ToLower, arg))
+            If TypeOf arg(0).Value Is Revision Then Return New Token(GetRevisionProperty(func.AsString.ToLowerI, arg))
 
-            Select Case func.String
+            Select Case func.AsString
                 'Infobox lookup operator
                 'Case "::"
                 '    Dim Page As Page
@@ -68,43 +69,43 @@ Namespace Huggle.Scripting
 
                     'Media properties
                 Case "isshared"
-                    If arg(0).Media.Exists AndAlso Not arg(0).Media.DetailsKnown Then
-                        RequestInfo(arg(0).Media.Page, "info")
+                    If arg(0).AsMedia.Exists AndAlso Not arg(0).AsMedia.DetailsKnown Then
+                        RequestInfo(arg(0).AsMedia.Page, "info")
                         Return Undefined
                     Else
-                        Return New Token(arg(0).Media.IsShared)
+                        Return New Token(arg(0).AsMedia.IsShared)
                     End If
 
                 Case "firstrevision"
-                    If arg(0).Media.Exists AndAlso Not arg(0).Media.DetailsKnown Then
-                        RequestInfo(arg(0).Media.Page, "info")
+                    If arg(0).AsMedia.Exists AndAlso Not arg(0).AsMedia.DetailsKnown Then
+                        RequestInfo(arg(0).AsMedia.Page, "info")
                         Return Undefined
                     Else
-                        Return New Token(arg(0).Media.FirstRevision)
+                        Return New Token(arg(0).AsMedia.FirstRevision)
                     End If
 
                 Case "lastrevision"
-                    If arg(0).Media.Exists AndAlso Not arg(0).Media.DetailsKnown Then
-                        RequestInfo(arg(0).Media.Page, "info")
+                    If arg(0).AsMedia.Exists AndAlso Not arg(0).AsMedia.DetailsKnown Then
+                        RequestInfo(arg(0).AsMedia.Page, "info")
                         Return Undefined
                     Else
-                        Return New Token(arg(0).Media.LastRevision)
+                        Return New Token(arg(0).AsMedia.LastRevision)
                     End If
 
                 Case "revisions"
-                    If arg(0).Media.Exists AndAlso Not arg(0).Media.DetailsKnown Then
-                        RequestInfo(arg(0).Media.Page, "info")
+                    If arg(0).AsMedia.Exists AndAlso Not arg(0).AsMedia.DetailsKnown Then
+                        RequestInfo(arg(0).AsMedia.Page, "info")
                         Return Undefined
                     Else
-                        Return New Token(New ArrayList(arg(0).Media.Revisions))
+                        Return New Token(New ArrayList(arg(0).AsMedia.Revisions))
                     End If
 
                 Case "uploader"
-                    If arg(0).Media.Exists AndAlso Not arg(0).Media.DetailsKnown Then
-                        RequestInfo(arg(0).Media.Page, "info")
+                    If arg(0).AsMedia.Exists AndAlso Not arg(0).AsMedia.DetailsKnown Then
+                        RequestInfo(arg(0).AsMedia.Page, "info")
                         Return Undefined
                     Else
-                        Return New Token(arg(0).Media.Uploader)
+                        Return New Token(arg(0).AsMedia.Uploader)
                     End If
 
                     'Media revision properties
@@ -140,101 +141,101 @@ Namespace Huggle.Scripting
                     Return New Token(Result)
 
                     'User properties
-                Case "anonymous" : Return New Token(arg(0).User.IsAnonymous)
+                Case "anonymous" : Return New Token(arg(0).AsUser.IsAnonymous)
 
                 Case "created"
-                    If arg(0).User.Created = Date.MinValue Then
-                        RequestInfo(arg(0).User, "created")
+                    If arg(0).AsUser.Created = Date.MinValue Then
+                        RequestInfo(arg(0).AsUser, "created")
                         Return Undefined
                     Else
-                        Return New Token(arg(0).User.Created)
+                        Return New Token(arg(0).AsUser.Created)
                     End If
 
                 Case "editcount"
-                    If arg(0).User.Contributions = -1 Then
-                        RequestInfo(arg(0).User, "editcount")
+                    If arg(0).AsUser.Contributions = -1 Then
+                        RequestInfo(arg(0).AsUser, "editcount")
                         Return Undefined
                     Else
-                        Return New Token(arg(0).User.Contributions)
+                        Return New Token(arg(0).AsUser.Contributions)
                     End If
 
-                Case "ignored" : Return New Token(arg(0).User.IsIgnored)
-                Case "userpage" : Return New Token(arg(0).User.Userpage)
+                Case "ignored" : Return New Token(arg(0).AsUser.IsIgnored)
+                Case "userpage" : Return New Token(arg(0).AsUser.Userpage)
 
                     'Page properties
                 Case "assessment"
-                    If arg(0).Page.TalkPage.Exists AndAlso Not arg(0).Page.TalkPage.CategoriesKnown Then
-                        RequestInfo(arg(0).Page, "assessment")
+                    If arg(0).AsPage.TalkPage.Exists AndAlso Not arg(0).AsPage.TalkPage.CategoriesKnown Then
+                        RequestInfo(arg(0).AsPage, "assessment")
                         Return Undefined
                     Else
-                        Return New Token(If(arg(0).Page.Assessment, ""))
+                        Return New Token(If(arg(0).AsPage.Assessment, ""))
                     End If
 
-                Case "title" : Return New Token(arg(0).Page.Name)
+                Case "title" : Return New Token(arg(0).AsPage.Name)
 
                 Case "namespace"
                     If arg(0).ValueType = "Page" Then
-                        Return New Token(arg(0).Page.Space)
+                        Return New Token(arg(0).AsPage.Space)
                     Else
-                        Return New Token(Wiki.Spaces(CInt(arg(0).Number)))
+                        Return New Token(Wiki.Spaces(CInt(arg(0).AsNumber)))
                     End If
 
-                Case "basename" : Return New Token(arg(0).Page.Name)
+                Case "basename" : Return New Token(arg(0).AsPage.Name)
 
                 Case "categories"
-                    If arg(0).Page.Exists AndAlso Not arg(0).Page.CategoriesKnown Then
+                    If arg(0).AsPage.Exists AndAlso Not arg(0).AsPage.CategoriesKnown Then
                         If Immediate Then
-                            Dim req As New PageInfoQuery(Session, List(arg(0).Page), Categories:=True)
+                            Dim req As New PageInfoQuery(Session, List(arg(0).AsPage), Categories:=True)
                             req.Start()
                             If req.Result.IsError Then Throw New ScriptException(req.Result.Message)
-                            Return New Token(New ArrayList(arg(0).Page.Categories))
+                            Return New Token(New ArrayList(arg(0).AsPage.Categories))
                         Else
-                            RequestInfo(arg(0).Page, "categories")
+                            RequestInfo(arg(0).AsPage, "categories")
                             Return Undefined
                         End If
                     Else
-                        Return New Token(New ArrayList(arg(0).Page.Categories))
+                        Return New Token(New ArrayList(arg(0).AsPage.Categories))
                     End If
 
                 Case "creator"
-                    If arg(0).Page.Exists AndAlso arg(0).Page.Creator Is Nothing Then
-                        RequestInfo(arg(0).Page, "creation")
+                    If arg(0).AsPage.Exists AndAlso arg(0).AsPage.Creator Is Nothing Then
+                        RequestInfo(arg(0).AsPage, "creation")
                         Return Undefined
                     Else
-                        Return New Token(arg(0).Page.Creator)
+                        Return New Token(arg(0).AsPage.Creator)
                     End If
 
                 Case "externallinks"
-                    If arg(0).Page.Exists AndAlso Not arg(0).Page.ExternalLinksKnown Then
-                        RequestInfo(arg(0).Page, "externallinks")
+                    If arg(0).AsPage.Exists AndAlso Not arg(0).AsPage.ExternalLinksKnown Then
+                        RequestInfo(arg(0).AsPage, "externallinks")
                         Return Undefined
                     Else
-                        Return New Token(New ArrayList(arg(0).Page.ExternalLinks))
+                        Return New Token(New ArrayList(arg(0).AsPage.ExternalLinks))
                     End If
 
                 Case "firstedit"
-                    If arg(0).Page.Exists AndAlso arg(0).Page.FirstRev Is Nothing Then
-                        RequestInfo(arg(0).Page, "creation")
+                    If arg(0).AsPage.Exists AndAlso arg(0).AsPage.FirstRev Is Nothing Then
+                        RequestInfo(arg(0).AsPage, "creation")
                         Return Undefined
                     Else
-                        Return New Token(arg(0).Page.FirstRev)
+                        Return New Token(arg(0).AsPage.FirstRev)
                     End If
 
-                Case "isarticle" : Return New Token(arg(0).Page.IsArticle)
-                Case "isarticletalkpage" : Return New Token(arg(0).Page.IsArticleTalkPage)
-                Case "isblp" : Return New Token(arg(0).Page.IsPriority)
-                Case "isblptalk" : Return New Token(arg(0).Page.IsPriorityTalk)
-                Case "isrootpage" : Return New Token(arg(0).Page.IsRootPage)
-                Case "issubjectpage" : Return New Token(arg(0).Page.IsSubjectPage)
-                Case "issubpage" : Return New Token(arg(0).Page.IsSubpage)
-                Case "istalkpage" : Return New Token(arg(0).Page.IsTalkPage)
+                Case "isarticle" : Return New Token(arg(0).AsPage.IsArticle)
+                Case "isarticletalkpage" : Return New Token(arg(0).AsPage.IsArticleTalkPage)
+                Case "isblp" : Return New Token(arg(0).AsPage.IsPriority)
+                Case "isblptalk" : Return New Token(arg(0).AsPage.IsPriorityTalk)
+                Case "isrootpage" : Return New Token(arg(0).AsPage.IsRootPage)
+                Case "issubjectpage" : Return New Token(arg(0).AsPage.IsSubjectPage)
+                Case "issubpage" : Return New Token(arg(0).AsPage.IsSubpage)
+                Case "istalkpage" : Return New Token(arg(0).AsPage.IsTalkPage)
 
                 Case "isredirect"
-                    If arg(0).Page.LastRev Is Nothing Then
-                        RequestInfo(arg(0).Page, "redirect")
+                    If arg(0).AsPage.LastRev Is Nothing Then
+                        RequestInfo(arg(0).AsPage, "redirect")
                         Return Undefined
                     Else
-                        Return New Token(arg(0).Page.IsRedirect)
+                        Return New Token(arg(0).AsPage.IsRedirect)
                     End If
 
                     'Case "hasinfobox"
@@ -255,71 +256,71 @@ Namespace Huggle.Scripting
                     '    End If
 
                 Case "langlinks"
-                    If arg(0).Page.Exists AndAlso Not arg(0).Page.LangLinksKnown Then
-                        RequestInfo(arg(0).Page, "langlinks")
+                    If arg(0).AsPage.Exists AndAlso Not arg(0).AsPage.LangLinksKnown Then
+                        RequestInfo(arg(0).AsPage, "langlinks")
                         Return Undefined
                     Else
-                        Return New Token(New ArrayList(arg(0).Page.LangLinks))
+                        Return New Token(New ArrayList(arg(0).AsPage.LangLinks))
                     End If
 
                 Case "lastrev"
-                    If arg(0).Page.Exists AndAlso arg(0).Page.LastRev Is Nothing Then
-                        RequestInfo(arg(0).Page, "latest")
+                    If arg(0).AsPage.Exists AndAlso arg(0).AsPage.LastRev Is Nothing Then
+                        RequestInfo(arg(0).AsPage, "latest")
                         Return Undefined
                     Else
-                        Return New Token(arg(0).Page.LastRev)
+                        Return New Token(arg(0).AsPage.LastRev)
                     End If
 
                 Case "links"
-                    If arg(0).Page.Exists AndAlso Not arg(0).Page.LinksKnown Then
-                        RequestInfo(arg(0).Page, "links")
+                    If arg(0).AsPage.Exists AndAlso Not arg(0).AsPage.LinksKnown Then
+                        RequestInfo(arg(0).AsPage, "links")
                         Return Undefined
                     Else
-                        Return New Token(New ArrayList(arg(0).Page.Links))
+                        Return New Token(New ArrayList(arg(0).AsPage.Links))
                     End If
 
                 Case "mediaused"
-                    If arg(0).Page.Exists AndAlso Not arg(0).Page.MediaKnown Then
-                        RequestInfo(arg(0).Page, "media")
+                    If arg(0).AsPage.Exists AndAlso Not arg(0).AsPage.MediaKnown Then
+                        RequestInfo(arg(0).AsPage, "media")
                         Return Undefined
                     Else
-                        Return New Token(New ArrayList(arg(0).Page.Media))
+                        Return New Token(New ArrayList(arg(0).AsPage.Media))
                     End If
 
                 Case "sections"
-                    If arg(0).Page.Exists AndAlso Not arg(0).Page.SectionsKnown Then
-                        RequestInfo(arg(0).Page, "sections")
+                    If arg(0).AsPage.Exists AndAlso Not arg(0).AsPage.SectionsKnown Then
+                        RequestInfo(arg(0).AsPage, "sections")
                         Return Undefined
                     Else
-                        Return New Token(New ArrayList(arg(0).Page.Sections))
+                        Return New Token(New ArrayList(arg(0).AsPage.Sections))
                     End If
 
-                Case "subject" : Return New Token(arg(0).Page.SubjectPage)
+                Case "subject" : Return New Token(arg(0).AsPage.SubjectPage)
 
                 Case "talk"
-                    If arg(0).ValueType = "Page" Then Return New Token(arg(0).Page.TalkPage) _
-                        Else Return New Token(arg(0).User.Talkpage)
+                    If arg(0).ValueType = "Page" Then Return New Token(arg(0).AsPage.TalkPage) _
+                        Else Return New Token(arg(0).AsUser.Talkpage)
 
                 Case "target"
-                    If arg(0).Page.Exists AndAlso Not arg(0).Page.TargetKnown Then
-                        RequestInfo(arg(0).Page, "target")
+                    If arg(0).AsPage.Exists AndAlso Not arg(0).AsPage.TargetKnown Then
+                        RequestInfo(arg(0).AsPage, "target")
                         Return Undefined
                     Else
-                        If arg(0).Page.Target Is Nothing Then Return New Token(arg(0).Page) _
-                            Else Return New Token(arg(0).Page.Target)
+                        If arg(0).AsPage.Target Is Nothing Then Return New Token(arg(0).AsPage) _
+                            Else Return New Token(arg(0).AsPage.Target)
                     End If
 
                 Case "templates"
-                    If arg(0).Page.Exists AndAlso Not arg(0).Page.TranscludesKnown Then
-                        RequestInfo(arg(0).Page, "templates")
+                    If arg(0).AsPage.Exists AndAlso Not arg(0).AsPage.TranscludesKnown Then
+                        RequestInfo(arg(0).AsPage, "templates")
                         Return Undefined
                     Else
-                        Return New Token(New ArrayList(arg(0).Page.Transcludes))
+                        Return New Token(New ArrayList(arg(0).AsPage.Transcludes))
                     End If
 
                 Case "text"
                     If TypeOf arg(0).Value Is Revision Then
-                        Dim Rev As Revision = arg(0).Revision
+                        Dim Rev As Revision = arg(0).AsRevision
 
                         If Rev.Text Is Nothing Then
                             RequestInfo(Rev, "text")
@@ -329,7 +330,7 @@ Namespace Huggle.Scripting
                         End If
 
                     Else
-                        Dim Page As Page = arg(0).Page
+                        Dim Page As Page = arg(0).AsPage
 
                         If Page.Exists AndAlso Page.Text Is Nothing Then
                             If Immediate Then
@@ -347,31 +348,31 @@ Namespace Huggle.Scripting
                     End If
 
                     'Namespace properties
-                Case "issubjectspace" : Return New Token(arg(0).Space.IsSubjectSpace)
-                Case "istalkspace" : Return New Token(arg(0).Space.IsTalkSpace)
-                Case "number" : Return New Token(arg(0).Space.Number)
-                Case "subpages" : Return New Token(arg(0).Space.HasSubpages)
+                Case "issubjectspace" : Return New Token(arg(0).AsSpace.IsSubjectSpace)
+                Case "istalkspace" : Return New Token(arg(0).AsSpace.IsTalkSpace)
+                Case "number" : Return New Token(arg(0).AsSpace.Number)
+                Case "subpages" : Return New Token(arg(0).AsSpace.HasSubpages)
 
                     'Time properties
-                Case "fullday" : Return New Token(arg(0).Time.Day.ToString & " " & _
-                    Globalization.DateTimeFormatInfo.CurrentInfo.MonthNames(arg(0).Time.Month - 1) & _
-                    " " & arg(0).Time.Year.ToString)
-                Case "fullweek" : Return New Token("Week " & (arg(0).Time.DayOfYear \ 7).ToString & " " & _
-                    arg(0).Time.Year.ToString)
-                Case "fullmonth" : Return New Token(Globalization.DateTimeFormatInfo.CurrentInfo.MonthNames _
-                    (arg(0).Time.Month - 1) & " " & arg(0).Time.Year.ToString)
+                Case "fullday" : Return New Token(arg(0).AsTime.Day.ToStringI & " " & _
+                    Globalization.DateTimeFormatInfo.CurrentInfo.MonthNames(arg(0).AsTime.Month - 1) & _
+                    " " & arg(0).AsTime.Year.ToStringI)
+                Case "fullweek" : Return New Token("Week " & (arg(0).AsTime.DayOfYear \ 7).ToStringI & " " & _
+                    arg(0).AsTime.Year.ToStringI)
+                Case "fullmonth" : Return New Token(DateTimeFormatInfo.CurrentInfo.MonthNames _
+                    (arg(0).AsTime.Month - 1) & " " & arg(0).AsTime.Year.ToStringI)
 
-                Case "second" : Return New Token(arg(0).Time.Second.ToString)
-                Case "minute" : Return New Token(arg(0).Time.Minute.ToString)
-                Case "hour" : Return New Token(arg(0).Time.Hour.ToString)
-                Case "dayofweek" : Return New Token(CInt(arg(0).Time.DayOfWeek).ToString)
-                Case "dayofmonth" : Return New Token(arg(0).Time.Day.ToString)
-                Case "dayofyear" : Return New Token(arg(0).Time.DayOfYear.ToString)
-                Case "dayname" : Return New Token(arg(0).Time.DayOfWeek.ToString)
-                Case "week" : Return New Token((arg(0).Time.DayOfYear \ 7).ToString)
-                Case "month" : Return New Token(arg(0).Time.Month.ToString)
-                Case "monthname" : Return New Token(Globalization.DateTimeFormatInfo.CurrentInfo.MonthNames(arg(0).Time.Month - 1))
-                Case "year" : Return New Token(arg(0).Time.Year.ToString)
+                Case "second" : Return New Token(arg(0).AsTime.Second.ToStringI)
+                Case "minute" : Return New Token(arg(0).AsTime.Minute.ToStringI)
+                Case "hour" : Return New Token(arg(0).AsTime.Hour.ToStringI)
+                Case "dayofweek" : Return New Token(CInt(arg(0).AsTime.DayOfWeek).ToStringI)
+                Case "dayofmonth" : Return New Token(arg(0).AsTime.Day.ToStringI)
+                Case "dayofyear" : Return New Token(arg(0).AsTime.DayOfYear.ToStringI)
+                Case "dayname" : Return New Token(arg(0).AsTime.DayOfWeek.ToStringI)
+                Case "week" : Return New Token((arg(0).AsTime.DayOfYear \ 7).ToStringI)
+                Case "month" : Return New Token(arg(0).AsTime.Month.ToStringI)
+                Case "monthname" : Return New Token(Globalization.DateTimeFormatInfo.CurrentInfo.MonthNames(arg(0).AsTime.Month - 1))
+                Case "year" : Return New Token(arg(0).AsTime.Year.ToStringI)
 
                     'Template instance properties
                     'Case "params"
@@ -403,26 +404,26 @@ Namespace Huggle.Scripting
                     '    Return New Token(Result)
 
                     'List requests
-                Case "allpages" : Return ListQuery(context, New Lists.AllPagesQuery(Session, Wiki.Spaces(arg(0).String)), original)
-                Case "backlinks" : Return ListQuery(context, New Lists.BacklinksQuery(Session, Wiki.Pages.FromString(arg(0).String)), original)
+                Case "allpages" : Return ListQuery(context, New Lists.AllPagesQuery(Session, Wiki.Spaces(arg(0).AsString)), original)
+                Case "backlinks" : Return ListQuery(context, New Lists.BacklinksQuery(Session, Wiki.Pages.FromString(arg(0).AsString)), original)
                 Case "blps" : Return New Token(New ArrayList(Wiki.Pages.Priority))
-                Case "category" : Return ListQuery(context, New Lists.CategoryQuery(Session, Wiki.Categories.FromString(arg(0).String)), original)
-                Case "contribs" : Return ListQuery(context, New Lists.ContribsQuery(Session, Wiki.Users.FromString(arg(0).String)), original)
-                Case "deletedcontribs" : Return ListQuery(context, New Lists.DeletedContribsQuery(Session, Wiki.Users.FromString(arg(0).String)), original)
-                Case "deletedhistory" : Return ListQuery(context, New Lists.DeletedHistoryQuery(Session, Wiki.Pages.FromString(arg(0).String)), original)
-                Case "externallinkusage" : Return ListQuery(context, New Lists.ExternalLinkUsageQuery(Session, arg(0).String), original)
-                Case "history" : Return ListQuery(context, New Lists.HistoryQuery(Session, Wiki.Pages.FromString(arg(0).String)), original)
+                Case "category" : Return ListQuery(context, New Lists.CategoryQuery(Session, Wiki.Categories.FromString(arg(0).AsString)), original)
+                Case "contribs" : Return ListQuery(context, New Lists.ContribsQuery(Session, Wiki.Users.FromString(arg(0).AsString)), original)
+                Case "deletedcontribs" : Return ListQuery(context, New Lists.DeletedContribsQuery(Session, Wiki.Users.FromString(arg(0).AsString)), original)
+                Case "deletedhistory" : Return ListQuery(context, New Lists.DeletedHistoryQuery(Session, Wiki.Pages.FromString(arg(0).AsString)), original)
+                Case "externallinkusage" : Return ListQuery(context, New Lists.ExternalLinkUsageQuery(Session, arg(0).AsString), original)
+                Case "history" : Return ListQuery(context, New Lists.HistoryQuery(Session, Wiki.Pages.FromString(arg(0).AsString)), original)
                 Case "logs" : Return ListQuery(context, New Lists.LogsQuery(Session), original)
-                Case "mediausage" : Return ListQuery(context, New Lists.MediaUsageQuery(Session, Wiki.Files(arg(0).String)), original)
-                Case "links" : Return ListQuery(context, New Lists.LinksQuery(Session, Wiki.Pages.FromString(arg(0).String)), original)
-                Case "prefix" : Return ListQuery(context, New Lists.PrefixQuery(Session, Wiki.Pages.FromString(arg(0).String).Space, Wiki.Pages.FromString(arg(0).String).Name), original)
-                Case "redirects" : Return ListQuery(context, New Lists.RedirectsQuery(Session, Wiki.Pages.FromString(arg(0).String)), original)
-                Case "subcats" : Return ListQuery(context, New Lists.SubcatsQuery(Session, Wiki.Categories.FromString(arg(0).String)), original)
-                Case "search" : Return ListQuery(context, New Lists.SearchQuery(Session, arg(0).String), original)
-                Case "templates" : Return ListQuery(context, New Lists.TemplatesQuery(Session, Wiki.Pages.FromString(arg(0).String)), original)
-                Case "transclusions" : Return ListQuery(context, New Lists.TransclusionsQuery(Session, Wiki.Pages.FromString(arg(0).String)), original)
+                Case "mediausage" : Return ListQuery(context, New Lists.MediaUsageQuery(Session, Wiki.Files(arg(0).AsString)), original)
+                Case "links" : Return ListQuery(context, New Lists.LinksQuery(Session, Wiki.Pages.FromString(arg(0).AsString)), original)
+                Case "prefix" : Return ListQuery(context, New Lists.PrefixQuery(Session, Wiki.Pages.FromString(arg(0).AsString).Space, Wiki.Pages.FromString(arg(0).AsString).Name), original)
+                Case "redirects" : Return ListQuery(context, New Lists.RedirectsQuery(Session, Wiki.Pages.FromString(arg(0).AsString)), original)
+                Case "subcats" : Return ListQuery(context, New Lists.SubcatsQuery(Session, Wiki.Categories.FromString(arg(0).AsString)), original)
+                Case "search" : Return ListQuery(context, New Lists.SearchQuery(Session, arg(0).AsString), original)
+                Case "templates" : Return ListQuery(context, New Lists.TemplatesQuery(Session, Wiki.Pages.FromString(arg(0).AsString)), original)
+                Case "transclusions" : Return ListQuery(context, New Lists.TransclusionsQuery(Session, Wiki.Pages.FromString(arg(0).AsString)), original)
                 Case "unreviewed" : Return ListQuery(context, New Lists.UnreviewedQuery(Session), original)
-                Case "watchlist" : Return ListQuery(context, New Lists.WatchlistQuery(Session, Wiki.Users.FromString(arg(0).String)), original)
+                Case "watchlist" : Return ListQuery(context, New Lists.WatchlistQuery(Session, Wiki.Users.FromString(arg(0).AsString)), original)
 
                     'Other
                 Case "revs_allknown" : Return New Token(New ArrayList(Wiki.Revisions.All.Values))
@@ -487,7 +488,7 @@ Namespace Huggle.Scripting
                     End If
 
                 Case "categorycount"
-                    Dim cat As Category = Wiki.Categories.FromString(arg(0).String)
+                    Dim cat As Category = Wiki.Categories.FromString(arg(0).AsString)
 
                     If cat.Count = -1 Then
                         RequestInfo(cat.Page, "info")
@@ -510,10 +511,10 @@ Namespace Huggle.Scripting
                     '    Return New Token(Str)
                     'End If
 
-                Case "strip" : Return New Token(WikiStripMarkup(arg(0).String))
+                Case "strip" : Return New Token(WikiStripMarkup(arg(0).AsString))
 
                 Case "paramnorm"
-                    Dim Param As String = arg(0).String
+                    Dim Param As String = arg(0).AsString
 
                     For Each Item As KeyValuePair(Of String, List(Of String)) In Wiki.Config.ParamNorm
                         If Item.Key = Param OrElse Item.Value.Contains(Param) Then Return New Token(Item.Key)
@@ -601,14 +602,14 @@ Namespace Huggle.Scripting
 
         Private Function GetRevisionProperty(ByVal prop As String, ByVal arg As Token()) As Token
 
-            Dim rev As Revision = arg(0).Revision
+            Dim rev As Revision = arg(0).AsRevision
 
             If rev Is Nothing Then Throw New ScriptException("Not a valid revision")
             If prop <> "exists" AndAlso rev.Exists.IsUndefined _
                 Then Throw New ScriptException("Revision " & rev.Id & " does not exist")
 
             Select Case prop
-                Case "author" : Return New Token(arg(0).Revision.User)
+                Case "author" : Return New Token(arg(0).AsRevision.User)
                 Case "bytes" : Return MaybeLoadInfo(rev.Bytes, rev.Bytes < 0, rev, "bytes")
                 Case "change" : Return MaybeLoadInfo(rev.Change, rev.Change = Integer.MinValue, rev, "change")
                 Case "exists" : Return MaybeLoadInfo(rev.Exists, rev.Exists.IsUndefined, rev, "info")

@@ -27,7 +27,7 @@ Namespace Huggle.UI
                 App.Languages.Current.Localize(Me)
                 Logo.Image = Resources.HuggleLogo
                 Icon = Resources.Icon
-                Text = "{0} {1}".FormatWith(App.Name, App.VersionString)
+                Text = "{0} {1}".FormatForUser(App.Name, App.VersionString)
 
                 Dim selectedWiki As Wiki = App.Wikis.Global
                 If Config.Global.TopWiki IsNot Nothing AndAlso IsShown(Config.Global.TopWiki) _
@@ -63,8 +63,7 @@ Namespace Huggle.UI
         Private Shared Function WikiTypeName(ByVal wiki As Wiki) As String
             If wiki.Family Is Nothing Then Return Msg("wikitype-other")
             If wiki.Type Is Nothing Then Return wiki.Family.Name
-            If App.Languages.Current.Messages.ContainsKey("wikitype-" & wiki.Type.ToLower) _
-                Then Return Msg("wikitype-" & wiki.Type.ToLower)
+            If App.Languages.Current.Messages.ContainsKey("wikitype-" & wiki.Type) Then Return Msg("wikitype-" & wiki.Type)
             Return UcFirst(wiki.Type)
         End Function
 
@@ -215,10 +214,10 @@ Namespace Huggle.UI
         End Sub
 
         Private Function CompareWikis(ByVal x As Wiki, ByVal y As Wiki) As Integer
-            If x.Type <> y.Type Then Return String.Compare(x.Type, y.Type)
+            If x.Type <> y.Type Then Return String.Compare(x.Type, y.Type, StringComparison.Ordinal)
             If x.Language IsNot Nothing AndAlso y.Language IsNot Nothing _
-                Then Return String.Compare(x.Language.Code, y.Language.Code)
-            Return String.Compare(x.Name, y.Name)
+                Then Return String.Compare(x.Language.Code, y.Language.Code, StringComparison.Ordinal)
+            Return String.Compare(x.Name, y.Name, StringComparison.Ordinal)
         End Function
 
         Private Function DoLogin(ByVal user As User) As Session

@@ -19,7 +19,7 @@ Namespace Huggle.Actions
                 If Not App.Sessions(user).IsActive Then
                     Dim login As New Login(App.Sessions(user), "setglobalpreferences")
                     login.Start()
-                    App.WaitFor(Function() login.IsComplete)
+                    App.WaitOn(login)
                 End If
             Next user
 

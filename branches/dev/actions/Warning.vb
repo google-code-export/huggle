@@ -143,18 +143,18 @@ Namespace Huggle.Actions
             All.Add(Me)
 
             Dim monthName As String = DateTimeFormatInfo.InvariantInfo.MonthNames(Wiki.ServerTime.Month - 1)
-            Dim summary As String = Rev.Wiki.Config.WarningSummaries(Type.Level).FormatWith(Rev.Page)
+            Dim summary As String = Rev.Wiki.Config.WarningSummaries(Type.Level).FormatForUser(Rev.Page)
             Dim warning As String = Rev.Wiki.Config.WarningMessages(Type)
 
             Dim document As New Document(Rev.User.Talkpage, Rev.User.Talkpage.Text)
             If Not document.Sections.Contains(monthName) Then document.Sections.Append(monthName, Nothing)
 
-            document.Sections(monthName).Append(LF & warning.FormatWith(Rev.Page, _
+            document.Sections(monthName).Append(LF & warning.FormatForUser(Rev.Page, _
                 "{{" & Rev.Wiki.MagicWords("fullurle") & Rev.Page.Name & "|diff=" & CStr(Rev.Id) & "}}"))
 
             OnStarted()
 
-            Dim edit As New Edit(Session, Rev.User.Talkpage, document.Text, summary.FormatWith(Rev.Page))
+            Dim edit As New Edit(Session, Rev.User.Talkpage, document.Text, summary.FormatForUser(Rev.Page))
             edit.Conflict = ConflictAction.Retry
             edit.Minor = Wiki.Config.IsMinor("warning")
             edit.Watch = If(User.Config.IsWatch("warning"), WatchAction.Watch, WatchAction.NoChange)

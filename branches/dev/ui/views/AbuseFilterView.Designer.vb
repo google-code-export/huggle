@@ -26,27 +26,27 @@
             Me.Description = New System.Windows.Forms.LinkLabel()
             Me.Modified = New System.Windows.Forms.Label()
             Me.Status = New System.Windows.Forms.Label()
-            Me.AbuseFilterSplit = New System.Windows.Forms.SplitContainer()
+            Me.Splitter = New System.Windows.Forms.SplitContainer()
             Me.Title = New System.Windows.Forms.Label()
             Me.CreateFilter = New System.Windows.Forms.LinkLabel()
             Me.FilterList = New System.Windows.Forms.EnhancedListView()
-            Me.FilterIdColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
-            Me.FilterNameColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
-            Me.FilterStatusColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
-            Me.FilterActionsColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
-            Me.FilterCountColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+            Me.IdColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+            Me.NameColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+            Me.StatusColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+            Me.ActionsColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+            Me.CountColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.SelLayout = New System.Windows.Forms.FlowLayoutPanel()
             Me.VisibilitySel = New System.Windows.Forms.ComboBox()
             Me.StatusSel = New System.Windows.Forms.ComboBox()
             Me.ActionSel = New System.Windows.Forms.ComboBox()
             Me.FilterCount = New System.Windows.Forms.Label()
-            Me.FilterDetails = New System.Windows.Forms.TabControl()
+            Me.Details = New System.Windows.Forms.TabControl()
             Me.DescriptionTab = New System.Windows.Forms.TabPage()
             Me.AbuseFilterProps = New System.Windows.Forms.FlowLayoutPanel()
             Me.Actions = New System.Windows.Forms.Label()
             Me.RateLimit = New System.Windows.Forms.Label()
             Me.Progress = New System.Windows.Forms.Label()
-            Me.Indicator = New WaitControl()
+            Me.Indicator = New Huggle.UI.WaitControl()
             Me.PatternTab = New System.Windows.Forms.TabPage()
             Me.Pattern = New System.Windows.Forms.TextBox()
             Me.NotesTab = New System.Windows.Forms.TabPage()
@@ -55,11 +55,11 @@
             Me.FilterImage = New System.Windows.Forms.PictureBox()
             Me.RestrictedIcon = New System.Windows.Forms.PictureBox()
             Me.Restricted = New System.Windows.Forms.Label()
-            Me.AbuseFilterSplit.Panel1.SuspendLayout()
-            Me.AbuseFilterSplit.Panel2.SuspendLayout()
-            Me.AbuseFilterSplit.SuspendLayout()
+            Me.Splitter.Panel1.SuspendLayout()
+            Me.Splitter.Panel2.SuspendLayout()
+            Me.Splitter.SuspendLayout()
             Me.SelLayout.SuspendLayout()
-            Me.FilterDetails.SuspendLayout()
+            Me.Details.SuspendLayout()
             Me.DescriptionTab.SuspendLayout()
             Me.AbuseFilterProps.SuspendLayout()
             Me.PatternTab.SuspendLayout()
@@ -105,34 +105,34 @@
             Me.Status.TabIndex = 6
             Me.Status.Text = "Status:"
             '
-            'AbuseFilterSplit
+            'Splitter
             '
-            Me.AbuseFilterSplit.BackColor = System.Drawing.Color.Transparent
-            Me.AbuseFilterSplit.Dock = System.Windows.Forms.DockStyle.Fill
-            Me.AbuseFilterSplit.FixedPanel = System.Windows.Forms.FixedPanel.Panel2
-            Me.AbuseFilterSplit.Location = New System.Drawing.Point(0, 0)
-            Me.AbuseFilterSplit.Name = "AbuseFilterSplit"
-            Me.AbuseFilterSplit.Orientation = System.Windows.Forms.Orientation.Horizontal
+            Me.Splitter.BackColor = System.Drawing.Color.Transparent
+            Me.Splitter.Dock = System.Windows.Forms.DockStyle.Fill
+            Me.Splitter.FixedPanel = System.Windows.Forms.FixedPanel.Panel2
+            Me.Splitter.Location = New System.Drawing.Point(0, 0)
+            Me.Splitter.Name = "Splitter"
+            Me.Splitter.Orientation = System.Windows.Forms.Orientation.Horizontal
             '
-            'AbuseFilterSplit.Panel1
+            'Splitter.Panel1
             '
-            Me.AbuseFilterSplit.Panel1.BackColor = System.Drawing.Color.Transparent
-            Me.AbuseFilterSplit.Panel1.Controls.Add(Me.Title)
-            Me.AbuseFilterSplit.Panel1.Controls.Add(Me.CreateFilter)
-            Me.AbuseFilterSplit.Panel1.Controls.Add(Me.FilterList)
-            Me.AbuseFilterSplit.Panel1.Controls.Add(Me.SelLayout)
-            Me.AbuseFilterSplit.Panel1.Controls.Add(Me.FilterCount)
+            Me.Splitter.Panel1.BackColor = System.Drawing.Color.Transparent
+            Me.Splitter.Panel1.Controls.Add(Me.Title)
+            Me.Splitter.Panel1.Controls.Add(Me.CreateFilter)
+            Me.Splitter.Panel1.Controls.Add(Me.FilterList)
+            Me.Splitter.Panel1.Controls.Add(Me.SelLayout)
+            Me.Splitter.Panel1.Controls.Add(Me.FilterCount)
             '
-            'AbuseFilterSplit.Panel2
+            'Splitter.Panel2
             '
-            Me.AbuseFilterSplit.Panel2.Controls.Add(Me.FilterDetails)
-            Me.AbuseFilterSplit.Panel2.Controls.Add(Me.EditFilter)
-            Me.AbuseFilterSplit.Panel2.Controls.Add(Me.FilterImage)
-            Me.AbuseFilterSplit.Panel2.Controls.Add(Me.RestrictedIcon)
-            Me.AbuseFilterSplit.Panel2.Controls.Add(Me.Restricted)
-            Me.AbuseFilterSplit.Size = New System.Drawing.Size(562, 432)
-            Me.AbuseFilterSplit.SplitterDistance = 278
-            Me.AbuseFilterSplit.TabIndex = 8
+            Me.Splitter.Panel2.Controls.Add(Me.Details)
+            Me.Splitter.Panel2.Controls.Add(Me.EditFilter)
+            Me.Splitter.Panel2.Controls.Add(Me.FilterImage)
+            Me.Splitter.Panel2.Controls.Add(Me.RestrictedIcon)
+            Me.Splitter.Panel2.Controls.Add(Me.Restricted)
+            Me.Splitter.Size = New System.Drawing.Size(562, 432)
+            Me.Splitter.SplitterDistance = 278
+            Me.Splitter.TabIndex = 8
             '
             'Title
             '
@@ -163,7 +163,8 @@
             Me.FilterList.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
                         Or System.Windows.Forms.AnchorStyles.Left) _
                         Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-            Me.FilterList.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.FilterIdColumn, Me.FilterNameColumn, Me.FilterStatusColumn, Me.FilterActionsColumn, Me.FilterCountColumn})
+            Me.FilterList.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.IdColumn, Me.NameColumn, Me.StatusColumn, Me.ActionsColumn, Me.CountColumn})
+            Me.FilterList.FlexibleColumn = 0
             Me.FilterList.FullRowSelect = True
             Me.FilterList.GridLines = True
             Me.FilterList.HideSelection = False
@@ -176,30 +177,30 @@
             Me.FilterList.UseCompatibleStateImageBehavior = False
             Me.FilterList.View = System.Windows.Forms.View.Details
             '
-            'FilterIdColumn
+            'IdColumn
             '
-            Me.FilterIdColumn.Text = "ID"
-            Me.FilterIdColumn.Width = 30
+            Me.IdColumn.Text = "ID"
+            Me.IdColumn.Width = 65
             '
-            'FilterNameColumn
+            'NameColumn
             '
-            Me.FilterNameColumn.Text = "Name"
-            Me.FilterNameColumn.Width = 220
+            Me.NameColumn.Text = "Name"
+            Me.NameColumn.Width = 220
             '
-            'FilterStatusColumn
+            'StatusColumn
             '
-            Me.FilterStatusColumn.Text = "Status"
-            Me.FilterStatusColumn.Width = 110
+            Me.StatusColumn.Text = "Status"
+            Me.StatusColumn.Width = 110
             '
-            'FilterActionsColumn
+            'ActionsColumn
             '
-            Me.FilterActionsColumn.Text = "Actions"
-            Me.FilterActionsColumn.Width = 87
+            Me.ActionsColumn.Text = "Actions"
+            Me.ActionsColumn.Width = 87
             '
-            'FilterCountColumn
+            'CountColumn
             '
-            Me.FilterCountColumn.Text = "Count"
-            Me.FilterCountColumn.Width = 50
+            Me.CountColumn.Text = "Count"
+            Me.CountColumn.Width = 50
             '
             'SelLayout
             '
@@ -252,19 +253,19 @@
             Me.FilterCount.Text = "0 items"
             Me.FilterCount.TextAlign = System.Drawing.ContentAlignment.TopRight
             '
-            'FilterDetails
+            'Details
             '
-            Me.FilterDetails.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Me.Details.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
                         Or System.Windows.Forms.AnchorStyles.Left) _
                         Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-            Me.FilterDetails.Controls.Add(Me.DescriptionTab)
-            Me.FilterDetails.Controls.Add(Me.PatternTab)
-            Me.FilterDetails.Controls.Add(Me.NotesTab)
-            Me.FilterDetails.Location = New System.Drawing.Point(77, 3)
-            Me.FilterDetails.Name = "FilterDetails"
-            Me.FilterDetails.SelectedIndex = 0
-            Me.FilterDetails.Size = New System.Drawing.Size(482, 144)
-            Me.FilterDetails.TabIndex = 14
+            Me.Details.Controls.Add(Me.DescriptionTab)
+            Me.Details.Controls.Add(Me.PatternTab)
+            Me.Details.Controls.Add(Me.NotesTab)
+            Me.Details.Location = New System.Drawing.Point(77, 3)
+            Me.Details.Name = "Details"
+            Me.Details.SelectedIndex = 0
+            Me.Details.Size = New System.Drawing.Size(482, 144)
+            Me.Details.TabIndex = 14
             '
             'DescriptionTab
             '
@@ -339,6 +340,7 @@
             Me.Indicator.Size = New System.Drawing.Size(16, 16)
             Me.Indicator.TabIndex = 12
             Me.Indicator.TabStop = False
+            Me.Indicator.TextPosition = Huggle.UI.WaitControl.WaitTextPosition.None
             Me.Indicator.Visible = False
             '
             'PatternTab
@@ -373,7 +375,7 @@
             Me.NotesTab.Location = New System.Drawing.Point(4, 22)
             Me.NotesTab.Name = "NotesTab"
             Me.NotesTab.Padding = New System.Windows.Forms.Padding(3)
-            Me.NotesTab.Size = New System.Drawing.Size(473, 118)
+            Me.NotesTab.Size = New System.Drawing.Size(474, 118)
             Me.NotesTab.TabIndex = 1
             Me.NotesTab.Text = "Notes"
             Me.NotesTab.UseVisualStyleBackColor = True
@@ -410,7 +412,7 @@
             'FilterImage
             '
             Me.FilterImage.BackColor = System.Drawing.Color.Transparent
-            Me.FilterImage.Image = Resources.abuse_filter
+            Me.FilterImage.Image = Global.Resources.abuse_filter
             Me.FilterImage.Location = New System.Drawing.Point(7, 4)
             Me.FilterImage.Name = "FilterImage"
             Me.FilterImage.Size = New System.Drawing.Size(64, 64)
@@ -441,16 +443,16 @@
             '
             'AbuseFilterView
             '
-            Me.Controls.Add(Me.AbuseFilterSplit)
+            Me.Controls.Add(Me.Splitter)
             Me.Name = "AbuseFilterView"
             Me.Size = New System.Drawing.Size(562, 432)
-            Me.AbuseFilterSplit.Panel1.ResumeLayout(False)
-            Me.AbuseFilterSplit.Panel1.PerformLayout()
-            Me.AbuseFilterSplit.Panel2.ResumeLayout(False)
-            Me.AbuseFilterSplit.Panel2.PerformLayout()
-            Me.AbuseFilterSplit.ResumeLayout(False)
+            Me.Splitter.Panel1.ResumeLayout(False)
+            Me.Splitter.Panel1.PerformLayout()
+            Me.Splitter.Panel2.ResumeLayout(False)
+            Me.Splitter.Panel2.PerformLayout()
+            Me.Splitter.ResumeLayout(False)
             Me.SelLayout.ResumeLayout(False)
-            Me.FilterDetails.ResumeLayout(False)
+            Me.Details.ResumeLayout(False)
             Me.DescriptionTab.ResumeLayout(False)
             Me.DescriptionTab.PerformLayout()
             Me.AbuseFilterProps.ResumeLayout(False)
@@ -472,20 +474,20 @@
         Private WithEvents Description As System.Windows.Forms.LinkLabel
         Private WithEvents Modified As System.Windows.Forms.Label
         Private WithEvents Status As System.Windows.Forms.Label
-        Private WithEvents AbuseFilterSplit As System.Windows.Forms.SplitContainer
+        Private WithEvents Splitter As System.Windows.Forms.SplitContainer
         Private WithEvents SelLayout As System.Windows.Forms.FlowLayoutPanel
         Private WithEvents VisibilitySel As System.Windows.Forms.ComboBox
         Private WithEvents StatusSel As System.Windows.Forms.ComboBox
         Private WithEvents ActionSel As System.Windows.Forms.ComboBox
         Private WithEvents FilterCount As System.Windows.Forms.Label
         Private WithEvents FilterList As System.Windows.Forms.EnhancedListView
-        Private WithEvents FilterIdColumn As System.Windows.Forms.ColumnHeader
-        Private WithEvents FilterNameColumn As System.Windows.Forms.ColumnHeader
-        Private WithEvents FilterStatusColumn As System.Windows.Forms.ColumnHeader
-        Private WithEvents FilterActionsColumn As System.Windows.Forms.ColumnHeader
-        Private WithEvents FilterCountColumn As System.Windows.Forms.ColumnHeader
+        Private WithEvents IdColumn As System.Windows.Forms.ColumnHeader
+        Private WithEvents NameColumn As System.Windows.Forms.ColumnHeader
+        Private WithEvents StatusColumn As System.Windows.Forms.ColumnHeader
+        Private WithEvents ActionsColumn As System.Windows.Forms.ColumnHeader
+        Private WithEvents CountColumn As System.Windows.Forms.ColumnHeader
         Private WithEvents CreateFilter As System.Windows.Forms.LinkLabel
-        Private WithEvents FilterDetails As System.Windows.Forms.TabControl
+        Private WithEvents Details As System.Windows.Forms.TabControl
         Private WithEvents DescriptionTab As System.Windows.Forms.TabPage
         Private WithEvents AbuseFilterProps As System.Windows.Forms.FlowLayoutPanel
         Private WithEvents Actions As System.Windows.Forms.Label

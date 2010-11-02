@@ -23,7 +23,7 @@ Namespace Huggle.UI
                     End If
 
                 Catch ex As SystemException
-                    Log.Write("Logo for {0} not in recognized format".FormatWith(Wiki.Code))
+                    Log.Write("Logo for {0} not in recognized format".FormatI(Wiki.Code))
                 End Try
             End If
 
@@ -55,12 +55,12 @@ Namespace Huggle.UI
             'Statistics
             StatisticsList.BeginUpdate()
             StatisticsList.Items.Clear()
-            StatisticsList.AddRow(Msg("view-wikistats-pages"), If(Wiki.Pages.Count < 0, Msg("a-unknown"), Wiki.Pages.Count.ToString))
-            StatisticsList.AddRow(Msg("view-wikistats-contentpages"), If(Wiki.ContentPages < 0, Msg("a-unknown"), Wiki.ContentPages.ToString))
-            StatisticsList.AddRow(Msg("view-wikistats-files"), If(Wiki.Files.Count < 0, Msg("a-unknown"), Wiki.Files.Count.ToString))
-            StatisticsList.AddRow(Msg("view-wikistats-revisions"), If(Wiki.Revisions.Count < 0, Msg("a-unknown"), Wiki.Revisions.Count.ToString))
-            StatisticsList.AddRow(Msg("view-wikistats-users"), If(Wiki.Users.Count < 0, Msg("a-unknown"), Wiki.Users.Count.ToString))
-            StatisticsList.AddRow(Msg("view-wikistats-activeusers"), If(Wiki.ActiveUsers < 0, Msg("a-unknown"), Wiki.ActiveUsers.ToString))
+            StatisticsList.AddRow(Msg("view-wikistats-pages"), If(Wiki.Pages.Count < 0, Msg("a-unknown"), Wiki.Pages.Count.ToStringForUser))
+            StatisticsList.AddRow(Msg("view-wikistats-contentpages"), If(Wiki.ContentPages < 0, Msg("a-unknown"), Wiki.ContentPages.ToStringForUser))
+            StatisticsList.AddRow(Msg("view-wikistats-files"), If(Wiki.Files.Count < 0, Msg("a-unknown"), Wiki.Files.Count.ToStringForUser))
+            StatisticsList.AddRow(Msg("view-wikistats-revisions"), If(Wiki.Revisions.Count < 0, Msg("a-unknown"), Wiki.Revisions.Count.ToStringForUser))
+            StatisticsList.AddRow(Msg("view-wikistats-users"), If(Wiki.Users.Count < 0, Msg("a-unknown"), Wiki.Users.Count.ToStringForUser))
+            StatisticsList.AddRow(Msg("view-wikistats-activeusers"), If(Wiki.ActiveUsers < 0, Msg("a-unknown"), Wiki.ActiveUsers.ToStringForUser))
             StatisticsList.EndUpdate()
         End Sub
 

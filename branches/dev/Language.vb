@@ -37,9 +37,9 @@ Namespace Huggle
         End Function
 
         Public Sub Localize(ByVal control As Control)
-            Dim prefix As String = control.Name.ToLower
-            If control.Name.EndsWith("View") Then prefix = "view-" & control.Name.Remove("View").ToLower
-            If control.Name.EndsWith("Form") Then prefix = "form-" & control.Name.Remove("Form").ToLower
+            Dim prefix As String = control.Name.ToLowerI
+            If control.Name.EndsWithI("View") Then prefix = "view-" & control.Name.Remove("View").ToLowerI
+            If control.Name.EndsWithI("Form") Then prefix = "form-" & control.Name.Remove("Form").ToLowerI
             Localize(control, prefix, Nothing)
         End Sub
 
@@ -52,24 +52,24 @@ Namespace Huggle
                 If TypeOf child Is Label OrElse TypeOf child Is CheckBox OrElse TypeOf child Is RadioButton OrElse _
                     TypeOf child Is Button OrElse TypeOf child Is GroupBox Then
 
-                    Dim ItemMsg As String = child.Name.Replace("Label", "").Replace("Button", "").ToLower
-                    Dim PrefixedMsg As String = prefix & "-" & ItemMsg
+                    Dim itemMsg As String = child.Name.Replace("Label", "").Replace("Button", "").ToLowerI
+                    Dim prefixedMsg As String = prefix & "-" & itemMsg
 
                     If child.Text <> "" Then
-                        If Messages.ContainsKey(PrefixedMsg) Then
-                            child.Text = Msg(PrefixedMsg)
-                        ElseIf Messages.ContainsKey("a-" & ItemMsg) Then
-                            child.Text = Msg("" & ItemMsg)
+                        If Messages.ContainsKey(prefixedMsg) Then
+                            child.Text = Msg(prefixedMsg)
+                        ElseIf Messages.ContainsKey("a-" & itemMsg) Then
+                            child.Text = Msg("" & itemMsg)
                         End If
                     End If
 
                     'Tooltips
                     If TypeOf child Is Button AndAlso tip IsNot Nothing _
-                        AndAlso Messages.ContainsKey(PrefixedMsg & "-tip") Then
+                        AndAlso Messages.ContainsKey(prefixedMsg & "-tip") Then
 
-                        Dim ToolTip As String = Msg(PrefixedMsg & "-tip")
-                        If Shortcut.All.ContainsKey(PrefixedMsg) _
-                            Then ToolTip &= " [" & Shortcut.All(PrefixedMsg).ToString & "]"
+                        Dim ToolTip As String = Msg(prefixedMsg & "-tip")
+                        If Shortcut.All.ContainsKey(prefixedMsg) _
+                            Then ToolTip &= " [" & Shortcut.All(prefixedMsg).ToString & "]"
                         tip.SetToolTip(child, ToolTip)
                     End If
 
@@ -83,31 +83,31 @@ Namespace Huggle
             Next child
         End Sub
 
-        Private Sub LocalizeToolStripItem(ByVal Item As ToolStripItem, ByVal Prefix As String)
-            Dim ItemMsg As String = Item.Name.Replace("Label", "").Replace("Button", "").ToLower
-            Dim PrefixedMsg As String = Prefix & "-" & ItemMsg
+        Private Sub LocalizeToolStripItem(ByVal item As ToolStripItem, ByVal prefix As String)
+            Dim ItemMsg As String = item.Name.Replace("Label", "").Replace("Button", "").ToLowerI
+            Dim PrefixedMsg As String = prefix & "-" & ItemMsg
 
             If Messages.ContainsKey(PrefixedMsg) Then
-                Item.Text = Msg(PrefixedMsg)
+                item.Text = Msg(PrefixedMsg)
             ElseIf Messages.ContainsKey("a-" & ItemMsg) Then
-                Item.Text = Msg("" & ItemMsg)
+                item.Text = Msg("" & ItemMsg)
             End If
 
-            Item.ToolTipText = Item.Text
+            item.ToolTipText = item.Text
         End Sub
 
         'Returns a message string in this language
-        Public Function Message(ByVal Name As String, ByVal ParamArray Params As Object()) As String
-            If Messages.ContainsKey(Name) Then
-                Return Messages(Name).FormatWith(Params)
+        Public Function Message(ByVal name As String, ByVal ParamArray params As Object()) As String
+            If Messages.ContainsKey(name) Then
+                Return Messages(name).FormatForUser(params)
 
-            ElseIf App.Languages.Default IsNot Nothing AndAlso App.Languages.Default.Messages.ContainsKey(Name) Then
+            ElseIf App.Languages.Default IsNot Nothing AndAlso App.Languages.Default.Messages.ContainsKey(name) Then
                 'Localized message does not exist, use default language
-                Return App.Languages.Default.Messages(Name).FormatWith(Params)
+                Return App.Languages.Default.Messages(name).FormatForUser(params)
 
             Else
                 'Message does not exist in either form, output message name instead
-                Return "[" & Name & "]"
+                Return "[" & name & "]"
             End If
         End Function
 

@@ -1,4 +1,5 @@
 ﻿Imports System.Collections.Generic
+Imports System.Globalization
 
 Namespace Huggle
 
@@ -13,9 +14,9 @@ Namespace Huggle
         Private ReadOnly _Result As String
         Private ReadOnly _UserAction As String
 
-        Public Sub New(ByVal time As Date, ByVal user As User, _
-            ByVal filter As AbuseFilter, ByVal page As Page, ByVal result As String, ByVal userAction As String, _
-            ByVal id As Integer, ByVal rcid As Integer)
+        Public Sub New(ByVal time As Date, ByVal user As User,
+            ByVal filter As AbuseFilter, ByVal page As Page, ByVal result As String,
+            ByVal userAction As String, ByVal id As Integer, ByVal rcid As Integer)
 
             MyBase.New(user.Wiki, id, rcid)
             Me.Action = "abuse"
@@ -58,7 +59,7 @@ Namespace Huggle
                     Case Else : HeaderColor = "ffe6d2"
                 End Select
 
-                '_Diff = My.Resources.AbusePage _
+                '_Diff = Resources.AbusePage _
                 '    .Replace("$IMAGE", If(Page.IsBlp, BlpIconHtml, "")) _
                 '    .Replace("$PAGETITLE", Page.Name) _
                 '    .Replace("$DIFF", value) _
@@ -86,7 +87,7 @@ Namespace Huggle
 
         Public Overrides ReadOnly Property Label() As String
             Get
-                Return "[" & Result & "] " & Filter.Id.ToString & " (" & Filter.Description & ")"
+                Return "[" & Result & "] " & Filter.Id.ToStringForUser & " (" & Filter.Description & ")"
             End Get
         End Property
 

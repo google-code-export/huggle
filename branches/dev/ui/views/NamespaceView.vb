@@ -26,7 +26,7 @@ Namespace Huggle.UI
                 If Not space.IsMovable Then props.Add(Msg("view-namespace-unmovable"))
                 If space.IsTalkSpace Then props.Add(Msg("view-namespace-discussion"))
                 If space.HasSubpages Then props.Add(Msg("view-namespace-subpages"))
-                List.AddRow(space.Number.ToString, space.Name, props.Join(", "))
+                List.AddRow(space.Number.ToStringForUser, space.Name, props.Join(", "))
             Next space
 
             List.SortMethods.Add(0, SortMethod.Integer)

@@ -472,7 +472,7 @@ Namespace Huggle
 
     End Class
 
-    <Diagnostics.DebuggerDisplay("{Code}")> _
+    <Diagnostics.DebuggerDisplay("{Code}")>
     Public Class WikiSkin
 
         Private _Code As String
@@ -504,7 +504,7 @@ Namespace Huggle
         End Property
 
         Public Overrides Function ToString() As String
-            Return Name & If(Wiki.Config.DefaultSkin = Code, " ({0})".FormatWith(Msg("a-default")), "")
+            Return Name & If(Wiki.Config.DefaultSkin = Code, " ({0})".FormatForUser(Msg("a-default")), "")
         End Function
 
     End Class

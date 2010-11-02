@@ -407,7 +407,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Public Property Sections() As List(Of String)
+        Public Property Sections() As New List(Of String)
 
         Public Property SectionsKnown() As Boolean
 
@@ -682,7 +682,7 @@ Namespace Huggle
 
             'Handle interwiki links
             For Each interwiki As KeyValuePair(Of String, Wiki) In Wiki.Interwikis
-                If title.ToLower.StartsWith(interwiki.Key & ":") _
+                If title.ToLowerI.StartsWithI(interwiki.Key & ":") _
                     Then Return interwiki.Value.Pages.FromString(title.Substring(interwiki.Key.Length))
             Next interwiki
 
@@ -713,17 +713,18 @@ Namespace Huggle
             'Handle special namespace
             If space.IsSpecial Then Return Nothing
 
-            If space IsNot Wiki.Spaces.Article Then
+            If Not space.IsArticleSpace Then
                 'Normalize namespace name
                 title = space.Name & ":" & title.FromFirst(":")
 
                 'Reject titles that are a namespace name followed by a colon
-                Dim cPos As Integer = title.IndexOf(":")
+                Dim cPos As Integer = title.IndexOfI(":")
                 If cPos = title.Length - 1 Then Return Nothing
 
                 'Capitalize first letter after namespace
                 If Not Wiki.Config.FirstLetterCaseSensitive AndAlso cPos >= 0 _
-                    Then title = title.Substring(0, cPos + 1) & title.Substring(cPos + 1, 1).ToUpper & title.Substring(cPos + 2)
+                    Then title = title.Substring(0, cPos + 1) &
+                    title.Substring(cPos + 1, 1).ToUpperI & title.Substring(cPos + 2)
             End If
 
             Return title

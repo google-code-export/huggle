@@ -101,7 +101,7 @@
                 "summary", Summary, _
                 "token", Session.EditToken, _
                 "section", Section, _
-                "watchlist", Watch.ToString.ToLower)
+                "watchlist", Watch.ToString.ToLowerI)
 
             If Bot Then query.Add("bot")
             If Minor Then query.Add("minor") Else query.Add("notminor")

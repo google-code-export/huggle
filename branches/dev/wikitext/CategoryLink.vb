@@ -4,7 +4,7 @@ Imports System.Text.RegularExpressions
 
 Namespace Huggle.Wikitext
 
-    <Diagnostics.DebuggerDisplay("{Category}")> _
+    <Diagnostics.DebuggerDisplay("{Category}")>
     Public Class CategoryLink
 
         Private Document As Document
@@ -13,13 +13,13 @@ Namespace Huggle.Wikitext
         Private _Selection As Selection
         Private _Sortkey As String
 
-        Public Sub New(ByVal Document As Document, ByVal Category As Category, _
-            ByVal Selection As Selection, ByVal Sortkey As String)
+        Public Sub New(ByVal document As Document, ByVal category As Category,
+            ByVal selection As Selection, ByVal sortkey As String)
 
-            Me.Document = Document
-            _Category = Category
-            _Selection = Selection
-            _Sortkey = Sortkey
+            Me.Document = document
+            _Category = category
+            _Selection = selection
+            _Sortkey = sortkey
         End Sub
 
         Public ReadOnly Property Category() As Category
@@ -94,7 +94,7 @@ Namespace Huggle.Wikitext
                 Document.Text &= LF & category.ToString
             Else
                 'Insert after existing categories
-                Document.Text.Insert(Items(Items.Count - 1).Selection.End, LF & category.ToString)
+                Document.Text = Document.Text.Insert(Items(Items.Count - 1).Selection.End, LF & category.ToString)
             End If
         End Sub
 
@@ -106,7 +106,7 @@ Namespace Huggle.Wikitext
             For Each Match As Match In Regex.Matches _
                 (Document.ParseableText, Parsing.BaseCatPattern(Document.Wiki), RegexOptions.Compiled)
 
-                Items.Add(New CategoryLink(Document, Document.Wiki.Categories(Match.Groups(1).Value), _
+                Items.Add(New CategoryLink(Document, Document.Wiki.Categories(Match.Groups(1).Value),
                      New Selection(Match.Index, Match.Length), Match.Groups(2).Value))
             Next Match
         End Sub

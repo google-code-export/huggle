@@ -85,12 +85,13 @@ Namespace Huggle
 
         Public Overrides Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
             Dim items As New Dictionary(Of String, Object)
-            If target <> ConfigTarget.Local Then Return items
 
-            items.Add("auto-unified-login", AutoUnifiedLogin)
+            If target = ConfigTarget.Local Then
+                items.Add("auto-unified-login", AutoUnifiedLogin)
+                If Extra Then items.Add("extra", True)
+            End If
 
             If GlobalUser.Created > Date.MinValue Then items.Add("created", WikiTimestamp(GlobalUser.Created))
-            If Extra Then items.Add("extra", True)
             If GlobalUser.GlobalGroups IsNot Nothing Then items.Add("groups", GlobalUser.GlobalGroups.Join(","))
             If GlobalUser.Home IsNot Nothing Then items.Add("home", GlobalUser.Home.Code)
             If GlobalUser.Id > 0 Then items.Add("id", GlobalUser.Id)

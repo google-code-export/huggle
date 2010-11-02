@@ -23,9 +23,9 @@
         'Do not modify it using the code editor.
         <System.Diagnostics.DebuggerStepThrough()> _
         Private Sub InitializeComponent()
-            Dim NameColumn As System.Windows.Forms.ColumnHeader
-            Dim TypeColumn As System.Windows.Forms.ColumnHeader
-            Dim VersionColumn As System.Windows.Forms.ColumnHeader
+            Me.NameColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+            Me.TypeColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+            Me.VersionColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.Count = New System.Windows.Forms.Label()
             Me.Properties = New System.Windows.Forms.FlowLayoutPanel()
             Me.ExtensionName = New System.Windows.Forms.LinkLabel()
@@ -37,26 +37,23 @@
             Me.Title = New System.Windows.Forms.Label()
             Me.TypeLabel = New System.Windows.Forms.Label()
             Me.Type = New System.Windows.Forms.EnhancedComboBox()
-            NameColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
-            TypeColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
-            VersionColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.Properties.SuspendLayout()
             CType(Me.Image, System.ComponentModel.ISupportInitialize).BeginInit()
             Me.SuspendLayout()
             '
             'NameColumn
             '
-            NameColumn.Text = "Name"
-            NameColumn.Width = 378
+            Me.NameColumn.Text = "Name"
+            Me.NameColumn.Width = 378
             '
             'TypeColumn
             '
-            TypeColumn.Text = "Type"
-            TypeColumn.Width = 100
+            Me.TypeColumn.Text = "Type"
+            Me.TypeColumn.Width = 100
             '
             'VersionColumn
             '
-            VersionColumn.Text = "Version"
+            Me.VersionColumn.Text = "Version"
             '
             'Count
             '
@@ -135,7 +132,7 @@
             Me.List.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
                         Or System.Windows.Forms.AnchorStyles.Left) _
                         Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-            Me.List.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {NameColumn, TypeColumn, VersionColumn})
+            Me.List.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.NameColumn, Me.TypeColumn, Me.VersionColumn})
             Me.List.FlexibleColumn = 0
             Me.List.FullRowSelect = True
             Me.List.GridLines = True
@@ -216,6 +213,9 @@
         Private WithEvents Title As System.Windows.Forms.Label
         Private WithEvents TypeLabel As System.Windows.Forms.Label
         Private WithEvents Type As System.Windows.Forms.EnhancedComboBox
+        Private WithEvents NameColumn As System.Windows.Forms.ColumnHeader
+        Private WithEvents TypeColumn As System.Windows.Forms.ColumnHeader
+        Private WithEvents VersionColumn As System.Windows.Forms.ColumnHeader
 
     End Class
 End Namespace

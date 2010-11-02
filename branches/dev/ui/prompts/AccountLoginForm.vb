@@ -25,7 +25,7 @@ Namespace Huggle.UI
             Try
                 Icon = Resources.Icon
                 Text = Windows.Forms.Application.ProductName
-                Request.Text = Request.Text.FormatWith(Requester, User.FullName)
+                Request.Text = Request.Text.FormatForUser(Requester, User.FullName)
 
             Catch ex As SystemException
                 App.ShowError(Result.FromException(ex))

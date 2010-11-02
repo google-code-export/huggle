@@ -55,7 +55,7 @@ Namespace Huggle
         End Function
 
         Private Function Parse(ByVal text As String) As List(Of TitleListEntry)
-            Log.Debug("Parsing title blacklist '{0}'".FormatWith(Location.FullTitle))
+            Log.Debug("Parsing title blacklist '{0}'".FormatI(Location.FullTitle))
 
             Dim result As New List(Of TitleListEntry)
             Dim lastComment As String = Nothing
@@ -78,7 +78,7 @@ Namespace Huggle
                     Dim errorMessage As String = Nothing
 
                     For Each opt As String In Regex.Split(match.Groups(3).Value, "\s*\|\s*", RegexOptions.Compiled)
-                        Select Case opt.Trim.ToLower
+                        Select Case opt.Trim.ToLowerI
                             Case "" 'ignore
                             Case "autoconfirmed" : options.Merge(TitleListOption.AutoConfirmed)
                             Case "casesensitive" : options.Merge(TitleListOption.CaseSensitive)
@@ -88,34 +88,34 @@ Namespace Huggle
                             Case "reupload" : options.Merge(TitleListOption.ReUpload)
 
                             Case Else : Log.Debug("Ignored unrecognized title blacklist option '{0}' on {1}" _
-                                .FormatWith(opt.Trim.ToLower, Location.FullTitle))
+                                .FormatI(opt.Trim.ToLowerI, Location.FullTitle))
                         End Select
 
-                        If opt.ToLower.StartsWith("errmsg") AndAlso opt.Contains("=") Then errorMessage = opt.FromFirst("=")
+                        If opt.StartsWithIgnoreCase("errmsg") AndAlso opt.Contains("=") Then errorMessage = opt.FromFirst("=")
                     Next opt
 
                     'Validate pattern
 
                     Try
-                        Dim reg As New Regex("^" & pattern & "$", _
+                        Dim reg As New Regex("^" & pattern & "$",
                             If(options.Contains(TitleListOption.CaseSensitive), RegexOptions.None, RegexOptions.IgnoreCase))
 
                     Catch ex As ArgumentException
                         Log.Debug("Warning: title blacklist pattern '{0}' on '{1}' is malformed, check syntax" _
-                            .FormatWith(pattern, Location.FullTitle))
+                            .FormatI(pattern, Location.FullTitle))
                         Continue For
                     End Try
 
                     'Additional pattern validation to find some mistakes
-                    If pattern.StartsWith("^") OrElse pattern.EndsWith("$") Then
+                    If pattern.StartsWithI("^") OrElse pattern.EndsWithI("$") Then
                         Log.Debug("Warning: title blacklist pattern '{0}' on '{1}' has superfluous anchor, check syntax" _
-                            .FormatWith(pattern, Location.FullTitle))
+                            .FormatI(pattern, Location.FullTitle))
                     Else
                         Try
                             Dim reg As New Regex(pattern)
                         Catch ex As ArgumentException
                             Log.Debug("Warning: title blacklist pattern '{0}' on '{1}' is malformed without starting anchor, check syntax" _
-                                .FormatWith(pattern, Location.FullTitle))
+                                .FormatI(pattern, Location.FullTitle))
                         End Try
                     End If
 
@@ -174,7 +174,7 @@ Namespace Huggle
                 For Each match As Match In Regex.Matches(pattern, "{{\s*([a-z]+)\s*:\s*(.+?)\s*}}", RegexOptions.Compiled)
                     Dim word As String = match.Groups(1).Value
 
-                    Select Case word.ToLower
+                    Select Case word.ToLowerI
                         Case "ns"
                             realPattern = realPattern.Replace(word, session.Wiki.Spaces(CInt(match.Groups(2).Value)).Name)
 
@@ -203,7 +203,7 @@ Namespace Huggle
 
             If Options.Count > 0 OrElse ErrorMessage IsNot Nothing Then
                 result &= " <"
-                If Options.Count > 0 Then result &= Options.Join("|").ToLower
+                If Options.Count > 0 Then result &= Options.Join("|").ToLowerI
                 If ErrorMessage IsNot Nothing Then result &= "|errmsg=" & ErrorMessage
                 result &= ">"
             End If

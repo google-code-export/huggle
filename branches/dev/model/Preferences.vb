@@ -106,7 +106,7 @@ Namespace Huggle
                     Select Case item.Key
                         Case "cols" : EditorColumns = CInt(value)
                         Case "contextchars" : SearchContextChars = CInt(value)
-                        Case "contextlines" : SearchContextLines = value.ToInteger
+                        Case "contextlines" : SearchContextLines = CInt(value)
                         Case "date" : DateFormat = value
                         Case "diffonly" : DiffOnly = value.ToBoolean
                         Case "disablesuggest" : SearchSuggestions = Not value.ToBoolean
@@ -166,13 +166,13 @@ Namespace Huggle
                         Case "wllimit" : RcItems = CInt(value)
 
                         Case Else
-                            If item.Key.StartsWith("searchNs") AndAlso value <> "" _
+                            If item.Key.StartsWithI("searchNs") AndAlso value <> "" _
                                 Then SearchNamespaces.Merge(item.Key.FromFirst("searchNs")) _
                                 Else Other.Merge(item.Key, value)
                     End Select
 
                 Catch ex As SystemException
-                    Log.Debug("Error parsing value for MediaWiki preference '{0}'".FormatWith(item.Key))
+                    Log.Debug("Error parsing value for MediaWiki preference '{0}'".FormatI(item.Key))
                 End Try
             Next item
         End Sub

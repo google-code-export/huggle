@@ -6,7 +6,7 @@ Namespace Huggle
 
     'Represents an entry in the MediaWiki log
 
-    <Diagnostics.DebuggerDisplay("{Label}")> _
+    <Diagnostics.DebuggerDisplay("{Label}")>
     Public MustInherit Class LogItem : Inherits QueueItem
 
         Private _Action As String

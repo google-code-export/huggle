@@ -11,7 +11,7 @@ Namespace Huggle.Actions
     Class BatchQuery : Inherits Query
 
         Private _Items As New List(Of BatchInfo)
-        Private _Queries As New List(Of Query)
+        Private _Queries As New List(Of Process)
 
         Private IsExecuting As Boolean
 
@@ -30,7 +30,7 @@ Namespace Huggle.Actions
             End Get
         End Property
 
-        Public ReadOnly Property Queries() As List(Of Query)
+        Public ReadOnly Property Queries() As List(Of Process)
             Get
                 Return _Queries
             End Get
@@ -71,12 +71,12 @@ Namespace Huggle.Actions
             For Each info As BatchInfo In Items
                 If info.Item Is Nothing Then
                     If info.Type = "stats" Then Stats = True
-                    If info.Type.StartsWith("expand-") Then Expansion.Add(info.Type.FromFirst("expand-"))
+                    If info.Type.StartsWithI("expand-") Then Expansion.Add(info.Type.FromFirst("expand-"))
 
                 ElseIf TypeOf info.Item Is Page Then
                     Dim Page As Page = CType(info.Item, Page)
 
-                    If info.Type.StartsWith("category-") Then
+                    If info.Type.StartsWithI("category-") Then
                         Dim Category As Category = info.Wiki.Categories(info.Type.FromFirst("category-"))
 
                         CategoryMembership.Merge(Category)
@@ -221,13 +221,7 @@ Namespace Huggle.Actions
         Public Sub Execute(ByVal context As Object)
             If Not IsExecuting Then
                 IsExecuting = True
-
-                For Each query As Query In Queries
-                    'query.Context = context
-                    query.Start()
-                Next query
-
-                App.WaitFor(Function() Queries.TrueForAll(Function(q As Query) q.IsComplete))
+                App.DoParallel(Queries)
                 IsExecuting = False
             End If
         End Sub

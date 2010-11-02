@@ -184,13 +184,13 @@ Namespace Huggle.Scripting
                     Case TokenType.Identifier
                         If context IsNot Nothing AndAlso CStr(token.Value) = "this" Then Return New Token(context)
 
-                        If Identifiers.ContainsKey(token.String.ToLower) Then
-                            If Identifiers(token.String.ToLower) Is Nothing Then
+                        If Identifiers.ContainsKey(token.AsString.ToLowerI) Then
+                            If Identifiers(token.AsString.ToLowerI) Is Nothing Then
                                 If InfoNeeded IsNot Nothing AndAlso TypeOf context Is QueueItem _
-                                    Then InfoNeeded.Add(New BatchInfo(Wiki, CType(context, QueueItem), token.String))
+                                    Then InfoNeeded.Add(New BatchInfo(Wiki, CType(context, QueueItem), token.AsString))
                                 Return Undefined
                             Else
-                                Return New Token(Identifiers(token.String.ToLower))
+                                Return New Token(Identifiers(token.AsString.ToLowerI))
                             End If
                         End If
 
@@ -226,8 +226,8 @@ Namespace Huggle.Scripting
             (ByVal Context As Object, ByVal Func As Token, ByVal Original As Token()) As Token
 
             'User-defined functions
-            If Identifiers.ContainsKey(Func.String) AndAlso TypeOf Identifiers(Func.String) Is Func _
-                Then Return ApplyFunc(Context, CType(Identifiers(Func.String), Func), Original)
+            If Identifiers.ContainsKey(Func.AsString) AndAlso TypeOf Identifiers(Func.AsString) Is Func _
+                Then Return ApplyFunc(Context, CType(Identifiers(Func.AsString), Func), Original)
 
             Dim Result As Token
 
@@ -243,8 +243,8 @@ Namespace Huggle.Scripting
                 If Arg(i).ValueType = "String" AndAlso Arg(i).ToString = "undefined" Then Return Undefined
 
                 'Short circuiting boolean operations
-                If (Func.String = "&" OrElse Func.String = "and") AndAlso Not Arg(i).Bool Then Return New Token(False)
-                If (Func.String = "|" OrElse Func.String = "or") AndAlso Arg(i).Bool Then Return New Token(True)
+                If (Func.AsString = "&" OrElse Func.AsString = "and") AndAlso Not Arg(i).AsBool Then Return New Token(False)
+                If (Func.AsString = "|" OrElse Func.AsString = "or") AndAlso Arg(i).AsBool Then Return New Token(True)
             Next i
 
             'Get named args
@@ -321,13 +321,13 @@ Namespace Huggle.Scripting
                 Return EvalFunction(Context, Prop, Args)
             End If
 
-            Dim PropName As String = Prop.String.ToLower
+            Dim propName As String = Prop.AsString.ToLowerI
 
             'If TypeOf Item.Value Is TableRow Then
             '    Dim Row As TableRow = CType(Item.Value, TableRow)
 
             '    For i As Integer = 0 To Row.Columns.Count - 1
-            '        If Row.Columns(i).ToLower = PropName Then Return New Token(Row.Items(i))
+            '        If Row.Columns(i).ToLowerI = PropName Then Return New Token(Row.Items(i))
             '    Next i
             'End If
 
@@ -336,7 +336,7 @@ Namespace Huggle.Scripting
             '    Dim Column As Integer = -1
 
             '    For i As Integer = 0 To Table.Columns.Count - 1
-            '        If Table.Columns(i).ToLower = PropName Then Column = i
+            '        If Table.Columns(i).ToLowerI = PropName Then Column = i
             '    Next i
 
             '    If Column > -1 Then
@@ -372,7 +372,7 @@ Namespace Huggle.Scripting
             query.SetOptions(options)
 
             'App.Invoke(AddressOf OnProgress, New EvalProgressEventArgs(Msg("list-progress-" & _
-            '    Query.GetType.Name.Remove("Request").ToLower)))
+            '    Query.GetType.Name.Remove("Request").ToLowerI)))
 
             Return New Token(New QueryPipe(Me, query))
         End Function
@@ -396,7 +396,7 @@ Namespace Huggle.Scripting
 
         Private Function CompareRows(ByVal x As Object, ByVal y As Object, ByVal Type As String) As Integer
             Select Case Type
-                Case "String" : Return String.Compare(CStr(x), CStr(y))
+                Case "String" : Return String.Compare(CStr(x), CStr(y), StringComparison.Ordinal)
                 Case "Number" : Return Math.Sign(CDbl(x) - CDbl(y))
                 Case "Boolean" : If CBool(x) Then Return 1 Else If CBool(y) Then Return -1 Else Return 0
                 Case "Range" : Return Math.Sign(CType(x, Range).Lower - CType(y, Range).Lower)

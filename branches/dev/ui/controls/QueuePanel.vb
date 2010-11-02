@@ -12,8 +12,6 @@ Namespace Huggle.UI
         Private _Mode As QueueMode
         Private _Wiki As Wiki
 
-        Private ReadOnly StringFormat As New StringFormat With {.Trimming = StringTrimming.EllipsisCharacter}
-
         Private WithEvents _Queue As Queue
 
         Public Event ItemsChanged As SimpleEventHandler(Of Queue)
@@ -74,7 +72,6 @@ Namespace Huggle.UI
 
         Private Sub _HandleDestroyed() Handles Me.HandleDestroyed
             CanRender = False
-            StringFormat.Dispose()
         End Sub
 
         Private Sub _MouseDown(ByVal s As Object, ByVal e As MouseEventArgs) Handles Me.MouseDown
@@ -114,8 +111,8 @@ Namespace Huggle.UI
                 End Using
 
                 Using labelFont As New Font(Font, Item.LabelStyle)
-                    Gfx.Graphics.DrawString(Item.Label, labelFont, Brushes.Black,
-                        New Rectangle(4, Y + 1, X - 3, 14), StringFormat)
+                    TextRenderer.DrawText(Gfx.Graphics, Item.Label, labelFont,
+                        New Rectangle(4, Y + 1, X - 3, 14), Color.Black, Item.LabelBackColor, TextFormatFlags.EndEllipsis)
                 End Using
 
                 If Item.Icon IsNot Nothing Then Gfx.Graphics.DrawImageUnscaled(Item.Icon, X, Y)

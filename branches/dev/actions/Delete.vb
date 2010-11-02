@@ -51,7 +51,7 @@
                 "title", Page, _
                 "reason", Comment, _
                 "token", Session.EditToken, _
-                "watchlist", Watch.ToString.ToLower)
+                "watchlist", Watch.ToString.ToLowerI)
 
             'Delete the page
             Dim req As New ApiRequest(Session, Description, query)

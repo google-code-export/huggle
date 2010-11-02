@@ -119,10 +119,9 @@ Namespace Huggle.UI
         Private Sub Views_DrawItem(ByVal sender As Object, ByVal e As DrawItemEventArgs) Handles Views.DrawItem
             e.DrawBackground()
             e.DrawFocusRectangle()
-            
-            Using pen As New Pen(e.ForeColor), format As New StringFormat With {.LineAlignment = StringAlignment.Center}
-                e.Graphics.DrawString(Views.Items(e.Index).ToString, Views.Font, pen.Brush, e.Bounds, format)
-            End Using
+
+            TextRenderer.DrawText(e.Graphics, Views.Items(e.Index).ToString,
+                Views.Font, e.Bounds, e.ForeColor, e.BackColor, TextFormatFlags.VerticalCenter)
         End Sub
 
     End Class

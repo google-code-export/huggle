@@ -169,7 +169,7 @@
 '                Return Failed(Msg("error-pagemissing"))
 '            End If
 
-'            If Text.ToLower.StartsWith("#redirect [[") Then
+'            If Text.ToLowerI.StartsWith("#redirect [[") Then
 '                Return Failed(Msg("error-rfdneeded"))
 
 '            ElseIf Text.Contains(Avoid) Then
