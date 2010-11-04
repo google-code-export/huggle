@@ -63,7 +63,7 @@ Namespace Huggle
             For Each key As String In keys
                 Dim value As Object = Values(key)
                 If value Is Nothing Then Continue For
-                If TypeOf value Is IList(Of String) Then value = CType(value, IList(Of String)).Join("|")
+                If TypeOf value Is IList(Of String) Then value = DirectCast(value, IList(Of String)).Join("|")
                 If TypeOf value Is Boolean Then value = If(CBool(value), 1, 0)
 
                 'Hide passwords/tokens in debug log
@@ -83,7 +83,7 @@ Namespace Huggle
             For Each item As KeyValuePair(Of String, Object) In Values
                 Dim value As Object = item.Value
                 If value Is Nothing Then Continue For
-                If TypeOf value Is IList(Of String) Then value = CType(value, IList(Of String)).Join("|")
+                If TypeOf value Is IList(Of String) Then value = DirectCast(value, IList(Of String)).Join("|")
                 If TypeOf value Is Boolean Then value = If(CBool(value), 1, 0)
                 Dim str As String = UrlEncode(value.ToString)
 

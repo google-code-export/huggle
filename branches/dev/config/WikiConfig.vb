@@ -13,11 +13,6 @@ Namespace Huggle
 
         Private Wiki As Wiki
 
-        Private ReadOnly IgnoredMessages As String() = {
-            "bad_image_list", "common.css", "common.js", "monobook.css", "monobook.js",
-            "robots.txt", "spam-blacklist", "spam-whitelist", "titleblacklist"
-            }
-
         Public Sub New(ByVal wiki As Wiki)
             Me.Wiki = wiki
         End Sub
@@ -215,15 +210,26 @@ Namespace Huggle
 
                         Case "change-tags"
                             For Each item As KeyValuePair(Of String, String) In Config.ParseConfig(source, key, value)
-                                Dim changeTag As ChangeTag = Wiki.ChangeTags(item.Key)
+                                Dim count As Integer
+                                Dim desc As String = Nothing
+                                Dim displayName As String = Nothing
+                                Dim name As String = Nothing
 
                                 For Each prop As KeyValuePair(Of String, String) In Config.ParseConfig(source, key & ":" & item.Key, item.Value)
                                     Select Case prop.Key
-                                        Case "count" : changeTag.Hits = CInt(prop.Value)
-                                        Case "description" : changeTag.Description = prop.Value
-                                        Case "display-name" : changeTag.DisplayName = prop.Value
+                                        Case "count" : count = CInt(prop.Value)
+                                        Case "description" : desc = prop.Value
+                                        Case "display-name" : displayName = prop.Value
+                                        Case "name" : name = prop.Value
                                     End Select
                                 Next prop
+
+                                If Not String.IsNullOrEmpty(name) Then
+                                    Dim changeTag As ChangeTag = Wiki.ChangeTags(name)
+                                    changeTag.Description = desc
+                                    changeTag.DisplayName = If(displayName, changeTag.Name)
+                                    changeTag.Hits = count
+                                End If
                             Next item
 
                         Case "database" : Database = value
@@ -456,16 +462,18 @@ Namespace Huggle
             If Wiki.ChangeTags.All.Count > 0 Then
                 Dim changeTags As New Dictionary(Of String, Object)
 
-                For Each changeTag As ChangeTag In Wiki.ChangeTags.All
+                For i As Integer = 0 To Wiki.ChangeTags.All.Count - 1
                     Dim item As New Dictionary(Of String, Object)
+                    Dim changeTag As ChangeTag = Wiki.ChangeTags.All(i)
 
                     item.Add("count", changeTag.Hits)
                     If Not String.IsNullOrEmpty(changeTag.Description) Then item.Add("description", changeTag.Description)
                     If Not String.IsNullOrEmpty(changeTag.DisplayName) AndAlso changeTag.DisplayName <> changeTag.Name _
                         Then item.Add("display-name", changeTag.DisplayName)
+                    item.Add("name", changeTag.Name)
 
-                    changeTags.Add(changeTag.Name, item)
-                Next changeTag
+                    changeTags.Add(i.ToStringI.PadLeft(4, "0"c), item)
+                Next i
 
                 items.Add("change-tags", changeTags)
             End If
@@ -528,7 +536,16 @@ Namespace Huggle
                 Dim messages As New Dictionary(Of String, Object)
 
                 For Each msg As KeyValuePair(Of String, String) In Wiki.Messages
-                    If Not IgnoredMessages.Contains(msg.Key) Then messages.Add(msg.Key, msg.Value)
+                    If InternalConfig.WikiMessages.Contains(msg.Key) Then
+                        messages.Add(msg.Key, msg.Value)
+                    Else
+                        For Each msgGroup As String In InternalConfig.MessageGroups
+                            If msg.Key.StartsWith(msgGroup.ToFirst("*")) Then
+                                messages.Add(msg.Key, msg.Value)
+                                Exit For
+                            End If
+                        Next msgGroup
+                    End If
                 Next msg
 
                 items.Add("messages", messages)

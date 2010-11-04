@@ -39,6 +39,7 @@ Namespace Huggle
             Wikis.Global = metaWiki
 
             'Load configuration
+            InternalConfig.Initialize()
             Config.Local.LoadLocal()
             LoadMessages()
             Config.Global.LoadLocal()

@@ -523,7 +523,8 @@ Namespace Huggle
                             Dim tag As ChangeTag = Wiki.ChangeTags(tagNode.Attribute("name"))
 
                             If tagNode.HasAttribute("description") Then tag.Description = tagNode.Attribute("description")
-                            If tagNode.HasAttribute("displayname") Then tag.DisplayName = tagNode.Attribute("displayname")
+                            If tagNode.HasAttribute("displayname") _
+                                Then tag.DisplayName = WikiSummaryHtmlToWikitext(tagNode.Attribute("displayname"))
                             If tagNode.HasAttribute("hitcount") Then tag.Hits = CInt(tagNode.Attribute("hitcount"))
                         Next tagNode
 
@@ -1692,11 +1693,11 @@ Namespace Huggle
 
                         For Each rateNode As XmlNode In node.ChildNodes
                             For Each groupNode As XmlNode In rateNode.ChildNodes
-                                User.RateLimits.Add(New RateLimit( _
-                                    Action:=rateNode.Name, _
-                                    Group:=groupNode.Name, _
-                                    Hits:=CInt(groupNode.Attribute("hits")), _
-                                    Seconds:=CInt(groupNode.Attribute("seconds"))))
+                                User.RateLimits.Add(New RateLimit(
+                                    Action:=rateNode.Name,
+                                    group:=groupNode.Name,
+                                    hits:=CInt(groupNode.Attribute("hits")),
+                                    time:=New TimeSpan(0, 0, CInt(groupNode.Attribute("seconds")))))
                             Next groupNode
                         Next rateNode
 

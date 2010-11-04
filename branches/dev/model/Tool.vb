@@ -6,10 +6,8 @@ Namespace Huggle
 
     'Represents an automated or assisted editing tool
 
-    <Diagnostics.DebuggerDisplay("{Name}")> _
+    <Diagnostics.DebuggerDisplay("{Name}")>
     Public Class Tool
-
-        Private _Description, _Link, _Name, _Type As String, _Pattern As Regex
 
         Private Shared ReadOnly _All As New List(Of Tool)
 
@@ -19,49 +17,14 @@ Namespace Huggle
         End Sub
 
         Public Property Description() As String
-            Get
-                Return _Description
-            End Get
-            Set(ByVal value As String)
-                _Description = value
-            End Set
-        End Property
 
         Public Property Link() As String
-            Get
-                Return _Link
-            End Get
-            Set(ByVal value As String)
-                _Link = value
-            End Set
-        End Property
 
         Public Property Name() As String
-            Get
-                Return _Name
-            End Get
-            Set(ByVal value As String)
-                _Name = value
-            End Set
-        End Property
 
         Public Property Pattern() As Regex
-            Get
-                Return _Pattern
-            End Get
-            Set(ByVal value As Regex)
-                _Pattern = value
-            End Set
-        End Property
 
         Public Property Type() As String
-            Get
-                Return _Type
-            End Get
-            Set(ByVal value As String)
-                _Type = value
-            End Set
-        End Property
 
         Public Overrides Function ToString() As String
             Return Name
@@ -73,12 +36,12 @@ Namespace Huggle
             End Get
         End Property
 
-        Public Shared Function FromName(ByVal Name As String) As Tool
-            For Each Item As Tool In All
-                If Item.Name = Name Then Return Item
-            Next Item
+        Public Shared Function FromName(ByVal name As String) As Tool
+            For Each tool As Tool In All
+                If tool.Name = name Then Return tool
+            Next tool
 
-            Return New Tool(Name)
+            Return New Tool(name)
         End Function
 
         Public Shared Sub ResetState()

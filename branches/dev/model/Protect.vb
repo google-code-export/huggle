@@ -6,27 +6,18 @@ Namespace Huggle.Actions
 
     Public Class Protect : Inherits Query
 
-        Private _Cascade As Boolean
         Private _Levels As New Dictionary(Of String, ProtectionPart)
         Private _Page As Page
         Private _Summary As String
-        Private _Watch As WatchAction
 
-        Public Sub New(ByVal session As Session, ByVal Page As Page, ByVal Summary As String)
-            MyBase.New(session, Msg("protect-desc", Page))
+        Public Sub New(ByVal session As Session, ByVal page As Page, ByVal summary As String)
+            MyBase.New(session, Msg("protect-desc", page))
 
-            _Page = Page
-            _Summary = Summary
+            _Page = page
+            _Summary = summary
         End Sub
 
         Public Property Cascade() As Boolean
-            Get
-                Return _Cascade
-            End Get
-            Set(ByVal value As Boolean)
-                _Cascade = value
-            End Set
-        End Property
 
         Public ReadOnly Property Levels() As Dictionary(Of String, ProtectionPart)
             Get
@@ -47,13 +38,6 @@ Namespace Huggle.Actions
         End Property
 
         Public Property Watch() As WatchAction
-            Get
-                Return _Watch
-            End Get
-            Set(ByVal value As WatchAction)
-                _Watch = value
-            End Set
-        End Property
 
         Public Overrides Sub Start()
             OnProgress(Msg("protect-progress", Page))
@@ -75,12 +59,12 @@ Namespace Huggle.Actions
                 expiry.Add(WikiTimestamp(part.Value.Expires))
             Next part
 
-            Dim query As New QueryString( _
-                "action", "protect", _
-                "title", Page, _
-                "reason", Summary, _
-                "protections", level.Join("|"), _
-                "expiry", expiry.Join("|"), _
+            Dim query As New QueryString(
+                "action", "protect",
+                "title", Page,
+                "reason", Summary,
+                "protections", level.Join("|"),
+                "expiry", expiry.Join("|"),
                 "token", Session.EditToken)
 
             If Cascade Then query.Add("cascade")

@@ -25,9 +25,9 @@ Namespace Huggle
         Public ReadOnly C1 As Char = Convert.ToChar(31)
         Public ReadOnly C2 As Char = Convert.ToChar(30)
 
-        Public ReadOnly BlpIconHtml As String = _
-            "<img src='http://upload.wikimedia.org/wikipedia/commons/thumb/4/41/" & _
-            "Crystal_Clear_app_personal_gray.png/32px-Crystal_Clear_app_personal_gray.png' " & _
+        Public ReadOnly BlpIconHtml As String =
+            "<img src='http://upload.wikimedia.org/wikipedia/commons/thumb/4/41/" &
+            "Crystal_Clear_app_personal_gray.png/32px-Crystal_Clear_app_personal_gray.png' " &
             "alt='Biography of living person' width='32' height='32' border='0' />"
 
         'Can't use Date.MinValue for optional date parameters, have to do this instead
@@ -116,7 +116,7 @@ Namespace Huggle
             End Using
         End Function
 
-        Public Function MakeWebPage(ByVal Html As String, Optional ByVal Title As String = "") As String
+        Public Function MakeWebPage(ByVal html As String, Optional ByVal title As String = "") As String
             Return Nothing 'My.Resources.WebPage _
             '.Replace("$TITLE", HtmlEncode(Title)) _
             '.Replace("$USER", UrlEncode(Account.Current.User.Name)) _
@@ -126,13 +126,13 @@ Namespace Huggle
 
         Public Function FullDateString(ByVal time As Date) As String
             Dim utc As Date = time.ToUniversalTime
-            Return CStr(time.Year) & "-" & CStr(time.Month).PadLeft(2, "0"c) & "-" & CStr(time.Day).PadLeft(2, "0"c) & _
-                " " & CStr(time.Hour).PadLeft(2, "0"c) & ":" & CStr(time.Minute).PadLeft(2, "0"c) & ":" & _
+            Return CStr(time.Year) & "-" & CStr(time.Month).PadLeft(2, "0"c) & "-" & CStr(time.Day).PadLeft(2, "0"c) &
+                " " & CStr(time.Hour).PadLeft(2, "0"c) & ":" & CStr(time.Minute).PadLeft(2, "0"c) & ":" &
                 CStr(time.Second).PadLeft(2, "0"c)
         End Function
 
-        Public Function MakeWebError(ByVal Text As String) As String
-            Return "<div class='huggle-error'>" & Text & "</div>"
+        Public Function MakeWebError(ByVal text As String) As String
+            Return "<div class='huggle-error'>" & text & "</div>"
         End Function
 
         Public Function MimeType(ByVal filename As String) As String
@@ -154,13 +154,13 @@ Namespace Huggle
             Return "application/octet-stream"
         End Function
 
-        Public Function CeilingToSigFigs(ByVal Number As Double, ByVal Digits As Integer) As Double
-            Dim Scale As Double = Math.Pow(10, Math.Ceiling(Math.Log10(Number)) - Digits)
-            Return Scale * Math.Ceiling(Number / Scale)
+        Public Function CeilingToSigFigs(ByVal number As Double, ByVal digits As Integer) As Double
+            Dim scale As Double = Math.Pow(10, Math.Ceiling(Math.Log10(number)) - digits)
+            Return scale * Math.Ceiling(number / scale)
         End Function
 
-        Public Function Dictionary(ByVal ParamArray Items() As Object) As Dictionary(Of String, String)
-            Return Items.ToDictionary
+        Public Function Dictionary(ByVal ParamArray items() As Object) As Dictionary(Of String, String)
+            Return items.ToDictionary
         End Function
 
         Public Function FuzzyTime(ByVal time As TimeSpan) As String
@@ -247,23 +247,23 @@ Namespace Huggle
 
         'Constructs a string of the form "foo", "foo and bar" or "foo, bar and baz"
         'in the specified language
-        Public Function NaturalLanguageList(ByVal Language As Language, ByVal ParamArray Items() As Object) As String
-            Select Case Items.Length
+        Public Function NaturalLanguageList(ByVal language As Language, ByVal ParamArray items() As Object) As String
+            Select Case items.Length
                 Case 0 : Return Nothing
-                Case 1 : Return Items(0).ToString
-                Case 2 : Return Items(0).ToString & " " & Language.Message("a-and") & " " & Items(1).ToString
+                Case 1 : Return items(0).ToString
+                Case 2 : Return items(0).ToString & " " & language.Message("a-and") & " " & items(1).ToString
                 Case Else
                     Dim Result As String = ""
 
-                    For i As Integer = 0 To Items.Length - 2
-                        Result &= Items(i).ToString & ", "
+                    For i As Integer = 0 To items.Length - 2
+                        Result &= items(i).ToString & ", "
                     Next i
 
-                    Return NaturalLanguageList(Language, Result, Items(Items.Length - 1))
+                    Return NaturalLanguageList(language, Result, items(items.Length - 1))
             End Select
         End Function
 
-        Public Function ParameterList(ByVal Items() As Object) As ParameterCollection
+        Public Function ParameterList(ByVal items() As Object) As ParameterCollection
             Return Nothing
         End Function
 
@@ -302,16 +302,16 @@ Namespace Huggle
             Return str.Substring(0, 1).ToUpperI & str.Substring(1)
         End Function
 
-        Public Function ValueListToRegex(ByVal List As List(Of String)) As Regex
-            If List Is Nothing Then Return Nothing
+        Public Function ValueListToRegex(ByVal list As List(Of String)) As Regex
+            If list Is Nothing Then Return Nothing
 
-            Dim Patterns As New List(Of String)
+            Dim patterns As New List(Of String)
 
-            For Each Item As String In List
-                Patterns.Add(Regex.Escape(Item))
-            Next Item
+            For Each item As String In list
+                patterns.Add(Regex.Escape(item))
+            Next item
 
-            Return New Regex("(" & String.Join("|", Patterns.ToArray) & ")", RegexOptions.Compiled)
+            Return New Regex("(" & String.Join("|", patterns.ToArray) & ")", RegexOptions.Compiled)
         End Function
 
         Public Function GetHtmlAttributeFromName(ByVal html As String,
@@ -338,7 +338,7 @@ Namespace Huggle
             If item Is Nothing Then Return String.Empty
 
             If TypeOf item Is ArrayList Then
-                Dim list As ArrayList = CType(item, ArrayList)
+                Dim list As ArrayList = DirectCast(item, ArrayList)
                 Dim strs(list.Count - 1) As String
 
                 For i As Integer = 0 To list.Count - 1
@@ -348,7 +348,7 @@ Namespace Huggle
                 Return String.Join(", ", strs)
 
             ElseIf TypeOf item Is Table Then
-                Dim table As Table = CType(item, Table)
+                Dim table As Table = DirectCast(item, Table)
                 Dim result As String = "Table ["
 
                 For Each column As TableColumn In table.Columns
@@ -393,9 +393,9 @@ Namespace Huggle
 
         Public Structure Pair
 
-            Public Sub New(ByVal First As Object, ByVal Second As Object)
-                Me.First = First
-                Me.Second = Second
+            Public Sub New(ByVal first As Object, ByVal second As Object)
+                Me.First = first
+                Me.Second = second
             End Sub
 
             Dim First As Object
@@ -410,9 +410,9 @@ Namespace Huggle
 
             Public Shared ReadOnly Empty As New Selection(-1, 0)
 
-            Public Sub New(ByVal Start As Integer, ByVal Length As Integer)
-                _Start = Start
-                _Length = Length
+            Public Sub New(ByVal start As Integer, ByVal length As Integer)
+                _Start = start
+                _Length = length
             End Sub
 
             Public ReadOnly Property [End]() As Integer

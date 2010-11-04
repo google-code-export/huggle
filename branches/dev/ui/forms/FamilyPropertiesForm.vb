@@ -31,7 +31,7 @@ Namespace Huggle.UI
                 'Core MediaWiki views
                 Views.Items.AddRange({
                     Msg("view-familygeneral-title"),
-                    Msg("view-globalgroups-title")})
+                    Msg("view-globalgroup-title")})
 
                 Views.SelectedIndex = 0
 
@@ -47,7 +47,7 @@ Namespace Huggle.UI
                     If Not LoadedViews.ContainsInstance(Of GeneralFamilyView)() Then LoadedViews.Add(New GeneralFamilyView(Session))
                     ViewInstance(Of GeneralFamilyView)()
 
-                Case Msg("view-globalgroups-title")
+                Case Msg("view-globalgroup-title")
                     If Not LoadedViews.ContainsInstance(Of GlobalGroupView)() Then LoadedViews.Add(New GlobalGroupView(Session))
                     ViewInstance(Of GlobalGroupView)()
             End Select

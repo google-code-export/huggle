@@ -23,19 +23,24 @@ Namespace Huggle
 
         Public Shared Property SourceUrl As New Uri("http://huggle.googlecode.com/")
         Public Shared Property TranslationUrl As New Uri("http://meta.wikimedia.org/wiki/Huggle")
-        Public Shared Property UseCloud As Boolean = True
+        Public Shared Property UseCloud As Boolean = False
         Public Shared Property UserAgent As String = "Huggle/" & Windows.Forms.Application.ProductVersion
         Public Shared Property WikimediaFilePath As String = "http://upload.wikimedia.org/"
         Public Shared Property WikimediaSecurePath As String = "https://secure.wikimedia.org/"
-        Public Shared Property WikimediaClosedWikisPath As New Uri("http://noc.wikimedia.org/conf/closed.dblist")
+        Public Shared Property WikimediaClosedWikisUrl As New Uri("http://noc.wikimedia.org/conf/closed.dblist")
+        Public Shared Property WikimediaGlobalGroupsUrl As New Uri("http://toolserver.org/~pathoschild/globalgroups/")
 
-        Public Shared ReadOnly Property WikiMessages() As String()
-            Get
-                Static result As String()
-                If result Is Nothing Then result = Resources.messages.Split(CRLF)
-                Return result
-            End Get
-        End Property
+        Public Shared Property MessageGroups As List(Of String)
+        Public Shared Property WikiMessages As List(Of String)
+
+        Public Shared Sub Initialize()
+            MessageGroups = New List(Of String)
+            WikiMessages = New List(Of String)
+
+            For Each item As String In Resources.messages.Split(CRLF).Trim
+                If item.Contains("*") Then MessageGroups.Merge(item) Else WikiMessages.Merge(item)
+            Next item
+        End Sub
 
     End Class
 

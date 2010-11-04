@@ -5,7 +5,7 @@ Imports System.Diagnostics
 Namespace Huggle
 
     <Diagnostics.DebuggerDisplay("{LogMessage}")>
-    Public Class Result : Inherits EventArgs
+    Public Class Result
 
         Private _Inner As Result
         Private _Message As String = "Unknown error"

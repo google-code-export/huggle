@@ -256,9 +256,9 @@ Namespace Huggle.Wikitext
             If items Is Nothing Then Me.Items = New List(Of Parameter) Else Me.Items = items
         End Sub
 
-        Public Sub New(ByVal ParamArray Values() As Object)
-            For i As Integer = 0 To (Values.Length \ 2) - 2 Step 2
-                Items.Add(New Parameter(Values(i).ToString, Values(i + 1).ToString))
+        Public Sub New(ByVal ParamArray values() As Object)
+            For i As Integer = 0 To (values.Length \ 2) - 2 Step 2
+                Items.Add(New Parameter(values(i).ToString, values(i + 1).ToString))
             Next i
         End Sub
 

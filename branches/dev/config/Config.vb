@@ -85,13 +85,13 @@ Namespace Huggle
                 Dim str As String
 
                 If TypeOf item Is Dictionary(Of String, Object) Then
-                    str = MakeConfig(CType(item, Dictionary(Of String, Object)))
+                    str = MakeConfig(DirectCast(item, Dictionary(Of String, Object)))
                 ElseIf TypeOf item Is List(Of String) Then
-                    str = CType(item, List(Of String)).Join(", ")
+                    str = DirectCast(item, List(Of String)).Join(", ")
                 ElseIf TypeOf item Is Date Then
-                    str = DirectCast(item, DateTime).ToString("u", CultureInfo.InvariantCulture)
+                    str = CDate(item).ToString("u", CultureInfo.InvariantCulture)
                 ElseIf TypeOf item Is Boolean Then
-                    str = CType(item, Boolean).ToString.ToLowerI
+                    str = CBool(item).ToString.ToLowerI
                 Else
                     str = Escape(item.ToString)
                 End If
@@ -102,6 +102,10 @@ Namespace Huggle
 
             result.Append(CRLF & CRLF)
             Return result.ToString
+        End Function
+
+        Protected Shared Function EscapeKey(ByVal key As String) As String
+            Return Escape(key).Replace(":", "_")
         End Function
 
         Private Shared Function Escape(ByVal value As String) As String

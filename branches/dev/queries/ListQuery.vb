@@ -276,7 +276,7 @@ Namespace Huggle.Actions
                 Else
                     For Each item As QueueItem In Request.Items
                         If TypeOf item Is Revision AndAlso (OutputType = "pages" OrElse OutputType = "info") _
-                            Then item = CType(item, Revision).Page
+                            Then item = DirectCast(item, Revision).Page
 
                         If TypeOf item Is Page AndAlso InputType = "revisions" Then Continue For
 

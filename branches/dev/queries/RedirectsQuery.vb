@@ -9,9 +9,9 @@ Namespace Huggle.Actions
 
         Private Pages As List(Of Page)
 
-        Public Sub New(ByVal session As Session, ByVal Pages As List(Of Page))
+        Public Sub New(ByVal session As Session, ByVal pages As List(Of Page))
             MyBase.New(session, Msg("redirects-desc"))
-            Me.Pages = Pages
+            Me.Pages = pages
         End Sub
 
         Public Overrides Sub Start()
@@ -21,10 +21,10 @@ Namespace Huggle.Actions
                 titles.Add(page.Title)
             Next page
 
-            Dim request As New ApiRequest(Session, Description, New QueryString( _
-                    "action", "query", _
-                        "redirects", True, _
-                        "titles", titles.Join("|")))
+            Dim request As New ApiRequest(Session, Description, New QueryString(
+                "action", "query",
+                "redirects", True,
+                "titles", titles.Join("|")))
 
             request.Start()
             If request.IsFailed Then OnFail(request.Message) : Return

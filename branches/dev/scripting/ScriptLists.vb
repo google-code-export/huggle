@@ -11,39 +11,39 @@ Namespace Huggle.Scripting
 
             Select Case Func.AsString
                 Case "list"
-                    Dim Result As New ArrayList
+                    Dim result As New ArrayList
 
-                    For Each Item As Token In Arg
-                        Result.Add(Item.Value)
-                    Next Item
+                    For Each item As Token In Arg
+                        result.Add(item.Value)
+                    Next item
 
-                    Return New Token(Result)
+                    Return New Token(result)
 
                 Case "sort"
-                    Dim Result As ArrayList = Arg(0).AsList
+                    Dim result As ArrayList = Arg(0).AsList
 
                     Try
-                        Result.Sort(Comparer)
+                        result.Sort(Comparer)
                     Catch ex As InvalidOperationException
                         Throw New ScriptException(Msg("query-sorterror"))
                     End Try
 
-                    Return New Token(Result)
+                    Return New Token(result)
 
                 Case "unique"
-                    Dim Result As New ArrayList
-                    Dim Strs As New List(Of String)
+                    Dim result As New ArrayList
+                    Dim strs As New List(Of String)
 
-                    For Each Item As Object In Arg(0).AsList
-                        Dim Str As String = MakeString(Item)
+                    For Each item As Object In Arg(0).AsList
+                        Dim str As String = MakeString(item)
 
-                        If Not Strs.Contains(Str) Then
-                            Strs.Add(Str)
-                            Result.Add(Item)
+                        If Not strs.Contains(str) Then
+                            strs.Add(str)
+                            result.Add(item)
                         End If
-                    Next Item
+                    Next item
 
-                    Return New Token(Result)
+                    Return New Token(result)
 
                     'Case "group"
                     '    Dim List As ArrayList = Arg(0).List
@@ -82,13 +82,13 @@ Namespace Huggle.Scripting
                     '    Return New Token(Result)
 
                 Case "exclude"
-                    Dim Result As ArrayList = Arg(0).AsList
+                    Dim result As ArrayList = Arg(0).AsList
 
-                    For Each Item As Object In Arg(1).AsList
-                        If Result.Contains(Item) Then Result.Remove(Item)
-                    Next Item
+                    For Each item As Object In Arg(1).AsList
+                        If result.Contains(item) Then result.Remove(item)
+                    Next item
 
-                    Return New Token(Result)
+                    Return New Token(result)
 
                 Case "union"
                     Dim Result As ArrayList = Arg(0).AsList

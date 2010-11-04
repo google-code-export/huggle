@@ -3,7 +3,7 @@ Imports System.Collections.Generic
 
 Namespace Huggle
 
-    <Diagnostics.DebuggerDisplay("{Name}")> _
+    <Diagnostics.DebuggerDisplay("{Name}")>
     Public Class Family
 
         Private ReadOnly _Code As String
@@ -126,6 +126,7 @@ Namespace Huggle
             _Default = App.Wikis(family.Code & "-default")
             _Default.Family = family
             _Default.IsDefault = True
+            Me.Family = family
         End Sub
 
         Public ReadOnly Property All() As IList(Of Wiki)
@@ -137,6 +138,13 @@ Namespace Huggle
                 Next wiki
 
                 Return result.AsReadOnly
+            End Get
+        End Property
+
+        Public ReadOnly Property Contains(ByVal code As String) As Boolean
+            Get
+                If Not App.Wikis.Contains(code) Then Return False
+                Return (App.Wikis(code).Family Is Family)
             End Get
         End Property
 

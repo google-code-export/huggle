@@ -224,8 +224,8 @@ Namespace Huggle.Wikitext
             End Get
         End Property
 
-        Public Sub Append(ByVal Title As String, ByVal text As String, Optional ByVal level As Integer = 1)
-            Insert(Title, text, -1, level)
+        Public Sub Append(ByVal title As String, ByVal text As String, Optional ByVal level As Integer = 1)
+            Insert(title, text, -1, level)
         End Sub
 
         Public Sub Insert(ByVal title As String, ByVal text As String,

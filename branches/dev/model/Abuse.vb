@@ -34,13 +34,13 @@ Namespace Huggle
 
             'Find the associated edit, if any
             If userAction = "edit" AndAlso (result = "none" OrElse result = "tag") Then
-                For Each Item As Revision In user.Edits
-                    If Item.Page Is page Then
-                        Rev = Item
+                For Each item As Revision In user.Edits
+                    If item.Page Is page Then
+                        Rev = item
                         Rev.Abuse = Me
                         Exit For
                     End If
-                Next Item
+                Next item
             End If
         End Sub
 

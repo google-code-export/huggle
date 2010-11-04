@@ -75,7 +75,8 @@ Namespace Huggle.Actions
 
                 lists.Add("tags")
                 meta.Add("siteinfo", "allmessages")
-                query.Add("ammessages", InternalConfig.WikiMessages)
+                query.Add("amlang", Wiki.Language.Code)
+                query.Add("ammessages", "*")
                 query.Add("siprop",
                     "general|namespaces|namespacealiases|extensions|fileextensions|rightsinfo|statistics|usergroups")
                 query.Add("sinumberingroup", True)

@@ -34,7 +34,7 @@ Namespace Huggle.Actions
 
                 If Levels Is Nothing Then
                     If Interactive Then
-                        Using reviewform As New ReviewForm(Rev)
+                        Using reviewform As New ReviewForm(Session, Rev)
                             If reviewform.ShowDialog = DialogResult.Cancel Then OnFail(Msg("error-cancelled")) : Return
                             Levels = reviewform.Levels
                             Summary = reviewform.Comment

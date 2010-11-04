@@ -11,44 +11,50 @@ Namespace Huggle.UI
         End Sub
 
         Private Sub _Load() Handles Me.Load
-            Dim rights As List(Of String) = Wiki.UserRights
-            rights.Sort()
-
-            List.BeginUpdate()
-            List.Items.Clear()
+            GroupList.BeginUpdate()
+            GroupList.Items.Clear()
 
             For Each group As UserGroup In Wiki.UserGroups.All
                 Dim groupCountString As String
 
-                If group.IsImplicit _
-                    Then groupCountString = Msg("view-usergroup-implicit") _
+                If group.IsImplicit Then groupCountString = Msg("view-usergroup-implicit") _
                     Else groupCountString = If(group.Count < 0, Msg("a-unknown"), group.Count.ToStringForUser)
 
-                List.AddRow(group.Name, group.Description, groupCountString)
+                GroupList.AddRow(group.Description, groupCountString)
             Next group
 
-            List.SortMethods(1) = SortMethod.Integer
-            List.SortBy(0)
-            List.SelectedIndices.Add(0)
-            List.EndUpdate()
+            GroupList.SortMethods(1) = SortMethod.Integer
+            GroupList.SortBy(0)
+            GroupList.SelectedIndices.Add(0)
+            GroupList.EndUpdate()
 
-            Count.Text = Msg("view-usergroup-count", List.Items.Count)
+            GroupCount.Text = Msg("a-count", GroupList.Items.Count)
         End Sub
 
-        Private Sub List_SelectedIndexChanged() Handles List.SelectedIndexChanged
-            If List.SelectedItems.Count > 0 Then
-                Dim selectedGroup As UserGroup = Wiki.UserGroups(List.SelectedItems(0).Text)
-                GroupName.Text = selectedGroup.Name
+        Private Sub List_SelectedIndexChanged() Handles GroupList.SelectedIndexChanged
+            If GroupList.SelectedItems.Count > 0 Then
+                Dim selectedGroup As UserGroup = Nothing
 
-                RightsList.BeginUpdate()
-                RightsList.Items.Clear()
+                For Each group As UserGroup In Wiki.UserGroups.All
+                    If group.Description = GroupList.SelectedItems(0).Text Then
+                        selectedGroup = group
+                        Exit For
+                    End If
+                Next group
 
-                For Each right As String In selectedGroup.Rights
-                    RightsList.AddRow(right)
-                Next right
+                If selectedGroup IsNot Nothing Then
+                    GroupName.Text = selectedGroup.Description
 
-                RightsCount.Text = Msg("view-usergroup-rightscount", RightsList.Items.Count)
-                RightsList.EndUpdate()
+                    RightsList.BeginUpdate()
+                    RightsList.Items.Clear()
+
+                    For Each right As String In selectedGroup.Rights
+                        RightsList.AddRow(right)
+                    Next right
+
+                    RightsCount.Text = Msg("a-count", RightsList.Items.Count)
+                    RightsList.EndUpdate()
+                End If
             End If
         End Sub
 

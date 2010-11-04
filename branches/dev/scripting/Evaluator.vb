@@ -187,7 +187,7 @@ Namespace Huggle.Scripting
                         If Identifiers.ContainsKey(token.AsString.ToLowerI) Then
                             If Identifiers(token.AsString.ToLowerI) Is Nothing Then
                                 If InfoNeeded IsNot Nothing AndAlso TypeOf context Is QueueItem _
-                                    Then InfoNeeded.Add(New BatchInfo(Wiki, CType(context, QueueItem), token.AsString))
+                                    Then InfoNeeded.Add(New BatchInfo(Wiki, DirectCast(context, QueueItem), token.AsString))
                                 Return Undefined
                             Else
                                 Return New Token(Identifiers(token.AsString.ToLowerI))
@@ -281,24 +281,24 @@ Namespace Huggle.Scripting
 
         Private Function ApplyFunc(ByVal Context As Object, ByVal Func As Func, ByVal Args As Token()) As Token
             'Save identifiers
-            Dim OldIds As New Dictionary(Of String, Object)
+            Dim oldIds As New Dictionary(Of String, Object)
 
-            For Each Item As String In Func.ArgNames
-                If Identifiers.ContainsKey(Item) Then OldIds.Merge(Item, Identifiers(Item))
-            Next Item
+            For Each item As String In Func.ArgNames
+                If Identifiers.ContainsKey(item) Then oldIds.Merge(item, Identifiers(item))
+            Next item
 
             For i As Integer = 0 To Func.ArgNames.Count - 1
                 Identifiers.Merge(Func.ArgNames(i), EvalToken(Context, Args(i)).Value)
             Next i
 
-            Dim Result As Token = EvalToken(Context, Func.Token)
+            Dim result As Token = EvalToken(Context, Func.Token)
 
             'Load identifiers
-            For Each Item As KeyValuePair(Of String, Object) In OldIds
-                Identifiers.Merge(Item.Key, Item.Value)
-            Next Item
+            For Each item As KeyValuePair(Of String, Object) In oldIds
+                Identifiers.Merge(item.Key, item.Value)
+            Next item
 
-            Return Result
+            Return result
         End Function
 
         Private Function EvalProperty(ByVal Context As Object, ByVal Item As Token, ByVal Prop As Token) As Token

@@ -177,7 +177,7 @@ Namespace Huggle.Scripting
                         Dim OptionVar As Object = EvalToken(Context, Arg(i)).Value
 
                         If TypeOf OptionVar Is ArrayList Then
-                            For Each Item As Object In CType(OptionVar, ArrayList)
+                            For Each Item As Object In DirectCast(OptionVar, ArrayList)
                                 If ValuesEqual(Item, Var) Then
                                     Result = EvalToken(Context, Arg(i + 1))
                                     Exit For

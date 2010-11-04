@@ -38,6 +38,7 @@ Namespace Huggle.Actions
             '* action=sitematrix through the API
             '* closed.dblist because sitematrix extension is broken and doesn't indicate closed wikis
             '* the global title blacklist
+            '* global groups from Toolserver because there is no API
 
             Dim configRequest As New PageInfoQuery(Session, New Page() {configPage, languagePage}.ToList, Content:=True)
 
@@ -47,9 +48,11 @@ Namespace Huggle.Actions
             Dim wikiRequest As New ApiRequest(
                 App.Sessions(App.Wikis.Global.Users.Anonymous), Description, New QueryString("action", "sitematrix"))
             Dim closedRequest As New FileRequest(
-                App.Sessions(App.Wikis.Global.Users.Anonymous), InternalConfig.WikimediaClosedWikisPath)
+                Nothing, InternalConfig.WikimediaClosedWikisUrl)
+            Dim groupsRequest As New FileRequest(
+                Nothing, InternalConfig.WikimediaGlobalGroupsUrl)
 
-            App.DoParallel({configRequest, wikiRequest, closedRequest})
+            App.DoParallel({configRequest, wikiRequest, closedRequest, groupsRequest})
             
             If configRequest.Result.IsError Then OnFail(configRequest.Result) : Return
             If wikiRequest.Result.IsError Then OnFail(wikiRequest.Result) : Return
@@ -86,7 +89,65 @@ Namespace Huggle.Actions
                     End If
                 Next code
             Else
-                Log.Debug("Error loading closed wiki list: {0}".FormatI(closedRequest.Result.LogMessage))
+                Log.Write("Error loading closed wiki list: {0}".FormatI(closedRequest.Result.LogMessage))
+            End If
+
+            'Scrape HTML of toolserver global groups list
+            If groupsRequest.IsSuccess Then
+                Dim html As String = Encoding.UTF8.GetString(groupsRequest.File.ToArray)
+                html = html.FromFirst("<div id=""toc"">").FromFirst("</div>").ToFirst("<!-- begin generated footer -->")
+
+                For Each groupItem As String In html.Split("<h2")
+                    If Not groupItem.Contains("<table") Then Continue For
+
+                    Dim groupName As String = groupItem.FromFirst(">").ToFirst("<").Trim
+                    Dim group As GlobalGroup = App.Families.Wikimedia.GlobalGroups(groupName)
+                    Dim rightsTable As String = groupItem.FromFirst("<table").ToFirst("</table>")
+                    Dim rights As New List(Of String)
+
+                    For Each rightItem As String In rightsTable.Split("<tr>")
+                        If Not rightItem.Contains("<td>") Then Continue For
+
+                        Dim right As String = rightItem.FromFirst("<td>").ToFirst("</td>").Trim
+                        rights.Merge(right)
+                    Next rightItem
+
+                    group.Rights = rights
+
+                    If groupItem.FromFirst("</table>").Contains("<table") Then
+                        Dim wikisTable As String = groupItem.FromFirst("</table>").FromFirst("<table").ToFirst("</table>")
+                        Dim header As String = wikisTable.FromFirst("<th>").ToFirst("</th>")
+
+                        wikisTable = wikisTable.FromFirst("<tr").FromFirst("<tr").FromFirst("<td>").ToFirst("</td>")
+                        Dim wikis As New List(Of Wiki)
+
+                        For Each wikiItem As String In wikisTable.Split("<br />")
+                            Dim wikiCode As String = wikiItem.Trim
+                            Dim wiki As Wiki = App.Wikis.FromInternalCode(wikiCode)
+
+                            Dim a As String = App.Wikis.All.Count.ToString
+                            If wiki IsNot Nothing AndAlso App.Families.Wikimedia.Wikis.All.Contains(wiki) _
+                                Then wikis.Merge(wiki)
+                        Next wikiItem
+
+                        group.Wikis = wikis
+
+                        If header.Contains("the following") Then
+                            group.Applicability = GlobalGroupApplicability.Inclusive
+                        ElseIf header.Contains("all wikis except") Then
+                            group.Applicability = GlobalGroupApplicability.Exclusive
+                        Else
+                            group.Wikis = Nothing
+                            group.Applicability = GlobalGroupApplicability.All
+                        End If
+
+                    Else
+                        group.Wikis = Nothing
+                        group.Applicability = GlobalGroupApplicability.All
+                    End If
+                Next groupItem
+            Else
+                Log.Write("Error loading global groups list: {0}".FormatI(groupsRequest.Result.LogMessage))
             End If
 
             'Save configuration

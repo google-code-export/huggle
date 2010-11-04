@@ -39,19 +39,17 @@ Namespace Huggle
                         Case "extra" : Extra = value.ToBoolean
 
                         Case "groups"
-                            GlobalUser.GlobalGroups.Clear()
+                            Dim groups As New List(Of GlobalGroup)
 
                             For Each group As String In value.ToList.Trim
-                                GlobalUser.GlobalGroups.Add(GlobalUser.Family.GlobalGroups(group))
+                                groups.Merge(GlobalUser.Family.GlobalGroups(group))
                             Next group
+
+                            GlobalUser.GlobalGroups = groups
 
                         Case "home" : GlobalUser.PrimaryUser = App.Wikis(value).Users(GlobalUser.Name)
                         Case "id" : GlobalUser.Id = CInt(value)
-
-                        Case "rights"
-                            GlobalUser.Rights.Clear()
-                            GlobalUser.Rights.AddRange(value.ToList.Trim)
-
+                        Case "rights" : GlobalUser.Rights = New List(Of String)(value.ToList.Trim)
                         Case "updated" : Updated = value.ToDate
 
                         Case "users"

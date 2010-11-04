@@ -164,14 +164,14 @@
                         Or System.Windows.Forms.AnchorStyles.Left) _
                         Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
             Me.FilterList.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.IdColumn, Me.NameColumn, Me.StatusColumn, Me.ActionsColumn, Me.CountColumn})
-            Me.FilterList.FlexibleColumn = 0
+            Me.FilterList.FlexibleColumn = 1
             Me.FilterList.FullRowSelect = True
             Me.FilterList.GridLines = True
             Me.FilterList.HideSelection = False
             Me.FilterList.Location = New System.Drawing.Point(3, 55)
             Me.FilterList.Name = "FilterList"
             Me.FilterList.ShowGroups = False
-            Me.FilterList.Size = New System.Drawing.Size(555, 220)
+            Me.FilterList.Size = New System.Drawing.Size(556, 220)
             Me.FilterList.SortOnColumnClick = True
             Me.FilterList.TabIndex = 1
             Me.FilterList.UseCompatibleStateImageBehavior = False
@@ -180,26 +180,27 @@
             'IdColumn
             '
             Me.IdColumn.Text = "ID"
-            Me.IdColumn.Width = 65
+            Me.IdColumn.Width = 40
             '
             'NameColumn
             '
             Me.NameColumn.Text = "Name"
-            Me.NameColumn.Width = 220
+            Me.NameColumn.Width = 240
             '
             'StatusColumn
             '
             Me.StatusColumn.Text = "Status"
-            Me.StatusColumn.Width = 110
+            Me.StatusColumn.Width = 100
             '
             'ActionsColumn
             '
             Me.ActionsColumn.Text = "Actions"
-            Me.ActionsColumn.Width = 87
+            Me.ActionsColumn.Width = 100
             '
             'CountColumn
             '
             Me.CountColumn.Text = "Count"
+            Me.CountColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
             Me.CountColumn.Width = 50
             '
             'SelLayout

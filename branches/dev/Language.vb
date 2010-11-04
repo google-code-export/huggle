@@ -74,7 +74,7 @@ Namespace Huggle
                     End If
 
                 ElseIf TypeOf child Is ToolStrip Then
-                    For Each ToolItem As ToolStripItem In CType(child, ToolStrip).Items
+                    For Each ToolItem As ToolStripItem In DirectCast(child, ToolStrip).Items
                         LocalizeToolStripItem(ToolItem, prefix)
                     Next ToolItem
                 End If

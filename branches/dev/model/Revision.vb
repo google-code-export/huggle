@@ -880,8 +880,8 @@ Namespace Huggle
         Private Wiki As Wiki
         Private ReadOnly _All As New Dictionary(Of Integer, Revision)
 
-        Public Sub New(ByVal Wiki As Wiki)
-            Me.Wiki = Wiki
+        Public Sub New(ByVal wiki As Wiki)
+            Me.Wiki = wiki
         End Sub
 
         Public ReadOnly Property All() As Dictionary(Of Integer, Revision)

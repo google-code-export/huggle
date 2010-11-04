@@ -459,7 +459,8 @@ Namespace Huggle
             Get
                 For Each wiki As Wiki In All
                     'Wikimedia setup variously uses "foo" and "foowiki" as internal names for the same wiki
-                    If code = wiki.InternalCode OrElse code = wiki.InternalCode.ToLast("wiki") Then Return wiki
+                    If code = wiki.InternalCode OrElse code = wiki.InternalCode.ToLast("wiki") _
+                        OrElse code = wiki.Code Then Return wiki
                 Next wiki
 
                 Return Nothing
