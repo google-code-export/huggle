@@ -279,9 +279,9 @@ Namespace Huggle
             Get
                 If _Sanctions Is Nothing Then Return False
 
-                For Each Item As Sanction In Sanctions
-                    If Item.IsCurrent AndAlso Item.Type.Name = "report" Then Return True
-                Next Item
+                For Each sanction As Sanction In Sanctions
+                    If sanction.IsCurrent AndAlso sanction.Type.Name = "report" Then Return True
+                Next sanction
 
                 Return False
             End Get
@@ -314,13 +314,13 @@ Namespace Huggle
 
         Public ReadOnly Property LastSanctionTime() As Date
             Get
-                Dim Result As Date = Date.MinValue
+                Dim result As Date = Date.MinValue
 
-                For Each Item As Sanction In _Sanctions
-                    If Item.Time > Result Then Result = Item.Time
-                Next Item
+                For Each sanction As Sanction In _Sanctions
+                    If sanction.Time > result Then result = sanction.Time
+                Next sanction
 
-                Return Result
+                Return result
             End Get
         End Property
 
@@ -371,14 +371,14 @@ Namespace Huggle
 
         Public ReadOnly Property Sanction() As Sanction
             Get
-                Dim Max As Sanction = Nothing
+                Dim max As Sanction = Nothing
 
-                For Each Item As Sanction In Sanctions
-                    If Item.Time.Add(Wiki.Config.WarningAge) < Wiki.ServerTime Then Return Max
-                    If Item.Type.Level > Max.Type.Level Then Max = Item
-                Next Item
+                For Each item As Sanction In Sanctions
+                    If item.Time.Add(Wiki.Config.WarningAge) < Wiki.ServerTime Then Return max
+                    If item.Type.Level > max.Type.Level Then max = item
+                Next item
 
-                Return Max
+                Return max
             End Get
         End Property
 
@@ -571,10 +571,10 @@ Namespace Huggle
             End Get
         End Property
 
-        Public Function FromString(ByVal Name As String) As User
-            Name = SanitizeName(Name)
-            If Name Is Nothing Then Return Nothing
-            Return FromName(Name)
+        Public Function FromString(ByVal name As String) As User
+            name = SanitizeName(name)
+            If name Is Nothing Then Return Nothing
+            Return FromName(name)
         End Function
 
         Public Sub Rename(ByVal oldName As String, ByVal newName As String)
@@ -623,21 +623,30 @@ Namespace Huggle
 
     End Class
 
+    <Diagnostics.DebuggerDisplay("{Description}")>
     Public Class RateLimit
 
-        Private _Hits, _Seconds As Integer
-        Private _Action, _Group As String
+        Private _Action As String
+        Private _Group As String
+        Private _Hits As Integer
+        Private _Time As TimeSpan
 
-        Public Sub New(ByVal Action As String, ByVal Group As String, ByVal Hits As Integer, ByVal Seconds As Integer)
-            _Hits = Hits
-            _Seconds = Seconds
-            _Action = Action
-            _Group = Group
+        Public Sub New(ByVal action As String, ByVal group As String, ByVal hits As Integer, ByVal time As TimeSpan)
+            _Action = action
+            _Group = group
+            _Hits = hits
+            _Time = time
         End Sub
 
         Public ReadOnly Property Action() As String
             Get
                 Return _Action
+            End Get
+        End Property
+
+        Public ReadOnly Property Description As String
+            Get
+                Return Action & ": " & CStr(Hits) & " in " & FuzzyTime(Time)
             End Get
         End Property
 
@@ -653,14 +662,14 @@ Namespace Huggle
             End Get
         End Property
 
-        Public ReadOnly Property Seconds() As Integer
+        Public ReadOnly Property Time As TimeSpan
             Get
-                Return _Seconds
+                Return _Time
             End Get
         End Property
 
         Public Overrides Function ToString() As String
-            Return Action & ": " & CStr(Hits) & " in " & Seconds
+            Return Description
         End Function
 
     End Class

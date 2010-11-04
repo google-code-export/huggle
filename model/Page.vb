@@ -210,14 +210,14 @@ Namespace Huggle
                     AndAlso Not user.HasRight("move-rootuserpages") Then Return False
                 If user.HasRight("protect") Then Return True
 
-                For Each Item As LogItem In Logs
-                    If Item.Action = "protect" Then
-                        Dim Protection As Protection = CType(Item, Protection)
+                For Each logItem As LogItem In Logs
+                    If logItem.Action = "protect" Then
+                        Dim Protection As Protection = CType(logItem, Protection)
                         If Protection.Move.Expires < Wiki.ServerTime Then Return True
                         If Protection.Move.Level IsNot Nothing _
                             Then Return user.IsInGroup(Wiki.UserGroups(Protection.Move.Level))
                     End If
-                Next Item
+                Next logItem
 
                 Return True
             End Get
@@ -236,9 +236,9 @@ Namespace Huggle
 
         Public Property IsProtected() As Boolean
 
-        Public ReadOnly Property IsProtectableBy(ByVal Account As User) As Boolean
+        Public ReadOnly Property IsProtectableBy(ByVal account As User) As Boolean
             Get
-                Return Account.HasRight("protect") AndAlso Space.IsEditRestricted
+                Return account.HasRight("protect") AndAlso Not Space.IsEditRestricted
             End Get
         End Property
 
@@ -285,12 +285,12 @@ Namespace Huggle
             End Get
         End Property
 
-        Public Property IsWatchedBy(ByVal Account As User) As Boolean
+        Public Property IsWatchedBy(ByVal account As User) As Boolean
             Get
-                Return Account.Watchlist.Contains(SubjectPage.Name)
+                Return account.Watchlist.Contains(SubjectPage.Name)
             End Get
             Set(ByVal value As Boolean)
-                If value Then Account.Watchlist.Merge(SubjectPage.Name) Else Account.Watchlist.Unmerge(SubjectPage.Name)
+                If value Then account.Watchlist.Merge(SubjectPage.Name) Else account.Watchlist.Unmerge(SubjectPage.Name)
             End Set
         End Property
 
@@ -377,9 +377,9 @@ Namespace Huggle
 
         Public ReadOnly Property Protection() As Protection
             Get
-                For Each Item As LogItem In Logs
-                    If Item.Action = "protect" Then Return CType(Item, Protection)
-                Next Item
+                For Each logItem As LogItem In Logs
+                    If logItem.Action = "protect" Then Return CType(logItem, Protection)
+                Next logItem
 
                 Return Nothing
             End Get
@@ -493,13 +493,13 @@ Namespace Huggle
             End Get
         End Property
 
-        Public Sub MovedTo(ByVal NewTitle As String)
+        Public Sub MovedTo(ByVal newTitle As String)
             'Handle a page move
-            Dim OldTitle As String = Title
+            Dim oldTitle As String = Title
             Wiki.Pages.All.Remove(Title)
-            _Title = NewTitle
-            Wiki.Pages.All.Merge(NewTitle, Me)
-            RaiseEvent Moved(Me, New PageMoveEventArgs(Me, OldTitle))
+            _Title = newTitle
+            Wiki.Pages.All.Merge(newTitle, Me)
+            RaiseEvent Moved(Me, New PageMoveEventArgs(Me, oldTitle))
         End Sub
 
         Public Sub OnEdit(ByVal rev As Revision)
@@ -623,8 +623,8 @@ Namespace Huggle
         Private ReadOnly _Ignored As New List(Of Page)
         Private ReadOnly _Priority As New List(Of String)
 
-        Public Sub New(ByVal Wiki As Wiki)
-            Me.Wiki = Wiki
+        Public Sub New(ByVal wiki As Wiki)
+            Me.Wiki = wiki
         End Sub
 
         Public ReadOnly Property All() As Dictionary(Of String, Page)

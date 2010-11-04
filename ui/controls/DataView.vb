@@ -34,7 +34,7 @@ Namespace Huggle.UI
 
         Public Sub UnsetAll()
             For Each item As ToolStripItem In ToolBar.Items
-                If TypeOf item Is ToolStripButton Then CType(item, ToolStripButton).Checked = False
+                If TypeOf item Is ToolStripButton Then DirectCast(item, ToolStripButton).Checked = False
             Next item
 
             ListData.Clear()

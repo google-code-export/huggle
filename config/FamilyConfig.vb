@@ -49,7 +49,17 @@ Namespace Huggle
 
                                 For Each groupProp As KVP In Config.ParseConfig("family", key & ":" & groupItem.Key, groupItem.Value)
                                     Select Case groupProp.Key
-                                        Case "display-name" : group.DisplayName = groupProp.Value
+                                        Case "applicability" : group.Applicability.TryParse(groupProp.Value)
+                                        Case "rights" : group.Rights = groupProp.Value.ToList.Trim
+
+                                        Case "wikis"
+                                            Dim wikis As New List(Of Wiki)
+
+                                            For Each wikiCode As String In groupProp.Value.ToList.Trim
+                                                wikis.Merge(App.Wikis(wikiCode))
+                                            Next wikiCode
+
+                                            group.Wikis = wikis
                                     End Select
                                 Next groupProp
                             Next groupItem
@@ -91,8 +101,19 @@ Namespace Huggle
 
                 For Each group As GlobalGroup In Family.GlobalGroups.All
                     Dim groupObject As New Dictionary(Of String, Object)
-                    If group.DisplayName IsNot Nothing Then groupObject.Add("display-name", group.DisplayName)
-                    If group.Rights.Count > 0 Then groupObject.Add("rights", group.Rights.Join(", "))
+                    If group.Applicability <> GlobalGroupApplicability.All _
+                        Then groupObject.Add("applicability", group.Applicability.ToStringI)
+                    If group.Rights IsNot Nothing Then groupObject.Add("rights", group.Rights.Join(", "))
+
+                    If group.Wikis IsNot Nothing Then
+                        Dim wikiItems As New List(Of String)
+
+                        For Each wiki As Wiki In group.Wikis
+                            wikiItems.Add(wiki.Code)
+                        Next wiki
+
+                        groupObject.Add("wikis", wikiItems.Join(", "))
+                    End If
 
                     groupItems.Add(group.Name, groupObject)
                 Next group

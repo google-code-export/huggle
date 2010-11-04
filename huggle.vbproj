@@ -77,7 +77,7 @@
     <OutputPath>bin\Release\</OutputPath>
     <NoWarn>
     </NoWarn>
-    <CodeAnalysisRuleSet>GlobalizationRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>analysis\analysis.ruleset</CodeAnalysisRuleSet>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningLevel>1</WarningLevel>
@@ -142,7 +142,6 @@
     <Compile Include="model\Preferences.vb" />
     <Compile Include="model\TitleBlacklist.vb" />
     <Compile Include="queries\ApiModuleQuery.vb" />
-    <Compile Include="queries\GlobalGroupsQuery.vb" />
     <Compile Include="queries\Query.vb" />
     <Compile Include="queries\ExtraGlobaluserConfig.vb" />
     <Compile Include="queries\LoadUserConfig.vb" />
@@ -764,6 +763,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <CodeAnalysisDictionary Include="analysis\CustomDictionary.xml" />
     <Content Include="en.txt" />
     <Content Include="resources\languages.txt" />
     <None Include="app.manifest" />

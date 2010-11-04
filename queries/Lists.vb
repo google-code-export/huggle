@@ -489,9 +489,9 @@ Namespace Huggle.Actions
 
             'Get contents of user's watchlist
 
-            Sub New(ByVal session As Session, ByVal User As User, Optional ByVal Token As String = Nothing)
-                MyBase.New(session, "list", "watchlistraw", "wr", _
-                    New QueryString("wlowner", User.Name, "wltoken", Token), Msg("listdesc-watchlist", User))
+            Sub New(ByVal session As Session, ByVal user As User, Optional ByVal token As String = Nothing)
+                MyBase.New(session, "list", "watchlistraw", "wr",
+                    New QueryString("wlowner", user.Name, "wltoken", token), Msg("listdesc-watchlist", user))
             End Sub
 
         End Class

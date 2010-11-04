@@ -3,7 +3,7 @@ Imports System.Collections.Generic
 
 Namespace Huggle
 
-    <Diagnostics.DebuggerDisplay("{Name}")> _
+    <Diagnostics.DebuggerDisplay("{Name}")>
     Public Class UserGroup
 
         'Represents a MediaWiki user group
@@ -22,7 +22,9 @@ Namespace Huggle
 
         Public ReadOnly Property Description As String
             Get
-                Return Wiki.Message(Name & "-description")
+                If Name = "*" Then Return Msg("view-usergroup-all")
+                If Wiki.Messages.ContainsKey("group-" & Name) Then Return Wiki.Message("group-" & Name)
+                Return Name
             End Get
         End Property
 

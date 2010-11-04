@@ -11,22 +11,22 @@ Namespace System.Collections.Generic
 
         Private _Comparer As Comparison(Of T)
 
-        Public Sub New(ByVal Comparer As Comparison(Of T))
-            _Comparer = Comparer
+        Public Sub New(ByVal comparer As Comparison(Of T))
+            _Comparer = comparer
         End Sub
 
-        Public Overloads Sub Add(ByVal Item As T)
-            If Not Contains(Item) Then
+        Public Overloads Sub Add(ByVal item As T)
+            If Not Contains(item) Then
 
                 'Binary insertion sort
                 Dim a As Integer = 0, b As Integer = Count, n As Integer
 
                 While a <> b
                     n = CInt(Math.Ceiling((b + a) \ 2))
-                    If _Comparer(Item, Me(n)) > 0 Then a = n + 1 Else b = n
+                    If _Comparer(item, Me(n)) > 0 Then a = n + 1 Else b = n
                 End While
 
-                Insert(a, Item)
+                Insert(a, item)
             End If
         End Sub
 

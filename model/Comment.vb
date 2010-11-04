@@ -1,7 +1,9 @@
-﻿Imports System.Collections.Generic
+﻿Imports System
+Imports System.Collections.Generic
 
 Namespace Huggle
 
+    <Diagnostics.DebuggerDisplay("{Id}")>
     Public Class Comment
 
         'Represents a comment created by MediaWiki's LiquidThreads extension
@@ -11,9 +13,9 @@ Namespace Huggle
         Private ReadOnly _Id As Integer
         Private ReadOnly _Wiki As Wiki
 
-        Public Sub New(ByVal Wiki As Wiki, ByVal Id As Integer)
-            _Id = Id
-            _Wiki = Wiki
+        Public Sub New(ByVal wiki As Wiki, ByVal id As Integer)
+            _Id = id
+            _Wiki = wiki
         End Sub
 
         Public Property Author() As User
@@ -61,8 +63,8 @@ Namespace Huggle
         Private Wiki As Wiki
         Private ReadOnly _All As New Dictionary(Of Integer, Comment)
 
-        Public Sub New(ByVal Wiki As Wiki)
-            Me.Wiki = Wiki
+        Public Sub New(ByVal wiki As Wiki)
+            Me.Wiki = wiki
         End Sub
 
         Public ReadOnly Property All() As Dictionary(Of Integer, Comment)
@@ -71,10 +73,10 @@ Namespace Huggle
             End Get
         End Property
 
-        Default Public ReadOnly Property Item(ByVal Id As Integer) As Comment
+        Default Public ReadOnly Property Item(ByVal id As Integer) As Comment
             Get
-                If Not All.ContainsKey(Id) Then All.Add(Id, New Comment(Wiki, Id))
-                Return All(Id)
+                If Not All.ContainsKey(id) Then All.Add(id, New Comment(Wiki, id))
+                Return All(id)
             End Get
         End Property
 

@@ -240,12 +240,12 @@ Namespace Huggle
             Return New Wikistring(lines.Join(CRLF))
         End Function
 
-        Private Sub WikitextList(ByVal list As ArrayList, ByVal level As Integer, _
+        Private Sub WikitextList(ByVal list As ArrayList, ByVal level As Integer,
             ByRef result As List(Of Wikistring), ByVal indent As Char)
 
             For Each item As Object In list
                 If TypeOf item Is ArrayList Then
-                    WikitextList(CType(item, ArrayList), level + 1, result, indent)
+                    WikitextList(DirectCast(item, ArrayList), level + 1, result, indent)
                 Else
                     result.Add(New Wikistring(New String(indent, level) & Data.AsWikitext(item).ToString))
                 End If

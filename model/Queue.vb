@@ -196,7 +196,7 @@ Namespace Huggle
 
             'Avoid re-adding old revisions
             If TypeOf item Is Revision Then
-                Dim rev As Revision = CType(item, Revision)
+                Dim rev As Revision = DirectCast(item, Revision)
                 If Not rev.IsTop AndAlso RemoveHistory Then match = False
                 If rev.User IsNot Nothing AndAlso RemoveContribs AndAlso Not (rev Is rev.User.LastEdit) _
                     Then match = False
@@ -250,12 +250,12 @@ Namespace Huggle
             Return _Name
         End Function
 
-        Public Sub View(ByVal Item As QueueItem)
-            If Items.Contains(Item) Then
-                Viewed.Add(Item)
+        Public Sub View(ByVal item As QueueItem)
+            If Items.Contains(item) Then
+                Viewed.Add(item)
 
                 If RemoveViewed Then
-                    Items.Remove(Item)
+                    Items.Remove(item)
                     CreateThread(AddressOf OnItemsChanged)
                 End If
             End If
@@ -270,8 +270,8 @@ Namespace Huggle
                         While i < queue.Items.Count - 1
                             Dim Item As QueueItem = queue.Items(i)
 
-                            If TypeOf Item Is Revision AndAlso CType(Item, Revision).Time.Add(queue.MaximumAge) < wiki.ServerTime _
-                                OrElse TypeOf Item Is LogItem AndAlso CType(Item, LogItem).Time.Add(queue.MaximumAge) < wiki.ServerTime _
+                            If TypeOf Item Is Revision AndAlso DirectCast(Item, Revision).Time.Add(queue.MaximumAge) < wiki.ServerTime _
+                                OrElse TypeOf Item Is LogItem AndAlso DirectCast(Item, LogItem).Time.Add(queue.MaximumAge) < wiki.ServerTime _
                                 Then queue.Items.RemoveAt(i) _
                                 Else i += 1
                         End While
@@ -282,7 +282,7 @@ Namespace Huggle
 
         Private Function CompareByQuality(ByVal x As QueueItem, ByVal y As QueueItem) As Integer
             If TypeOf x Is Revision AndAlso TypeOf y Is Revision _
-                Then Return Revision.CompareByQuality(CType(x, Revision), CType(y, Revision))
+                Then Return Revision.CompareByQuality(DirectCast(x, Revision), DirectCast(y, Revision))
 
             If TypeOf x Is Revision Then Return -1
             If TypeOf y Is Revision Then Return 1
@@ -292,7 +292,7 @@ Namespace Huggle
 
         Private Function CompareByTime(ByVal x As QueueItem, ByVal y As QueueItem) As Integer
             If TypeOf x Is Revision AndAlso TypeOf y Is Revision _
-                Then Return Date.Compare(CType(x, Revision).Time, CType(y, Revision).Time)
+                Then Return Date.Compare(DirectCast(x, Revision).Time, DirectCast(y, Revision).Time)
             Return 0
         End Function
 

@@ -19,7 +19,12 @@ view-family-title:               Family Properties
 view-wiki-title:                 Wiki Properties
 
 view-familygeneral-title:        General
-view-globalgroups-title:         Global user groups
+
+view-globalgroup-all:            This group applies to all wikis
+view-globalgroup-excludes:       This group applies to all wikis except:
+view-globalgroup-includes:       This group applies to the following wikis:
+view-globalgroup-rights:         This group has the following rights:
+view-globalgroup-title:          Global user groups
 
 view-titleblacklist-title:       Title blacklist
 view-titleblacklist-all:         All
@@ -78,11 +83,11 @@ view-wikistats-revisions:        Revisions
 view-wikistats-users:            User accounts
 view-wikistats-activeusers:      Active user accounts
 
+view-usergroup-all:              (All users)
 view-usergroup-title:            User groups
 view-usergroup-filterall:        (Any)
 view-usergroup-implicit:         (implicit)
-view-usergroup-count:            {0} groups
-view-usergroup-rightscount:      {0} rights
+view-usergroup-rights:           This group has the following rights:
 
 view-userright-title:            User rights
 view-userright-nobody:           (nobody)

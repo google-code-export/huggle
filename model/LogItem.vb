@@ -116,8 +116,8 @@ Namespace Huggle
         Private Wiki As Wiki
         Private ReadOnly _All As New Dictionary(Of Integer, LogItem)
 
-        Public Sub New(ByVal Wiki As Wiki)
-            Me.Wiki = Wiki
+        Public Sub New(ByVal wiki As Wiki)
+            Me.Wiki = wiki
         End Sub
 
         Public ReadOnly Property All() As Dictionary(Of Integer, LogItem)
@@ -126,9 +126,9 @@ Namespace Huggle
             End Get
         End Property
 
-        Default Public ReadOnly Property Item(ByVal Id As Integer) As LogItem
+        Default Public ReadOnly Property Item(ByVal id As Integer) As LogItem
             Get
-                If All.ContainsKey(Id) Then Return All(Id) Else Return Nothing
+                If All.ContainsKey(id) Then Return All(id) Else Return Nothing
             End Get
         End Property
 

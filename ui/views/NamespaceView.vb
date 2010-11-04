@@ -22,7 +22,7 @@ Namespace Huggle.UI
                 If space.IsContent Then props.Add(Msg("view-namespace-content"))
                 If space.IsCustom Then props.Add(Msg("view-namespace-custom"))
                 If space.IsEditRestricted Then props.Add(Msg("view-namespace-restricted"))
-                If Not space.IsEditRestricted AndAlso space.IsMoveRestricted Then props.Add(Msg("view-namespace-moverestricted"))
+                If space.IsMoveRestricted Then props.Add(Msg("view-namespace-moverestricted"))
                 If Not space.IsMovable Then props.Add(Msg("view-namespace-unmovable"))
                 If space.IsTalkSpace Then props.Add(Msg("view-namespace-discussion"))
                 If space.HasSubpages Then props.Add(Msg("view-namespace-subpages"))

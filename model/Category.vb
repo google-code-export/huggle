@@ -3,13 +3,13 @@ Imports System.Collections.Generic
 
 Namespace Huggle
 
-    <Diagnostics.DebuggerDisplay("{Name}")> _
+    <Diagnostics.DebuggerDisplay("{Name}")>
     Public Class Category
 
         Private ReadOnly _Page As Page
 
-        Public Sub New(ByVal Page As Page)
-            _Page = Page
+        Public Sub New(ByVal page As Page)
+            _Page = page
         End Sub
 
         Public Property Count() As Integer = -1
@@ -61,10 +61,10 @@ Namespace Huggle
             End Get
         End Property
 
-        Public Function FromString(ByVal Name As String) As Category
-            Name = Wiki.Pages.SanitizeTitle(Name)
-            If Name Is Nothing Then Return Nothing
-            Return Item(Wiki.Pages.FromNsAndName(Wiki.Spaces.Category, Wiki.Pages(Name).Name))
+        Public Function FromString(ByVal name As String) As Category
+            name = Wiki.Pages.SanitizeTitle(name)
+            If name Is Nothing Then Return Nothing
+            Return Item(Wiki.Pages.FromNsAndName(Wiki.Spaces.Category, Wiki.Pages(name).Name))
         End Function
 
         Default Public ReadOnly Property Item(ByVal name As String) As Category

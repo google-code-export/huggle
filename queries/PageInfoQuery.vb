@@ -48,22 +48,22 @@ Namespace Huggle.Actions
 
         Public Overrides Sub Start()
 
-            Dim query As New QueryString( _
-                "action", "query", _
+            Dim query As New QueryString(
+                "action", "query",
                 "titles", Pages.ToStringArray.Join("|"))
 
             Dim Prop As New List(Of String)
             Prop.Add("info")
 
-            For Each Item As Page In Pages
-                If Item.Space Is Item.Wiki.Spaces.Category Then Prop.Merge("categoryinfo")
+            For Each page As Page In Pages
+                If page.Space Is page.Wiki.Spaces.Category Then Prop.Merge("categoryinfo")
 
-                If Item.Space Is Item.Wiki.Spaces.File Then
+                If page.Space Is page.Wiki.Spaces.File Then
                     Prop.Merge("imageinfo")
                     query.Add("iiprop", "timestamp|user|comment|url|size|sha1|mime|metadata|archivename|bitdepth")
                     query.Add("iilimit", "max")
                 End If
-            Next Item
+            Next page
 
             If Categories Then
                 Prop.Add("categories")

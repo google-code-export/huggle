@@ -155,7 +155,7 @@ Namespace Huggle
             For Each winForm As Form In Windows.Forms.Application.OpenForms
                 If Not (TypeOf winForm Is HuggleForm) Then Continue For
 
-                Dim form As HuggleForm = CType(winForm, HuggleForm)
+                Dim form As HuggleForm = DirectCast(winForm, HuggleForm)
                 If form.GetKey IsNot Nothing Then formConfig.Merge(form.GetKey, form.GetState)
             Next winForm
 

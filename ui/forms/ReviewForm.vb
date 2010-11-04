@@ -8,9 +8,12 @@ Namespace Huggle.UI
         Private _Levels As New Dictionary(Of ReviewFlag, Integer)
         Private _Revision As Revision
 
-        Public Sub New(ByVal Revision As Revision)
+        Private Session As Session
+
+        Public Sub New(ByVal session As Session, ByVal revision As Revision)
             InitializeComponent()
-            _Revision = Revision
+            Me.Session = session
+            _Revision = revision
         End Sub
 
         Public ReadOnly Property Comment() As String
@@ -59,10 +62,10 @@ Namespace Huggle.UI
         End Sub
 
         Private Sub _FormClosing() Handles Me.FormClosing
-            For Each item As Control In LevelPanel.Controls
-                Dim combobox As ComboBox = CType(item, ComboBox)
+            For Each control As Control In LevelPanel.Controls
+                Dim combobox As ComboBox = CType(control, ComboBox)
                 Levels(Revision.Wiki.Config.ReviewFlags(combobox.Name)) = combobox.SelectedIndex
-            Next item
+            Next control
         End Sub
 
     End Class
