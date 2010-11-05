@@ -2,29 +2,29 @@
 
 Namespace Huggle.Actions
 
-    Public Class UsernameCheckQuery : Inherits Query
+    Friend Class UsernameCheckQuery : Inherits Query
 
         Private _Name As String
         Private _Status As CheckStatus
 
-        Public Sub New(ByVal session As Session, ByVal name As String)
+        Friend Sub New(ByVal session As Session, ByVal name As String)
             MyBase.New(session, Msg("usernamecheck-desc", name))
             _Name = name
         End Sub
 
-        Public ReadOnly Property Name() As String
+        Friend ReadOnly Property Name() As String
             Get
                 Return _Name
             End Get
         End Property
 
-        Public ReadOnly Property Status() As CheckStatus
+        Friend ReadOnly Property Status() As CheckStatus
             Get
                 Return _Status
             End Get
         End Property
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
 
             'Check title blacklists
             If Wiki.Family IsNot Nothing AndAlso Wiki.Family.GlobalTitleBlacklist IsNot Nothing _
@@ -34,8 +34,8 @@ Namespace Huggle.Actions
                 OnSuccess() : Return
             End If
 
-            If Wiki.TitleBlacklist IsNot Nothing _
-                AndAlso Wiki.TitleBlacklist.IsMatch(Session, Name, TitleListAction.CreateAccount) Then
+            If Wiki.TitleList IsNot Nothing _
+                AndAlso Wiki.TitleList.IsMatch(Session, Name, TitleListAction.CreateAccount) Then
 
                 _Status = CheckStatus.LocalBlacklisted
                 OnSuccess() : Return
@@ -69,7 +69,7 @@ Namespace Huggle.Actions
 
     End Class
 
-    Public Enum CheckStatus As Integer
+    Friend Enum CheckStatus As Integer
         : None : Checking : GlobalBlacklisted : Invalid : LocalBlacklisted : Used : OK : [Error]
     End Enum
 

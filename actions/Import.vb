@@ -3,27 +3,27 @@ Imports System.Windows.Forms
 
 Namespace Huggle.Actions
 
-    Public Class Import : Inherits Process
+    Friend Class Import : Inherits Process
 
         Private WithEvents Login As Login
 
-        Public Sub New()
+        Friend Sub New()
 
         End Sub
 
-        Public Property Attribution() As Boolean
+        Friend Property Attribution() As Boolean
 
-        Public Property DestPage() As Page
+        Friend Property DestPage() As Page
 
-        Public Property DestWiki() As Wiki
+        Friend Property DestWiki() As Wiki
 
-        Public Property History() As Boolean
+        Friend Property History() As Boolean
 
-        Public Property SourcePage() As Page
+        Friend Property SourcePage() As Page
 
-        Public Property SourceWiki() As Wiki
+        Friend Property SourceWiki() As Wiki
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             If SourcePage Is Nothing OrElse DestPage Is Nothing Then
                 If Not Interactive Then OnFail(Msg("import-notspecified")) : Return
 

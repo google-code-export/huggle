@@ -12,7 +12,7 @@
 '        Private Pages As List(Of Page), _Results As New Dictionary(Of Page, Revision)
 '        Private _Content As Boolean
 
-'        Public Sub New(ByVal user As User, ByVal Page As Page, Optional ByVal Revision As Integer = 0, _
+'        Friend Sub New(ByVal user As User, ByVal Page As Page, Optional ByVal Revision As Integer = 0, _
 '            Optional ByVal Section As String = Nothing, Optional ByVal Content As Boolean = True)
 
 '            MyBase.New(user)
@@ -22,7 +22,7 @@
 '            _Content = Content
 '        End Sub
 
-'        Public Sub New(ByVal user As User, ByVal Revision As Revision, Optional ByVal Section As String = Nothing)
+'        Friend Sub New(ByVal user As User, ByVal Revision As Revision, Optional ByVal Section As String = Nothing)
 '            MyBase.New(user)
 '            Pages.Add(Revision.Page)
 '            _Revision = Revision.Id
@@ -30,25 +30,25 @@
 '            _Content = True
 '        End Sub
 
-'        Public Sub New(ByVal user As User, ByVal Revisions As List(Of Revision), Optional ByVal Content As Boolean = True)
+'        Friend Sub New(ByVal user As User, ByVal Revisions As List(Of Revision), Optional ByVal Content As Boolean = True)
 '            MyBase.New(user)
 '            Me.Revisions = Revisions
 '            _Content = Content
 '        End Sub
 
-'        Public Sub New(ByVal user As User, ByVal Pages As List(Of Page), Optional ByVal Content As Boolean = True)
+'        Friend Sub New(ByVal user As User, ByVal Pages As List(Of Page), Optional ByVal Content As Boolean = True)
 '            MyBase.New(user)
 '            Me.Pages = Pages
 '            _Content = Content
 '        End Sub
 
-'        Public Sub New(ByVal user As User, ByVal ParamArray Pages() As Page)
+'        Friend Sub New(ByVal user As User, ByVal ParamArray Pages() As Page)
 '            MyBase.New(user)
 '            Me.Pages = Pages.ToList
 '            _Content = True
 '        End Sub
 
-'        Public ReadOnly Property Results() As Dictionary(Of Page, Revision)
+'        Friend ReadOnly Property Results() As Dictionary(Of Page, Revision)
 '            Get
 '                Return _Results
 '            End Get

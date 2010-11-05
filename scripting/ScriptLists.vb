@@ -7,20 +7,20 @@ Namespace Huggle.Scripting
 
     Partial Class Evaluator
 
-        Private Function ListFunc(ByVal Context As Object, ByVal Func As Token, ByVal Arg As Token()) As Token
+        Private Function ListFunc(ByVal context As Object, ByVal func As Token, ByVal arg As Token()) As Token
 
-            Select Case Func.AsString
+            Select Case func.AsString
                 Case "list"
                     Dim result As New ArrayList
 
-                    For Each item As Token In Arg
+                    For Each item As Token In arg
                         result.Add(item.Value)
                     Next item
 
                     Return New Token(result)
 
                 Case "sort"
-                    Dim result As ArrayList = Arg(0).AsList
+                    Dim result As ArrayList = arg(0).AsList
 
                     Try
                         result.Sort(Comparer)
@@ -34,7 +34,7 @@ Namespace Huggle.Scripting
                     Dim result As New ArrayList
                     Dim strs As New List(Of String)
 
-                    For Each item As Object In Arg(0).AsList
+                    For Each item As Object In arg(0).AsList
                         Dim str As String = MakeString(item)
 
                         If Not strs.Contains(str) Then
@@ -82,27 +82,27 @@ Namespace Huggle.Scripting
                     '    Return New Token(Result)
 
                 Case "exclude"
-                    Dim result As ArrayList = Arg(0).AsList
+                    Dim result As ArrayList = arg(0).AsList
 
-                    For Each item As Object In Arg(1).AsList
+                    For Each item As Object In arg(1).AsList
                         If result.Contains(item) Then result.Remove(item)
                     Next item
 
                     Return New Token(result)
 
                 Case "union"
-                    Dim Result As ArrayList = Arg(0).AsList
-                    Result.AddRange(Arg(1).AsList)
+                    Dim Result As ArrayList = arg(0).AsList
+                    Result.AddRange(arg(1).AsList)
                     Return New Token(Result)
 
                 Case "append"
-                    Dim Result As ArrayList = Arg(0).AsList
-                    Result.Add(Arg(1).Value)
+                    Dim Result As ArrayList = arg(0).AsList
+                    Result.Add(arg(1).Value)
                     Return New Token(Result)
 
                 Case "containsany"
-                    Dim First As ArrayList = Arg(0).AsList
-                    Dim Second As ArrayList = Arg(1).AsList
+                    Dim First As ArrayList = arg(0).AsList
+                    Dim Second As ArrayList = arg(1).AsList
 
                     For Each Item As Object In First
                         If Second.Contains(Item) Then Return New Token(True)
@@ -111,8 +111,8 @@ Namespace Huggle.Scripting
                     Return New Token(False)
 
                 Case "containspattern"
-                    Dim List As ArrayList = Arg(0).AsList
-                    Dim Pattern As New Regex("^" & Arg(1).AsString & "$")
+                    Dim List As ArrayList = arg(0).AsList
+                    Dim Pattern As New Regex("^" & arg(1).AsString & "$")
 
                     For Each Item As Object In List
                         If Pattern.IsMatch(Item.ToString) Then Return New Token(True)
@@ -121,8 +121,8 @@ Namespace Huggle.Scripting
                     Return New Token(False)
 
                 Case "join"
-                    Dim List As ArrayList = Arg(0).AsList
-                    Dim Separator As String = Arg(1).AsString
+                    Dim List As ArrayList = arg(0).AsList
+                    Dim Separator As String = arg(1).AsString
                     Dim Result As String = ""
 
                     For Each Item As Object In List
@@ -132,25 +132,25 @@ Namespace Huggle.Scripting
                     If Result <> "" Then Result = Result.Substring(0, Result.Length - Separator.Length)
                     Return New Token(Result)
 
-                Case "first" : Return New Token(Arg(0).AsList(0))
-                Case "item" : Return New Token(Arg(0).AsList(CInt(Arg(1).AsNumber)))
+                Case "first" : Return New Token(arg(0).AsList(0))
+                Case "item" : Return New Token(arg(0).AsList(CInt(arg(1).AsNumber)))
 
                 Case "rest"
-                    Dim List As ArrayList = Arg(0).AsList
-                    If List.Count = 0 Then Throw New ScriptException(Msg("query-listempty", Func.ToString))
+                    Dim List As ArrayList = arg(0).AsList
+                    If List.Count = 0 Then Throw New ScriptException(Msg("query-listempty", func.ToString))
                     Return New Token(List.GetRange(1, List.Count - 1))
 
                 Case "last"
-                    Dim List As ArrayList = Arg(0).AsList
+                    Dim List As ArrayList = arg(0).AsList
                     Return New Token(List(List.Count - 1))
 
                 Case "limit"
-                    Dim List As ArrayList = Arg(0).AsList
-                    Return New Token(List.GetRange(0, CInt(Arg(1).AsNumber)))
+                    Dim List As ArrayList = arg(0).AsList
+                    Return New Token(List.GetRange(0, CInt(arg(1).AsNumber)))
 
                 Case "range"
-                    Dim List As ArrayList = Arg(0).AsList
-                    Return New Token(List.GetRange(CInt(Arg(1).AsNumber), CInt(Arg(2).AsNumber)))
+                    Dim List As ArrayList = arg(0).AsList
+                    Return New Token(List.GetRange(CInt(arg(1).AsNumber), CInt(arg(2).AsNumber)))
 
                     'Case "reverse"
                     '    If Arg(0).ValueType = "List" Then
@@ -164,9 +164,9 @@ Namespace Huggle.Scripting
                     '    End If
 
                 Case "movingavg"
-                    Dim List As ArrayList = Arg(0).AsList
+                    Dim List As ArrayList = arg(0).AsList
                     Dim Result As New ArrayList
-                    Dim Size As Integer = CInt(Arg(1).AsNumber)
+                    Dim Size As Integer = CInt(arg(1).AsNumber)
 
                     For i As Integer = Size - 1 To List.Count - 1
                         Dim Sum As Double = 0

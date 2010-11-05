@@ -5,7 +5,7 @@ Imports System.Text.RegularExpressions
 Namespace Huggle.Wikitext
 
     <Diagnostics.DebuggerDisplay("{Category}")>
-    Public Class CategoryLink
+    Friend Class CategoryLink
 
         Private Document As Document
 
@@ -13,7 +13,7 @@ Namespace Huggle.Wikitext
         Private _Selection As Selection
         Private _Sortkey As String
 
-        Public Sub New(ByVal document As Document, ByVal category As Category,
+        Friend Sub New(ByVal document As Document, ByVal category As Category,
             ByVal selection As Selection, ByVal sortkey As String)
 
             Me.Document = document
@@ -22,19 +22,19 @@ Namespace Huggle.Wikitext
             _Sortkey = sortkey
         End Sub
 
-        Public ReadOnly Property Category() As Category
+        Friend ReadOnly Property Category() As Category
             Get
                 Return _Category
             End Get
         End Property
 
-        Public ReadOnly Property Selection() As Selection
+        Friend ReadOnly Property Selection() As Selection
             Get
                 Return _Selection
             End Get
         End Property
 
-        Public ReadOnly Property Sortkey() As String
+        Friend ReadOnly Property Sortkey() As String
             Get
                 Return _Sortkey
             End Get
@@ -46,35 +46,35 @@ Namespace Huggle.Wikitext
 
     End Class
 
-    Public Class CategoryLinkCollection
+    Friend Class CategoryLinkCollection
 
         Private Document As Document
         Private Items As New List(Of CategoryLink)
 
-        Public Sub New(ByVal document As Document)
+        Friend Sub New(ByVal document As Document)
             Me.Document = document
             Parse()
         End Sub
 
-        Public ReadOnly Property All() As IList(Of CategoryLink)
+        Friend ReadOnly Property All() As IList(Of CategoryLink)
             Get
                 Return Items.AsReadOnly
             End Get
         End Property
 
-        Public ReadOnly Property Contains(ByVal category As Category) As Boolean
+        Friend ReadOnly Property Contains(ByVal category As Category) As Boolean
             Get
                 Return (Item(category) IsNot Nothing)
             End Get
         End Property
 
-        Public ReadOnly Property Count() As Integer
+        Friend ReadOnly Property Count() As Integer
             Get
                 Return Items.Count
             End Get
         End Property
 
-        Default Public ReadOnly Property Item(ByVal category As Category) As CategoryLink
+        Default Friend ReadOnly Property Item(ByVal category As Category) As CategoryLink
             Get
                 For Each link As CategoryLink In Items
                     If link.Category Is category Then Return link
@@ -84,7 +84,7 @@ Namespace Huggle.Wikitext
             End Get
         End Property
 
-        Public Sub Add(ByVal category As Category, Optional ByVal sortkey As String = Nothing)
+        Friend Sub Add(ByVal category As Category, Optional ByVal sortkey As String = Nothing)
 
             'Don't add if already present
             If Contains(category) Then Return
@@ -98,11 +98,11 @@ Namespace Huggle.Wikitext
             End If
         End Sub
 
-        Public Sub Remove(ByVal category As Category)
+        Friend Sub Remove(ByVal category As Category)
 
         End Sub
 
-        Public Sub Parse()
+        Friend Sub Parse()
             For Each Match As Match In Regex.Matches _
                 (Document.ParseableText, Parsing.BaseCatPattern(Document.Wiki), RegexOptions.Compiled)
 

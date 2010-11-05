@@ -9,29 +9,29 @@ Namespace Huggle.Actions
         Private _Page As Page
         Private _Rev As Revision
 
-        Public Sub New(ByVal session As Session, ByVal page As Page)
+        Friend Sub New(ByVal session As Session, ByVal page As Page)
             MyBase.New(session, Msg("parse-desc"))
             _Page = page
         End Sub
 
-        Public Sub New(ByVal session As Session, ByVal rev As Revision)
+        Friend Sub New(ByVal session As Session, ByVal rev As Revision)
             MyBase.New(session, Msg("parse-desc"))
             _Rev = rev
         End Sub
 
-        Public ReadOnly Property Page() As Page
+        Friend ReadOnly Property Page() As Page
             Get
                 Return _Page
             End Get
         End Property
 
-        Public ReadOnly Property Rev() As Revision
+        Friend ReadOnly Property Rev() As Revision
             Get
                 Return _Rev
             End Get
         End Property
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             OnProgress(Msg("parse-progress"))
             OnStarted()
 

@@ -4,28 +4,28 @@ Imports System.Windows.Forms
 
 Namespace Huggle.Actions
 
-    Public Class Review : Inherits Query
+    Friend Class Review : Inherits Query
 
         Private _Rev As Revision
 
-        Public Sub New(ByVal session As Session, ByVal rev As Revision)
+        Friend Sub New(ByVal session As Session, ByVal rev As Revision)
             MyBase.New(session, Msg("review-desc"))
             _Rev = rev
         End Sub
 
-        Public Property Levels() As Dictionary(Of ReviewFlag, Integer)
+        Friend Property Levels() As Dictionary(Of ReviewFlag, Integer)
 
-        Public ReadOnly Property Rev() As Revision
+        Friend ReadOnly Property Rev() As Revision
             Get
                 Return _Rev
             End Get
         End Property
 
-        Public Property Summary() As String
+        Friend Property Summary() As String
 
-        Public Property Watch() As WatchAction
+        Friend Property Watch() As WatchAction
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             If User.Can("review") Then
                 If User.Can("quickreview") AndAlso Wiki.Config.QuickReview Then
                     If Levels Is Nothing Then Levels = Wiki.Config.QuickReviewLevels

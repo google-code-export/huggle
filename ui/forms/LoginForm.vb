@@ -7,7 +7,7 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class LoginForm : Inherits HuggleForm
+    Friend Class LoginForm : Inherits HuggleForm
 
         Private _Session As Session
 
@@ -16,7 +16,7 @@ Namespace Huggle.UI
         Private User As User
         Private Wiki As Wiki
 
-        Public ReadOnly Property Session As Session
+        Friend ReadOnly Property Session As Session
             Get
                 Return _Session
             End Get

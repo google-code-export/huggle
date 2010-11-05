@@ -5,22 +5,22 @@ Imports System.Text.RegularExpressions
 
 Namespace Huggle
 
-    Public Class SpamListCollection
+    Friend Class SpamListCollection
 
         Private _All As New Dictionary(Of Page, SpamList)
         Private _Wiki As Wiki
 
-        Public Sub New(ByVal wiki As Wiki)
+        Friend Sub New(ByVal wiki As Wiki)
             _Wiki = wiki
         End Sub
 
-        Public ReadOnly Property All As IList(Of SpamList)
+        Friend ReadOnly Property All As IList(Of SpamList)
             Get
                 Return _All.Values.ToList.AsReadOnly
             End Get
         End Property
 
-        Default Public ReadOnly Property FromPage(ByVal page As Page) As SpamList
+        Default Friend ReadOnly Property FromPage(ByVal page As Page) As SpamList
             Get
                 If page.Wiki IsNot Wiki Then Return Nothing
 
@@ -29,7 +29,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Public Function IsMatch(ByVal session As Session, ByVal link As String) As Boolean
+        Friend Function IsMatch(ByVal session As Session, ByVal link As String) As Boolean
             Dim allMatches As List(Of SpamListEntry) = Matches(session, link)
 
             For Each entry As SpamListEntry In allMatches
@@ -39,7 +39,7 @@ Namespace Huggle
             Return (allMatches.Count > 0)
         End Function
 
-        Public Function Matches(ByVal session As Session, ByVal link As String) As List(Of SpamListEntry)
+        Friend Function Matches(ByVal session As Session, ByVal link As String) As List(Of SpamListEntry)
             Dim result As New List(Of SpamListEntry)
 
             For Each list As SpamList In All
@@ -50,7 +50,7 @@ Namespace Huggle
             Return result
         End Function
 
-        Public ReadOnly Property Wiki As Wiki
+        Friend ReadOnly Property Wiki As Wiki
             Get
                 Return _Wiki
             End Get
@@ -59,19 +59,19 @@ Namespace Huggle
     End Class
 
     <Diagnostics.DebuggerDisplay("{ToString()}")>
-    Public Class SpamList
+    Friend Class SpamList
 
         Private _Entries As List(Of SpamListEntry)
         Private _IsLoaded As Boolean
         Private _Page As Page
 
-        Public Sub New(ByVal page As Page)
+        Friend Sub New(ByVal page As Page)
             _Page = page
         End Sub
 
-        Public Property Action As SpamListAction
+        Friend Property Action As SpamListAction
 
-        Public Property Entries As List(Of SpamListEntry)
+        Friend Property Entries As List(Of SpamListEntry)
             Get
                 If Not IsLoaded Then Return Nothing
                 Return _Entries
@@ -81,19 +81,19 @@ Namespace Huggle
             End Set
         End Property
 
-        Public Property IsCustom As Boolean
+        Friend Property IsCustom As Boolean
 
-        Public ReadOnly Property IsLoaded As Boolean
+        Friend ReadOnly Property IsLoaded As Boolean
             Get
                 Return _IsLoaded
             End Get
         End Property
 
-        Public Function IsMatch(ByVal session As Session, ByVal link As String) As Boolean
+        Friend Function IsMatch(ByVal session As Session, ByVal link As String) As Boolean
             Return (Match(session, link) IsNot Nothing)
         End Function
 
-        Public Function Match(ByVal session As Session, ByVal link As String) As SpamListEntry
+        Friend Function Match(ByVal session As Session, ByVal link As String) As SpamListEntry
             For Each entry As SpamListEntry In Entries
                 If entry.IsMatch(session, link) Then Return entry
             Next entry
@@ -101,7 +101,7 @@ Namespace Huggle
             Return Nothing
         End Function
 
-        Public ReadOnly Property Page As Page
+        Friend ReadOnly Property Page As Page
             Get
                 Return _Page
             End Get
@@ -111,7 +111,7 @@ Namespace Huggle
             Return Page.Title
         End Function
 
-        Public Sub Load(ByVal text As String)
+        Friend Sub Load(ByVal text As String)
             _Entries = Parse(text)
             _IsLoaded = True
         End Sub
@@ -152,35 +152,35 @@ Namespace Huggle
     End Class
 
     <Diagnostics.DebuggerDisplay("{ToString()}")>
-    Public Class SpamListEntry
+    Friend Class SpamListEntry
 
         Private _List As SpamList
         Private _Pattern As Regex
 
-        Public Sub New(ByVal list As SpamList, ByVal pattern As Regex)
+        Friend Sub New(ByVal list As SpamList, ByVal pattern As Regex)
             _List = list
             _Pattern = pattern
         End Sub
 
-        Public Property Comment As String
-        Public Property DisplayText As String
+        Friend Property Comment As String
+        Friend Property DisplayText As String
 
-        Public ReadOnly Property IsMatch(ByVal session As Session, ByVal link As String) As Boolean
+        Friend ReadOnly Property IsMatch(ByVal session As Session, ByVal link As String) As Boolean
             Get
                 Return Pattern.IsMatch(link)
             End Get
         End Property
 
-        Public Property LastModifiedAt As Date
-        Public Property LastModifiedBy As User
+        Friend Property LastModifiedAt As Date
+        Friend Property LastModifiedBy As User
 
-        Public ReadOnly Property List As SpamList
+        Friend ReadOnly Property List As SpamList
             Get
                 Return _List
             End Get
         End Property
 
-        Public ReadOnly Property Pattern As Regex
+        Friend ReadOnly Property Pattern As Regex
             Get
                 Return _Pattern
             End Get
@@ -192,7 +192,7 @@ Namespace Huggle
 
     End Class
 
-    Public Enum SpamListAction As Integer
+    Friend Enum SpamListAction As Integer
         : Deny : Permit
     End Enum
 

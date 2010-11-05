@@ -14,7 +14,7 @@ Namespace Huggle
         Private _Query As QueryString
         Private _Response As String
 
-        Public Sub New(ByVal session As Session, ByVal description As String, _
+        Friend Sub New(ByVal session As Session, ByVal description As String, _
             ByVal query As QueryString, ByVal data As QueryString)
 
             MyBase.New(session)
@@ -26,31 +26,31 @@ Namespace Huggle
             If data IsNot Nothing Then Me.Data = Encoding.UTF8.GetBytes(data.ToUrlString)
         End Sub
 
-        Public ReadOnly Property Query() As QueryString
+        Friend ReadOnly Property Query() As QueryString
             Get
                 Return _Query
             End Get
         End Property
 
-        Public Shadows ReadOnly Property Response() As String
+        Friend Shadows ReadOnly Property Response() As String
             Get
                 Return _Response
             End Get
         End Property
 
-        Public ReadOnly Property User() As User
+        Friend ReadOnly Property User() As User
             Get
                 Return Session.User
             End Get
         End Property
 
-        Public ReadOnly Property Wiki() As Wiki
+        Friend ReadOnly Property Wiki() As Wiki
             Get
                 Return Session.User.Wiki
             End Get
         End Property
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             Url = New Uri(If(Session.IsSecure, Wiki.SecureUrl, Wiki.Url).ToString & "index.php?" & Query.ToUrlString)
             Cookies = Session.Cookies
             MyBase.Start()

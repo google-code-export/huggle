@@ -3,11 +3,11 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class ChangePasswordForm : Inherits HuggleForm
+    Friend Class ChangePasswordForm : Inherits HuggleForm
 
         Private Session As Session
 
-        Public Sub New(ByVal session As Session)
+        Friend Sub New(ByVal session As Session)
             InitializeComponent()
             Me.Session = session
         End Sub

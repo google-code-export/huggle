@@ -11,28 +11,28 @@ Imports KVP = System.Collections.Generic.KeyValuePair(Of String, String)
 
 Namespace Huggle
 
-    Public Class LocalConfig : Inherits Config
+    Friend Class LocalConfig : Inherits Config
 
-        Public Property AutoLogin As Boolean = True
-        Public Property DebugEnabled As Boolean = True
-        Public Property DebugVisible As Boolean
-        Public Property DetectProxySettings As Boolean
-        Public Property Feed As Boolean = True
-        Public Property IsFirstRun As Boolean = True
-        Public Property LastLogin As User
-        Public Property LogToFile As Boolean = True
-        Public Property ManualProxySettings As Boolean
-        Public Property Proxy As IWebProxy
-        Public Property ProxyHost As String
-        Public Property ProxyPort As Integer
-        Public Property RcFeeds As Boolean = True
-        Public Property SavePasswords As Boolean = True
-        Public Property SecureLogin As Boolean
-        Public Property Uid As String
-        Public Property UpdateState As Integer
-        Public Property WindowLocation As Point
-        Public Property WindowMaximized As Boolean = True
-        Public Property WindowSize As Size
+        Friend Property AutoLogin As Boolean = True
+        Friend Property DebugEnabled As Boolean = True
+        Friend Property DebugVisible As Boolean
+        Friend Property DetectProxySettings As Boolean
+        Friend Property Feed As Boolean = True
+        Friend Property IsFirstRun As Boolean = True
+        Friend Property LastLogin As User
+        Friend Property LogToFile As Boolean = True
+        Friend Property ManualProxySettings As Boolean
+        Friend Property Proxy As IWebProxy
+        Friend Property ProxyHost As String
+        Friend Property ProxyPort As Integer
+        Friend Property RcFeeds As Boolean = True
+        Friend Property SavePasswords As Boolean = True
+        Friend Property SecureLogin As Boolean
+        Friend Property Uid As String
+        Friend Property UpdateState As Integer
+        Friend Property WindowLocation As Point
+        Friend Property WindowMaximized As Boolean = True
+        Friend Property WindowSize As Size
 
         Protected Overrides ReadOnly Property Location() As String
             Get
@@ -44,7 +44,7 @@ Namespace Huggle
             If Config.Global.IsLoaded Then LoadAfterGlobal(text) Else LoadBeforeGlobal(text)
         End Sub
 
-        Public Overrides Sub Load(ByVal text As String)
+        Friend Overrides Sub Load(ByVal text As String)
             MyBase.Load(text)
 
             If ManualProxySettings Then Proxy = New WebProxy(ProxyHost, ProxyPort)
@@ -115,7 +115,7 @@ Namespace Huggle
             Next item
         End Sub
 
-        Public Overrides Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
+        Friend Overrides Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
             Dim items As New Dictionary(Of String, Object)
 
             items.Add("auto-login", AutoLogin)

@@ -26,24 +26,24 @@ view-globalgroup-includes:       This group applies to the following wikis:
 view-globalgroup-rights:         This group has the following rights:
 view-globalgroup-title:          Global user groups
 
-view-titleblacklist-title:       Title blacklist
-view-titleblacklist-all:         All
-view-titleblacklist-edit:        Editing
-view-titleblacklist-create:      Creating pages
-view-titleblacklist-move:        Moving pages
-view-titleblacklist-newuser:     Account creation
-view-titleblacklist-upload:      Uploading new files
-view-titleblacklist-reupload:    Replacing existing files
-view-titleblacklist-empty:       No entries defined in title blacklist
-view-titleblacklist-global:      Global title blacklist for {0} still applies
-view-titleblacklist-filter:      Show entries applicable to
+view-titlelist-title:       Title blacklist
+view-titlelist-all:         All
+view-titlelist-edit:        Editing
+view-titlelist-create:      Creating pages
+view-titlelist-move:        Moving pages
+view-titlelist-newuser:     Account creation
+view-titlelist-upload:      Uploading new files
+view-titlelist-reupload:    Replacing existing files
+view-titlelist-empty:       No entries defined in title blacklist
+view-titlelist-global:      Global title blacklist for {0} still applies
+view-titlelist-filter:      Show entries applicable to
 
-view-spamblacklist-title:        Spam blacklist
-view-spamblacklist-all:          All
-view-spamblacklist-blacklist:    Blacklist
-view-spamblacklist-whitelist:    Whitelist (overrides blacklist)
-view-spamblacklist-custom:       Custom blacklists
-view-spamblacklist-global:       Global spam blacklist for {0} still applies
+view-spamlist-title:        Spam blacklist
+view-spamlist-all:          All
+view-spamlist-blacklist:    Blacklist
+view-spamlist-whitelist:    Whitelist (overrides blacklist)
+view-spamlist-custom:       Custom blacklists
+view-spamlist-global:       Global spam blacklist for {0} still applies
 
 view-namespace-title:            Namespaces
 view-namespace-special:          special
@@ -98,21 +98,27 @@ view-moderation-title:           Moderation
 
 view-general-nodescription:      (no description)
 
-view-abusefilter-title:           Abuse filters
-view-abusefilter-actions:         Actions: {0}
-view-abusefilter-disabled:        disabled
-view-abusefilter-deleted:         deleted
-view-abusefilter-enabled:         enabled
-view-abusefilter-modified:        Last modified by {0} at {1}
-view-abusefilter-limitdetail:     {0} matching actions within {1} seconds grouped by {2}
-view-abusefilter-notes:           Notes:
-view-abusefilter-pattern:         Pattern:
-view-abusefilter-private:         private
-view-abusefilter-progress:        Loading filter details
-view-abusefilter-public:          public
-view-abusefilter-ratelimit:       Rate limit: {0}
-view-abusefilter-restricted:      User right 'abusefilter-private' required to view filter details
-view-abusefilter-status:          Status: {0}
+view-abusefilter-title:          Abuse filters
+view-abusefilter-actions:        Actions: {0}
+view-abusefilter-disabled:       disabled
+view-abusefilter-deleted:        deleted
+view-abusefilter-enabled:        enabled
+view-abusefilter-general:        General
+view-abusefilter-modified:       Last modified by {0} at {1}
+view-abusefilter-notes:          Notes
+view-abusefilter-pattern:        Pattern
+view-abusefilter-private:        private
+view-abusefilter-progress:       Loading filter details
+view-abusefilter-public:         public
+view-abusefilter-ratelimit:      Rate limit: {0}
+view-abusefilter-restricted:     Some details of this filter are hidden, and you do not have permission to view them
+view-abusefilter-status:         Status: {0}
+view-abusefilter-tags:           Tags
+view-abusefilter-tagdetail:      Tags applied by this filter:
+
+view-misc-ratelimit:             {0} actions of type '{1}' within {2}
+view-misc-ratelimitaction:       {0} actions within {1}
+view-misc-ratelimitgrouped:      {0} actions within {1} grouped by {2}
 
 wikiadd-explanation:             Use this form to add a wiki to the wiki list.\nWikis must be running MediaWiki 1.15 or later with the API enabled.
 

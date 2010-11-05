@@ -8,7 +8,7 @@
 
 '        Private Comment As String, Rev As Revision, Levels As Dictionary(Of ReviewFlag, Integer), Watch As Boolean
 
-'        Public Sub New(ByVal Account As User, ByVal Rev As Revision, ByVal Levels As Dictionary(Of ReviewFlag, Integer), _
+'        Friend Sub New(ByVal Account As User, ByVal Rev As Revision, ByVal Levels As Dictionary(Of ReviewFlag, Integer), _
 '            ByVal Comment As String, ByVal Watch As Boolean)
 
 '            MyBase.New(Account)

@@ -6,13 +6,13 @@
 
 'Namespace Huggle.Actions
 
-'    Public Class VandalReport : Inherits Query
+'    Friend Class VandalReport : Inherits Query
 
 '        Private Reason As String
 '        Private Target As User
 '        Private Type As String
 
-'        Public Sub New(ByVal session As Session, ByVal user As User, ByVal type As String)
+'        Friend Sub New(ByVal session As Session, ByVal user As User, ByVal type As String)
 '            MyBase.New(session, Msg("vandalreport-desc"))
 '            Me.Target = user
 '            Me.Type = type
@@ -24,7 +24,7 @@
 '            End Get
 '        End Property
 
-'        Public Overrides Sub Start()
+'        Friend Overrides Sub Start()
 '            CreateThread(AddressOf GetDetails, AddressOf GetConfirmation)
 '        End Sub
 

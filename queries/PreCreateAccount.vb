@@ -4,28 +4,28 @@ Imports System.IO
 
 Namespace Huggle.Actions
 
-    Public Class PreCreateAccount : Inherits Query
+    Friend Class PreCreateAccount : Inherits Query
 
         Private _Confirmation As Confirmation
 
-        Public Sub New(ByVal wiki As Wiki)
+        Friend Sub New(ByVal wiki As Wiki)
             MyBase.New(App.Sessions(wiki.Users.Anonymous), Msg("createaccount-desc"))
         End Sub
 
-        Public ReadOnly Property Confirmation As Confirmation
+        Friend ReadOnly Property Confirmation As Confirmation
             Get
                 Return _Confirmation
             End Get
         End Property
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             OnProgress(Msg("createaccount-confirm", Wiki))
 
             'Load title blacklist
-            If Not Wiki.IsLoaded AndAlso Wiki.TitleBlacklist Is Nothing Then
-                Wiki.TitleBlacklist = New TitleList(Wiki.Pages("MediaWiki:Titleblacklist"))
+            If Not Wiki.IsLoaded AndAlso Wiki.TitleList Is Nothing Then
+                Wiki.TitleList = New TitleList(Wiki.Pages("MediaWiki:Titleblacklist"))
 
-                Dim titleReq As New PageDetailQuery(Session, Wiki.TitleBlacklist.Location)
+                Dim titleReq As New PageDetailQuery(Session, Wiki.TitleList.Location)
                 titleReq.Start()
             End If
 

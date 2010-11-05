@@ -6,51 +6,51 @@ Imports System.Web.HttpUtility
 Namespace Huggle
 
     <Diagnostics.DebuggerDisplay("{ToString()}")> _
-    Public Class QueryString
+    Friend Class QueryString
 
         Private _Values As Dictionary(Of String, Object)
 
-        Public Sub New(ByVal ParamArray values As Object())
+        Friend Sub New(ByVal ParamArray values As Object())
             _Values = values.ToDictionary(Of String, Object)()
         End Sub
 
-        Public ReadOnly Property Contains(ByVal name As String) As Boolean
+        Friend ReadOnly Property Contains(ByVal name As String) As Boolean
             Get
                 Return (Values.ContainsKey(name))
             End Get
         End Property
 
-        Default Public ReadOnly Property Value(ByVal name As String) As Object
+        Default Friend ReadOnly Property Value(ByVal name As String) As Object
             Get
                 If Values.ContainsKey(name) Then Return Values(name) Else Return Nothing
             End Get
         End Property
 
-        Public ReadOnly Property Values() As Dictionary(Of String, Object)
+        Friend ReadOnly Property Values() As Dictionary(Of String, Object)
             Get
                 Return _Values
             End Get
         End Property
 
-        Public Sub Add(ByVal name As String)
+        Friend Sub Add(ByVal name As String)
             Values.Merge(name, "")
         End Sub
 
-        Public Sub Add(ByVal name As String, ByVal value As Object)
+        Friend Sub Add(ByVal name As String, ByVal value As Object)
             If value IsNot Nothing Then Values.Merge(name, value)
         End Sub
 
-        Public Sub Merge(ByVal ParamArray items As Object())
+        Friend Sub Merge(ByVal ParamArray items As Object())
             Merge(items.ToDictionary(Of String, Object))
         End Sub
 
-        Public Sub Merge(ByVal items As Dictionary(Of String, Object))
+        Friend Sub Merge(ByVal items As Dictionary(Of String, Object))
             For Each item As KeyValuePair(Of String, Object) In items
                 Values.Merge(item.Key, item.Value)
             Next item
         End Sub
 
-        Public Sub Remove(ByVal name As String)
+        Friend Sub Remove(ByVal name As String)
             If Values.ContainsKey(name) Then Values.Remove(name)
         End Sub
 
@@ -76,7 +76,7 @@ Namespace Huggle
             Return items.Join(" & ")
         End Function
 
-        Public Function ToUrlString() As String
+        Friend Function ToUrlString() As String
             If Values.Count = 0 Then Return ""
             Dim items As New List(Of String)
 
@@ -93,7 +93,7 @@ Namespace Huggle
             Return items.Join("&")
         End Function
 
-        Public Function ToMultipart(ByVal boundary As String, ByVal filename As String) As Byte()
+        Friend Function ToMultipart(ByVal boundary As String, ByVal filename As String) As Byte()
             Dim header As String = ""
             Dim fileparam As String = Nothing
             Dim footer As String = "--" & boundary & "--" & CRLF

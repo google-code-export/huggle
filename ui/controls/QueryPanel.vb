@@ -4,18 +4,18 @@ Imports System
 
 Namespace Huggle.UI
 
-    Public Class QueryPanel
+    Friend Class QueryPanel
 
         Private _Session As Session
 
         Private Evaluator As Evaluator
 
-        Public Sub New(ByVal session As Session)
+        Friend Sub New(ByVal session As Session)
             InitializeComponent()
             _Session = session
         End Sub
 
-        Public ReadOnly Property Session As Session
+        Friend ReadOnly Property Session As Session
             Get
                 Return _Session
             End Get
@@ -44,7 +44,7 @@ Namespace Huggle.UI
         End Sub
 
         Private Sub Evaluator_Progress(ByVal sender As Object, ByVal e As EventArgs(Of Process))
-            Progress.Text = e.Sender.Message
+            Progress.Text = e.Value.Message
         End Sub
 
         Private Sub Evaluator_Done()

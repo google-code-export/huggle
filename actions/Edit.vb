@@ -1,6 +1,6 @@
 ﻿Namespace Huggle.Actions
 
-    Public Class Edit : Inherits Query
+    Friend Class Edit : Inherits Query
 
         Private _ConflictRetry As Boolean
         Private _Page As Page
@@ -8,32 +8,32 @@
 
         Private Retrying As Boolean
 
-        Public Sub New(ByVal session As Session, ByVal page As Page, ByVal text As String, ByVal summary As String)
+        Friend Sub New(ByVal session As Session, ByVal page As Page, ByVal text As String, ByVal summary As String)
             MyBase.New(session, Msg("edit-desc", page))
             _Page = page
             _Summary = summary
             _Text = text
         End Sub
 
-        Public Property AllowCreate() As Boolean
+        Friend Property AllowCreate() As Boolean
 
-        Public Property AllowRecreate() As Boolean
+        Friend Property AllowRecreate() As Boolean
 
-        Public Property Bot() As Boolean
+        Friend Property Bot() As Boolean
 
-        Public Property Conflict() As ConflictAction
+        Friend Property Conflict() As ConflictAction
 
-        Public ReadOnly Property ConflictRetry() As Boolean
+        Friend ReadOnly Property ConflictRetry() As Boolean
             Get
                 Return _ConflictRetry
             End Get
         End Property
 
-        Public Property CreateOnly() As Boolean
+        Friend Property CreateOnly() As Boolean
 
-        Public Property Minor() As Boolean
+        Friend Property Minor() As Boolean
 
-        Public Property NewSection() As Boolean
+        Friend Property NewSection() As Boolean
             Get
                 Return (Section = "new")
             End Get
@@ -42,27 +42,27 @@
             End Set
         End Property
 
-        Public ReadOnly Property Page() As Page
+        Friend ReadOnly Property Page() As Page
             Get
                 Return _Page
             End Get
         End Property
 
-        Public Property Section() As String
+        Friend Property Section() As String
 
-        Public Property Summary() As String
+        Friend Property Summary() As String
 
-        Public ReadOnly Property Text() As String
+        Friend ReadOnly Property Text() As String
             Get
                 Return _Text
             End Get
         End Property
 
-        Public Property UseSummaryTag() As Boolean
+        Friend Property UseSummaryTag() As Boolean
 
-        Public Property Watch() As WatchAction
+        Friend Property Watch() As WatchAction
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             'Abort if blocked
             If User.IsBlocked Then OnFail(Msg("error-blocked", User.CurrentBlock.Comment)) : Return
 

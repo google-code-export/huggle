@@ -4,18 +4,18 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class AssessForm : Inherits HuggleForm
+    Friend Class AssessForm : Inherits HuggleForm
 
         Private _Page As Page
 
         Private Session As Session
 
-        Public Sub New(ByVal session As Session)
+        Friend Sub New(ByVal session As Session)
             Me.Session = session
             InitializeComponent()
         End Sub
 
-        Public ReadOnly Property Page As Page
+        Friend ReadOnly Property Page As Page
             Get
                 Return _Page
             End Get

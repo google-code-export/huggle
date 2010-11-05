@@ -8,7 +8,7 @@
 
 '        Private Page As Page, Comment As String, Watch As Boolean, Timestamps As List(Of Date)
 
-'        Public Sub New(ByVal Account As User, ByVal Page As Page, ByVal Comment As String, ByVal Watch As Boolean, _
+'        Friend Sub New(ByVal Account As User, ByVal Page As Page, ByVal Comment As String, ByVal Watch As Boolean, _
 '            Optional ByVal Timestamps As List(Of Date) = Nothing)
 
 '            MyBase.New(Account)

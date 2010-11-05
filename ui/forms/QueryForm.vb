@@ -1,6 +1,6 @@
 ﻿Namespace Huggle.UI
 
-    Public Class QueryForm : Inherits HuggleForm
+    Friend Class QueryForm : Inherits HuggleForm
 
     End Class
 

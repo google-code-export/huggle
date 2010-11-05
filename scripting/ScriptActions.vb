@@ -5,12 +5,12 @@ Namespace Huggle.Scripting
 
     Partial Class Evaluator
 
-        Private Function ActionFunc(ByVal Context As Object, ByVal Func As Token, _
-            ByVal Arg As Token(), ByVal Params As Dictionary(Of String, Token)) As Token
+        Private Function ActionFunc(ByVal context As Object, ByVal func As Token, _
+            ByVal arg As Token(), ByVal params As Dictionary(Of String, Token)) As Token
 
-            Select Case Func.AsString
+            Select Case func.AsString
                 Case "edit"
-                    If Arg(0).AsPage.Text = Arg(1).AsString _
+                    If arg(0).AsPage.Text = arg(1).AsString _
                         Then Return New Token("Ignored as no change to text")
 
                     'Dim Result As New Edit _

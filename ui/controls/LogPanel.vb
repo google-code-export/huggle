@@ -6,7 +6,7 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class LogPanel
+    Friend Class LogPanel
 
         Private Sub _Load() Handles Me.Load
             AddHandler Log.UpdateProcess, AddressOf Log_UpdateAction
@@ -30,7 +30,7 @@ Namespace Huggle.UI
         End Sub
 
         Private Sub Log_UpdateAction(ByVal sender As Object, ByVal e As EventArgs(Of Process))
-            Dim action As Process = e.Sender
+            Dim action As Process = e.Value
 
             For i As Integer = 0 To LogList.Items.Count - 1
                 If LogList.Items(i).Tag Is action Then
@@ -49,8 +49,8 @@ Namespace Huggle.UI
         End Sub
 
         Private Sub Log_Written(ByVal sender As Object, ByVal e As EventArgs(Of LogMessage))
-            If Config.Local.DebugVisible OrElse Not e.Sender.IsDebug _
-                Then LogList.InsertRow(0, FullDateString(e.Sender.Time), e.Sender.Message)
+            If Config.Local.DebugVisible OrElse Not e.Value.IsDebug _
+                Then LogList.InsertRow(0, FullDateString(e.Value.Time), e.Value.Message)
         End Sub
 
         Private Sub LogCopy_Click() Handles LogCopy.Click

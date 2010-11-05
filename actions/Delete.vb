@@ -8,25 +8,25 @@
         Private _Page As Page
         Private _Watch As WatchAction
 
-        Public Sub New(ByVal session As Session, ByVal page As Page, ByVal comment As String)
+        Friend Sub New(ByVal session As Session, ByVal page As Page, ByVal comment As String)
             MyBase.New(session, Msg("delete-desc", page))
             _Comment = comment
             _Page = page
         End Sub
 
-        Public ReadOnly Property Comment() As String
+        Friend ReadOnly Property Comment() As String
             Get
                 Return _Comment
             End Get
         End Property
 
-        Public ReadOnly Property Page() As Page
+        Friend ReadOnly Property Page() As Page
             Get
                 Return _Page
             End Get
         End Property
 
-        Public Property Watch() As WatchAction
+        Friend Property Watch() As WatchAction
             Get
                 Return _Watch
             End Get
@@ -35,7 +35,7 @@
             End Set
         End Property
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             OnProgress(Msg("delete-progress", Page))
 
             'Get token

@@ -7,13 +7,13 @@ Imports KVP = System.Collections.Generic.KeyValuePair(Of String, String)
 
 Namespace Huggle
 
-    Public Class FamilyConfig : Inherits Config
+    Friend Class FamilyConfig : Inherits Config
 
         Private Family As Family
 
-        Public Property Logo As String
+        Friend Property Logo As String
 
-        Public Sub New(ByVal family As Family)
+        Friend Sub New(ByVal family As Family)
             Me.Family = family
         End Sub
 
@@ -87,7 +87,7 @@ Namespace Huggle
             Next item
         End Sub
 
-        Public Overrides Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
+        Friend Overrides Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
             Dim items As New Dictionary(Of String, Object)
 
             If Family.CentralWiki IsNot Nothing Then items.Add("central-wiki", Family.CentralWiki.Code)
@@ -144,7 +144,7 @@ Namespace Huggle
             Return items
         End Function
 
-        Public Function Copy(ByVal family As Family) As FamilyConfig
+        Friend Function Copy(ByVal family As Family) As FamilyConfig
             Dim result As New FamilyConfig(family)
             result.Load(Config.MakeConfig(WriteConfig(ConfigTarget.Local)))
             Return result

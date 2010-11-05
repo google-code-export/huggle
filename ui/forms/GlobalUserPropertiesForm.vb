@@ -6,12 +6,12 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class GlobalUserPropertiesForm : Inherits HuggleForm
+    Friend Class GlobalUserPropertiesForm : Inherits HuggleForm
 
         Private Session As Session
         Private HoveredItem As ListViewItem.ListViewSubItem
 
-        Public Sub New(ByVal session As Session)
+        Friend Sub New(ByVal session As Session)
             InitializeComponent()
             Me.Session = session
         End Sub

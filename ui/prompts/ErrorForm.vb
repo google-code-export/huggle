@@ -3,13 +3,14 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class ErrorForm : Inherits HuggleForm
+    Friend Class ErrorForm : Inherits HuggleForm
 
         Private Message As String
         Private ShowRetry As Boolean
 
-        Public Sub New(ByVal message As String, ByVal showRetry As Boolean)
+        Friend Sub New(ByVal message As String, ByVal showRetry As Boolean)
             InitializeComponent()
+            If message Is Nothing Then Throw New ArgumentNullException("message")
 
             Dim maxLength As Integer = 80
             Dim result As String = ""

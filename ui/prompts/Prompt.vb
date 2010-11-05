@@ -4,7 +4,7 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class Prompt : Inherits HuggleForm
+    Friend Class Prompt : Inherits HuggleForm
 
         Private WithEvents Title As New Label
         Private WithEvents ButtonPanel As New FlowLayoutPanel
@@ -93,7 +93,7 @@ Namespace Huggle.UI
             Close()
         End Sub
 
-        Public Overloads Shared Function Show(
+        Friend Overloads Shared Function Show(
             ByVal title As String, ByVal largeText As String, ByVal smallText As String,
             ByVal defaultButton As Integer, ByVal ParamArray buttons As String()) As Integer
 

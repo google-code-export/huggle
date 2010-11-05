@@ -8,13 +8,13 @@ Namespace Huggle.Actions
 
     'Load non-essential wiki configuration
 
-    Public Class ExtraWikiConfig : Inherits Query
+    Friend Class ExtraWikiConfig : Inherits Query
 
-        Public Sub New(ByVal wiki As Wiki)
+        Friend Sub New(ByVal wiki As Wiki)
             MyBase.New(App.Sessions(wiki), Msg("extraconfig-desc"))
         End Sub
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             OnStarted()
             OnProgress(Msg("extraconfig-progress"))
 
@@ -38,9 +38,9 @@ Namespace Huggle.Actions
             End If
 
             If Wiki.Extensions.Contains(Extension.TitleList) Then
-                If Wiki.TitleBlacklist Is Nothing _
-                    Then Wiki.TitleBlacklist = New TitleList(Wiki.Pages("MediaWiki:Titleblacklist"))
-                If Not Wiki.TitleBlacklist.IsLoaded Then pageReq.Pages.Add(Wiki.TitleBlacklist.Location)
+                If Wiki.TitleList Is Nothing _
+                    Then Wiki.TitleList = New TitleList(Wiki.Pages("MediaWiki:Titleblacklist"))
+                If Not Wiki.TitleList.IsLoaded Then pageReq.Pages.Add(Wiki.TitleList.Location)
             End If
 
             If Wiki.Config.Logo IsNot Nothing Then reqs.Add(New MediaQuery(Session, Wiki.Files.FromString(Wiki.Config.Logo), 128))

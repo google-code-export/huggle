@@ -5,7 +5,7 @@ Imports KVP = System.Collections.Generic.KeyValuePair(Of String, String)
 
 Namespace Huggle
 
-    Partial Public Class Config
+    Partial Friend Class Config
 
         Protected Shared Sub ReadSpamLists(ByVal lists As SpamListCollection,
             ByVal context As String, ByVal value As String)

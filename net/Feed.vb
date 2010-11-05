@@ -8,9 +8,9 @@ Imports System.Threading
 Namespace Huggle
 
     <Diagnostics.DebuggerDisplay("{Server}")>
-    Public Class Feed : Implements IDisposable
+    Friend Class Feed : Implements IDisposable
 
-        Public Shared ReadOnly BasePattern As String =
+        Friend Const BasePattern As String =
             ":[^ ]+ PRIVMSG (\#[^ ]+) :\cC14\[\[\cC07([^\cC]+)\cC14\]\]\cC4 {0}\cC10 \cC02{1}" &
             "\cC \cC5\*\cC \cC03([^\cC]+)\cC \cC5\*\cC {2} \cc10{3}(?:: ([^\cC]+))?\cC?"
 
@@ -35,58 +35,58 @@ Namespace Huggle
 
         Private ProcessTimer As Timer
 
-        Public Event Action As SimpleEventHandler(Of QueueItem)
+        Friend Event Action As SimpleEventHandler(Of QueueItem)
 
-        Public Sub New(ByVal family As Family, ByVal server As String, ByVal port As Integer)
+        Friend Sub New(ByVal family As Family, ByVal server As String, ByVal port As Integer)
             _Family = family
             _Port = port
             _Server = server
         End Sub
 
-        Public ReadOnly Property Available() As Boolean
+        Friend ReadOnly Property Available() As Boolean
             Get
                 Return (State = FeedState.Connected AndAlso Wikis.Count > 0 _
                     AndAlso LastMessageTime.AddSeconds(30) > Date.UtcNow)
             End Get
         End Property
 
-        Public ReadOnly Property ConnectionAttempted() As Boolean
+        Friend ReadOnly Property ConnectionAttempted() As Boolean
             Get
                 Return _ConnectionAttempted
             End Get
         End Property
 
-        Public ReadOnly Property Family() As Family
+        Friend ReadOnly Property Family() As Family
             Get
                 Return _Family
             End Get
         End Property
 
-        Public ReadOnly Property IsDisconnected() As Boolean
+        Friend ReadOnly Property IsDisconnected() As Boolean
             Get
                 Return (State = FeedState.Disconnected OrElse State = FeedState.Disconnecting)
             End Get
         End Property
 
-        Public ReadOnly Property Port() As Integer
+        Friend ReadOnly Property Port() As Integer
             Get
                 Return _Port
             End Get
         End Property
 
-        Public ReadOnly Property Server() As String
+        Friend ReadOnly Property Server() As String
             Get
                 Return _Server
             End Get
         End Property
 
-        Public ReadOnly Property Wikis() As List(Of Wiki)
+        Friend ReadOnly Property Wikis() As List(Of Wiki)
             Get
                 Return _Wikis
             End Get
         End Property
 
-        Public Sub AddWiki(ByVal wiki As Wiki)
+        Friend Sub AddWiki(ByVal wiki As Wiki)
             Wikis.Merge(wiki)
 
             If wiki.Channel IsNot Nothing Then
@@ -99,7 +99,7 @@ Namespace Huggle
             End If
         End Sub
 
-        Public Sub RemoveWiki(ByVal wiki As Wiki)
+        Friend Sub RemoveWiki(ByVal wiki As Wiki)
             Wikis.Unmerge(wiki)
 
             If wiki.Channel IsNot Nothing Then
@@ -112,7 +112,7 @@ Namespace Huggle
             End If
         End Sub
 
-        Public Sub Connect()
+        Friend Sub Connect()
             If Server Is Nothing Then Return
 
             Log.Debug("Connecting to recent changes feed")
@@ -125,16 +125,16 @@ Namespace Huggle
             Thread.Start()
         End Sub
 
-        Public Sub Disconnect()
+        Friend Sub Disconnect()
             State = FeedState.Disconnecting
         End Sub
 
-        Public Sub Reconnect()
+        Friend Sub Reconnect()
             If State = FeedState.Connecting OrElse State = FeedState.Connected _
                 Then State = FeedState.Reconnecting Else Connect()
         End Sub
 
-        Public Sub ResetState()
+        Friend Sub ResetState()
             Disconnect()
         End Sub
 
@@ -555,7 +555,7 @@ Namespace Huggle
             disposed = True
         End Sub
 
-        Public Sub Dispose() Implements IDisposable.Dispose
+        Friend Sub Dispose() Implements IDisposable.Dispose
             Dispose(True)
             GC.SuppressFinalize(Me)
         End Sub

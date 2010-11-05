@@ -4,28 +4,28 @@ Namespace Huggle.Actions
 
     'Purge one or more pages
 
-    Public Class Purge : Inherits Query
+    Friend Class Purge : Inherits Query
 
         Private _Pages As List(Of Page)
         Private _Watch As WatchAction
 
-        Public Sub New(ByVal session As Session, ByVal page As Page)
+        Friend Sub New(ByVal session As Session, ByVal page As Page)
             MyBase.New(session, Msg("purge-desc"))
             _Pages = List(page)
         End Sub
 
-        Public Sub New(ByVal session As Session, ByVal pages As List(Of Page))
+        Friend Sub New(ByVal session As Session, ByVal pages As List(Of Page))
             MyBase.New(session, Msg("purge-desc"))
             _Pages = pages
         End Sub
 
-        Public ReadOnly Property Pages() As List(Of Page)
+        Friend ReadOnly Property Pages() As List(Of Page)
             Get
                 Return _Pages
             End Get
         End Property
 
-        Public Property Watch() As WatchAction
+        Friend Property Watch() As WatchAction
             Get
                 Return _Watch
             End Get
@@ -34,7 +34,7 @@ Namespace Huggle.Actions
             End Set
         End Property
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             OnStarted()
             If Pages.Count = 0 Then OnSuccess() : Return
             If Pages.Count = 1 Then OnProgress(Msg("purge-progress", Pages(0))) _

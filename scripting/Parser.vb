@@ -4,7 +4,7 @@ Imports System.Text.RegularExpressions
 
 Namespace Huggle.Scripting
 
-    Public Class Parser
+    Friend Class Parser
 
         Private Shared ReadOnly Delimiters As Char() = {""""c}
         Private Shared ReadOnly TokenPattern As New Regex _
@@ -26,7 +26,7 @@ Namespace Huggle.Scripting
         Private Postfix As List(Of Token)
         Private ConditionEnd As Integer
 
-        Public Function Parse(ByVal expression As String) As Token
+        Friend Function Parse(ByVal expression As String) As Token
             If expression = "require" Then Return New Token(False)
 
             Dim expr As String = expression.Remove(Tab, CR, LF)

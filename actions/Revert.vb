@@ -2,7 +2,7 @@
 
 Namespace Huggle.Actions
 
-    Public Class Revert : Inherits Query
+    Friend Class Revert : Inherits Query
 
         'Handles the "business logic" of reverting a page to an earlier revision
 
@@ -21,7 +21,7 @@ Namespace Huggle.Actions
         Private ConfirmMessages As New List(Of String)
         Private ConfirmOptions As New List(Of String)
 
-        Public Sub New(ByVal session As Session, ByVal rev As Revision, Optional ByVal self As Boolean = False, _
+        Friend Sub New(ByVal session As Session, ByVal rev As Revision, Optional ByVal self As Boolean = False, _
             Optional ByVal undo As Boolean = False, Optional ByVal summary As String = Nothing)
 
             MyBase.New(session, Msg("revert-desc"))
@@ -31,13 +31,13 @@ Namespace Huggle.Actions
             _Summary = summary
         End Sub
 
-        Public ReadOnly Property Rev() As Revision
+        Friend ReadOnly Property Rev() As Revision
             Get
                 Return _Rev
             End Get
         End Property
 
-        Public Property Summary() As String
+        Friend Property Summary() As String
             Get
                 Return _Summary
             End Get
@@ -46,7 +46,7 @@ Namespace Huggle.Actions
             End Set
         End Property
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             'Abort if blocked
             If User.IsBlocked Then OnFail(Msg("error-blocked", User.CurrentBlock.Comment)) : Return
 

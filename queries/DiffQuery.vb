@@ -8,18 +8,18 @@ Namespace Huggle.Actions
 
         Private _Diff As Diff
 
-        Public Sub New(ByVal session As Session, ByVal diff As Diff)
+        Friend Sub New(ByVal session As Session, ByVal diff As Diff)
             MyBase.New(session, Msg("diff-desc"))
             _Diff = diff
         End Sub
 
-        Public ReadOnly Property Diff() As Diff
+        Friend ReadOnly Property Diff() As Diff
             Get
                 Return _Diff
             End Get
         End Property
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             OnProgress(Msg("diff-progress", Diff.Page))
             OnStarted()
 

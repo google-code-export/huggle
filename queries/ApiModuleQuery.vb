@@ -4,7 +4,7 @@ Namespace Huggle.Actions
 
     'Determine which API modules are available
 
-    Public Class ApiModuleQuery : Inherits Query
+    Friend Class ApiModuleQuery : Inherits Query
 
         Private Shared ReadOnly CoreModules As String() = {"help", "paraminfo", "query", "login", "logout",
             "parse", "expandtemplates", "feedwatchlist", "purge", "watch", "edit", "rollback", "delete", "undelete",
@@ -17,11 +17,11 @@ Namespace Huggle.Actions
 
         Private Shared ReadOnly CoreMetaModules As String() = {"siteinfo", "userinfo", "allmessages"}
 
-        Public Sub New(ByVal session As Session)
+        Friend Sub New(ByVal session As Session)
             MyBase.New(session, Msg("apimodule-desc", session.User.FullName))
         End Sub
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             OnStarted()
             OnProgress(Msg("userconfig-progress", Session.User.FullName))
 

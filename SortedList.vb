@@ -2,7 +2,7 @@
 
 Namespace System.Collections.Generic
 
-    Public Class SortedList(Of T) : Inherits List(Of T)
+    Friend Class SortedList(Of T) : Inherits List(Of T)
 
         'Implements a generic sorted list
         'Differs from System.Collections.Generic.SortedList(Of TKey, TValue)
@@ -11,11 +11,11 @@ Namespace System.Collections.Generic
 
         Private _Comparer As Comparison(Of T)
 
-        Public Sub New(ByVal comparer As Comparison(Of T))
+        Friend Sub New(ByVal comparer As Comparison(Of T))
             _Comparer = comparer
         End Sub
 
-        Public Overloads Sub Add(ByVal item As T)
+        Friend Overloads Sub Add(ByVal item As T)
             If Not Contains(item) Then
 
                 'Binary insertion sort
@@ -30,11 +30,11 @@ Namespace System.Collections.Generic
             End If
         End Sub
 
-        Public Overloads Sub Sort()
+        Friend Overloads Sub Sort()
             MyBase.Sort(_Comparer)
         End Sub
 
-        Public Property Comparer() As Comparison(Of T)
+        Friend Property Comparer() As Comparison(Of T)
             Get
                 Return _Comparer
             End Get

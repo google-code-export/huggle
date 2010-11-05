@@ -1,12 +1,12 @@
 ﻿Namespace Huggle
 
-    Public Class GlobalUserStatusChange : Inherits LogItem
+    Friend Class GlobalUserStatusChange : Inherits LogItem
 
         'Represents a change in the status of a global user account created by MediaWiki's CentralAuth extension
 
         Private _Target As GlobalUser
 
-        Public Sub New(ByVal wiki As Wiki, ByVal comment As String, ByVal id As Integer, ByVal rcid As Integer,
+        Friend Sub New(ByVal wiki As Wiki, ByVal comment As String, ByVal id As Integer, ByVal rcid As Integer,
             ByVal target As GlobalUser, ByVal time As Date, ByVal user As User)
 
             MyBase.New(wiki, id, rcid)
@@ -18,7 +18,7 @@
             _Target = target
         End Sub
 
-        Public Overrides ReadOnly Property Target As String
+        Friend Overrides ReadOnly Property Target As String
             Get
                 Return _Target.Name
             End Get

@@ -4,12 +4,12 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class UserGroupsForm : Inherits HuggleForm
+    Friend Class UserGroupsForm : Inherits HuggleForm
 
         Private Session As Session
         Private User As User
 
-        Public Sub New(ByVal session As Session, ByVal user As User)
+        Friend Sub New(ByVal session As Session, ByVal user As User)
             InitializeComponent()
 
             If session Is Nothing Then Throw New ArgumentNullException("session")

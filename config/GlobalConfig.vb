@@ -9,33 +9,33 @@ Imports KVP = System.Collections.Generic.KeyValuePair(Of String, String)
 
 Namespace Huggle
 
-    Public Class GlobalConfig : Inherits Config
+    Friend Class GlobalConfig : Inherits Config
 
-        Public Property AnonymousLogin As Boolean
-        Public Property AutoUnifiedLogin As Boolean
-        Public Property DownloadLocation As String
-        Public Property LatestVersion As Version
-        Public Property ScaryPattern As Regex
-        Public Property TimeZones As Dictionary(Of String, Integer)
-        Public Property TopWiki As Wiki
-        Public Property WikiConfigPageTitle As String
+        Friend Property AnonymousLogin As Boolean
+        Friend Property AutoUnifiedLogin As Boolean
+        Friend Property DownloadLocation As String
+        Friend Property LatestVersion As Version
+        Friend Property ScaryPattern As Regex
+        Friend Property TimeZones As Dictionary(Of String, Integer)
+        Friend Property TopWiki As Wiki
+        Friend Property WikiConfigPageTitle As String
 
         Private _Loader As LoadGlobalConfig
 
-        Public Sub New()
+        Friend Sub New()
             DownloadLocation = InternalConfig.DownloadUrl.ToString
             LatestVersion = App.Version
             WikiConfigPageTitle = "Project:Huggle/Config"
         End Sub
 
-        Public ReadOnly Property Loader As LoadGlobalConfig
+        Friend ReadOnly Property Loader As LoadGlobalConfig
             Get
                 If _Loader Is Nothing Then _Loader = New LoadGlobalConfig
                 Return _Loader
             End Get
         End Property
 
-        Public Shared ReadOnly Property LocalizationPageName(ByVal code As String) As String
+        Friend Shared ReadOnly Property LocalizationPageName(ByVal code As String) As String
             Get
                 Return "Huggle/messages/" & code
             End Get
@@ -47,7 +47,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Public Shared ReadOnly Property PageTitle() As String
+        Friend Shared ReadOnly Property PageTitle() As String
             Get
                 Return "Huggle/test config"
             End Get
@@ -165,7 +165,7 @@ Namespace Huggle
             Next wiki
         End Sub
 
-        Public Overrides Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
+        Friend Overrides Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
             Dim items As New Dictionary(Of String, Object)
 
             items.Add("anon-login", AnonymousLogin)

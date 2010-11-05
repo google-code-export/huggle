@@ -2,17 +2,17 @@
 
 Namespace Huggle.Actions
 
-    Public Class SetGlobalPreferences : Inherits Process
+    Friend Class SetGlobalPreferences : Inherits Process
 
         Private GlobalUser As GlobalUser
         Private NewPrefs As Dictionary(Of String, String)
 
-        Public Sub New(ByVal user As GlobalUser, ByVal newPrefs As Dictionary(Of String, String))
+        Friend Sub New(ByVal user As GlobalUser, ByVal newPrefs As Dictionary(Of String, String))
             Me.GlobalUser = user
             Me.NewPrefs = newPrefs
         End Sub
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             OnStarted()
 
             For Each user As User In GlobalUser.Users

@@ -3,19 +3,19 @@ Imports System
 
 Namespace Huggle.UI
 
-    Public Class AbuseFilterEditForm : Inherits HuggleForm
+    Friend Class AbuseFilterEditForm : Inherits HuggleForm
 
         Private Filter As AbuseFilter
         Private Session As Session
 
-        Public Sub New(ByVal session As Session, Optional ByVal filter As AbuseFilter = Nothing)
+        Friend Sub New(ByVal session As Session, Optional ByVal filter As AbuseFilter = Nothing)
             InitializeComponent()
             Me.Filter = If(filter Is Nothing, New AbuseFilter(App.Wikis.Default, 0), filter)
             Me.Session = session
         End Sub
 
         Private Sub _Load() Handles Me.Load
-            Dim getter As New AbuseFilterDetail(Session, Filter)
+            Dim getter As New Actions.AbuseFilterDetailQuery(Session, Filter)
             App.UserWaitForProcess(getter)
             If getter.IsCancelled Then Close() : Return
 
@@ -45,9 +45,9 @@ Namespace Huggle.UI
                 DegroupCheck.Checked = Filter.Actions.Contains("degroup")
                 RangeblockCheck.Checked = Filter.Actions.Contains("rangeblock")
                 RateLimitCheck.Checked = Filter.Actions.Contains("throttle")
-                RateLimitCount.Text = CStr(Filter.RateLimitCount)
-                RateLimitTime.Text = CStr(CInt(Filter.RateLimitPeriod.TotalSeconds))
-                RateLimitGroup.Text = Filter.RateLimitGroups.Join(CRLF)
+                RateLimitCount.Text = Filter.RateLimit.Count.ToStringI
+                RateLimitTime.Text = CInt(Filter.RateLimit.Time.TotalSeconds).ToStringI
+                RateLimitGroup.Text = Filter.RateLimit.Groups.Join(CRLF)
                 Tags.Text = Filter.Tags.Join(CRLF)
             Else
                 Text = Msg("abusefilteredit-newtitle")
@@ -78,11 +78,9 @@ Namespace Huggle.UI
             newFilter.Pattern = Condition.Text
             If WarningSelector.Text IsNot Nothing Then newFilter.WarningMessage = WarningSelector.Text
 
-            If RateLimitCheck.Checked Then
-                newFilter.RateLimitCount = CInt(RateLimitCount.Text)
-                newFilter.RateLimitGroups = RateLimitGroup.Text.Split(CRLF).ToList
-                newFilter.RateLimitPeriod = New TimeSpan(0, 0, CInt(RateLimitTime.Text))
-            End If
+            If RateLimitCheck.Checked Then newFilter.RateLimit = New RateLimit(
+                Nothing, Nothing, RateLimitGroup.Text.Split(CRLF).ToList, CInt(RateLimitCount.Text),
+                New TimeSpan(0, 0, CInt(RateLimitTime.Text)))
 
             If Tags.Text.Length > 0 Then newFilter.Tags = Tags.Text.Split(CRLF).ToList
 

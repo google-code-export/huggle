@@ -14,19 +14,19 @@ Namespace Huggle
             _NewValue = NewValue
         End Sub
 
-        Public ReadOnly Property OldValue() As String
+        Friend ReadOnly Property OldValue() As String
             Get
                 Return _OldValue
             End Get
         End Property
 
-        Public ReadOnly Property NewValue() As String
+        Friend ReadOnly Property NewValue() As String
             Get
                 Return _NewValue
             End Get
         End Property
 
-        Public Shared Sub Add(ByVal Language As Language, ByVal Message As String, ByVal NewValue As String)
+        Friend Shared Sub Add(ByVal Language As Language, ByVal Message As String, ByVal NewValue As String)
 
             Dim OldValue As String = Nothing
 
@@ -54,7 +54,7 @@ Namespace Huggle
             End If
         End Sub
 
-        Public Shared Sub Undo()
+        Friend Shared Sub Undo()
             For Each Item As KeyValuePair(Of Language, Dictionary(Of String, Translation)) In All
                 Dim Language As Language = Item.Key
 
@@ -77,13 +77,13 @@ Namespace Huggle
             ResetState()
         End Sub
 
-        Public Shared ReadOnly Property All() As Dictionary(Of Language, Dictionary(Of String, Translation))
+        Friend Shared ReadOnly Property All() As Dictionary(Of Language, Dictionary(Of String, Translation))
             Get
                 Return _All
             End Get
         End Property
 
-        Public Shared Sub ResetState()
+        Friend Shared Sub ResetState()
             All.Clear()
         End Sub
 

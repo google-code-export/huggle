@@ -5,7 +5,7 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class AccountCreateForm : Inherits HuggleForm
+    Friend Class AccountCreateForm : Inherits HuggleForm
 
         Private _NewUser As User
         Private _Session As Session
@@ -17,18 +17,18 @@ Namespace Huggle.UI
 
         Private WithEvents CheckTimer As New Timer With {.Interval = 800}
 
-        Public Sub New(ByVal session As Session)
+        Friend Sub New(ByVal session As Session)
             InitializeComponent()
             _Session = session
         End Sub
 
-        Public ReadOnly Property NewUser() As User
+        Friend ReadOnly Property NewUser() As User
             Get
                 Return _NewUser
             End Get
         End Property
 
-        Public ReadOnly Property Session() As Session
+        Friend ReadOnly Property Session() As Session
             Get
                 Return _Session
             End Get
@@ -88,8 +88,8 @@ Namespace Huggle.UI
 
                         Status = CheckStatus.GlobalBlacklisted
 
-                    ElseIf Session.Wiki.TitleBlacklist IsNot Nothing _
-                        AndAlso Session.Wiki.TitleBlacklist.IsMatch _
+                    ElseIf Session.Wiki.TitleList IsNot Nothing _
+                        AndAlso Session.Wiki.TitleList.IsMatch _
                         (Session, name, TitleListAction.CreateAccount) Then
 
                         Status = CheckStatus.LocalBlacklisted
@@ -129,8 +129,8 @@ Namespace Huggle.UI
         Private Sub CheckDone(ByVal sender As Object, ByVal e As EventArgs(Of Process))
             Indicator.Stop()
 
-            If e.Sender Is CurrentQuery Then
-                Status = CType(e.Sender, UsernameCheckQuery).Status
+            If e.Value Is CurrentQuery Then
+                Status = CType(e.Value, UsernameCheckQuery).Status
                 UpdateStatus()
                 If Status <> CheckStatus.Error Then CheckResults.Merge(UserCollection.SanitizeName(Username.Text), Status)
                 InputChanged()

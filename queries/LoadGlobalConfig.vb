@@ -6,14 +6,14 @@ Imports System.Text
 
 Namespace Huggle.Actions
 
-    Public Class LoadGlobalConfig : Inherits Query
+    Friend Class LoadGlobalConfig : Inherits Query
 
-        Public Sub New()
+        Friend Sub New()
             MyBase.New(App.Sessions(App.Wikis.Global.Users.Anonymous), Msg("config-desc"))
             Interactive = True
         End Sub
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             OnStarted()
             OnProgress(Msg("config-progress"))
 
@@ -53,7 +53,7 @@ Namespace Huggle.Actions
                 Nothing, InternalConfig.WikimediaGlobalGroupsUrl)
 
             App.DoParallel({configRequest, wikiRequest, closedRequest, groupsRequest})
-            
+
             If configRequest.Result.IsError Then OnFail(configRequest.Result) : Return
             If wikiRequest.Result.IsError Then OnFail(wikiRequest.Result) : Return
 
@@ -125,7 +125,7 @@ Namespace Huggle.Actions
                             Dim wikiCode As String = wikiItem.Trim
                             Dim wiki As Wiki = App.Wikis.FromInternalCode(wikiCode)
 
-                            Dim a As String = App.Wikis.All.Count.ToString
+                            Dim a As String = App.Wikis.All.Count.ToStringI
                             If wiki IsNot Nothing AndAlso App.Families.Wikimedia.Wikis.All.Contains(wiki) _
                                 Then wikis.Merge(wiki)
                         Next wikiItem

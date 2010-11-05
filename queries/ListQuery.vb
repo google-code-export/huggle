@@ -7,7 +7,7 @@ Namespace Huggle.Actions
 
     'Abstract class for getting a list of pages through the API
 
-    Public MustInherit Class ListQuery : Inherits Query
+    Friend MustInherit Class ListQuery : Inherits Query
 
         Private _Continues As Dictionary(Of String, Object)
         Private _ExpectDuplicates As Boolean
@@ -33,7 +33,7 @@ Namespace Huggle.Actions
 
         Private Shared ReadOnly Cache As New Dictionary(Of String, CacheItem)
 
-        Public Event ListProgress(ByVal sender As Object, ByVal e As ListProgressEventArgs)
+        Friend Event ListProgress(ByVal sender As Object, ByVal e As ListProgressEventArgs)
 
         Protected Sub New(ByVal session As Session, ByVal inputType As String, ByVal name As String, _
             ByVal prefix As String, ByVal query As QueryString, ByVal description As String)
@@ -48,19 +48,19 @@ Namespace Huggle.Actions
             Me.Prefix = prefix
         End Sub
 
-        Public ReadOnly Property CacheKey() As String
+        Friend ReadOnly Property CacheKey() As String
             Get
                 Return List(Wiki.Code, Prefix, If(From, "")).Join("-")
             End Get
         End Property
 
-        Public ReadOnly Property Continues() As Dictionary(Of String, Object)
+        Friend ReadOnly Property Continues() As Dictionary(Of String, Object)
             Get
                 Return _Continues
             End Get
         End Property
 
-        Public Property ExpectDuplicates() As Boolean
+        Friend Property ExpectDuplicates() As Boolean
             Get
                 Return _ExpectDuplicates
             End Get
@@ -69,7 +69,7 @@ Namespace Huggle.Actions
             End Set
         End Property
 
-        Public Property From() As String
+        Friend Property From() As String
             Get
                 Return _From
             End Get
@@ -78,13 +78,13 @@ Namespace Huggle.Actions
             End Set
         End Property
 
-        Public ReadOnly Property InputType() As String
+        Friend ReadOnly Property InputType() As String
             Get
                 Return _InputType
             End Get
         End Property
 
-        Public Property IsAtEnd() As Boolean
+        Friend Property IsAtEnd() As Boolean
             Get
                 Return _IsAtEnd
             End Get
@@ -93,7 +93,7 @@ Namespace Huggle.Actions
             End Set
         End Property
 
-        Public Property Items() As List(Of QueueItem)
+        Friend Property Items() As List(Of QueueItem)
             Get
                 Return _Items
             End Get
@@ -102,7 +102,7 @@ Namespace Huggle.Actions
             End Set
         End Property
 
-        Public Property Limit() As Integer
+        Friend Property Limit() As Integer
             Get
                 Return _Limit
             End Get
@@ -111,7 +111,7 @@ Namespace Huggle.Actions
             End Set
         End Property
 
-        Public Property OutputType() As String
+        Friend Property OutputType() As String
             Get
                 Return _OutputType
             End Get
@@ -120,7 +120,7 @@ Namespace Huggle.Actions
             End Set
         End Property
 
-        Public Property PartialResults() As Boolean
+        Friend Property PartialResults() As Boolean
             Get
                 Return _PartialResults
             End Get
@@ -138,7 +138,7 @@ Namespace Huggle.Actions
             End Set
         End Property
 
-        Public Property Simple() As Boolean
+        Friend Property Simple() As Boolean
             Get
                 Return _Simple
             End Get
@@ -156,7 +156,7 @@ Namespace Huggle.Actions
             End Set
         End Property
 
-        Public Property Strings() As List(Of String)
+        Friend Property Strings() As List(Of String)
             Get
                 Return _Strings
             End Get
@@ -165,7 +165,7 @@ Namespace Huggle.Actions
             End Set
         End Property
 
-        Public Property UseCache() As Boolean
+        Friend Property UseCache() As Boolean
             Get
                 Return _UseCache
             End Get
@@ -174,7 +174,7 @@ Namespace Huggle.Actions
             End Set
         End Property
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             Do
                 DoOne()
                 If IsFailed Then Return
@@ -256,7 +256,7 @@ Namespace Huggle.Actions
             Initialized = True
         End Sub
 
-        Public Overridable Sub DoOne()
+        Friend Overridable Sub DoOne()
             If Not Initialized Then Initialize()
 
             'Make request
@@ -308,7 +308,7 @@ Namespace Huggle.Actions
             RaiseEvent ListProgress(Me, New ListProgressEventArgs(Me, message, partialResult))
         End Sub
 
-        Public Sub SetOptions(ByVal options As Dictionary(Of String, String))
+        Friend Sub SetOptions(ByVal options As Dictionary(Of String, String))
 
             For Each item As KeyValuePair(Of String, String) In options
                 Select Case item.Key
@@ -329,31 +329,31 @@ Namespace Huggle.Actions
 
     End Class
 
-    Public Class ListProgressEventArgs : Inherits EventArgs
+    Friend Class ListProgressEventArgs : Inherits EventArgs
 
         Private _Message As String
         Private _PartialResult As List(Of QueueItem)
         Private _Query As ListQuery
 
-        Public Sub New(ByVal query As ListQuery, ByVal message As String, ByVal partialResult As List(Of QueueItem))
+        Friend Sub New(ByVal query As ListQuery, ByVal message As String, ByVal partialResult As List(Of QueueItem))
             _Message = message
             _PartialResult = partialResult
             _Query = query
         End Sub
 
-        Public ReadOnly Property Message() As String
+        Friend ReadOnly Property Message() As String
             Get
                 Return _Message
             End Get
         End Property
 
-        Public ReadOnly Property PartialResult() As List(Of QueueItem)
+        Friend ReadOnly Property PartialResult() As List(Of QueueItem)
             Get
                 Return _PartialResult
             End Get
         End Property
 
-        Public ReadOnly Property Query As ListQuery
+        Friend ReadOnly Property Query As ListQuery
             Get
                 Return _Query
             End Get
@@ -361,17 +361,17 @@ Namespace Huggle.Actions
 
     End Class
 
-    Public Class CacheItem
+    Friend Class CacheItem
 
         Private _Continues As Dictionary(Of String, Object)
         Private _Items As List(Of QueueItem)
 
-        Public Sub New(ByVal continues As Dictionary(Of String, Object), ByVal items As List(Of QueueItem))
+        Friend Sub New(ByVal continues As Dictionary(Of String, Object), ByVal items As List(Of QueueItem))
             _Continues = continues
             _Items = items
         End Sub
 
-        Public Property Continues() As Dictionary(Of String, Object)
+        Friend Property Continues() As Dictionary(Of String, Object)
             Get
                 Return _Continues
             End Get
@@ -380,7 +380,7 @@ Namespace Huggle.Actions
             End Set
         End Property
 
-        Public Property Items() As List(Of QueueItem)
+        Friend Property Items() As List(Of QueueItem)
             Get
                 Return _Items
             End Get

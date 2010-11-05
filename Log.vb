@@ -5,17 +5,17 @@ Imports System.IO
 
 Namespace Huggle
 
-    Public NotInheritable Class LogClass : Implements IDisposable
+    Friend NotInheritable Class LogClass : Implements IDisposable
 
         Private _Items As New List(Of LogMessage)
         Private Writer As StreamWriter
 
         Private Delegate Sub LogDelegate(ByVal message As LogMessage)
 
-        Public Event UpdateProcess As SimpleEventHandler(Of Process)
-        Public Event Written As SimpleEventHandler(Of LogMessage)
+        Friend Event UpdateProcess As SimpleEventHandler(Of Process)
+        Friend Event Written As SimpleEventHandler(Of LogMessage)
 
-        Public ReadOnly Property Items() As List(Of LogMessage)
+        Friend ReadOnly Property Items() As List(Of LogMessage)
             Get
                 Return _Items
             End Get
@@ -27,7 +27,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Public Sub Initialize()
+        Friend Sub Initialize()
             _Items.Clear()
 
             If IO.File.Exists(Path) Then
@@ -42,15 +42,15 @@ Namespace Huggle
             End If
         End Sub
 
-        Public Sub AttachProcess(ByVal process As Process)
+        Friend Sub AttachProcess(ByVal process As Process)
             CallOnMainThread(AddressOf _AttachProcess, process)
         End Sub
 
-        Public Sub Debug(ByVal message As String)
+        Friend Sub Debug(ByVal message As String)
             CallOnMainThread(AddressOf Write, New LogMessage(message, True))
         End Sub
 
-        Public Sub Write(ByVal message As String)
+        Friend Sub Write(ByVal message As String)
             CallOnMainThread(AddressOf Write, New LogMessage(message, False))
         End Sub
 
@@ -65,8 +65,8 @@ Namespace Huggle
         End Sub
 
         Private Sub OnUpdateProcess(ByVal sender As Object, ByVal e As EventArgs(Of Process))
-            If e.Sender.IsComplete Then RemoveHandler e.Sender.Progress, AddressOf OnUpdateProcess
-            RaiseEvent UpdateProcess(Me, New EventArgs(Of Process)(e.Sender))
+            If e.Value.IsComplete Then RemoveHandler e.Value.Progress, AddressOf OnUpdateProcess
+            RaiseEvent UpdateProcess(Me, New EventArgs(Of Process)(e.Value))
         End Sub
 
         Private Sub Write(ByVal messageObject As Object)
@@ -89,7 +89,7 @@ Namespace Huggle
             RaiseEvent Written(Me, New EventArgs(Of LogMessage)(message))
         End Sub
 
-        Public Sub Dispose() Implements IDisposable.Dispose
+        Friend Sub Dispose() Implements IDisposable.Dispose
             If Writer IsNot Nothing Then
                 Writer.Flush()
                 Writer.Close()
@@ -100,31 +100,31 @@ Namespace Huggle
 
     End Class
 
-    Public Class LogMessage
+    Friend Class LogMessage
 
         Private _IsDebug As Boolean
         Private _Message As String
         Private _Time As Date
 
-        Public Sub New(ByVal message As String, ByVal isDebug As Boolean)
+        Friend Sub New(ByVal message As String, ByVal isDebug As Boolean)
             _Message = message
             _Time = Date.Now
             _IsDebug = isDebug
         End Sub
 
-        Public ReadOnly Property IsDebug() As Boolean
+        Friend ReadOnly Property IsDebug() As Boolean
             Get
                 Return _IsDebug
             End Get
         End Property
 
-        Public ReadOnly Property Message() As String
+        Friend ReadOnly Property Message() As String
             Get
                 Return _Message
             End Get
         End Property
 
-        Public ReadOnly Property Time() As Date
+        Friend ReadOnly Property Time() As Date
             Get
                 Return _Time
             End Get

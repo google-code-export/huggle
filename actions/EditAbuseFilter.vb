@@ -3,22 +3,22 @@
     'Edit an abuse filter
     'TODO: Convert this to use the API if it ever supports editing abuse filters
 
-    Public Class EditAbuseFilter : Inherits Query
+    Friend Class EditAbuseFilter : Inherits Query
 
         Private _Filter As AbuseFilter
 
-        Public Sub New(ByVal session As Session, ByVal filter As AbuseFilter)
+        Friend Sub New(ByVal session As Session, ByVal filter As AbuseFilter)
             MyBase.New(session, Msg("editabusefilter-desc"))
             _Filter = filter
         End Sub
 
-        Public ReadOnly Property Filter() As AbuseFilter
+        Friend ReadOnly Property Filter() As AbuseFilter
             Get
                 Return _Filter
             End Get
         End Property
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             If Filter Is Nothing Then OnProgress(Msg("editabusefilter-progressnew")) _
                 Else OnProgress(Msg("editabusefilter-progress", Filter.Id))
             OnStarted()
@@ -31,29 +31,30 @@
             End If
 
             'Not possible with API, must use UI instead
-            Dim query As New QueryString("title", "Special:AbuseFilter/" & If(Filter Is Nothing, "new", CStr(Filter.Id)))
+            Dim query As New QueryString(
+                "title", "Special:AbuseFilter/" & If(Filter Is Nothing, "new", Filter.Id.ToStringI))
 
-            Dim data As New QueryString( _
-                "wpFilterActionBlockautopromote", Filter.Actions.Contains("block autopromote"), _
-                "wpFilterActionBlock", Filter.Actions.Contains("block"), _
-                "wpFilterActionDegroup", Filter.Actions.Contains("degroup"), _
-                "wpFilterActionDisallow", Filter.Actions.Contains("disallow"), _
-                "wpFilterActionRangeblock", Filter.Actions.Contains("rangeblock"), _
-                "wpFilterActionTag", Filter.Actions.Contains("tag"), _
-                "wpFilterActionThrottle", Filter.Actions.Contains("throttle"), _
-                "wpFilterActionWarn", Filter.Actions.Contains("warn"), _
-                "wpFilterDeleted", Filter.IsDeleted, _
-                "wpFilterDescription", Filter.Description, _
-                "wpFilterEnabled", Filter.IsEnabled, _
-                "wpFilterHidden", Filter.IsPrivate, _
-                "wpFilterNotes", Filter.Notes, _
-                "wpFilterRules", Filter.Pattern, _
-                "wpFilterTags", Filter.Tags.Join(LF), _
-                "wpFilterThrottleCount", Filter.RateLimitCount, _
-                "wpFilterThrottlePeriod", CInt(Filter.RateLimitPeriod.TotalSeconds), _
-                "wpFilterThrottleGroups", Filter.RateLimitGroups.Join(LF), _
-                "wpFilterWarnMessage", Filter.WarningMessage, _
-                "wpFilterWarnMessageOther", Filter.WarningMessage, _
+            Dim data As New QueryString(
+                "wpFilterActionBlockautopromote", Filter.Actions.Contains("block autopromote"),
+                "wpFilterActionBlock", Filter.Actions.Contains("block"),
+                "wpFilterActionDegroup", Filter.Actions.Contains("degroup"),
+                "wpFilterActionDisallow", Filter.Actions.Contains("disallow"),
+                "wpFilterActionRangeblock", Filter.Actions.Contains("rangeblock"),
+                "wpFilterActionTag", Filter.Actions.Contains("tag"),
+                "wpFilterActionThrottle", Filter.Actions.Contains("throttle"),
+                "wpFilterActionWarn", Filter.Actions.Contains("warn"),
+                "wpFilterDeleted", Filter.IsDeleted,
+                "wpFilterDescription", Filter.Description,
+                "wpFilterEnabled", Filter.IsEnabled,
+                "wpFilterHidden", Filter.IsPrivate,
+                "wpFilterNotes", Filter.Notes,
+                "wpFilterRules", Filter.Pattern,
+                "wpFilterTags", Filter.Tags.Join(LF),
+                "wpFilterThrottleCount", Filter.RateLimit.Count,
+                "wpFilterThrottlePeriod", CInt(Filter.RateLimit.Time.TotalSeconds),
+                "wpFilterThrottleGroups", Filter.RateLimit.Groups.Join(LF),
+                "wpFilterWarnMessage", Filter.WarningMessage,
+                "wpFilterWarnMessageOther", Filter.WarningMessage,
                 "wpToken", Session.EditToken)
 
             Dim req As New UIRequest(Session, Description, query, data)

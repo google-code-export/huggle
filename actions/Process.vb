@@ -3,95 +3,79 @@ Imports System.Collections.Generic
 
 Namespace Huggle.Actions
 
-    Public MustInherit Class Process
+    Friend MustInherit Class Process
 
-        Private _Description As String
         Private _Message As String
-        Private _Result As Result
 
         Private State As ProcessState
 
-        Public MustOverride Sub Start()
+        Friend MustOverride Sub Start()
 
-        Public Event Complete As SimpleEventHandler(Of Process)
-        Public Event Fail As SimpleEventHandler(Of Process)
-        Public Event Progress As SimpleEventHandler(Of Process)
-        Public Event Started As SimpleEventHandler(Of Process)
-        Public Event Success As SimpleEventHandler(Of Process)
+        Friend Event Complete As SimpleEventHandler(Of Process)
+        Friend Event Fail As SimpleEventHandler(Of Process)
+        Friend Event Progress As SimpleEventHandler(Of Process)
+        Friend Event Started As SimpleEventHandler(Of Process)
+        Friend Event Success As SimpleEventHandler(Of Process)
 
         Protected Sub New()
             _Result = Result.Success
         End Sub
 
-        Public Property Description() As String
-            Get
-                Return _Description
-            End Get
-            Protected Set(ByVal value As String)
-                _Description = value
-            End Set
-        End Property
+        Friend Property Description() As String
 
-        Public Property Interactive() As Boolean
+        Friend Property Interactive() As Boolean
 
-        Public ReadOnly Property IsCancelled() As Boolean
+        Friend ReadOnly Property IsCancelled() As Boolean
             Get
                 Return (State = ProcessState.Cancelled)
             End Get
         End Property
 
-        Public ReadOnly Property IsComplete() As Boolean
+        Friend ReadOnly Property IsComplete() As Boolean
             Get
                 Return (State = ProcessState.Cancelled OrElse State = ProcessState.Errored _
                     OrElse State = ProcessState.Success)
             End Get
         End Property
 
-        Public ReadOnly Property IsErrored() As Boolean
+        Friend ReadOnly Property IsErrored() As Boolean
             Get
                 Return (State = ProcessState.Errored)
             End Get
         End Property
 
-        Public ReadOnly Property IsFailed() As Boolean
+        Friend ReadOnly Property IsFailed() As Boolean
             Get
                 Return (State = ProcessState.Cancelled OrElse State = ProcessState.Errored)
             End Get
         End Property
 
-        Public ReadOnly Property IsRunning() As Boolean
+        Friend ReadOnly Property IsRunning() As Boolean
             Get
                 Return (State = ProcessState.Running)
             End Get
         End Property
 
-        Public ReadOnly Property IsSuccess() As Boolean
+        Friend ReadOnly Property IsSuccess() As Boolean
             Get
                 Return (State = ProcessState.Success)
             End Get
         End Property
 
-        Public ReadOnly Property Message() As String
+        Friend ReadOnly Property Message() As String
             Get
                 Return _Message
             End Get
         End Property
 
-        Public Property Result() As Result
-            Get
-                Return _Result
-            End Get
-            Protected Set(ByVal value As Result)
-                _Result = value
-            End Set
-        End Property
+        Friend Property Result() As Result
 
-        Public Sub Cancel()
+        Friend Sub Cancel()
             OnFail(Msg("error-cancelled"))
             State = ProcessState.Cancelled
         End Sub
 
-        Public Sub Reset()
+        Friend Sub Reset()
             OnProgress(Nothing)
             State = ProcessState.None
         End Sub
@@ -182,16 +166,16 @@ Namespace Huggle.Actions
 
     End Class
 
-    Public Class GeneralProcess : Inherits Process
+    Friend Class GeneralProcess : Inherits Process
 
         Private Method As Action
 
-        Public Sub New(ByVal message As String, ByVal method As Action)
+        Friend Sub New(ByVal message As String, ByVal method As Action)
             OnProgress(message)
             Me.Method = method
         End Sub
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             Method.Invoke()
             OnSuccess()
         End Sub

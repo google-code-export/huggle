@@ -5,91 +5,87 @@ Namespace Huggle
 
     'Represents a filter from MediaWiki's AbuseFilter extension
 
-    <Diagnostics.DebuggerDisplay("{Id}")> _
-    Public Class AbuseFilter
+    <Diagnostics.DebuggerDisplay("{Id}")>
+    Friend Class AbuseFilter
 
         Private _Hits As List(Of Abuse)
         Private ReadOnly _Id As Integer
         Private ReadOnly _Wiki As Wiki
 
-        Public Sub New(ByVal wiki As Wiki, ByVal id As Integer)
+        Friend Sub New(ByVal wiki As Wiki, ByVal id As Integer)
             _IsEnabled = True
             _Id = id
             _TotalHits = -1
             _Wiki = wiki
         End Sub
 
-        Public Property Actions() As New List(Of String)
+        Friend Property Actions() As New List(Of String)
 
-        Public Property Description() As String
+        Friend Property Description() As String
 
-        Public ReadOnly Property Hits() As List(Of Abuse)
+        Friend ReadOnly Property Hits() As List(Of Abuse)
             Get
                 If _Hits Is Nothing Then _Hits = New List(Of Abuse)
                 Return _Hits
             End Get
         End Property
 
-        Public ReadOnly Property Id() As Integer
+        Friend ReadOnly Property Id() As Integer
             Get
                 Return _Id
             End Get
         End Property
 
-        Public Property IsDeleted() As Boolean
+        Friend Property IsDeleted() As Boolean
 
-        Public Property IsEnabled() As Boolean
+        Friend Property IsEnabled() As Boolean
 
-        Public Property IsPrivate() As Boolean
+        Friend Property IsPrivate() As Boolean
 
-        Public Property LastModified() As Date
+        Friend Property LastModified() As Date
 
-        Public Property LastModifiedBy() As User
+        Friend Property LastModifiedBy() As User
 
-        Public Property Notes() As String
+        Friend Property Notes() As String
 
-        Public Property Pattern() As String
+        Friend Property Pattern() As String
 
-        Public Property RateLimitCount() As Integer
+        Friend Property RateLimit As RateLimit
 
-        Public Property RateLimitGroups() As List(Of String)
+        Friend Property Tags() As List(Of String)
 
-        Public Property RateLimitPeriod() As TimeSpan
+        Friend Property TotalHits() As Integer
 
-        Public Property Tags() As List(Of String)
+        Friend Property WarningMessage() As String
 
-        Public Property TotalHits() As Integer
-
-        Public Property WarningMessage() As String
-
-        Public ReadOnly Property Wiki() As Wiki
+        Friend ReadOnly Property Wiki() As Wiki
             Get
                 Return _Wiki
             End Get
         End Property
 
         Public Overrides Function ToString() As String
-            Return CStr(Id)
+            Return Id.ToStringI
         End Function
 
     End Class
 
-    Public Class AbuseFilterCollection
+    Friend Class AbuseFilterCollection
 
         Private Wiki As Wiki
         Private ReadOnly _All As New Dictionary(Of Integer, AbuseFilter)
 
-        Public Sub New(ByVal wiki As Wiki)
+        Friend Sub New(ByVal wiki As Wiki)
             Me.Wiki = wiki
         End Sub
 
-        Public ReadOnly Property All() As IList(Of AbuseFilter)
+        Friend ReadOnly Property All() As IList(Of AbuseFilter)
             Get
                 Return _All.Values.ToList.AsReadOnly
             End Get
         End Property
 
-        Default Public ReadOnly Property Item(ByVal id As Integer) As AbuseFilter
+        Default Friend ReadOnly Property Item(ByVal id As Integer) As AbuseFilter
             Get
                 If Not _All.ContainsKey(id) Then _All.Add(id, New AbuseFilter(Wiki, id))
                 Return _All(id)

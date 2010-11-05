@@ -17,26 +17,26 @@ Namespace Huggle.Actions
 
         Private Shared WithEvents Timer As New Timer
 
-        Private Shared ReadOnly MaxExtraQueries As Integer = 10
+        Private Const MaxExtraQueries As Integer = 10
         Private Shared ReadOnly Current As Dictionary(Of Wiki, BatchQuery)
 
-        Public Sub New(ByVal session As Session)
+        Friend Sub New(ByVal session As Session)
             MyBase.New(session, Msg("batch-desc"))
         End Sub
 
-        Public ReadOnly Property Items() As List(Of BatchInfo)
+        Friend ReadOnly Property Items() As List(Of BatchInfo)
             Get
                 Return _Items
             End Get
         End Property
 
-        Public ReadOnly Property Queries() As List(Of Process)
+        Friend ReadOnly Property Queries() As List(Of Process)
             Get
                 Return _Queries
             End Get
         End Property
 
-        Public Sub Prepare()
+        Friend Sub Prepare()
             Dim result As New List(Of BatchInfo)
 
             'Each type of query we might make
@@ -218,7 +218,7 @@ Namespace Huggle.Actions
             _Items = result
         End Sub
 
-        Public Sub Execute(ByVal context As Object)
+        Friend Sub Execute(ByVal context As Object)
             If Not IsExecuting Then
                 IsExecuting = True
                 App.DoParallel(Queries)
@@ -226,14 +226,14 @@ Namespace Huggle.Actions
             End If
         End Sub
 
-        Public Shared ReadOnly Property CurrentFor(ByVal Wiki As Wiki) As BatchQuery
+        Friend Shared ReadOnly Property CurrentFor(ByVal Wiki As Wiki) As BatchQuery
             Get
                 'If Not Current.ContainsKey(Wiki) Then Current.Add(Wiki, New BatchQuery(Wiki.Account))
                 Return Current(Wiki)
             End Get
         End Property
 
-        Public Shared Property Interval() As Integer
+        Friend Shared Property Interval() As Integer
             Get
                 Return Timer.Interval
             End Get
@@ -242,13 +242,13 @@ Namespace Huggle.Actions
             End Set
         End Property
 
-        Public Shared Sub ResetState()
+        Friend Shared Sub ResetState()
             Timer.Stop()
             Current.Clear()
             Timer.Start()
         End Sub
 
-        Public Shared Sub Timer_Tick() Handles Timer.Tick
+        Friend Shared Sub Timer_Tick() Handles Timer.Tick
             'Execute all pending requests
             For Each request As BatchQuery In Current.Values
                 If request.Items.Count > 0 Then
@@ -267,13 +267,13 @@ Namespace Huggle.Actions
             Next wiki
         End Sub
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
 
         End Sub
 
     End Class
 
-    Public Structure BatchInfo
+    Friend Structure BatchInfo
 
         'Represents a piece of information about a wiki or something in it
         'to be requested by the query batcher
@@ -282,30 +282,30 @@ Namespace Huggle.Actions
         Private _Type As String
         Private _Wiki As Wiki
 
-        Public Sub New(ByVal wiki As Wiki, ByVal type As String)
+        Friend Sub New(ByVal wiki As Wiki, ByVal type As String)
             _Wiki = wiki
             _Type = type
         End Sub
 
-        Public Sub New(ByVal wiki As Wiki, ByVal item As QueueItem, ByVal type As String)
+        Friend Sub New(ByVal wiki As Wiki, ByVal item As QueueItem, ByVal type As String)
             _Wiki = wiki
             _Item = item
             _Type = type
         End Sub
 
-        Public ReadOnly Property Item() As QueueItem
+        Friend ReadOnly Property Item() As QueueItem
             Get
                 Return _Item
             End Get
         End Property
 
-        Public ReadOnly Property Type() As String
+        Friend ReadOnly Property Type() As String
             Get
                 Return _Type
             End Get
         End Property
 
-        Public ReadOnly Property Wiki() As Wiki
+        Friend ReadOnly Property Wiki() As Wiki
             Get
                 Return _Wiki
             End Get

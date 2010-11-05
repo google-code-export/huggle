@@ -4,9 +4,9 @@ Imports System.Drawing
 
 Namespace System.Windows.Forms
 
-    Public Class EnhancedFlowLayoutPanel : Inherits FlowLayoutPanel
+    Friend Class EnhancedFlowLayoutPanel : Inherits FlowLayoutPanel
 
-        Public Sub New()
+        Friend Sub New()
             MyBase.New()
 
             SetStyle(ControlStyles.UserPaint, True)

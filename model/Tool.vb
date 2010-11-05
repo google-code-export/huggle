@@ -7,7 +7,7 @@ Namespace Huggle
     'Represents an automated or assisted editing tool
 
     <Diagnostics.DebuggerDisplay("{Name}")>
-    Public Class Tool
+    Friend Class Tool
 
         Private Shared ReadOnly _All As New List(Of Tool)
 
@@ -16,27 +16,27 @@ Namespace Huggle
             _All.Merge(Me)
         End Sub
 
-        Public Property Description() As String
+        Friend Property Description() As String
 
-        Public Property Link() As String
+        Friend Property Link() As String
 
-        Public Property Name() As String
+        Friend Property Name() As String
 
-        Public Property Pattern() As Regex
+        Friend Property Pattern() As Regex
 
-        Public Property Type() As String
+        Friend Property Type() As String
 
         Public Overrides Function ToString() As String
             Return Name
         End Function
 
-        Public Shared ReadOnly Property All() As List(Of Tool)
+        Friend Shared ReadOnly Property All() As List(Of Tool)
             Get
                 Return _All
             End Get
         End Property
 
-        Public Shared Function FromName(ByVal name As String) As Tool
+        Friend Shared Function FromName(ByVal name As String) As Tool
             For Each tool As Tool In All
                 If tool.Name = name Then Return tool
             Next tool
@@ -44,7 +44,7 @@ Namespace Huggle
             Return New Tool(name)
         End Function
 
-        Public Shared Sub ResetState()
+        Friend Shared Sub ResetState()
             _All.Clear()
         End Sub
 

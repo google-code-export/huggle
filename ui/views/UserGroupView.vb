@@ -1,14 +1,38 @@
-﻿Imports System.Collections.Generic
+﻿Imports System
+Imports System.Collections.Generic
 Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class UserGroupView : Inherits Viewer
+    Friend Class UserGroupView : Inherits Viewer
 
-        Public Sub New(ByVal session As Session)
+        Private _SelectedGroup As UserGroup
+
+        Friend Event ViewRight As SimpleEventHandler(Of String)
+
+        Friend Sub New(ByVal session As Session)
             MyBase.New(session)
             InitializeComponent()
         End Sub
+
+        Friend Property SelectedGroup As UserGroup
+            Get
+                Return _SelectedGroup
+            End Get
+            Set(ByVal value As UserGroup)
+                If Wiki.UserGroups.All.Contains(value) Then GroupList.SelectedValue = value.Description
+            End Set
+        End Property
+
+        Friend Property SelectedRight As String
+            Get
+                Return RightsList.SelectedValue
+            End Get
+            Set(ByVal value As String)
+                If SelectedGroup IsNot Nothing AndAlso SelectedGroup.Rights.Contains(value) _
+                    Then RightsList.SelectedValue = value
+            End Set
+        End Property
 
         Private Sub _Load() Handles Me.Load
             GroupList.BeginUpdate()
@@ -31,31 +55,34 @@ Namespace Huggle.UI
             GroupCount.Text = Msg("a-count", GroupList.Items.Count)
         End Sub
 
-        Private Sub List_SelectedIndexChanged() Handles GroupList.SelectedIndexChanged
-            If GroupList.SelectedItems.Count > 0 Then
-                Dim selectedGroup As UserGroup = Nothing
+        Private Sub GroupList_SelectedIndexChanged() Handles GroupList.SelectedIndexChanged
+            _SelectedGroup = Nothing
 
-                For Each group As UserGroup In Wiki.UserGroups.All
-                    If group.Description = GroupList.SelectedItems(0).Text Then
-                        selectedGroup = group
-                        Exit For
-                    End If
-                Next group
-
-                If selectedGroup IsNot Nothing Then
-                    GroupName.Text = selectedGroup.Description
-
-                    RightsList.BeginUpdate()
-                    RightsList.Items.Clear()
-
-                    For Each right As String In selectedGroup.Rights
-                        RightsList.AddRow(right)
-                    Next right
-
-                    RightsCount.Text = Msg("a-count", RightsList.Items.Count)
-                    RightsList.EndUpdate()
+            For Each group As UserGroup In Wiki.UserGroups.All
+                If group.Description = GroupList.SelectedValue Then
+                    _SelectedGroup = group
+                    Exit For
                 End If
-            End If
+            Next group
+
+            If SelectedGroup Is Nothing Then Return
+
+            GroupName.Text = SelectedGroup.Description
+
+            RightsList.BeginUpdate()
+            RightsList.Items.Clear()
+
+            For Each right As String In SelectedGroup.Rights
+                RightsList.AddRow(right)
+            Next right
+
+            RightsCount.Text = Msg("a-count", RightsList.Items.Count)
+            RightsList.EndUpdate()
+        End Sub
+
+        Private Sub RightsList_DoubleClick() Handles RightsList.DoubleClick
+            If RightsList.SelectedValue IsNot Nothing _
+                Then RaiseEvent ViewRight(Me, New EventArgs(Of String)(RightsList.SelectedValue))
         End Sub
 
     End Class

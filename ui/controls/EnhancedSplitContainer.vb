@@ -1,6 +1,6 @@
 ﻿Namespace System.Windows.Forms
 
-    Public Class EnhancedSplitContainer : Inherits SplitContainer
+    Friend Class EnhancedSplitContainer : Inherits SplitContainer
 
         Private Sub _MouseDown() Handles Me.MouseDown
             IsSplitterFixed = True

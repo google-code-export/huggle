@@ -9,7 +9,7 @@ Namespace Huggle.Scripting
     'Handles evaluation of script expressions
 
     <Diagnostics.DebuggerDisplay("{Name}")> _
-    Public Class Evaluator : Inherits Query
+    Friend Class Evaluator : Inherits Query
 
         Private _Cancelled As Boolean
         Private _CancelReason As String
@@ -40,7 +40,7 @@ Namespace Huggle.Scripting
 
         Private WithEvents BatchQuery As BatchQuery
 
-        Public Sub New(ByVal session As Session, ByVal name As String, ByVal expression As String)
+        Friend Sub New(ByVal session As Session, ByVal name As String, ByVal expression As String)
             MyBase.New(session, Msg("script-desc", name))
             _Expression = expression
             _Name = name
@@ -48,13 +48,13 @@ Namespace Huggle.Scripting
             SentQueries = New List(Of String)
         End Sub
 
-        Public ReadOnly Property Name() As String
+        Friend ReadOnly Property Name() As String
             Get
                 Return _Name
             End Get
         End Property
 
-        Public Property Cancelled() As Boolean
+        Friend Property Cancelled() As Boolean
             Get
                 Return _Cancelled
             End Get
@@ -63,7 +63,7 @@ Namespace Huggle.Scripting
             End Set
         End Property
 
-        Public Property CancelReason() As String
+        Friend Property CancelReason() As String
             Get
                 Return _CancelReason
             End Get
@@ -72,7 +72,7 @@ Namespace Huggle.Scripting
             End Set
         End Property
 
-        Public Property Context() As Object
+        Friend Property Context() As Object
             Get
                 Return _Context
             End Get
@@ -81,13 +81,13 @@ Namespace Huggle.Scripting
             End Set
         End Property
 
-        Public ReadOnly Property Expression() As String
+        Friend ReadOnly Property Expression() As String
             Get
                 Return _Expression
             End Get
         End Property
 
-        Public Property Immediate() As Boolean
+        Friend Property Immediate() As Boolean
             Get
                 Return _Immediate
             End Get
@@ -96,13 +96,13 @@ Namespace Huggle.Scripting
             End Set
         End Property
 
-        Public ReadOnly Property InfoNeeded() As List(Of BatchInfo)
+        Friend ReadOnly Property InfoNeeded() As List(Of BatchInfo)
             Get
                 Return _InfoNeeded
             End Get
         End Property
 
-        Public Property Previous() As Object
+        Friend Property Previous() As Object
             Get
                 Return _Previous
             End Get
@@ -111,7 +111,7 @@ Namespace Huggle.Scripting
             End Set
         End Property
 
-        Public Property [ReadOnly]() As Boolean
+        Friend Property [ReadOnly]() As Boolean
             Get
                 Return _ReadOnly
             End Get
@@ -120,7 +120,7 @@ Namespace Huggle.Scripting
             End Set
         End Property
 
-        Public Property Value() As Token
+        Friend Property Value() As Token
             Get
                 Return _Value
             End Get
@@ -129,7 +129,7 @@ Namespace Huggle.Scripting
             End Set
         End Property
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             'Try
             '    BatchQuery = New BatchQuery(User)
             '    OnStarted()
@@ -173,7 +173,7 @@ Namespace Huggle.Scripting
             Return _Expression
         End Function
 
-        Public Function EvalToken(ByVal context As Object, ByVal token As Token) As Token
+        Friend Function EvalToken(ByVal context As Object, ByVal token As Token) As Token
             If token Is Nothing Then Return New Token(False)
             If Cancelled Then Throw New ScriptException(Msg("error-cancelled"))
 
@@ -377,7 +377,7 @@ Namespace Huggle.Scripting
             Return New Token(New QueryPipe(Me, query))
         End Function
 
-        Public Sub DoProgress(ByVal message As String)
+        Friend Sub DoProgress(ByVal message As String)
             OnProgress(message)
         End Sub
 

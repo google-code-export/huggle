@@ -3,32 +3,32 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class ReviewForm : Inherits HuggleForm
+    Friend Class ReviewForm : Inherits HuggleForm
 
         Private _Levels As New Dictionary(Of ReviewFlag, Integer)
         Private _Revision As Revision
 
         Private Session As Session
 
-        Public Sub New(ByVal session As Session, ByVal revision As Revision)
+        Friend Sub New(ByVal session As Session, ByVal revision As Revision)
             InitializeComponent()
             Me.Session = session
             _Revision = revision
         End Sub
 
-        Public ReadOnly Property Comment() As String
+        Friend ReadOnly Property Comment() As String
             Get
                 Return CommentField.Text
             End Get
         End Property
 
-        Public ReadOnly Property Levels() As Dictionary(Of ReviewFlag, Integer)
+        Friend ReadOnly Property Levels() As Dictionary(Of ReviewFlag, Integer)
             Get
                 Return _Levels
             End Get
         End Property
 
-        Public ReadOnly Property Revision() As Revision
+        Friend ReadOnly Property Revision() As Revision
             Get
                 Return _Revision
             End Get

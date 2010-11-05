@@ -5,41 +5,41 @@ Imports System.Text.RegularExpressions
 
 Namespace Huggle.Wikitext
 
-    Public Class Table
+    Friend Class Table
 
         Private _Columns As New List(Of TableColumn)
         Private _Rows As New List(Of TableRow)
         Private _Selection As Selection
 
-        Public Sub New()
+        Friend Sub New()
         End Sub
 
-        Public Sub New(ByVal wikitext As String, ByVal selection As String)
+        Friend Sub New(ByVal wikitext As String, ByVal selection As String)
         End Sub
 
-        Public Property Caption() As String
+        Friend Property Caption() As String
 
-        Public ReadOnly Property Columns() As List(Of TableColumn)
+        Friend ReadOnly Property Columns() As List(Of TableColumn)
             Get
                 Return _Columns
             End Get
         End Property
 
-        Public ReadOnly Property Rows() As List(Of TableRow)
+        Friend ReadOnly Property Rows() As List(Of TableRow)
             Get
                 Return _Rows
             End Get
         End Property
 
-        Public ReadOnly Property Selection() As Selection
+        Friend ReadOnly Property Selection() As Selection
             Get
                 Return _Selection
             End Get
         End Property
 
-        Public Property Style() As String
+        Friend Property Style() As String
 
-        Public Function ToHtml() As String
+        Friend Function ToHtml() As String
             Dim result As New StringBuilder
 
 
@@ -81,7 +81,7 @@ Namespace Huggle.Wikitext
             Return result.ToString
         End Function
 
-        Public Function ToWikitext() As String
+        Friend Function ToWikitext() As String
             Dim result As New StringBuilder
 
             result.Append("{|")
@@ -108,7 +108,7 @@ Namespace Huggle.Wikitext
             Return ToWikitext()
         End Function
 
-        Public Shared Function FromScriptTable(ByVal source As ScriptTable) As Table
+        Friend Shared Function FromScriptTable(ByVal source As ScriptTable) As Table
             Dim result As New Table
             result.Style = "class=""wikitable"""
 
@@ -135,70 +135,70 @@ Namespace Huggle.Wikitext
 
     End Class
 
-    Public Class TableRow
+    Friend Class TableRow
 
         Private _Cells As New List(Of TableCell)
 
-        Public Sub New(Optional ByVal style As String = Nothing)
+        Friend Sub New(Optional ByVal style As String = Nothing)
             _Style = style
         End Sub
 
-        Public ReadOnly Property Cells() As List(Of TableCell)
+        Friend ReadOnly Property Cells() As List(Of TableCell)
             Get
                 Return _Cells
             End Get
         End Property
 
-        Public Property IsHeader() As Boolean
+        Friend Property IsHeader() As Boolean
 
-        Public Property Style() As String
+        Friend Property Style() As String
 
     End Class
 
-    Public Class TableColumn
+    Friend Class TableColumn
 
         Private _Cells As List(Of TableCell)
         Private _IsHeader As Boolean
 
-        Public Sub New(Optional ByVal style As String = Nothing)
+        Friend Sub New(Optional ByVal style As String = Nothing)
             _Style = style
         End Sub
 
-        Public ReadOnly Property Cells() As List(Of TableCell)
+        Friend ReadOnly Property Cells() As List(Of TableCell)
             Get
                 Return _Cells
             End Get
         End Property
 
-        Public ReadOnly Property IsHeader() As Boolean
+        Friend ReadOnly Property IsHeader() As Boolean
             Get
                 Return _IsHeader
             End Get
         End Property
 
-        Public Property Style() As String
+        Friend Property Style() As String
 
     End Class
 
-    Public Class TableCell
+    Friend Class TableCell
 
-        Public Sub New(ByVal content As String, Optional ByVal style As String = Nothing)
+        Friend Sub New(ByVal content As String, Optional ByVal style As String = Nothing)
             _Content = content
             _Style = style
         End Sub
 
-        Public Property Content() As String
+        Friend Property Content() As String
 
-        Public Property Style() As String
+        Friend Property Style() As String
 
     End Class
 
-    Public Class TableCollection
+    Friend Class TableCollection
 
         Private Document As Document
         Private Tables As List(Of Table)
 
-        Public Sub New(ByVal document As Document)
+        Friend Sub New(ByVal document As Document)
             Me.Document = document
 
             Dim matches As MatchCollection = Parsing.SectionPattern.Matches(document.Text)
@@ -206,29 +206,29 @@ Namespace Huggle.Wikitext
 
         End Sub
 
-        Public ReadOnly Property All() As IList(Of Table)
+        Friend ReadOnly Property All() As IList(Of Table)
             Get
                 Return Tables.AsReadOnly
             End Get
         End Property
 
-        Public ReadOnly Property Count() As Integer
+        Friend ReadOnly Property Count() As Integer
             Get
                 Return All.Count
             End Get
         End Property
 
-        Default Public ReadOnly Property Item(ByVal index As Integer) As Table
+        Default Friend ReadOnly Property Item(ByVal index As Integer) As Table
             Get
                 If All.Count > index Then Return All(index) Else Return Nothing
             End Get
         End Property
 
-        Public Sub Append(ByVal title As String, ByVal text As String, Optional ByVal level As Integer = 1)
+        Friend Sub Append(ByVal title As String, ByVal text As String, Optional ByVal level As Integer = 1)
             Insert(title, text, -1, level)
         End Sub
 
-        Public Sub Insert(ByVal title As String, ByVal text As String,
+        Friend Sub Insert(ByVal title As String, ByVal text As String,
             ByVal index As Integer, Optional ByVal level As Integer = 1)
 
             Dim headerMarkup As String = (New StringBuilder).Append("=", 0, level + 1).ToString
@@ -241,7 +241,7 @@ Namespace Huggle.Wikitext
             End If
         End Sub
 
-        Public Sub Remove(ByVal index As Integer)
+        Friend Sub Remove(ByVal index As Integer)
             Document.Text = Document.Text.Remove(All(index).Selection)
         End Sub
 

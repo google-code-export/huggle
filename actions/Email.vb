@@ -9,7 +9,7 @@
         Private _Target As User
         Private _Text As String
 
-        Public Sub New(ByVal session As Session, ByVal target As User, ByVal subject As String, ByVal text As String)
+        Friend Sub New(ByVal session As Session, ByVal target As User, ByVal subject As String, ByVal text As String)
             MyBase.New(session, Msg("email-desc"))
 
             _Subject = subject
@@ -17,7 +17,7 @@
             _Text = text
         End Sub
 
-        Public Property CopyMe() As Boolean
+        Friend Property CopyMe() As Boolean
             Get
                 Return _CopyMe
             End Get
@@ -26,25 +26,25 @@
             End Set
         End Property
 
-        Public ReadOnly Property Subject() As String
+        Friend ReadOnly Property Subject() As String
             Get
                 Return _Subject
             End Get
         End Property
 
-        Public ReadOnly Property Target() As User
+        Friend ReadOnly Property Target() As User
             Get
                 Return _Target
             End Get
         End Property
 
-        Public ReadOnly Property Text() As String
+        Friend ReadOnly Property Text() As String
             Get
                 Return _Text
             End Get
         End Property
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             If User.ExtendedInfoKnown AndAlso Not User.IsEmailable Then OnFail(Msg("email-notemailable")) : Return
 
             OnProgress(Msg("email-progress", Target))

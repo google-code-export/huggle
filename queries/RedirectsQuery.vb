@@ -5,16 +5,16 @@ Namespace Huggle.Actions
 
     'Get redirect targets
 
-    Public Class RedirectsQuery : Inherits Query
+    Friend Class RedirectsQuery : Inherits Query
 
         Private Pages As List(Of Page)
 
-        Public Sub New(ByVal session As Session, ByVal pages As List(Of Page))
+        Friend Sub New(ByVal session As Session, ByVal pages As List(Of Page))
             MyBase.New(session, Msg("redirects-desc"))
             Me.Pages = pages
         End Sub
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             Dim titles As New List(Of String)
 
             For Each page As Page In Pages

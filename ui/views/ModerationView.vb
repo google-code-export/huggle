@@ -2,9 +2,9 @@
 
 Namespace Huggle.UI
 
-    Public Class ModerationView : Inherits Viewer
+    Friend Class ModerationView : Inherits Viewer
 
-        Public Sub New(ByVal session As Session)
+        Friend Sub New(ByVal session As Session)
             MyBase.New(session)
             InitializeComponent()
         End Sub

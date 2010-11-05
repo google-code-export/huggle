@@ -4,7 +4,7 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class FirstRunForm : Inherits HuggleForm
+    Friend Class FirstRunForm : Inherits HuggleForm
 
         Private Sub _Load() Handles Me.Load
             Try

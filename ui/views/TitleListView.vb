@@ -1,8 +1,8 @@
 ﻿Namespace Huggle.UI
 
-    Public Class TitleBlacklistView : Inherits Viewer
+    Friend Class TitleListView : Inherits Viewer
 
-        Public Sub New(ByVal session As Session)
+        Friend Sub New(ByVal session As Session)
             MyBase.New(session)
             InitializeComponent()
         End Sub
@@ -10,10 +10,10 @@
         Private Sub _Load() Handles Me.Load
             App.Languages.Current.Localize(Me)
 
-            If Wiki.TitleBlacklist Is Nothing OrElse Wiki.TitleBlacklist.Entries Is Nothing OrElse Wiki.TitleBlacklist.Entries.Count = 0 Then
+            If Wiki.TitleList Is Nothing OrElse Wiki.TitleList.Entries Is Nothing OrElse Wiki.TitleList.Entries.Count = 0 Then
                 Entries.Clear()
                 EmptyNote.Visible = True
-                EditBlacklist.Visible = (Wiki.TitleBlacklist IsNot Nothing)
+                EditBlacklist.Visible = (Wiki.TitleList IsNot Nothing)
 
                 If Wiki.Family IsNot Nothing AndAlso Wiki.Family.GlobalTitleBlacklist IsNot Nothing Then
                     GlobalListNote.Text = Msg("view-titleblacklist-global", Wiki.Family.Name)
@@ -39,7 +39,7 @@
             Entries.BeginUpdate()
             Entries.Clear()
 
-            For Each entry As TitleListEntry In Wiki.TitleBlacklist.Entries
+            For Each entry As TitleListEntry In Wiki.TitleList.Entries
                 Select Case Filter.SelectedItem.ToString
                     Case Msg("view-titleblacklist-edit")
                         If Not entry.Options.Contains(TitleListOption.NoEdit) Then Continue For
@@ -72,7 +72,7 @@
         End Sub
 
         Private Sub EditBlacklist_LinkClicked() Handles EditBlacklist.LinkClicked
-            OpenWebBrowser(Wiki.TitleBlacklist.Location.Url)
+            OpenWebBrowser(Wiki.TitleList.Location.Url)
         End Sub
 
     End Class

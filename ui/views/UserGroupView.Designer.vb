@@ -42,7 +42,7 @@
             'GroupColumn
             '
             Me.GroupColumn.Text = "Group"
-            Me.GroupColumn.Width = 113
+            Me.GroupColumn.Width = 220
             '
             'CountColumn
             '

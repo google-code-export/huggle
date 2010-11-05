@@ -2,19 +2,19 @@
 
 Namespace Huggle.Actions
 
-    Public Class RevertAndWarn
+    Friend Class RevertAndWarn
 
         'Handles revert-warn behaviour
 
         Private Revert As Revert
         Private Warn As Warning
 
-        Public Sub New(ByVal revert As Revert, ByVal warn As Warning)
+        Friend Sub New(ByVal revert As Revert, ByVal warn As Warning)
             Me.Revert = revert
             Me.Warn = warn
         End Sub
 
-        Public Sub Start()
+        Friend Sub Start()
             AddHandler Revert.Success, AddressOf RevertSuccess
             Revert.Start()
         End Sub

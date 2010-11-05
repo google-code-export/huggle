@@ -50,8 +50,10 @@
             Me.List.FlexibleColumn = 1
             Me.List.FullRowSelect = True
             Me.List.GridLines = True
+            Me.List.HideSelection = False
             Me.List.Location = New System.Drawing.Point(3, 25)
             Me.List.Name = "List"
+            Me.List.SelectedValue = Nothing
             Me.List.ShowGroups = False
             Me.List.Size = New System.Drawing.Size(514, 392)
             Me.List.SortOnColumnClick = True
@@ -72,6 +74,7 @@
             'CountColumn
             '
             Me.CountColumn.Text = "Count"
+            Me.CountColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
             Me.CountColumn.Width = 50
             '
             'Title

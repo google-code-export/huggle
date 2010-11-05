@@ -5,11 +5,11 @@ Imports System.Drawing
 
 Namespace Huggle.UI
 
-    Public Class GeneralFamilyView : Inherits Viewer
+    Friend Class GeneralFamilyView : Inherits Viewer
 
         Private Family As Family
 
-        Public Sub New(ByVal session As Session)
+        Friend Sub New(ByVal session As Session)
             MyBase.New(session)
             Family = session.Wiki.Family
             InitializeComponent()

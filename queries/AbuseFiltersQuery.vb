@@ -4,13 +4,13 @@
 
     Class AbuseFiltersQuery : Inherits Query
 
-        Public Sub New(ByVal session As Session)
+        Friend Sub New(ByVal session As Session)
             MyBase.New(session, Msg("abusefilters-desc"))
         End Sub
 
-        Public Property Limit() As Integer
+        Friend Property Limit() As Integer
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             OnProgress(Msg("abusefilters-progress"))
             OnStarted()
 

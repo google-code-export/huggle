@@ -4,7 +4,7 @@ Imports System.Collections.Generic
 Namespace Huggle
 
     <Diagnostics.DebuggerDisplay("{ToString()}")> _
-    Public Class Space
+    Friend Class Space
 
         'Represents a MediaWiki namespace
 
@@ -13,7 +13,7 @@ Namespace Huggle
         Private _Name As String
         Private _Wiki As Wiki
 
-        Public Sub New(ByVal wiki As Wiki, ByVal number As Integer)
+        Friend Sub New(ByVal wiki As Wiki, ByVal number As Integer)
             _Wiki = wiki
             _Number = number
             _IsMovable = True
@@ -21,47 +21,47 @@ Namespace Huggle
             _HasSubpages = True
         End Sub
 
-        Public ReadOnly Property Aliases() As List(Of String)
+        Friend ReadOnly Property Aliases() As List(Of String)
             Get
                 Return _Aliases
             End Get
         End Property
 
-        Public Property CanonicalName() As String
-        Public Property HasSubpages() As Boolean
+        Friend Property CanonicalName() As String
+        Friend Property HasSubpages() As Boolean
 
-        Public ReadOnly Property IsArticleSpace() As Boolean
+        Friend ReadOnly Property IsArticleSpace() As Boolean
             Get
                 Return (Number = 0)
             End Get
         End Property
 
-        Public Property IsContent() As Boolean
+        Friend Property IsContent() As Boolean
 
-        Public ReadOnly Property IsCustom() As Boolean
+        Friend ReadOnly Property IsCustom() As Boolean
             Get
                 Return (Number >= 16)
             End Get
         End Property
 
-        Public Property IsEditRestricted() As Boolean
-        Public Property IsMovable() As Boolean
-        Public Property IsMoveRestricted() As Boolean
-        Public Property IsSpecial() As Boolean
+        Friend Property IsEditRestricted() As Boolean
+        Friend Property IsMovable() As Boolean
+        Friend Property IsMoveRestricted() As Boolean
+        Friend Property IsSpecial() As Boolean
 
-        Public ReadOnly Property IsSubjectSpace() As Boolean
+        Friend ReadOnly Property IsSubjectSpace() As Boolean
             Get
                 Return (Number Mod 2 = 0) AndAlso Not IsSpecial
             End Get
         End Property
 
-        Public ReadOnly Property IsTalkSpace() As Boolean
+        Friend ReadOnly Property IsTalkSpace() As Boolean
             Get
                 Return (Number Mod 2 = 1) AndAlso Not IsSpecial
             End Get
         End Property
 
-        Public Property Name() As String
+        Friend Property Name() As String
             Get
                 If _Name Is Nothing Then Return _CanonicalName Else Return _Name
             End Get
@@ -70,26 +70,26 @@ Namespace Huggle
             End Set
         End Property
 
-        Public ReadOnly Property Number() As Integer
+        Friend ReadOnly Property Number() As Integer
             Get
                 Return _Number
             End Get
         End Property
 
-        Public ReadOnly Property Wiki() As Wiki
+        Friend ReadOnly Property Wiki() As Wiki
             Get
                 Return _Wiki
             End Get
         End Property
 
-        Public ReadOnly Property SubjectSpace() As Space
+        Friend ReadOnly Property SubjectSpace() As Space
             Get
                 If IsSpecial Then Return Nothing
                 If IsTalkSpace Then Return Wiki.Spaces(Number - 1) Else Return Me
             End Get
         End Property
 
-        Public ReadOnly Property TalkSpace() As Space
+        Friend ReadOnly Property TalkSpace() As Space
             Get
                 If IsSpecial Then Return Nothing
                 If IsTalkSpace Then Return Me Else Return Wiki.Spaces(Number + 1)
@@ -118,7 +118,7 @@ Namespace Huggle
 
     End Class
 
-    Public Class SpaceCollection
+    Friend Class SpaceCollection
 
         Private _IsDefault As Boolean
         Private Wiki As Wiki
@@ -126,10 +126,26 @@ Namespace Huggle
         Private ReadOnly _All As New Dictionary(Of Integer, Space)
 
         'Built-in namespaces
-        Public Media, Special, Article, Talk, User, UserTalk, Project, ProjectTalk, File, FileTalk, _
-            MediaWiki, MediaWikiTalk, Template, TemplateTalk, Help, HelpTalk, Category, CategoryTalk As Space
+        Friend ReadOnly Media As Space
+        Friend ReadOnly Special As Space
+        Friend ReadOnly Article As Space
+        Friend ReadOnly Talk As Space
+        Friend ReadOnly User As Space
+        Friend ReadOnly UserTalk As Space
+        Friend ReadOnly Project As Space
+        Friend ReadOnly ProjectTalk As Space
+        Friend ReadOnly File As Space
+        Friend ReadOnly FileTalk As Space
+        Friend ReadOnly MediaWiki As Space
+        Friend ReadOnly MediaWikiTalk As Space
+        Friend ReadOnly Template As Space
+        Friend ReadOnly TemplateTalk As Space
+        Friend ReadOnly Help As Space
+        Friend ReadOnly HelpTalk As Space
+        Friend ReadOnly Category As Space
+        Friend ReadOnly CategoryTalk As Space
 
-        Public Sub New(ByVal wiki As Wiki)
+        Friend Sub New(ByVal wiki As Wiki)
             Me.Wiki = wiki
 
             For i As Integer = -2 To 15
@@ -189,20 +205,20 @@ Namespace Huggle
             _IsDefault = True
         End Sub
 
-        Public ReadOnly Property All() As IEnumerable(Of Space)
+        Friend ReadOnly Property All() As IEnumerable(Of Space)
             Get
                 Return _All.Values
             End Get
         End Property
 
-        Default Public ReadOnly Property Item(ByVal number As Integer) As Space
+        Default Friend ReadOnly Property Item(ByVal number As Integer) As Space
             Get
                 If Not _All.ContainsKey(number) Then _All.Add(number, New Space(Wiki, number))
                 Return _All(number)
             End Get
         End Property
 
-        Default Public ReadOnly Property Item(ByVal name As String) As Space
+        Default Friend ReadOnly Property Item(ByVal name As String) As Space
             Get
                 If name Is Nothing Then Return Nothing
 
@@ -215,7 +231,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Public Function FromTitle(ByVal title As String) As Space
+        Friend Function FromTitle(ByVal title As String) As Space
             If title Is Nothing Then Return Nothing
 
             If Not title.Contains(":") Then Return Article

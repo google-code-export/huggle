@@ -5,11 +5,11 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class GlobalGroupView : Inherits Viewer
+    Friend Class GlobalGroupView : Inherits Viewer
 
         Private Family As Family
 
-        Public Sub New(ByVal session As Session)
+        Friend Sub New(ByVal session As Session)
             MyBase.New(session)
             Family = session.Wiki.Family
             InitializeComponent()

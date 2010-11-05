@@ -2,9 +2,9 @@
 Imports System.Drawing
 
 Namespace Huggle.UI
-    Public Class GeneralWikiView : Inherits Viewer
+    Friend Class GeneralWikiView : Inherits Viewer
 
-        Public Sub New(ByVal session As Session)
+        Friend Sub New(ByVal session As Session)
             MyBase.New(session)
             InitializeComponent()
         End Sub

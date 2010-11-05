@@ -2,18 +2,18 @@
 
 Namespace Huggle.Actions
 
-    Public Class Assess : Inherits Query
+    Friend Class Assess : Inherits Query
 
         Private Page As Page
         Private Ratings As List(Of String)
 
-        Public Sub New(ByVal session As Session, ByVal page As Page, ByVal ratings As List(Of String))
+        Friend Sub New(ByVal session As Session, ByVal page As Page, ByVal ratings As List(Of String))
             MyBase.New(session, Msg("assess-desc", page))
             Me.Page = page
             Me.Ratings = ratings
         End Sub
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             If Page.Id = 0 OrElse Page.LastRev Is Nothing OrElse Not Page.ExistsKnown Then
                 Dim infoQuery As New PageDetailQuery(Session, Page, Content:=False)
                 infoQuery.Start()

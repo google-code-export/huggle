@@ -9,12 +9,12 @@ Imports System.Windows.Forms
 
 Namespace Huggle.Actions
 
-    Public Class CreateAccount : Inherits Query
+    Friend Class CreateAccount : Inherits Query
 
         Private Confirmation As Confirmation
         Private NewUser As User
 
-        Public Sub New(ByVal session As Session, ByVal newUser As User, ByVal confirmation As Confirmation)
+        Friend Sub New(ByVal session As Session, ByVal newUser As User, ByVal confirmation As Confirmation)
             MyBase.New(session, Msg("createaccount-desc", session.Wiki, newUser))
             Interactive = True
 
@@ -22,7 +22,7 @@ Namespace Huggle.Actions
             Me.NewUser = newUser
         End Sub
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             OnProgress(Msg("createaccount-progress", NewUser.FullName))
 
             'Obtain a login token

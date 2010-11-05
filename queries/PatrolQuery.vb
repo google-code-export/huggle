@@ -7,22 +7,22 @@
         Private Page As Page
         Private Rev As Revision
 
-        Public Sub New(ByVal session As Session, ByVal rev As Revision)
+        Friend Sub New(ByVal session As Session, ByVal rev As Revision)
             MyBase.New(session, Msg("query-patrol-desc"))
             Me.Rev = rev
             Me.Page = rev.Page
             Me.Watch = Watch
         End Sub
 
-        Public Sub New(ByVal session As Session, ByVal page As Page)
+        Friend Sub New(ByVal session As Session, ByVal page As Page)
             MyBase.New(session, Msg("query-patrol-desc"))
             Me.Page = page
             Me.Watch = watch
         End Sub
 
-        Public Property Watch As WatchAction
+        Friend Property Watch As WatchAction
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             'Dim FailMsg As String = Msg("patrol-fail", Page)
 
             'DoProgress(Msg("patrol-progress", Page))

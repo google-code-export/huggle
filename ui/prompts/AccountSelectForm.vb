@@ -1,13 +1,16 @@
-﻿Namespace Huggle.UI
+﻿Imports System
 
-    Public Class AccountSelectForm : Inherits HuggleForm
+Namespace Huggle.UI
+
+    Friend Class AccountSelectForm : Inherits HuggleForm
 
         Private _User As User
 
         Private Wiki As Wiki
 
-        Public Sub New(ByVal requester As String, ByVal wiki As Wiki)
+        Friend Sub New(ByVal requester As String, ByVal wiki As Wiki)
             InitializeComponent()
+            If wiki Is Nothing Then Throw New ArgumentNullException("wiki")
             Me.Wiki = wiki
 
             App.Languages.Current.Localize(Me)
@@ -24,7 +27,7 @@
             End If
         End Sub
 
-        Public ReadOnly Property User() As User
+        Friend ReadOnly Property User() As User
             Get
                 Return _User
             End Get

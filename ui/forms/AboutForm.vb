@@ -1,6 +1,6 @@
 ﻿Namespace Huggle.UI
 
-    Public Class AboutForm : Inherits HuggleForm
+    Friend Class AboutForm : Inherits HuggleForm
 
         Private Sub _Load() Handles Me.Load
             Icon = Resources.Icon

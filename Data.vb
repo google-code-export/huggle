@@ -8,9 +8,9 @@ Imports System.Web.HttpUtility
 
 Namespace Huggle
 
-    Public Module Data
+    Friend Module Data
 
-        Public Function AsString(ByVal item As Object) As String
+        Friend Function AsString(ByVal item As Object) As String
             If item Is Nothing Then Return "null"
 
             If TypeOf item Is Token Then
@@ -53,13 +53,13 @@ Namespace Huggle
             Return item.ToString
         End Function
 
-        Public Function AsChart(ByVal item As Object) As Image
+        Friend Function AsChart(ByVal item As Object) As Image
             If item Is Nothing Then Return Nothing
 
             Return Nothing
         End Function
 
-        Public Function AsHtml(ByVal item As Object) As Html
+        Friend Function AsHtml(ByVal item As Object) As Html
             If item Is Nothing Then Return New Html("")
 
             If TypeOf item Is Html Then
@@ -94,13 +94,13 @@ Namespace Huggle
             Return New Html(HtmlEncode(Data.AsString(item)))
         End Function
 
-        Public Function AsImage(ByVal item As Object) As Image
+        Friend Function AsImage(ByVal item As Object) As Image
             If item Is Nothing Then Return Nothing
 
             Return Nothing
         End Function
 
-        Public Function AsList(ByVal item As Object) As List(Of String)
+        Friend Function AsList(ByVal item As Object) As List(Of String)
             If item Is Nothing Then Return Nothing
 
             If TypeOf item Is ArrayList Then
@@ -119,7 +119,7 @@ Namespace Huggle
             Return Nothing
         End Function
 
-        Public Function AsSubitem(ByVal item As Object) As String
+        Friend Function AsSubitem(ByVal item As Object) As String
             If item Is Nothing Then Return "null"
 
             If TypeOf item Is Image Then
@@ -132,7 +132,7 @@ Namespace Huggle
             Return Data.AsString(item)
         End Function
 
-        Public Function AsTable(ByVal item As Object) As ScriptTable
+        Friend Function AsTable(ByVal item As Object) As ScriptTable
             If item Is Nothing Then Return Nothing
 
             If TypeOf item Is ScriptTable Then
@@ -145,7 +145,7 @@ Namespace Huggle
             Return Nothing
         End Function
 
-        Public Function AsWikitext(ByVal item As Object) As Wikistring
+        Friend Function AsWikitext(ByVal item As Object) As Wikistring
             If item Is Nothing Then Return New Wikistring("")
 
             If TypeOf item Is Wikistring Then
@@ -174,15 +174,15 @@ Namespace Huggle
 
     End Module
 
-    Public Class Html
+    Friend Class Html
 
         Private _Value As String
 
-        Public Sub New(ByVal value As String)
+        Friend Sub New(ByVal value As String)
             _Value = value
         End Sub
 
-        Public ReadOnly Property Value() As String
+        Friend ReadOnly Property Value() As String
             Get
                 Return _Value
             End Get
