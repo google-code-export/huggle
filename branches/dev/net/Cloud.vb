@@ -13,12 +13,12 @@ Namespace Huggle.Actions
     '(except for the free storage service that you used because you were too 
     'lazy/broke to host your own backend)
 
-    Public Class CloudQuery : Inherits Process
+    Friend Class CloudQuery : Inherits Process
 
         Private Key As String
         Private _Value As String
 
-        Public Shared ReadOnly Property KeyPrefix As String
+        Friend Shared ReadOnly Property KeyPrefix As String
             Get
 #If DEBUG Then
                 'lets not stomp all over production
@@ -29,7 +29,7 @@ Namespace Huggle.Actions
             End Get
         End Property
 
-        Public ReadOnly Property Value As String
+        Friend ReadOnly Property Value As String
             Get
                 Return _Value
             End Get
@@ -39,7 +39,7 @@ Namespace Huggle.Actions
             Me.Key = key
         End Sub
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             OnStarted()
 
             Dim req As New Request(Nothing)
@@ -84,17 +84,17 @@ Namespace Huggle.Actions
 
     End Class
 
-    Public Class CloudStore : Inherits Process
+    Friend Class CloudStore : Inherits Process
 
         Private Key As String
         Private Value As String
 
-        Public Sub New(ByVal key As String, ByVal value As String)
+        Friend Sub New(ByVal key As String, ByVal value As String)
             Me.Key = key
             Me.Value = value
         End Sub
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             OnStarted()
 
             Dim req As New Request(Nothing)

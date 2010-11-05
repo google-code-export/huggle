@@ -4,42 +4,42 @@ Namespace Huggle.Actions
 
     'Proptect a page
 
-    Public Class Protect : Inherits Query
+    Friend Class Protect : Inherits Query
 
         Private _Levels As New Dictionary(Of String, ProtectionPart)
         Private _Page As Page
         Private _Summary As String
 
-        Public Sub New(ByVal session As Session, ByVal page As Page, ByVal summary As String)
+        Friend Sub New(ByVal session As Session, ByVal page As Page, ByVal summary As String)
             MyBase.New(session, Msg("protect-desc", page))
 
             _Page = page
             _Summary = summary
         End Sub
 
-        Public Property Cascade() As Boolean
+        Friend Property Cascade() As Boolean
 
-        Public ReadOnly Property Levels() As Dictionary(Of String, ProtectionPart)
+        Friend ReadOnly Property Levels() As Dictionary(Of String, ProtectionPart)
             Get
                 Return _Levels
             End Get
         End Property
 
-        Public ReadOnly Property Page() As Page
+        Friend ReadOnly Property Page() As Page
             Get
                 Return _Page
             End Get
         End Property
 
-        Public ReadOnly Property Summary() As String
+        Friend ReadOnly Property Summary() As String
             Get
                 Return _Summary
             End Get
         End Property
 
-        Public Property Watch() As WatchAction
+        Friend Property Watch() As WatchAction
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             OnProgress(Msg("protect-progress", Page))
             OnStarted()
 

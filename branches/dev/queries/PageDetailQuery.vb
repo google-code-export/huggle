@@ -11,7 +11,7 @@ Namespace Huggle.Actions
         Private Categories, Content, Diffs, Externals, LangLinks, Links, Media, Revisions, Templates As Boolean
         Private Revs As RevType
 
-        Public Sub New(ByVal session As Session, ByVal Page As Page, Optional ByVal Revs As RevType = RevType.Last, _
+        Friend Sub New(ByVal session As Session, ByVal Page As Page, Optional ByVal Revs As RevType = RevType.Last, _
             Optional ByVal Categories As Boolean = False, Optional ByVal Content As Boolean = True, _
             Optional ByVal Diffs As Boolean = False, _
             Optional ByVal Externals As Boolean = False, Optional ByVal LangLinks As Boolean = False, _
@@ -32,7 +32,7 @@ Namespace Huggle.Actions
             Me.Templates = Templates
         End Sub
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
 
             Dim Query As New QueryString( _
                 "action", "query", _
@@ -104,7 +104,7 @@ Namespace Huggle.Actions
 
     End Class
 
-    Public Enum RevType As Integer
+    Friend Enum RevType As Integer
         : Last : First : Recent : Old
     End Enum
 

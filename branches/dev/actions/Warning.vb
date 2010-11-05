@@ -4,7 +4,7 @@ Imports System.Globalization
 
 Namespace Huggle.Actions
 
-    Public Class Warning : Inherits Query
+    Friend Class Warning : Inherits Query
 
         'Handles issuing a warning for a specified revision
 
@@ -13,20 +13,20 @@ Namespace Huggle.Actions
         Private _Rev As Revision
         Private _Type As SanctionType
 
-        Public Sub New(ByVal session As Session, ByVal rev As Revision, ByVal type As SanctionType)
+        Friend Sub New(ByVal session As Session, ByVal rev As Revision, ByVal type As SanctionType)
             MyBase.New(session, Msg("warn-desc"))
 
             _Rev = rev
             _Type = type
         End Sub
 
-        Public ReadOnly Property Rev() As Revision
+        Friend ReadOnly Property Rev() As Revision
             Get
                 Return _Rev
             End Get
         End Property
 
-        Public Property Type() As SanctionType
+        Friend Property Type() As SanctionType
             Get
                 Return _Type
             End Get
@@ -35,7 +35,7 @@ Namespace Huggle.Actions
             End Set
         End Property
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             'Check user's status
             If Rev.User.IsBlocked Then OnFail(Msg("warn-alreadyblocked")) : Return
 

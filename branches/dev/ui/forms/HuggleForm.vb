@@ -6,23 +6,23 @@ Namespace Huggle.UI
     'This should be abstract, but for some reason the Windows Forms designer
     'cannot design controls that inherit from abstract base types
 
-    Public Class HuggleForm : Inherits Form
+    Friend Class HuggleForm : Inherits Form
 
         Private _IsAvailable As Boolean
 
-        Public Sub New()
+        Friend Sub New()
 
         End Sub
 
-        Public Overridable Function GetKey() As String
+        Friend Overridable Function GetKey() As String
             Return Nothing
         End Function
 
-        Public Overridable Function GetState() As Dictionary(Of String, Object)
+        Friend Overridable Function GetState() As Dictionary(Of String, Object)
             Return Nothing
         End Function
 
-        Public Overridable Sub RestoreState()
+        Friend Overridable Sub RestoreState()
 
         End Sub
 

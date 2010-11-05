@@ -66,7 +66,7 @@
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <NoWarn>
     </NoWarn>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>analysis\analysis.ruleset</CodeAnalysisRuleSet>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningLevel>1</WarningLevel>
     <DocumentationFile>
@@ -134,6 +134,7 @@
     <Compile Include="actions\ResetPreferences.vb" />
     <Compile Include="actions\Unblock.vb" />
     <Compile Include="config\ConfigRead.vb" />
+    <Compile Include="model\RateLimit.vb" />
     <Compile Include="net\Cloud.vb" />
     <Compile Include="Main.vb" />
     <Compile Include="model\ApiModule.vb" />
@@ -175,6 +176,12 @@
     <Compile Include="config\MessageConfig.vb" />
     <Compile Include="net\FileRequest.vb" />
     <Compile Include="Data.vb" />
+    <Compile Include="ui\views\AbuseFilterDetailView.Designer.vb">
+      <DependentUpon>AbuseFilterDetailView.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\views\AbuseFilterDetailView.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="ui\controls\DataView.Designer.vb">
       <DependentUpon>DataView.vb</DependentUpon>
     </Compile>
@@ -379,7 +386,7 @@
     <Compile Include="ui\forms\ReviewForm.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ui\controls\SplitContainerEx.vb">
+    <Compile Include="ui\controls\EnhancedSplitContainer.vb">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ui\views\ChangeTagView.Designer.vb">
@@ -406,10 +413,10 @@
     <Compile Include="ui\views\GeneralFamilyView.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ui\views\UserRightsView.Designer.vb">
-      <DependentUpon>UserRightsView.vb</DependentUpon>
+    <Compile Include="ui\views\UserRightView.Designer.vb">
+      <DependentUpon>UserRightView.vb</DependentUpon>
     </Compile>
-    <Compile Include="ui\views\UserRightsView.vb">
+    <Compile Include="ui\views\UserRightView.vb">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ui\views\SpamListView.Designer.vb">
@@ -442,10 +449,10 @@
     <Compile Include="ui\views\NamespaceView.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ui\views\TitleBlacklistView.Designer.vb">
-      <DependentUpon>TitleBlacklistView.vb</DependentUpon>
+    <Compile Include="ui\views\TitleListView.Designer.vb">
+      <DependentUpon>TitleListView.vb</DependentUpon>
     </Compile>
-    <Compile Include="ui\views\TitleBlacklistView.vb">
+    <Compile Include="ui\views\TitleListView.vb">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ui\views\UserGroupView.Designer.vb">
@@ -641,6 +648,9 @@
     <Compile Include="wikitext\Transclusion.vb" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ui\views\AbuseFilterDetailView.resx">
+      <DependentUpon>AbuseFilterDetailView.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ui\controls\QueryPanel.resx">
       <DependentUpon>QueryPanel.vb</DependentUpon>
     </EmbeddedResource>
@@ -725,8 +735,8 @@
     <EmbeddedResource Include="ui\views\GeneralFamilyView.resx">
       <DependentUpon>GeneralFamilyView.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ui\views\UserRightsView.resx">
-      <DependentUpon>UserRightsView.vb</DependentUpon>
+    <EmbeddedResource Include="ui\views\UserRightView.resx">
+      <DependentUpon>UserRightView.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ui\views\SpamListView.resx">
       <DependentUpon>SpamListView.vb</DependentUpon>
@@ -743,8 +753,8 @@
     <EmbeddedResource Include="ui\views\NamespaceView.resx">
       <DependentUpon>NamespaceView.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ui\views\TitleBlacklistView.resx">
-      <DependentUpon>TitleBlacklistView.vb</DependentUpon>
+    <EmbeddedResource Include="ui\views\TitleListView.resx">
+      <DependentUpon>TitleListView.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ui\views\UserGroupView.resx">
       <DependentUpon>UserGroupView.vb</DependentUpon>

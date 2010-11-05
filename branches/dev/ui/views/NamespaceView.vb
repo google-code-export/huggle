@@ -3,9 +3,9 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class NamespaceView : Inherits Viewer
+    Friend Class NamespaceView : Inherits Viewer
 
-        Public Sub New(ByVal session As Session)
+        Friend Sub New(ByVal session As Session)
             MyBase.New(session)
             InitializeComponent()
         End Sub

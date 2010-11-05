@@ -5,17 +5,17 @@ Imports System.Text.RegularExpressions
 Namespace Huggle
 
     <Diagnostics.DebuggerDisplay("{ToString()}")>
-    Public Class TitleList
+    Friend Class TitleList
 
         Private _Entries As List(Of TitleListEntry)
         Private _IsLoaded As Boolean
         Private _Location As Page
 
-        Public Sub New(ByVal location As Page)
+        Friend Sub New(ByVal location As Page)
             _Location = location
         End Sub
 
-        Public ReadOnly Property Entries As List(Of TitleListEntry)
+        Friend ReadOnly Property Entries As List(Of TitleListEntry)
             Get
                 If Not IsLoaded Then Return Nothing
 
@@ -24,13 +24,13 @@ Namespace Huggle
             End Get
         End Property
 
-        Public ReadOnly Property IsLoaded As Boolean
+        Friend ReadOnly Property IsLoaded As Boolean
             Get
                 Return (Location.Text IsNot Nothing)
             End Get
         End Property
 
-        Public ReadOnly Property IsMatch _
+        Friend ReadOnly Property IsMatch _
             (ByVal session As Session, ByVal title As String, ByVal action As TitleListAction) As Boolean
 
             Get
@@ -44,7 +44,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Public ReadOnly Property Location As Page
+        Friend ReadOnly Property Location As Page
             Get
                 Return _Location
             End Get
@@ -134,19 +134,19 @@ Namespace Huggle
     End Class
 
     <Diagnostics.DebuggerDisplay("{ToString()}")>
-    Public Class TitleListEntry
+    Friend Class TitleListEntry
 
         Private _Options As New List(Of TitleListOption)
         Private _Pattern As String
 
-        Public Sub New(ByVal pattern As String)
+        Friend Sub New(ByVal pattern As String)
             _Pattern = pattern
         End Sub
 
-        Public Property Comment As String
-        Public Property ErrorMessage As String
+        Friend Property Comment As String
+        Friend Property ErrorMessage As String
 
-        Public ReadOnly Property IsMatch _
+        Friend ReadOnly Property IsMatch _
             (ByVal session As Session, ByVal title As String, ByVal action As TitleListAction) As Boolean
 
             Get
@@ -186,13 +186,13 @@ Namespace Huggle
             End Get
         End Property
 
-        Public ReadOnly Property Options As List(Of TitleListOption)
+        Friend ReadOnly Property Options As List(Of TitleListOption)
             Get
                 Return _Options
             End Get
         End Property
 
-        Public ReadOnly Property Pattern As String
+        Friend ReadOnly Property Pattern As String
             Get
                 Return _Pattern
             End Get
@@ -213,11 +213,11 @@ Namespace Huggle
 
     End Class
 
-    Public Enum TitleListOption As Integer
+    Friend Enum TitleListOption As Integer
         : AutoConfirmed : CaseSensitive : MoveOnly : NoEdit : NewAccountOnly : ReUpload
     End Enum
 
-    Public Enum TitleListAction As Integer
+    Friend Enum TitleListAction As Integer
         : Edit : Create : CreateAccount : Move : ReUpload : Upload
     End Enum
 

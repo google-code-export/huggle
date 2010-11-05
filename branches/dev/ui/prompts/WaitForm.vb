@@ -5,13 +5,13 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class WaitForm : Inherits HuggleForm
+    Friend Class WaitForm : Inherits HuggleForm
 
         Private _Cancelled As Boolean
 
         Private Message As String
 
-        Public Sub New(ByVal message As String)
+        Friend Sub New(ByVal message As String)
             InitializeComponent()
             Me.Message = message
         End Sub
@@ -28,21 +28,21 @@ Namespace Huggle.UI
             Indicator.Stop()
         End Sub
 
-        Public ReadOnly Property Cancelled() As Boolean
+        Friend ReadOnly Property Cancelled() As Boolean
             Get
                 Return _Cancelled
             End Get
         End Property
 
-        Public Sub CloseByProcess(ByVal sender As Object, ByVal e As EventArgs(Of Process))
+        Friend Sub CloseByProcess(ByVal sender As Object, ByVal e As EventArgs(Of Process))
             Done()
         End Sub
 
-        Public Sub UpdateByProcess(ByVal sender As Object, ByVal e As EventArgs(Of Process))
-            SetMessage(e.Sender.Message)
+        Friend Sub UpdateByProcess(ByVal sender As Object, ByVal e As EventArgs(Of Process))
+            SetMessage(e.Value.Message)
         End Sub
 
-        Public Sub SetMessage(ByVal message As String)
+        Friend Sub SetMessage(ByVal message As String)
             If Not IsAvailable Then Return
 
             Indicator.Text = message
@@ -59,7 +59,7 @@ Namespace Huggle.UI
             Close()
         End Sub
 
-        Public Function Done() As Object
+        Friend Function Done() As Object
             _Cancelled = False
             Close()
             Return Nothing

@@ -14,54 +14,46 @@ Namespace Huggle
 
     'Represents an HTTP request
 
-    Public Class Request : Inherits Process
+    Friend Class Request : Inherits Process
 
-        Private _Response As MemoryStream
         Private _ResponseTime As TimeSpan
         Private ReadOnly _Session As Session
 
-        Private Shared ReadOnly MaxAttempts As Integer = 3
+        Private Const MaxAttempts As Integer = 3
         Private Shared ReadOnly RetryInterval As New TimeSpan(0, 0, 3)
         Private Shared ReadOnly DefaultTimeout As New TimeSpan(0, 0, 30)
 
-        Public Sub New(ByVal session As Session)
+        Friend Sub New(ByVal session As Session)
             _Session = session
         End Sub
 
-        Public Property Boundary() As String
+        Friend Property Boundary() As String
 
-        Public Property Cookies() As CookieContainer
+        Friend Property Cookies() As CookieContainer
 
-        Public Property Data() As Byte()
+        Friend Property Data() As Byte()
 
-        Public Property IsMultipart() As Boolean
+        Friend Property IsMultipart() As Boolean
 
-        Public Property Response() As MemoryStream
-            Get
-                Return _Response
-            End Get
-            Protected Set(ByVal value As MemoryStream)
-                _Response = value
-            End Set
-        End Property
+        Friend Property Response() As MemoryStream
 
-        Public ReadOnly Property ResponseTime() As TimeSpan
+        Friend ReadOnly Property ResponseTime() As TimeSpan
             Get
                 Return _ResponseTime
             End Get
         End Property
 
-        Public ReadOnly Property Session() As Session
+        Friend ReadOnly Property Session() As Session
             Get
                 Return _Session
             End Get
         End Property
 
-        Public Property Timeout As TimeSpan = DefaultTimeout
+        Friend Property Timeout As TimeSpan = DefaultTimeout
 
-        Public Property Url() As Uri
+        Friend Property Url() As Uri
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             OnStarted()
             Result = Result.Success
             Dim retries As Integer = MaxAttempts

@@ -5,12 +5,12 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class FamilyPropertiesForm : Inherits HuggleForm
+    Friend Class FamilyPropertiesForm : Inherits HuggleForm
 
         Private LoadedViews As New List(Of Viewer)
         Private Session As Session
 
-        Public Sub New(ByVal session As Session)
+        Friend Sub New(ByVal session As Session)
             InitializeComponent()
             Size = New Size(720, 480)
             Me.Session = session

@@ -5,7 +5,7 @@ Imports System.Xml
 
 Namespace Huggle
 
-    Partial Public Class ApiRequest
+    Partial Friend Class ApiRequest
 
         Private LastRev As Revision
 
@@ -1695,8 +1695,9 @@ Namespace Huggle
                             For Each groupNode As XmlNode In rateNode.ChildNodes
                                 User.RateLimits.Add(New RateLimit(
                                     Action:=rateNode.Name,
+                                    count:=CInt(groupNode.Attribute("hits")),
                                     group:=groupNode.Name,
-                                    hits:=CInt(groupNode.Attribute("hits")),
+                                    groups:=Nothing,
                                     time:=New TimeSpan(0, 0, CInt(groupNode.Attribute("seconds")))))
                             Next groupNode
                         Next rateNode

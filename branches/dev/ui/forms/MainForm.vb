@@ -6,11 +6,11 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class MainForm : Inherits HuggleForm
+    Friend Class MainForm : Inherits HuggleForm
 
         Private Session As Session
 
-        Public Sub New(ByVal session As Session)
+        Friend Sub New(ByVal session As Session)
             InitializeComponent()
             Me.Session = session
             Dim queryPanel As New QueryPanel(session)
@@ -102,11 +102,11 @@ Namespace Huggle.UI
             req.Start()
         End Sub
 
-        Public Overrides Function GetKey() As String
+        Friend Overrides Function GetKey() As String
             Return "main"
         End Function
 
-        Public Overrides Function GetState() As Dictionary(Of String, Object)
+        Friend Overrides Function GetState() As Dictionary(Of String, Object)
             Dim result As New Dictionary(Of String, Object)
 
             result.Add("location", Location.ToString)

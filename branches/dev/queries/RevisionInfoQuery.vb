@@ -6,7 +6,7 @@
 
 '        Private Revisions As List(Of Revision)
 
-'        Public Sub New(ByVal Account As User, ByVal ParamArray Revisions() As Revision)
+'        Friend Sub New(ByVal Account As User, ByVal ParamArray Revisions() As Revision)
 '            MyBase.New(Account)
 '            Me.Revisions = Revisions.ToList
 '        End Sub

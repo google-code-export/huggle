@@ -10,7 +10,7 @@
 '        Private Summary, AvoidText As String
 '        Private Minor, Watch, Patrol, Append As Boolean, NotifyRequest As Request
 
-'        Public Sub New(ByVal Page As Page, ByVal Tag As Tag, ByVal Summary As String, _
+'        Friend Sub New(ByVal Page As Page, ByVal Tag As Tag, ByVal Summary As String, _
 '            Optional ByVal AvoidText As String = Nothing, Optional ByVal Minor As Boolean = False, _
 '            Optional ByVal Watch As Boolean = False, Optional ByVal Patrol As Boolean = False, _
 '            Optional ByVal Append As Boolean = False, Optional ByVal NotifyRequest As Request = Nothing)

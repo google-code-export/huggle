@@ -4,11 +4,11 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class ConfirmationForm : Inherits HuggleForm
+    Friend Class ConfirmationForm : Inherits HuggleForm
 
         Private _Confirmation As Confirmation
 
-        Public Sub New(ByVal confirmation As Confirmation)
+        Friend Sub New(ByVal confirmation As Confirmation)
             InitializeComponent()
             _Confirmation = confirmation
         End Sub
@@ -33,7 +33,7 @@ Namespace Huggle.UI
 
         End Sub
 
-        Public ReadOnly Property Confirmation As Confirmation
+        Friend ReadOnly Property Confirmation As Confirmation
             Get
                 Return _Confirmation
             End Get

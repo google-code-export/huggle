@@ -4,18 +4,18 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class WikiAddForm : Inherits HuggleForm
+    Friend Class WikiAddForm : Inherits HuggleForm
 
         Private _User As User
         Private _Wiki As Wiki
 
-        Public ReadOnly Property User() As User
+        Friend ReadOnly Property User() As User
             Get
                 Return _User
             End Get
         End Property
 
-        Public ReadOnly Property Wiki() As Wiki
+        Friend ReadOnly Property Wiki() As Wiki
             Get
                 Return _Wiki
             End Get

@@ -6,29 +6,29 @@ Namespace Huggle.Actions
     'Retrieve details of an abuse filter
     'This includes information that is not currently available through the MediaWiki API
 
-    Public Class AbuseFilterDetail : Inherits Query
+    Friend Class AbuseFilterDetailQuery : Inherits Query
 
         Private _AllowedActions As New List(Of String)
         Private _Filter As AbuseFilter
 
-        Public Sub New(ByVal session As Session, ByVal filter As AbuseFilter)
+        Friend Sub New(ByVal session As Session, ByVal filter As AbuseFilter)
             MyBase.New(session, Msg("abusefilterdetail-desc", filter))
             _Filter = filter
         End Sub
 
-        Public ReadOnly Property AllowedActions() As List(Of String)
+        Friend ReadOnly Property AllowedActions() As List(Of String)
             Get
                 Return _AllowedActions
             End Get
         End Property
 
-        Public ReadOnly Property Filter() As AbuseFilter
+        Friend ReadOnly Property Filter() As AbuseFilter
             Get
                 Return _Filter
             End Get
         End Property
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             OnStarted()
 
             Dim req As New UIRequest(Session, Description, New QueryString("title", "Special:AbuseFilter/" &
@@ -50,11 +50,13 @@ Namespace Huggle.Actions
                 Dim rateLimitPeriod As String = GetHtmlAttributeFromName(req.Response, "wpFilterThrottlePeriod", "value")
                 Dim rateLimitGroups As String = GetHtmlAttributeFromName(req.Response, "wpFilterThrottleGroups", "value")
 
-                If rateLimitCount IsNot Nothing Then Filter.RateLimitCount = CInt(rateLimitCount)
-                If rateLimitGroups IsNot Nothing Then Filter.RateLimitGroups = List(rateLimitGroups.Split(LF))
-                If rateLimitPeriod IsNot Nothing Then Filter.RateLimitPeriod = New TimeSpan(0, 0, CInt(rateLimitPeriod))
+                If rateLimitCount IsNot Nothing Then Filter.RateLimit = New RateLimit(
+                    Nothing, Nothing, If(rateLimitGroups Is Nothing, Nothing, rateLimitGroups.Split(LF).ToList),
+                    CInt(rateLimitCount), New TimeSpan(0, 0, CInt(rateLimitPeriod)))
+            Else
+                Filter.RateLimit = RateLimit.None
             End If
-            
+
             For Each item As String In
                 {"blockautopromote", "block", "degroup", "disallow", "tag", "throttle", "warn", "rangeblock"}
 

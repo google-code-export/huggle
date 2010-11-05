@@ -20,19 +20,19 @@ Imports System.Windows.Forms
 
 Namespace Huggle
 
-    Public Module Main
+    Friend Module Main
 
         Private _Log As LogClass
 
-        Public Property Handle As Form
+        Friend Property Handle As Form
 
-        Public ReadOnly Property Log As LogClass
+        Friend ReadOnly Property Log As LogClass
             Get
                 Return _Log
             End Get
         End Property
 
-        Public Sub Main()
+        Friend Sub Main()
             Try
                 AddHandler AppDomain.CurrentDomain.UnhandledException, AddressOf UnhandledException
                 AddHandler Windows.Forms.Application.ThreadException, AddressOf ThreadException
@@ -73,16 +73,16 @@ Namespace Huggle
             If Log IsNot Nothing Then Log.Write(result.LogMessage)
         End Sub
 
-        Public Sub CallOnMainThread(ByVal method As Action)
+        Friend Sub CallOnMainThread(ByVal method As Action)
             If Handle Is Nothing OrElse Not Handle.InvokeRequired Then method.Invoke() Else Handle.BeginInvoke(method)
         End Sub
 
-        Public Sub CallOnMainThread(Of T)(ByVal method As Action(Of T), ByVal param As T)
+        Friend Sub CallOnMainThread(Of T)(ByVal method As Action(Of T), ByVal param As T)
             If Handle Is Nothing OrElse Not Handle.InvokeRequired _
                 Then method.Invoke(param) Else Handle.BeginInvoke(method, param)
         End Sub
 
-        Public Sub CreateThread(ByVal method As Action, Optional ByVal callback As Action = Nothing)
+        Friend Sub CreateThread(ByVal method As Action, Optional ByVal callback As Action = Nothing)
             If SynchronizationContext.Current Is Nothing _
                 Then SynchronizationContext.SetSynchronizationContext(New SynchronizationContext)
 
@@ -106,15 +106,15 @@ Namespace Huggle
 
         Private Structure InvokeState
 
-            Public Sub New(ByVal context As SynchronizationContext, ByVal method As Action, ByVal callback As Action)
+            Friend Sub New(ByVal context As SynchronizationContext, ByVal method As Action, ByVal callback As Action)
                 Me.Callback = callback
                 Me.Context = context
                 Me.Method = method
             End Sub
 
-            Public ReadOnly Callback As Action
-            Public ReadOnly Context As SynchronizationContext
-            Public ReadOnly Method As Action
+            Friend ReadOnly Callback As Action
+            Friend ReadOnly Context As SynchronizationContext
+            Friend ReadOnly Method As Action
 
         End Structure
 

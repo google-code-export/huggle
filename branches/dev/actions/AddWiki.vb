@@ -6,7 +6,7 @@ Imports System.Text.RegularExpressions
 
 Namespace Huggle.Actions
 
-    Public Class AddWiki : Inherits Process
+    Friend Class AddWiki : Inherits Process
 
         Private _User As User
         Private _Wiki As Wiki
@@ -20,29 +20,29 @@ Namespace Huggle.Actions
         Private Shared ReadOnly newUrlRegex As New Regex _
             ("< *script[^>]*src *= *""([^""]*)/load.php", RegexOptions.Compiled Or RegexOptions.Singleline)
 
-        Public Sub New(ByVal url As Uri)
+        Friend Sub New(ByVal url As Uri)
             Me.New(url, Nothing, Nothing)
         End Sub
 
-        Public Sub New(ByVal url As Uri, ByVal username As String, ByVal password As String)
+        Friend Sub New(ByVal url As Uri, ByVal username As String, ByVal password As String)
             Me.Url = url
-            Me.Username = Username
-            Me.Password = Password
+            Me.Username = username
+            Me.Password = password
         End Sub
 
-        Public ReadOnly Property User As User
+        Friend ReadOnly Property User As User
             Get
                 Return _User
             End Get
         End Property
 
-        Public Shadows ReadOnly Property Wiki As Wiki
+        Friend Shadows ReadOnly Property Wiki As Wiki
             Get
                 Return _Wiki
             End Get
         End Property
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             OnProgress(Msg("addwiki-progress"))
 
             Dim testReq As New FileRequest(Nothing, Url)

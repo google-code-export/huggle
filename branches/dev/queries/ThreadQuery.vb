@@ -2,11 +2,11 @@
 
 'Namespace Huggle.Queries.Info
 
-'    Public Class ThreadQuery : Inherits OldQuery
+'    Friend Class ThreadQuery : Inherits OldQuery
 
 '        Private Limit As Integer
 
-'        Public Sub New(ByVal Account As User)
+'        Friend Sub New(ByVal Account As User)
 '            MyBase.New(Account)
 '        End Sub
 

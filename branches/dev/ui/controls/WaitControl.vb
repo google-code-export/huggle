@@ -24,12 +24,18 @@ Namespace Huggle.UI
         Private WithEvents AttachedProcess As Process
         Private Callback As SimpleEventHandler(Of Process)
 
-        Public Sub New()
+        Friend Sub New()
             TabStop = False
         End Sub
 
+        Friend ReadOnly Property IsRunning As Boolean
+            Get
+                Return (Timer.Enabled)
+            End Get
+        End Property
+
         <DefaultValue(WaitTextPosition.None)>
-        Public Property TextPosition As WaitTextPosition
+        Friend Property TextPosition As WaitTextPosition
             Get
                 Return _TextPosition
             End Get
@@ -55,14 +61,18 @@ Namespace Huggle.UI
         End Sub
 
         Private Sub _Paint(ByVal s As Object, ByVal e As PaintEventArgs) Handles Me.Paint
+            If Gfx Is Nothing Then Return
+
             Gfx.Graphics.Clear(BackColor)
             If BackgroundImage IsNot Nothing Then Gfx.Graphics.DrawImageUnscaled(BackgroundImage, 0, 0)
             If CanRender Then Gfx.Render()
         End Sub
 
         Private Sub _Resize() Handles Me.Resize
-            Gfx = BufferedGraphicsManager.Current.Allocate(CreateGraphics, DisplayRectangle)
-            Gfx.Graphics.SmoothingMode = Drawing2D.SmoothingMode.HighQuality
+            If DisplayRectangle.Height > 0 AndAlso DisplayRectangle.Width > 0 Then
+                Gfx = BufferedGraphicsManager.Current.Allocate(CreateGraphics, DisplayRectangle)
+                Gfx.Graphics.SmoothingMode = Drawing2D.SmoothingMode.HighQuality
+            End If
         End Sub
 
         Private Sub _TextChanged() Handles Me.TextChanged
@@ -76,11 +86,15 @@ Namespace Huggle.UI
                     Height = 16
 
                 Case WaitTextPosition.Vertical
-                    Size = TextRenderer.MeasureText(Text, Font, Size.Empty, TextFormatFlags.VerticalCenter)
+                    Dim measurement As Size = TextRenderer.MeasureText(Text, Font, Size.Empty, TextFormatFlags.VerticalCenter)
+                    Width = Size.Width
+                    Height = Size.Height + 20
             End Select
         End Sub
 
         Private Sub Timer_Tick() Handles Timer.Tick
+            If Gfx Is Nothing Then Return
+
             Gfx.Graphics.Clear(BackColor)
             Frame = (Frame + 1) Mod Frames
 
@@ -111,11 +125,11 @@ Namespace Huggle.UI
             Next i
         End Sub
 
-        Public Sub Start()
+        Friend Sub Start()
             Timer.Start()
         End Sub
 
-        Public Sub [Stop]()
+        Friend Sub [Stop]()
             Timer.Stop()
 
             If CanRender Then
@@ -124,7 +138,7 @@ Namespace Huggle.UI
             End If
         End Sub
 
-        Public Sub WaitOn(ByVal process As Process, ByVal callback As SimpleEventHandler(Of Process))
+        Friend Sub WaitOn(ByVal process As Process, ByVal callback As SimpleEventHandler(Of Process))
             If process.IsComplete Then
                 [Stop]()
                 callback(Me, New EventArgs(Of Process)(process))
@@ -141,7 +155,7 @@ Namespace Huggle.UI
             Callback(Me, New EventArgs(Of Process)(AttachedProcess))
         End Sub
 
-        Public Enum WaitTextPosition As Integer
+        Friend Enum WaitTextPosition As Integer
             : None : Horizontal : Vertical
         End Enum
 

@@ -4,13 +4,13 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class GlobalPreferencesForm : Inherits HuggleForm
+    Friend Class GlobalPreferencesForm : Inherits HuggleForm
 
         Private PrefsValid As Boolean
         Private Session As Session
         Private Source As User
 
-        Public Sub New(ByVal session As Session)
+        Friend Sub New(ByVal session As Session)
             InitializeComponent()
             Me.Session = session
         End Sub

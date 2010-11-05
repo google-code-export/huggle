@@ -1,19 +1,22 @@
-﻿Namespace Huggle.UI
+﻿Imports System
 
-    Public Class AccountCopyForm : Inherits HuggleForm
+Namespace Huggle.UI
 
-        Private User As User
+    Friend Class AccountCopyForm : Inherits HuggleForm
 
-        Public Sub New(ByVal user As User)
+        Private Session As Session
+
+        Friend Sub New(ByVal session As Session)
             InitializeComponent()
-            Me.User = user
+            If session Is Nothing Then Throw New ArgumentNullException("session")
+            Me.Session = session
 
-            For Each item As User In user.Wiki.Users.All
-                If item IsNot user Then Source.Items.Add(item)
-            Next item
+            For Each user As User In session.Wiki.Users.All
+                If user IsNot session.User AndAlso user.IsUsed Then Source.Items.Add(user)
+            Next user
         End Sub
 
-        Public ReadOnly Property Result() As User
+        Friend ReadOnly Property Result() As User
             Get
                 If UseDefault.Checked Then Return Nothing
                 Return CType(Source.SelectedItem, User)

@@ -14,12 +14,12 @@ Namespace Huggle.UI
 
         Private WithEvents _Queue As Queue
 
-        Public Event ItemsChanged As SimpleEventHandler(Of Queue)
-        Public Event ItemSelected As EventHandler(Of QueuePanelItemSelectedEventArgs)
-        Public Event OptionsClicked As SimpleEventHandler(Of QueuePanel)
-        Public Event SelectedQueueChanged As SimpleEventHandler(Of QueuePanel)
+        Friend Event ItemsChanged As SimpleEventHandler(Of Queue)
+        Friend Event ItemSelected As EventHandler(Of QueuePanelItemSelectedEventArgs)
+        Friend Event OptionsClicked As SimpleEventHandler(Of QueuePanel)
+        Friend Event SelectedQueueChanged As SimpleEventHandler(Of QueuePanel)
 
-        Public Sub New(ByVal wiki As Wiki)
+        Friend Sub New(ByVal wiki As Wiki)
             InitializeComponent()
             _Wiki = wiki
             Queues.Items.AddRange(wiki.Queues.All.ToArray)
@@ -30,7 +30,7 @@ Namespace Huggle.UI
             If App.Languages.Current IsNot Nothing Then App.Languages.Current.Localize(Me)
         End Sub
 
-        Public Property Mode() As QueueMode
+        Friend Property Mode() As QueueMode
             Get
                 Return _Mode
             End Get
@@ -39,7 +39,7 @@ Namespace Huggle.UI
             End Set
         End Property
 
-        Public Property Queue() As Queue
+        Friend Property Queue() As Queue
             Get
                 Return _Queue
             End Get
@@ -60,7 +60,7 @@ Namespace Huggle.UI
             End Set
         End Property
 
-        Public ReadOnly Property Wiki() As Wiki
+        Friend ReadOnly Property Wiki() As Wiki
             Get
                 Return _Wiki
             End Get
@@ -189,7 +189,7 @@ Namespace Huggle.UI
             UpdateItems()
         End Sub
 
-        Public Sub Reset() Handles ResetButton.Click
+        Friend Sub Reset() Handles ResetButton.Click
             If Queue IsNot Nothing Then Queue.Clear()
         End Sub
 
@@ -234,18 +234,18 @@ Namespace Huggle.UI
         Private _Item As QueueItem
         Private _Queue As Queue
 
-        Public Sub New(ByVal queue As Queue, ByVal item As QueueItem)
+        Friend Sub New(ByVal queue As Queue, ByVal item As QueueItem)
             _Item = item
             _Queue = queue
         End Sub
 
-        Public ReadOnly Property Item() As QueueItem
+        Friend ReadOnly Property Item() As QueueItem
             Get
                 Return _Item
             End Get
         End Property
 
-        Public ReadOnly Property Queue As Queue
+        Friend ReadOnly Property Queue As Queue
             Get
                 Return _Queue
             End Get

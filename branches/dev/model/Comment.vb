@@ -4,7 +4,7 @@ Imports System.Collections.Generic
 Namespace Huggle
 
     <Diagnostics.DebuggerDisplay("{Id}")>
-    Public Class Comment
+    Friend Class Comment
 
         'Represents a comment created by MediaWiki's LiquidThreads extension
         'The extension calls it a "thread", it's what a bulletin board or forum would call a "post"
@@ -13,44 +13,44 @@ Namespace Huggle
         Private ReadOnly _Id As Integer
         Private ReadOnly _Wiki As Wiki
 
-        Public Sub New(ByVal wiki As Wiki, ByVal id As Integer)
+        Friend Sub New(ByVal wiki As Wiki, ByVal id As Integer)
             _Id = id
             _Wiki = wiki
         End Sub
 
-        Public Property Author() As User
+        Friend Property Author() As User
 
-        Public Property ContentPageID() As Integer = -1
+        Friend Property ContentPageID() As Integer = -1
 
-        Public Property Created() As Date
+        Friend Property Created() As Date
 
-        Public ReadOnly Property HasSummary() As Boolean
+        Friend ReadOnly Property HasSummary() As Boolean
             Get
                 Return (_SummaryPageID > 0)
             End Get
         End Property
 
-        Public ReadOnly Property Id() As Integer
+        Friend ReadOnly Property Id() As Integer
             Get
                 Return _Id
             End Get
         End Property
 
-        Public Property Modified() As Date
+        Friend Property Modified() As Date
 
-        Public Property Page() As Page
+        Friend Property Page() As Page
 
-        Public Property Parent() As Comment
+        Friend Property Parent() As Comment
 
-        Public Property Prev() As Comment
+        Friend Property Prev() As Comment
 
-        Public Property SummaryPageID() As Integer = -1
+        Friend Property SummaryPageID() As Integer = -1
 
-        Public Property Title() As String
+        Friend Property Title() As String
 
-        Public Property Type() As Integer
+        Friend Property Type() As Integer
 
-        Public ReadOnly Property Wiki() As Wiki
+        Friend ReadOnly Property Wiki() As Wiki
             Get
                 Return _Wiki
             End Get
@@ -58,22 +58,22 @@ Namespace Huggle
 
     End Class
 
-    Public Class CommentCollection
+    Friend Class CommentCollection
 
         Private Wiki As Wiki
         Private ReadOnly _All As New Dictionary(Of Integer, Comment)
 
-        Public Sub New(ByVal wiki As Wiki)
+        Friend Sub New(ByVal wiki As Wiki)
             Me.Wiki = wiki
         End Sub
 
-        Public ReadOnly Property All() As Dictionary(Of Integer, Comment)
+        Friend ReadOnly Property All() As Dictionary(Of Integer, Comment)
             Get
                 Return _All
             End Get
         End Property
 
-        Default Public ReadOnly Property Item(ByVal id As Integer) As Comment
+        Default Friend ReadOnly Property Item(ByVal id As Integer) As Comment
             Get
                 If Not All.ContainsKey(id) Then All.Add(id, New Comment(Wiki, id))
                 Return All(id)

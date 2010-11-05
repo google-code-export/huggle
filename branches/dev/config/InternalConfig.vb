@@ -4,36 +4,40 @@ Imports System.Windows.Forms
 
 Namespace Huggle
 
-    Public Class InternalConfig
+    Friend NotInheritable Class InternalConfig
+
+        Private Sub New()
+            '
+        End Sub
 
         'Settings here are hardcoded and not user-editable
         'They are kept in a common place for convenience
 
-        Public Shared Property CloudUrl As New Uri("http://api.openkeyval.org/")
-        Public Shared Property DownloadUrl As New Uri("http://code.google.com/p/huggle")
-        Public Shared Property FeedbackUrl As New Uri("http://en.wikipedia.org/wiki/Wikipedia:Huggle/Feedback")
+        Friend Shared Property CloudUrl As New Uri("http://api.openkeyval.org/")
+        Friend Shared Property DownloadUrl As New Uri("http://code.google.com/p/huggle")
+        Friend Shared Property FeedbackUrl As New Uri("http://en.wikipedia.org/wiki/Wikipedia:Huggle/Feedback")
 
-        Public Shared Property GlobalExtensions As New List(Of String) _
+        Friend Shared Property GlobalExtensions As New List(Of String) _
             ({"Central Auth", "Global Usage", "MergeAccount", "CentralNotice", "GlobalBlocking"})
 
-        Public Shared Property ManualUrl As New Uri("http://en.wikipedia.org/wiki/Wikipedia:Huggle/Manual")
-        Public Shared Property MediaWikiUrl As New Uri("http://www.mediawiki.org/")
-        Public Shared Property PrivilegedRights As New List(Of String) _
+        Friend Shared Property ManualUrl As New Uri("http://en.wikipedia.org/wiki/Wikipedia:Huggle/Manual")
+        Friend Shared Property MediaWikiUrl As New Uri("http://www.mediawiki.org/")
+        Friend Shared Property PrivilegedRights As New List(Of String) _
             ({"delete, undelete, protect, block, userrights, suppressrevision"})
 
-        Public Shared Property SourceUrl As New Uri("http://huggle.googlecode.com/")
-        Public Shared Property TranslationUrl As New Uri("http://meta.wikimedia.org/wiki/Huggle")
-        Public Shared Property UseCloud As Boolean = False
-        Public Shared Property UserAgent As String = "Huggle/" & Windows.Forms.Application.ProductVersion
-        Public Shared Property WikimediaFilePath As String = "http://upload.wikimedia.org/"
-        Public Shared Property WikimediaSecurePath As String = "https://secure.wikimedia.org/"
-        Public Shared Property WikimediaClosedWikisUrl As New Uri("http://noc.wikimedia.org/conf/closed.dblist")
-        Public Shared Property WikimediaGlobalGroupsUrl As New Uri("http://toolserver.org/~pathoschild/globalgroups/")
+        Friend Shared Property SourceUrl As New Uri("http://huggle.googlecode.com/")
+        Friend Shared Property TranslationUrl As New Uri("http://meta.wikimedia.org/wiki/Huggle")
+        Friend Shared Property UseCloud As Boolean = False
+        Friend Shared Property UserAgent As String = "Huggle/" & Windows.Forms.Application.ProductVersion
+        Friend Shared Property WikimediaFilePath As String = "http://upload.wikimedia.org/"
+        Friend Shared Property WikimediaSecurePath As String = "https://secure.wikimedia.org/"
+        Friend Shared Property WikimediaClosedWikisUrl As New Uri("http://noc.wikimedia.org/conf/closed.dblist")
+        Friend Shared Property WikimediaGlobalGroupsUrl As New Uri("http://toolserver.org/~pathoschild/globalgroups/")
 
-        Public Shared Property MessageGroups As List(Of String)
-        Public Shared Property WikiMessages As List(Of String)
+        Friend Shared Property MessageGroups As List(Of String)
+        Friend Shared Property WikiMessages As List(Of String)
 
-        Public Shared Sub Initialize()
+        Friend Shared Sub Initialize()
             MessageGroups = New List(Of String)
             WikiMessages = New List(Of String)
 

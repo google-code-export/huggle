@@ -1,6 +1,6 @@
 ﻿Namespace Huggle.UI
     <Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
-    Partial Class TitleBlacklistView
+    Partial Class TitleListView
         Inherits Viewer
 
         'UserControl overrides dispose to clean up the component list.

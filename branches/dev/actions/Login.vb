@@ -6,7 +6,7 @@ Imports System.Windows.Forms
 
 Namespace Huggle.Actions
 
-    Public Class Login : Inherits Query
+    Friend Class Login : Inherits Query
 
         Private Anonymous As Boolean
         Private Requester As String
@@ -16,18 +16,18 @@ Namespace Huggle.Actions
         Private Shared ReadOnly KnownErrors As String() =
             {"emptypass", "illegal", "noname", "notexists", "throttled", "wrongpass", "wrongtoken"}
 
-        Public Sub New(ByVal session As Session, ByVal requester As String)
+        Friend Sub New(ByVal session As Session, ByVal requester As String)
             MyBase.New(session, Msg("login-desc"))
             Anonymous = session.User.IsAnonymous
             Me.Requester = requester
         End Sub
 
-        Public Sub New(ByVal wiki As Wiki, ByVal requester As String)
+        Friend Sub New(ByVal wiki As Wiki, ByVal requester As String)
             MyBase.New(App.Sessions(wiki.Users.Anonymous), Msg("login-desc"))
             Me.Requester = requester
         End Sub
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             If Session.IsActive Then OnSuccess() : Return
 
             'Let global config finish preloading. If it wasn't preloading, load it.
@@ -144,7 +144,7 @@ Namespace Huggle.Actions
             End Select
 
             If IsFailed Then Return
-            
+
             Log.Debug("Logged in {0}".FormatI(User.FullName))
 
             'Check cookies for unified account
@@ -183,7 +183,7 @@ Namespace Huggle.Actions
                     Next otherUser
 
                     If copyable.Count > 0 Then
-                        Using form As New AccountCopyForm(User)
+                        Using form As New AccountCopyForm(Session)
                             form.ShowDialog()
                             If form.Result IsNot Nothing Then User.Config = form.Result.Config.Copy(User)
                         End Using

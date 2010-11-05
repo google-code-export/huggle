@@ -1,8 +1,8 @@
 ﻿Namespace Huggle.UI
 
-    Public Class SpamListView : Inherits Viewer
+    Friend Class SpamListView : Inherits Viewer
 
-        Public Sub New(ByVal session As Session)
+        Friend Sub New(ByVal session As Session)
             MyBase.New(session)
             InitializeComponent()
         End Sub

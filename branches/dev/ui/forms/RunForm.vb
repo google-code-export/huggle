@@ -3,7 +3,7 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class RunForm : Inherits HuggleForm
+    Friend Class RunForm : Inherits HuggleForm
 
         Private Sub Mode_DrawItem(ByVal s As Object, ByVal e As DrawItemEventArgs)
             e.DrawBackground()

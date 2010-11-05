@@ -1,6 +1,6 @@
 ﻿Namespace Huggle.UI
     <Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
-    Partial Class UserRightsView
+    Partial Class UserRightView
         Inherits Viewer
 
         'UserControl overrides dispose to clean up the component list.
@@ -26,7 +26,8 @@
             Me.RightColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.GrantedColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.Count = New System.Windows.Forms.Label()
-            Me.List = New System.Windows.Forms.EnhancedListView()
+            Me.RightsList = New System.Windows.Forms.EnhancedListView()
+            Me.DescriptionColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.Title = New System.Windows.Forms.Label()
             Me.SuspendLayout()
             '
@@ -38,7 +39,7 @@
             'GrantedColumn
             '
             Me.GrantedColumn.Text = "Granted to"
-            Me.GrantedColumn.Width = 341
+            Me.GrantedColumn.Width = 157
             '
             'Count
             '
@@ -50,23 +51,28 @@
             Me.Count.Text = "0 items"
             Me.Count.TextAlign = System.Drawing.ContentAlignment.TopRight
             '
-            'List
+            'RightsList
             '
-            Me.List.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Me.RightsList.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
                         Or System.Windows.Forms.AnchorStyles.Left) _
                         Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-            Me.List.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.RightColumn, Me.GrantedColumn})
-            Me.List.FlexibleColumn = 1
-            Me.List.FullRowSelect = True
-            Me.List.GridLines = True
-            Me.List.Location = New System.Drawing.Point(3, 25)
-            Me.List.Name = "List"
-            Me.List.ShowGroups = False
-            Me.List.Size = New System.Drawing.Size(533, 303)
-            Me.List.SortOnColumnClick = True
-            Me.List.TabIndex = 15
-            Me.List.UseCompatibleStateImageBehavior = False
-            Me.List.View = System.Windows.Forms.View.Details
+            Me.RightsList.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.RightColumn, Me.DescriptionColumn, Me.GrantedColumn})
+            Me.RightsList.FlexibleColumn = 1
+            Me.RightsList.FullRowSelect = True
+            Me.RightsList.GridLines = True
+            Me.RightsList.Location = New System.Drawing.Point(3, 25)
+            Me.RightsList.Name = "RightsList"
+            Me.RightsList.ShowGroups = False
+            Me.RightsList.Size = New System.Drawing.Size(533, 303)
+            Me.RightsList.SortOnColumnClick = True
+            Me.RightsList.TabIndex = 15
+            Me.RightsList.UseCompatibleStateImageBehavior = False
+            Me.RightsList.View = System.Windows.Forms.View.Details
+            '
+            'DescriptionColumn
+            '
+            Me.DescriptionColumn.Text = "Description"
+            Me.DescriptionColumn.Width = 184
             '
             'Title
             '
@@ -82,7 +88,7 @@
             '
             Me.Controls.Add(Me.Title)
             Me.Controls.Add(Me.Count)
-            Me.Controls.Add(Me.List)
+            Me.Controls.Add(Me.RightsList)
             Me.Name = "UserRightsView"
             Me.Size = New System.Drawing.Size(539, 331)
             Me.ResumeLayout(False)
@@ -90,10 +96,11 @@
 
         End Sub
         Private WithEvents Count As System.Windows.Forms.Label
-        Private WithEvents List As System.Windows.Forms.EnhancedListView
+        Private WithEvents RightsList As System.Windows.Forms.EnhancedListView
         Private WithEvents Title As System.Windows.Forms.Label
         Private WithEvents RightColumn As System.Windows.Forms.ColumnHeader
         Private WithEvents GrantedColumn As System.Windows.Forms.ColumnHeader
+        Private WithEvents DescriptionColumn As System.Windows.Forms.ColumnHeader
 
     End Class
 End Namespace

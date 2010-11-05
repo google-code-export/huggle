@@ -4,9 +4,9 @@ Imports System.Drawing
 
 Namespace System.Windows.Forms
 
-    Public Class EnhancedComboBox : Inherits ComboBox
+    Friend Class EnhancedComboBox : Inherits ComboBox
 
-        Public Sub ResizeDropDown()
+        Friend Sub ResizeDropDown()
             Dim newWidth As Integer = DropDownWidth
             Dim graphics As Graphics = CreateGraphics()
 

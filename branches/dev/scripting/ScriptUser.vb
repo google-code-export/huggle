@@ -59,12 +59,12 @@ Namespace Huggle.Scripting
             Return Nothing
         End Function
 
-        Private Function DoUIAction(ByVal FuncData As FuncData) As Object
+        Private Function DoUIAction(ByVal funcData As FuncData) As Object
             'Post(Of FuncData)(AddressOf EvalUIAction, FuncData)
             Return True
         End Function
 
-        Private Sub EvalUIAction(ByVal Data As FuncData)
+        Private Sub EvalUIAction(ByVal data As FuncData)
 
             'Evaluation happens in its own thread; this method is the exception and executes on the UI thread,
             'to handle things that need to manipulate the UI
@@ -80,10 +80,10 @@ Namespace Huggle.Scripting
         End Sub
 
         Structure FuncData
-            Public Context As Object
-            Public Func As Token
-            Public Arg As Token()
-            Public Named As Dictionary(Of String, Token)
+            Friend Context As Object
+            Friend Func As Token
+            Friend Arg As Token()
+            Friend Named As Dictionary(Of String, Token)
         End Structure
 
     End Class

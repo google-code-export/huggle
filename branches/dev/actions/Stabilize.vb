@@ -1,6 +1,6 @@
 ﻿Namespace Huggle.Actions
 
-    Public Class Stabilize : Inherits Query
+    Friend Class Stabilize : Inherits Query
 
         Private _AutoReview As Boolean
         Private _Page As Page
@@ -9,12 +9,12 @@
         Private _Summary As String
         Private _Watch As Boolean
 
-        Public Sub New(ByVal session As Session, ByVal page As Page)
+        Friend Sub New(ByVal session As Session, ByVal page As Page)
             MyBase.New(session, Msg("stabilize-desc", page))
             _Page = page
         End Sub
 
-        Public Property AutoReview() As Boolean
+        Friend Property AutoReview() As Boolean
             Get
                 Return _AutoReview
             End Get
@@ -23,7 +23,7 @@
             End Set
         End Property
 
-        Public Property Page() As Page
+        Friend Property Page() As Page
             Get
                 Return _Page
             End Get
@@ -32,7 +32,7 @@
             End Set
         End Property
 
-        Public Property RestrictAutoReview() As Boolean
+        Friend Property RestrictAutoReview() As Boolean
             Get
                 Return _RestrictAutoReview
             End Get
@@ -41,7 +41,7 @@
             End Set
         End Property
 
-        Public Property StableFlag() As StableFlag
+        Friend Property StableFlag() As StableFlag
             Get
                 Return _StableFlag
             End Get
@@ -50,7 +50,7 @@
             End Set
         End Property
 
-        Public Property Summary() As String
+        Friend Property Summary() As String
             Get
                 Return _Summary
             End Get
@@ -59,7 +59,7 @@
             End Set
         End Property
 
-        Public Property Watch() As Boolean
+        Friend Property Watch() As Boolean
             Get
                 Return _Watch
             End Get
@@ -68,7 +68,7 @@
             End Set
         End Property
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             OnProgress(Msg("stabilize-progress", Page.Title))
             OnStarted()
 
@@ -105,7 +105,7 @@
 
     End Class
 
-    Public Enum StableFlag As Integer
+    Friend Enum StableFlag As Integer
         : Latest : LatestStable : LatestQuality : LatestPristine
     End Enum
 

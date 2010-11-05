@@ -30,7 +30,7 @@ Namespace Huggle
             "OemQuestion", "/" _
             }
 
-        Public Sub New(ByVal command As String, ByVal key As Keys, _
+        Friend Sub New(ByVal command As String, ByVal key As Keys, _
             ByVal control As Boolean, ByVal alt As Boolean, ByVal shift As Boolean)
 
             _Command = command
@@ -41,7 +41,7 @@ Namespace Huggle
             _All.Merge(command, Me)
         End Sub
 
-        Public Sub New(ByVal command As String, ByVal shortcutString As String)
+        Friend Sub New(ByVal command As String, ByVal shortcutString As String)
             _Command = command
 
             If Not String.IsNullOrEmpty(shortcutString) Then
@@ -68,41 +68,41 @@ Namespace Huggle
             End If
         End Sub
 
-        Public ReadOnly Property Alt() As Boolean
+        Friend ReadOnly Property Alt() As Boolean
             Get
                 Return _Alt
             End Get
         End Property
 
-        Public ReadOnly Property Command() As String
+        Friend ReadOnly Property Command() As String
             Get
                 Return _Command
             End Get
         End Property
 
-        Public ReadOnly Property Control() As Boolean
+        Friend ReadOnly Property Control() As Boolean
             Get
                 Return _Control
             End Get
         End Property
 
-        Public ReadOnly Property Key() As Keys
+        Friend ReadOnly Property Key() As Keys
             Get
                 Return _Key
             End Get
         End Property
 
-        Public ReadOnly Property Shift() As Boolean
+        Friend ReadOnly Property Shift() As Boolean
             Get
                 Return _Shift
             End Get
         End Property
 
         Public Overrides Function Equals(ByVal obj As Object) As Boolean
-            Dim Shortcut As Shortcut = TryCast(obj, Shortcut)
+            Dim shortcut As Shortcut = TryCast(obj, Shortcut)
 
-            If Shortcut Is Nothing Then Return False Else Return (Shortcut.Key = Key AndAlso _
-                Shortcut.Alt = Alt AndAlso Shortcut.Control = Control AndAlso Shortcut.Shift = Shift)
+            If shortcut Is Nothing Then Return False Else Return (shortcut.Key = Key AndAlso _
+                shortcut.Alt = Alt AndAlso shortcut.Control = Control AndAlso shortcut.Shift = Shift)
         End Function
 
         Public Overrides Function GetHashCode() As Integer
@@ -110,33 +110,35 @@ Namespace Huggle
         End Function
 
         Public Overrides Function ToString() As String
-            Dim Name As String = Key.ToString
+            Dim name As String = Key.ToString
 
             For i As Integer = 0 To KeyNames.Length - 2 Step 2
-                If Name = KeyNames(i) Then
-                    Name = KeyNames(i + 1)
+                If name = KeyNames(i) Then
+                    name = KeyNames(i + 1)
                     Exit For
                 End If
             Next i
 
-            If Shift Then Name = "Shift + " & Name
-            If Alt Then Name = "Alt + " & Name
-            If Control Then Name = "Ctrl + " & Name
+            If Shift Then name = "Shift + " & name
+            If Alt Then name = "Alt + " & name
+            If Control Then name = "Ctrl + " & name
 
-            Return Name
+            Return name
         End Function
 
-        Public Shared ReadOnly Property All() As Dictionary(Of String, Shortcut)
+        Friend Shared ReadOnly Property All() As Dictionary(Of String, Shortcut)
             Get
                 Return _All
             End Get
         End Property
 
-        Public Shared Function GetCommand(ByVal Key As Keys, ByVal Shift As Boolean, ByVal Alt As Boolean, ByVal Control As Boolean) As String
-            For Each Item As Shortcut In All.Values
-                If Item.Key = Key AndAlso Item.Shift = Shift _
-                    AndAlso Item.Alt = Alt AndAlso Item.Control = Control Then Return Item.Command
-            Next Item
+        Friend Shared Function GetCommand(ByVal key As Keys,
+            ByVal shift As Boolean, ByVal alt As Boolean, ByVal control As Boolean) As String
+
+            For Each shortcut As Shortcut In All.Values
+                If shortcut.Key = key AndAlso shortcut.Shift = shift _
+                    AndAlso shortcut.Alt = alt AndAlso shortcut.Control = control Then Return shortcut.Command
+            Next shortcut
 
             Return Nothing
         End Function

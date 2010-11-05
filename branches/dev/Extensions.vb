@@ -18,7 +18,7 @@ Imports System.Xml
 Namespace System.Runtime.CompilerServices
 
     <AttributeUsageAttribute(AttributeTargets.Assembly Or AttributeTargets.Class Or AttributeTargets.Method)>
-    Public NotInheritable Class ExtensionAttribute : Inherits Attribute
+    Friend NotInheritable Class ExtensionAttribute : Inherits Attribute
 
     End Class
 
@@ -26,20 +26,20 @@ End Namespace
 
 Namespace System
 
-    Public Delegate Sub Action()
-    Public Delegate Sub SimpleEventHandler(Of T)(ByVal sender As Object, ByVal e As EventArgs(Of T))
+    Friend Delegate Sub Action()
+    Friend Delegate Sub SimpleEventHandler(Of T)(ByVal sender As Object, ByVal e As EventArgs(Of T))
 
-    Public Class EventArgs(Of T) : Inherits EventArgs
+    Friend Class EventArgs(Of T) : Inherits EventArgs
 
-        Private _Sender As T
+        Private _Value As T
 
-        Public Sub New(ByVal sender As T)
-            _Sender = sender
+        Friend Sub New(ByVal value As T)
+            _Value = value
         End Sub
 
-        Public ReadOnly Property Sender As T
+        Friend ReadOnly Property Value As T
             Get
-                Return _Sender
+                Return _Value
             End Get
         End Property
 
@@ -50,7 +50,7 @@ End Namespace
 Namespace System.Windows.Forms
 
     <Diagnostics.DebuggerStepThrough()>
-    Public Module Extensions
+    Friend Module Extensions
 
         <Extension()>
         Function ToList(Of T)(ByVal items As ListView.ListViewItemCollection) As List(Of T)
@@ -80,15 +80,15 @@ End Namespace
 
 Namespace Huggle
 
-    Public Module Extensions
+    Friend Module Extensions
 
         <Extension()>
-        Sub Add(Of T)(ByVal this As List(Of T), ByVal ParamArray items() As T)
+        Friend Sub Add(Of T)(ByVal this As List(Of T), ByVal ParamArray items() As T)
             this.AddRange(items)
         End Sub
 
         <Extension()>
-        Function AllOfType(Of T, TSub As T)(ByVal this As List(Of T)) As List(Of TSub)
+        Friend Function AllOfType(Of T, TSub As T)(ByVal this As List(Of T)) As List(Of TSub)
             Dim result As New List(Of TSub)
 
             For Each item As T In this
@@ -99,17 +99,17 @@ Namespace Huggle
         End Function
 
         <Extension()>
-        Function Attribute(ByVal this As XmlNode, ByVal value As String) As String
+        Friend Function Attribute(ByVal this As XmlNode, ByVal value As String) As String
             If this.Attributes(value) IsNot Nothing Then Return HtmlDecode(this.Attributes(value).Value) Else Return Nothing
         End Function
 
         <Extension()>
-        Function Contains(Of T)(ByVal this As T(), ByVal item As T) As Boolean
+        Friend Function Contains(Of T)(ByVal this As T(), ByVal item As T) As Boolean
             Return Array.IndexOf(this, item) > -1
         End Function
 
         <Extension()>
-        Function ContainsInstance(Of TList, TType)(ByVal this As List(Of TType)) As Boolean
+        Friend Function ContainsInstance(Of TList, TType)(ByVal this As List(Of TType)) As Boolean
             For Each item As TType In this
                 If TypeOf item Is TList Then Return True
             Next item
@@ -118,7 +118,7 @@ Namespace Huggle
         End Function
 
         <Extension()>
-        Function FirstWhere(Of T)(ByVal this As List(Of T), ByVal predicate As Predicate(Of T)) As T
+        Friend Function FirstWhere(Of T)(ByVal this As List(Of T), ByVal predicate As Predicate(Of T)) As T
             For Each item As T In this
                 If predicate(item) Then Return item
             Next item
@@ -127,7 +127,7 @@ Namespace Huggle
         End Function
 
         <Extension()>
-        Function FirstInstance(Of TList, TType As Class)(ByVal this As List(Of TList)) As TType
+        Friend Function FirstInstance(Of TList, TType As Class)(ByVal this As List(Of TList)) As TType
             For Each item As TList In this
                 If TypeOf item Is TType Then Return TryCast(item, TType)
             Next item
@@ -136,14 +136,14 @@ Namespace Huggle
         End Function
 
         <Extension()>
-        Sub ForEach(Of T)(ByVal this As IList(Of T), ByVal action As Action(Of T))
+        Friend Sub ForEach(Of T)(ByVal this As IList(Of T), ByVal action As Action(Of T))
             For Each item As T In this
                 action(item)
             Next item
         End Sub
 
         <Extension()>
-        Function FromFirst(ByVal this As String, ByVal value As String,
+        Friend Function FromFirst(ByVal this As String, ByVal value As String,
             Optional ByVal include As Boolean = False) As String
 
             If this Is Nothing OrElse value Is Nothing Then Return Nothing
@@ -153,7 +153,7 @@ Namespace Huggle
         End Function
 
         <Extension()>
-        Function FromLast(ByVal this As String, ByVal value As String,
+        Friend Function FromLast(ByVal this As String, ByVal value As String,
             Optional ByVal include As Boolean = False) As String
 
             If this Is Nothing OrElse value Is Nothing Then Return Nothing
@@ -163,17 +163,17 @@ Namespace Huggle
         End Function
 
         <Extension()>
-        Function HasAttribute(ByVal this As XmlNode, ByVal value As String) As Boolean
+        Friend Function HasAttribute(ByVal this As XmlNode, ByVal value As String) As Boolean
             Return (this.Attributes(value) IsNot Nothing)
         End Function
 
         <Extension()>
-        Function IndexOf(Of T)(ByVal this As T(), ByVal item As T) As Integer
+        Friend Function IndexOf(Of T)(ByVal this As T(), ByVal item As T) As Integer
             Return System.Array.IndexOf(this, item)
         End Function
 
         <Extension()>
-        Function IndexOfPattern(ByVal this As String, ByVal pattern As String,
+        Friend Function IndexOfPattern(ByVal this As String, ByVal pattern As String,
             Optional ByVal startIndex As Integer = 0) As Integer
 
             Dim Match As Match = Regex.Match(this.Substring(startIndex), pattern, RegexOptions.Compiled)
@@ -181,17 +181,17 @@ Namespace Huggle
         End Function
 
         <Extension()>
-        Function ItemOrNull(Of TKey, TValue)(ByVal this As Dictionary(Of TKey, TValue), ByVal key As TKey) As TValue
+        Friend Function ItemOrNull(Of TKey, TValue)(ByVal this As Dictionary(Of TKey, TValue), ByVal key As TKey) As TValue
             If this.ContainsKey(key) Then Return this(key) Else Return Nothing
         End Function
 
         <Extension()>
-        Function Join(Of T)(ByVal this As IList(Of T), Optional ByVal separator As String = "") As String
+        Friend Function Join(Of T)(ByVal this As IList(Of T), Optional ByVal separator As String = "") As String
             Return String.Join(separator, this.ToStringArray)
         End Function
 
         <Extension()>
-        Sub Merge(Of TKey, TValue)(ByVal this As Dictionary(Of TKey, TValue),
+        Friend Sub Merge(Of TKey, TValue)(ByVal this As Dictionary(Of TKey, TValue),
             ByVal mergingDictionary As Dictionary(Of TKey, TValue))
 
             For Each item As KeyValuePair(Of TKey, TValue) In mergingDictionary
@@ -200,43 +200,43 @@ Namespace Huggle
         End Sub
 
         <Extension()>
-        Sub Merge(Of T)(ByVal this As IList(Of T), ByVal items As IList(Of T))
+        Friend Sub Merge(Of T)(ByVal this As IList(Of T), ByVal items As IList(Of T))
             For Each item As T In items
                 If Not this.Contains(item) Then this.Add(item)
             Next item
         End Sub
 
         <Extension()>
-        Sub Merge(Of T)(ByVal this As IList(Of T), ByVal item As T)
+        Friend Sub Merge(Of T)(ByVal this As IList(Of T), ByVal item As T)
             If Not this.Contains(item) Then this.Add(item)
         End Sub
 
         <Extension()>
-        Sub Merge(Of TKey, TValue)(ByVal this As Dictionary(Of TKey, TValue),
+        Friend Sub Merge(Of TKey, TValue)(ByVal this As Dictionary(Of TKey, TValue),
             ByVal key As TKey, ByVal value As TValue)
 
             If Not this.ContainsKey(key) Then this.Add(key, value) Else this(key) = value
         End Sub
 
         <Extension()>
-        Sub Merge(Of TKey, TValue)(ByVal this As Dictionary(Of TKey, TValue),
+        Friend Sub Merge(Of TKey, TValue)(ByVal this As Dictionary(Of TKey, TValue),
             ByVal item As KeyValuePair(Of TKey, TValue))
 
             If this.ContainsKey(item.Key) Then this(item.Key) = item.Value Else this.Add(item.Key, item.Value)
         End Sub
 
         <Extension()>
-        Function Remove(ByVal this As String, ByVal selection As Selection) As String
+        Friend Function Remove(ByVal this As String, ByVal selection As Selection) As String
             Return this.Remove(selection.Start, selection.Length)
         End Function
 
         <Extension()>
-        Function Remove(ByVal this As String, ByVal removeString As String) As String
+        Friend Function Remove(ByVal this As String, ByVal removeString As String) As String
             Return this.Replace(removeString, "")
         End Function
 
         <Extension()>
-        Function Remove(ByVal this As String, ByVal ParamArray strings As String()) As String
+        Friend Function Remove(ByVal this As String, ByVal ParamArray strings As String()) As String
             Dim result As String = this
 
             For Each item As String In strings
@@ -247,30 +247,30 @@ Namespace Huggle
         End Function
 
         <Extension()>
-        Sub RemoveAll(Of T)(ByVal this As IList(Of T), ByVal items As IList(Of T))
+        Friend Sub RemoveAll(Of T)(ByVal this As IList(Of T), ByVal items As IList(Of T))
             For Each item As T In items
                 this.Remove(item)
             Next item
         End Sub
 
         <Extension()>
-        Function Replace(ByVal this As String, ByVal selection As Selection, ByVal replacement As String) As String
+        Friend Function Replace(ByVal this As String, ByVal selection As Selection, ByVal replacement As String) As String
             Return this.Remove(selection.Start, selection.Length).Insert(selection.Start, replacement)
         End Function
 
         <Extension()>
-        Function Split(ByVal this As String, ByVal separator As String) As String()
+        Friend Function Split(ByVal this As String, ByVal separator As String) As String()
             If this Is Nothing Then Return Nothing
             Return this.Split(New String() {separator}, StringSplitOptions.RemoveEmptyEntries)
         End Function
 
         <Extension()>
-        Function Substring(ByVal this As String, ByVal selection As Selection) As String
+        Friend Function Substring(ByVal this As String, ByVal selection As Selection) As String
             Return this.Substring(selection.Start, selection.Length)
         End Function
 
         <Extension()>
-        Function ToArray(Of T)(ByVal this As IList(Of T)) As T()
+        Friend Function ToArray(Of T)(ByVal this As IList(Of T)) As T()
             Dim result(this.Count - 1) As T
 
             For i As Integer = 0 To this.Count - 1
@@ -281,17 +281,17 @@ Namespace Huggle
         End Function
 
         <Extension()>
-        Function ToArray(Of TKey, TValue)(ByVal this As Dictionary(Of TKey, TValue).KeyCollection) As TKey()
+        Friend Function ToArray(Of TKey, TValue)(ByVal this As Dictionary(Of TKey, TValue).KeyCollection) As TKey()
             Return this.ToList.ToArray
         End Function
 
         <Extension()>
-        Function ToArray(Of TKey, TValue)(ByVal this As Dictionary(Of TKey, TValue).ValueCollection) As TValue()
+        Friend Function ToArray(Of TKey, TValue)(ByVal this As Dictionary(Of TKey, TValue).ValueCollection) As TValue()
             Return this.ToList.ToArray
         End Function
 
         <Extension()>
-        Function ToBoolean(ByVal this As String) As Boolean
+        Friend Function ToBoolean(ByVal this As String) As Boolean
             If String.IsNullOrEmpty(this) Then Return False
 
             Dim result As Boolean
@@ -306,8 +306,8 @@ Namespace Huggle
         End Function
 
         <Extension()>
-        Function ToDate(ByVal this As String) As Date
-            If this Is Nothing Then Throw New ArgumentNullException("str")
+        Friend Function ToDate(ByVal this As String) As Date
+            If this Is Nothing Then Throw New ArgumentNullException("this")
 
             Dim result As Date
             If Date.TryParse(this, result) Then Return result
@@ -315,11 +315,11 @@ Namespace Huggle
             'Also handle MediaWiki's internal timestamp format
             If this.Length = 14 AndAlso Long.TryParse(this, New Long) Then Return FromWikiTimestamp(this)
 
-            Throw New ArgumentException("str")
+            Throw New ArgumentException("this")
         End Function
 
         <Extension()>
-        Function ToDictionary(ByVal this As IList(Of Object)) As Dictionary(Of String, String)
+        Friend Function ToDictionary(ByVal this As IList(Of Object)) As Dictionary(Of String, String)
             Dim result As New Dictionary(Of String, String)
 
             For i As Integer = 0 To this.Count - 2 Step 2
@@ -331,18 +331,19 @@ Namespace Huggle
         End Function
 
         <Extension()>
-        Function ToDictionary(ByVal this As String, Optional ByVal delimiter As String = ";",
+        Friend Function ToDictionary(ByVal this As String, Optional ByVal delimiter As String = ";",
             Optional ByVal separator As String = ":") As Dictionary(Of String, String)
 
             Dim result As New Dictionary(Of String, String)
 
-            For Each item As String In this.ToList(";")
-                item = item.Replace("\:", C2)
+            For Each item As String In this.ToList(delimiter)
+                item = item.Replace("\" & separator, C2)
 
                 Dim key, value As String
 
-                key = item.ToFirst(":").Replace(C2, ":").Trim
-                If item.Contains(":") Then value = item.FromFirst(":").Replace(C2, ":").Trim Else value = ""
+                key = item.ToFirst(separator).Replace(C2, separator).Trim
+                If item.Contains(separator) Then value = item.FromFirst(separator).Replace(C2, separator).Trim _
+                    Else value = ""
 
                 result.Merge(key, value)
             Next item
@@ -351,7 +352,7 @@ Namespace Huggle
         End Function
 
         <Extension()>
-        Function ToDictionary(Of TKey, TValue)(ByVal this As Object()) As Dictionary(Of TKey, TValue)
+        Friend Function ToDictionary(Of TKey, TValue)(ByVal this As Object()) As Dictionary(Of TKey, TValue)
             Dim result As New Dictionary(Of TKey, TValue)
 
             If this.Length Mod 2 = 1 Then ReDim Preserve this(this.Length - 2)
@@ -365,7 +366,7 @@ Namespace Huggle
         End Function
 
         <Extension()>
-        Function ToDictionary(Of TSrcKey, TSrcValue, TDstKey, TDstValue)(
+        Friend Function ToDictionary(Of TSrcKey, TSrcValue, TDstKey, TDstValue)(
             ByVal this As Dictionary(Of TSrcKey, TSrcValue)) As Dictionary(Of TDstKey, TDstValue)
 
             Dim result As New Dictionary(Of TDstKey, TDstValue)
@@ -378,7 +379,7 @@ Namespace Huggle
         End Function
 
         <Extension()>
-        Function ToFirst(ByVal this As String, ByVal value As String,
+        Friend Function ToFirst(ByVal this As String, ByVal value As String,
             Optional ByVal include As Boolean = False) As String
 
             If this Is Nothing OrElse value Is Nothing Then Return Nothing
@@ -388,7 +389,7 @@ Namespace Huggle
         End Function
 
         <Extension()>
-        Function ToLast(ByVal this As String, ByVal value As String,
+        Friend Function ToLast(ByVal this As String, ByVal value As String,
             Optional ByVal include As Boolean = False) As String
 
             If this Is Nothing OrElse value Is Nothing Then Return Nothing
@@ -398,12 +399,12 @@ Namespace Huggle
         End Function
 
         <Extension()>
-        Function ToList(Of T)(ByVal this As IEnumerable(Of T)) As List(Of T)
+        Friend Function ToList(Of T)(ByVal this As IEnumerable(Of T)) As List(Of T)
             Return New List(Of T)(this)
         End Function
 
         <Extension()>
-        Function ToList(Of T)(ByVal this As IEnumerable) As List(Of T)
+        Friend Function ToList(Of T)(ByVal this As IEnumerable) As List(Of T)
             Dim result As New List(Of T)
 
             For Each item As Object In this
@@ -414,7 +415,7 @@ Namespace Huggle
         End Function
 
         <Extension()>
-        Function ToList(ByVal this As String, Optional ByVal delimiter As String = ",") As List(Of String)
+        Friend Function ToList(ByVal this As String, Optional ByVal delimiter As String = ",") As List(Of String)
             Dim result As New List(Of String)
 
             For Each item As String In this.Replace("\" & delimiter, C1).Split(delimiter)
@@ -426,7 +427,7 @@ Namespace Huggle
         End Function
 
         <Extension()>
-        Function ToList(Of T)(ByVal this As String, Optional ByVal delimiter As String = ",") As List(Of T)
+        Friend Function ToList(Of T)(ByVal this As String, Optional ByVal delimiter As String = ",") As List(Of T)
 
             Dim result As New List(Of T)
 
@@ -439,14 +440,14 @@ Namespace Huggle
         End Function
 
         <Extension()>
-        Function ToList(Of TKey, TValue)(
+        Friend Function ToList(Of TKey, TValue)(
             ByVal this As Dictionary(Of TKey, TValue).ValueCollection) As List(Of TValue)
 
             Return New List(Of TValue)(this)
         End Function
 
         <Extension()>
-        Function ToList(Of TKey, TValue)(ByVal this As Dictionary(Of TKey, TValue).KeyCollection) As List(Of TKey)
+        Friend Function ToList(Of TKey, TValue)(ByVal this As Dictionary(Of TKey, TValue).KeyCollection) As List(Of TKey)
             Dim result As New List(Of TKey)
 
             For Each item As TKey In this
@@ -457,7 +458,7 @@ Namespace Huggle
         End Function
 
         <Extension()>
-        Function ToStringArray(Of T)(ByVal this As IList(Of T)) As String()
+        Friend Function ToStringArray(Of T)(ByVal this As IList(Of T)) As String()
             Dim result(this.Count - 1) As String
 
             For i As Integer = 0 To this.Count - 1
@@ -468,7 +469,7 @@ Namespace Huggle
         End Function
 
         <Extension()>
-        Function Trim(ByVal this As IList(Of String)) As List(Of String)
+        Friend Function Trim(ByVal this As IList(Of String)) As List(Of String)
             Dim result As New List(Of String)
 
             For Each item As String In this
@@ -479,7 +480,7 @@ Namespace Huggle
         End Function
 
         <Extension()>
-        Function TryParse(Of T As Structure)(ByRef this As T, ByVal value As String) As Boolean
+        Friend Function TryParse(Of T As Structure)(ByRef this As T, ByVal value As String) As Boolean
             Try
                 this = CType(System.Enum.Parse(GetType(T), value, True), T)
                 Return True
@@ -489,39 +490,39 @@ Namespace Huggle
         End Function
 
         <Extension()>
-        Sub Unmerge(Of T)(ByVal this As List(Of T), ByVal item As T)
+        Friend Sub Unmerge(Of T)(ByVal this As List(Of T), ByVal item As T)
             If this.Contains(item) Then this.Remove(item)
         End Sub
 
         <Extension()>
-        Sub Unmerge(Of TKey, TValue)(ByVal this As Dictionary(Of TKey, TValue), ByVal item As TKey)
+        Friend Sub Unmerge(Of TKey, TValue)(ByVal this As Dictionary(Of TKey, TValue), ByVal item As TKey)
             If this.ContainsKey(item) Then this.Remove(item)
         End Sub
 
     End Module
 
-    Module StringExtensions
+    Friend Module StringExtensions
 
         'Basic string manipulating functions using invariant casing rules
         'because typing out System.Globalization.CultureInfo.InvariantCulture every time is a pain
 
         <Extension()>
-        Function EndsWithI(ByVal this As String, ByVal value As String) As Boolean
+        Friend Function EndsWithI(ByVal this As String, ByVal value As String) As Boolean
             Return this.EndsWith(value, StringComparison.Ordinal)
         End Function
 
         <Extension()>
-        Function EqualsI(ByVal this As String, ByVal value As String) As Boolean
+        Friend Function EqualsI(ByVal this As String, ByVal value As String) As Boolean
             Return this.Equals(value, StringComparison.Ordinal)
         End Function
 
         <Extension()>
-        Function EqualsIgnoreCase(ByVal this As String, ByVal value As String) As Boolean
+        Friend Function EqualsIgnoreCase(ByVal this As String, ByVal value As String) As Boolean
             Return this.Equals(value, StringComparison.OrdinalIgnoreCase)
         End Function
 
         <Extension()>
-        Function FormatForUser(ByVal format As String, ByVal ParamArray args As Object()) As String
+        Friend Function FormatForUser(ByVal format As String, ByVal ParamArray args As Object()) As String
             Try
                 Return String.Format(CultureInfo.CurrentCulture, format, args)
             Catch ex As FormatException
@@ -530,57 +531,57 @@ Namespace Huggle
         End Function
 
         <Extension()>
-        Function FormatI(ByVal format As String, ByVal ParamArray args As Object()) As String
+        Friend Function FormatI(ByVal format As String, ByVal ParamArray args As Object()) As String
             Return String.Format(CultureInfo.InvariantCulture, format, args)
         End Function
 
         <Extension()>
-        Function IndexOfI(ByVal this As String, ByVal value As String) As Integer
+        Friend Function IndexOfI(ByVal this As String, ByVal value As String) As Integer
             Return this.IndexOf(value, StringComparison.Ordinal)
         End Function
 
         <Extension()>
-        Function IndexOfI(ByVal this As String, ByVal value As String, ByVal startIndex As Integer) As Integer
+        Friend Function IndexOfI(ByVal this As String, ByVal value As String, ByVal startIndex As Integer) As Integer
             Return this.IndexOf(value, startIndex, StringComparison.Ordinal)
         End Function
 
         <Extension()>
-        Function IndexOfIgnoreCase(ByVal this As String, ByVal value As String) As Integer
+        Friend Function IndexOfIgnoreCase(ByVal this As String, ByVal value As String) As Integer
             Return this.IndexOf(value, StringComparison.OrdinalIgnoreCase)
         End Function
 
         <Extension()>
-        Function StartsWithI(ByVal this As String, ByVal value As String) As Boolean
+        Friend Function StartsWithI(ByVal this As String, ByVal value As String) As Boolean
             Return this.StartsWith(value, StringComparison.Ordinal)
         End Function
 
         <Extension()>
-        Function StartsWithIgnoreCase(ByVal this As String, ByVal value As String) As Boolean
+        Friend Function StartsWithIgnoreCase(ByVal this As String, ByVal value As String) As Boolean
             Return this.StartsWith(value, StringComparison.OrdinalIgnoreCase)
         End Function
 
         <Extension()>
-        Function LastIndexOfI(ByVal this As String, ByVal value As String) As Integer
+        Friend Function LastIndexOfI(ByVal this As String, ByVal value As String) As Integer
             Return this.LastIndexOf(value, StringComparison.Ordinal)
         End Function
 
         <Extension()>
-        Function ToLowerI(ByVal this As String) As String
+        Friend Function ToLowerI(ByVal this As String) As String
             Return this.ToLower(CultureInfo.InvariantCulture)
         End Function
 
         <Extension()>
-        Function ToUpperI(ByVal this As String) As String
+        Friend Function ToUpperI(ByVal this As String) As String
             Return this.ToUpper(CultureInfo.InvariantCulture)
         End Function
 
         <Extension()>
-        Function ToStringI(ByVal this As IFormattable) As String
+        Friend Function ToStringI(ByVal this As IFormattable) As String
             Return this.ToString(Nothing, CultureInfo.InvariantCulture)
         End Function
 
         <Extension()>
-        Function ToStringForUser(ByVal this As IFormattable) As String
+        Friend Function ToStringForUser(ByVal this As IFormattable) As String
             Return this.ToString(Nothing, CultureInfo.CurrentCulture)
         End Function
 

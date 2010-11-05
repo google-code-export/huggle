@@ -2,22 +2,22 @@
 
 Namespace Huggle.Actions
 
-    Public Class SetPreferences : Inherits Query
+    Friend Class SetPreferences : Inherits Query
 
         Private _NewPrefs As Preferences
 
-        Public Sub New(ByVal session As Session, ByVal newPrefs As Preferences)
+        Friend Sub New(ByVal session As Session, ByVal newPrefs As Preferences)
             MyBase.New(session, Msg("setprefs-desc"))
             _NewPrefs = newPrefs
         End Sub
 
-        Public ReadOnly Property NewPrefs() As Preferences
+        Friend ReadOnly Property NewPrefs() As Preferences
             Get
                 Return _NewPrefs
             End Get
         End Property
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             If User.IsAnonymous Then OnFail(Msg("setprefs-anon")) : Return
             OnStarted()
             OnProgress(Msg("setprefs-progress", User.FullName))

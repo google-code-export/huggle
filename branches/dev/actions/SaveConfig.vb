@@ -1,17 +1,17 @@
 ﻿Namespace Huggle.Actions
 
-    Public Class SaveConfig : Inherits Query
+    Friend Class SaveConfig : Inherits Query
 
         Private Config As WikiConfig
         Private Protect As Boolean
 
-        Public Sub New(ByVal session As Session, ByVal config As WikiConfig, ByVal protect As Boolean)
+        Friend Sub New(ByVal session As Session, ByVal config As WikiConfig, ByVal protect As Boolean)
             MyBase.New(session, Msg("saveconfig-desc"))
             Me.Config = config
             Me.Protect = protect
         End Sub
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             If User.HasRight("protect") Then
                 If Protect AndAlso Not User.Wiki.Config.ConfigPage.IsProtected Then
                     'Need to protect the page

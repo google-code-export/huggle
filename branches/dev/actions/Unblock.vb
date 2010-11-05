@@ -1,30 +1,30 @@
 ﻿Namespace Huggle.Actions
 
-    Public Class Unblock : Inherits Query
+    Friend Class Unblock : Inherits Query
 
         Private _Summary As String
         Private _Target As User
         Private _Watch As WatchAction
 
-        Public Sub New(ByVal session As Session, ByVal target As User, ByVal summary As String)
+        Friend Sub New(ByVal session As Session, ByVal target As User, ByVal summary As String)
             MyBase.New(session, Msg("unblock-desc", target))
             _Summary = summary
             _Target = target
         End Sub
 
-        Public ReadOnly Property Summary() As String
+        Friend ReadOnly Property Summary() As String
             Get
                 Return _Summary
             End Get
         End Property
 
-        Public ReadOnly Property Target() As User
+        Friend ReadOnly Property Target() As User
             Get
                 Return _Target
             End Get
         End Property
 
-        Public Property Watch() As WatchAction
+        Friend Property Watch() As WatchAction
             Get
                 Return _Watch
             End Get
@@ -33,7 +33,7 @@
             End Set
         End Property
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             OnProgress(Msg("unblock-progress", Target))
             OnStarted()
 

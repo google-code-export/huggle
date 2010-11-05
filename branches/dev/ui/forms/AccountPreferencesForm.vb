@@ -4,11 +4,11 @@ Imports System.Collections.Generic
 
 Namespace Huggle.UI
 
-    Public Class AccountPreferencesForm : Inherits HuggleForm
+    Friend Class AccountPreferencesForm : Inherits HuggleForm
 
         Private Session As Session
 
-        Public Sub New(ByVal session As Session)
+        Friend Sub New(ByVal session As Session)
             InitializeComponent()
             Me.Session = session
         End Sub

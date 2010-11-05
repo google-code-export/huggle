@@ -9,7 +9,7 @@ Namespace Huggle
 
     'Represents a read or write request made to MediaWiki's API (api.php)
 
-    Public Class ApiRequest : Inherits Request
+    Friend Class ApiRequest : Inherits Request
 
         Private _Continues As New Dictionary(Of String, Object)
         Private _Items As New List(Of QueueItem)
@@ -21,9 +21,9 @@ Namespace Huggle
         Private _Strings As New List(Of String)
         Private _Warnings As New List(Of String)
 
-        Private Shared ReadOnly MaxRequests As Integer = 100
+        Private Const MaxRequests As Integer = 100
 
-        Public Sub New(ByVal session As Session, ByVal description As String, ByVal query As QueryString)
+        Friend Sub New(ByVal session As Session, ByVal description As String, ByVal query As QueryString)
             MyBase.New(session)
             _Limit = session.User.ApiLimit
             _Query = query
@@ -32,83 +32,83 @@ Namespace Huggle
             Processing = True
         End Sub
 
-        Public ReadOnly Property Continues() As Dictionary(Of String, Object)
+        Friend ReadOnly Property Continues() As Dictionary(Of String, Object)
             Get
                 Return _Continues
             End Get
         End Property
 
-        Public Property Filename() As String
+        Friend Property Filename() As String
 
-        Public Property IsAtEnd() As Boolean
+        Friend Property IsAtEnd() As Boolean
 
-        Public Property IsSimple() As Boolean
+        Friend Property IsSimple() As Boolean
 
-        Public ReadOnly Property Items() As List(Of QueueItem)
+        Friend ReadOnly Property Items() As List(Of QueueItem)
             Get
                 Return _Items
             End Get
         End Property
 
-        Public Property Limit() As Integer
+        Friend Property Limit() As Integer
 
-        Public ReadOnly Property LoginResponse() As LoginResponse
+        Friend ReadOnly Property LoginResponse() As LoginResponse
             Get
                 Return _LoginResponse
             End Get
         End Property
 
-        Public Shared ReadOnly Property MaxSlowLength() As Integer
+        Friend Shared ReadOnly Property MaxSlowLength() As Integer
             Get
                 Return 50
             End Get
         End Property
 
-        Public ReadOnly Property NewItems() As List(Of QueueItem)
+        Friend ReadOnly Property NewItems() As List(Of QueueItem)
             Get
                 Return _NewItems
             End Get
         End Property
 
-        Public Property Processing() As Boolean
+        Friend Property Processing() As Boolean
 
-        Public ReadOnly Property Query() As QueryString
+        Friend ReadOnly Property Query() As QueryString
             Get
                 Return _Query
             End Get
         End Property
 
-        Public Shadows ReadOnly Property Response() As XmlDocument
+        Friend Shadows ReadOnly Property Response() As XmlDocument
             Get
                 Return _Response
             End Get
         End Property
 
-        Public ReadOnly Property Strings() As List(Of String)
+        Friend ReadOnly Property Strings() As List(Of String)
             Get
                 Return _Strings
             End Get
         End Property
 
-        Public ReadOnly Property User() As User
+        Friend ReadOnly Property User() As User
             Get
                 Return Session.User
             End Get
         End Property
 
-        Public ReadOnly Property Warnings() As List(Of String)
+        Friend ReadOnly Property Warnings() As List(Of String)
             Get
                 Return _Warnings
             End Get
         End Property
 
-        Public ReadOnly Property Wiki() As Wiki
+        Friend ReadOnly Property Wiki() As Wiki
             Get
                 Return Session.User.Wiki
             End Get
         End Property
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             Url = If(Session.IsSecure, Wiki.SecureUrl, Wiki.Url)
             If Url Is Nothing Then OnFail(Msg("error-wikibadurl", Wiki)) : Return
             Url = New Uri(Url.ToString & "api.php")
@@ -181,7 +181,7 @@ Namespace Huggle
             If Not IsFailed Then OnSuccess()
         End Sub
 
-        Public Sub DoMultiple()
+        Friend Sub DoMultiple()
             Dim remainingRequests As Integer = MaxRequests
             Continues.Clear()
             Items.Clear()
@@ -202,15 +202,15 @@ Namespace Huggle
     End Class
 
     <Diagnostics.DebuggerDisplay("{Result}")> _
-    Public Class LoginResponse
+    Friend Class LoginResponse
 
-        Public Sub New()
+        Friend Sub New()
             Result = "error"
         End Sub
 
-        Public Property Result() As String
-        Public Property Token() As String
-        Public Property Wait() As TimeSpan
+        Friend Property Result() As String
+        Friend Property Token() As String
+        Friend Property Wait() As TimeSpan
 
         Public Overrides Function ToString() As String
             Return Result

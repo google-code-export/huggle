@@ -6,7 +6,7 @@ Namespace Huggle.Scripting
 
     Partial Class Evaluator
 
-        Private Function StandardFunc(ByVal Context As Object, ByVal func As Token, ByVal arg As Token()) As Token
+        Private Function StandardFunc(ByVal context As Object, ByVal func As Token, ByVal arg As Token()) As Token
 
             Select Case func.AsString
                 Case "cancel" : Throw New TaskCancelledException

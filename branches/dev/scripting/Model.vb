@@ -6,90 +6,90 @@ Imports System.Collections.Generic
 Namespace Huggle.Scripting
 
     <Diagnostics.DebuggerDisplay("{Value}")> _
-        Public Class Token
+    Friend Class Token
 
         'Represents a symbol or value during parsing and evaluation
 
-        Public Sub New(ByVal value As Object, Optional ByVal type As TokenType = TokenType.Constant)
+        Friend Sub New(ByVal value As Object, Optional ByVal type As TokenType = TokenType.Constant)
             Me.Value = value
             Me.Type = type
         End Sub
 
-        Public Property Arguments() As Integer
+        Friend Property Arguments() As Integer
 
-        Public Function AsBool() As Boolean
+        Friend Function AsBool() As Boolean
             Return [As](Of Boolean)()
         End Function
 
-        Public Function AsDictionary() As Hashtable
+        Friend Function AsDictionary() As Hashtable
             Return [As](Of Hashtable)()
         End Function
 
-        Public Function AsList() As ArrayList
+        Friend Function AsList() As ArrayList
             Return [As](Of ArrayList)()
         End Function
 
-        Public Function AsMedia() As File
+        Friend Function AsMedia() As File
             Return [As](Of File)()
         End Function
 
-        Public Function AsNumber() As Double            
+        Friend Function AsNumber() As Double
             If TypeOf Value Is Double Then Return CDbl(Value)
             If TypeOf Value Is Integer Then Return CInt(Value)
             If TypeOf Value Is Long Then Return CLng(Value)
             Throw New ScriptException(Msg("query-typemismatch", "Number", ValueType.ToString))
         End Function
 
-        Public Function AsPage() As Page
+        Friend Function AsPage() As Page
             Return [As](Of Page)()
         End Function
 
-        Public Function AsQItem() As QueueItem
+        Friend Function AsQItem() As QueueItem
             Return [As](Of QueueItem)()
         End Function
 
-        Public Function AsRevision() As Revision
+        Friend Function AsRevision() As Revision
             Return [As](Of Revision)()
         End Function
 
-        Public Function AsSpace() As Space
+        Friend Function AsSpace() As Space
             Return [As](Of Space)()
         End Function
 
-        Public Function AsString() As String
+        Friend Function AsString() As String
             If TypeOf Value Is String Then Return CStr(Value)
             If Value IsNot Nothing Then Return Value.ToString
             Throw New ScriptException(Msg("query-typemismatch", "String", ValueType.ToString))
         End Function
 
-        Public Function AsTime() As Date
+        Friend Function AsTime() As Date
             Return [As](Of Date)()
         End Function
 
-        Public Function AsUser() As User
+        Friend Function AsUser() As User
             Return [As](Of User)()
         End Function
 
-        Public Property FirstChild() As Token
+        Friend Property FirstChild() As Token
 
-        Public Property NextSibling() As Token
+        Friend Property NextSibling() As Token
 
-        Public Property Parent() As Token
+        Friend Property Parent() As Token
 
-        Public Property Precedence() As Integer
+        Friend Property Precedence() As Integer
 
-        Public Property RightAssociative() As Boolean
+        Friend Property RightAssociative() As Boolean
 
-        Public Property Type() As TokenType
+        Friend Property Type() As TokenType
 
         Private Function [As](Of T)() As T
             If TypeOf Value Is T Then Return CType(Value, T)
             Throw New ScriptException(Msg("query-typemismatch", GetType(T).Name, ValueType.ToString))
         End Function
 
-        Public Property Value() As Object
+        Friend Property Value() As Object
 
-        Public ReadOnly Property ValueType() As String
+        Friend ReadOnly Property ValueType() As String
             Get
                 If TypeOf Value Is Double OrElse TypeOf Value Is Integer OrElse TypeOf Value Is Long Then
                     Return "Number"
@@ -111,9 +111,11 @@ Namespace Huggle.Scripting
 
     End Class
 
-    Public Class ItemComparer : Implements IComparer
+    Friend Class ItemComparer : Implements IComparer
 
-        Public Function Compare(ByVal x As Object, ByVal y As Object) As Integer Implements IComparer.Compare
+        Friend Function Compare(ByVal x As Object, ByVal y As Object) As Integer Implements IComparer.Compare
+            If x Is Nothing Then Return -1
+            If y Is Nothing Then Return 1
 
             If TypeOf x Is String Then Return String.Compare(CStr(x), CStr(y), StringComparison.Ordinal)
             If TypeOf x Is Boolean Then If CBool(x) Then Return 1 Else If CBool(y) Then Return -1 Else Return 0
@@ -131,12 +133,12 @@ Namespace Huggle.Scripting
 
     End Class
 
-    Public Structure FunctionData
+    Friend Structure FunctionData
         Dim Count As Integer
         Dim [Function] As Token
     End Structure
 
-    Public Enum TokenType As Integer
+    Friend Enum TokenType As Integer
         Constant
         [Operator]
         UnaryOperator
@@ -149,10 +151,10 @@ Namespace Huggle.Scripting
         ArgCount
     End Enum
 
-    Public Class Func
+    Friend Class Func
 
-        Public ArgNames As New List(Of String)
-        Public Token As Token
+        Friend ArgNames As New List(Of String)
+        Friend Token As Token
 
         Public Overrides Function ToString() As String
             Return "function(" & ArgNames.Join(", ") & ")"
@@ -161,34 +163,34 @@ Namespace Huggle.Scripting
     End Class
 
     <Serializable()>
-    Public Class ScriptException : Inherits ApplicationException
+    Friend Class ScriptException : Inherits HuggleException
 
         'Represents an error raised during parsing or evaluation of a script
 
-        Public Sub New(ByVal message As String)
+        Friend Sub New(ByVal message As String)
             MyBase.New(message)
         End Sub
 
     End Class
 
     <Serializable()>
-    Public Class TaskCancelledException : Inherits ApplicationException
+    Friend Class TaskCancelledException : Inherits HuggleException
 
-        Public Sub New()
+        Friend Sub New()
             MyBase.New(Msg("script-usercancelled"))
         End Sub
 
     End Class
 
-    Public Class EvalDoneEventArgs : Inherits EventArgs
+    Friend Class EvalDoneEventArgs : Inherits EventArgs
 
         Private _Result As Result
 
-        Public Sub New(ByVal result As Result)
+        Friend Sub New(ByVal result As Result)
             _Result = result
         End Sub
 
-        Public ReadOnly Property Result() As Result
+        Friend ReadOnly Property Result() As Result
             Get
                 Return _Result
             End Get
@@ -196,15 +198,15 @@ Namespace Huggle.Scripting
 
     End Class
 
-    Public Class EvalProgressEventArgs : Inherits EventArgs
+    Friend Class EvalProgressEventArgs : Inherits EventArgs
 
         Private _Message As String
 
-        Public Sub New(ByVal message As String)
+        Friend Sub New(ByVal message As String)
             _Message = message
         End Sub
 
-        Public ReadOnly Property Message() As String
+        Friend ReadOnly Property Message() As String
             Get
                 Return _Message
             End Get
@@ -212,22 +214,22 @@ Namespace Huggle.Scripting
 
     End Class
 
-    Public Class ScriptTable
+    Friend Class ScriptTable
 
-        Public Columns As List(Of String)
-        Public ColumnTypes As List(Of String)
-        Public Rows As List(Of ScriptTableRow)
-
-    End Class
-
-    Public Class ScriptTableRow
-
-        Public Columns As List(Of String)
-        Public Items As ArrayList
+        Friend Property Columns As List(Of String)
+        Friend Property ColumnTypes As List(Of String)
+        Friend Property Rows As List(Of ScriptTableRow)
 
     End Class
 
-    Public MustInherit Class Pipe : Implements IEnumerable(Of Object)
+    Friend Class ScriptTableRow
+
+        Friend Property Columns As List(Of String)
+        Friend Property Items As ArrayList
+
+    End Class
+
+    Friend MustInherit Class Pipe : Implements IEnumerable(Of Object)
 
         Private _Description As String
         Private _Evaluator As Evaluator
@@ -237,7 +239,7 @@ Namespace Huggle.Scripting
             _Evaluator = evaluator
         End Sub
 
-        Public ReadOnly Property Description() As String
+        Friend ReadOnly Property Description() As String
             Get
                 Return _Description
             End Get
@@ -249,7 +251,7 @@ Namespace Huggle.Scripting
             End Get
         End Property
 
-        Public Function ReadAll() As ArrayList
+        Friend Function ReadAll() As ArrayList
             Evaluator.DoProgress(Msg("eval-stream", Description))
 
             Dim result As New ArrayList
@@ -262,24 +264,24 @@ Namespace Huggle.Scripting
             Return result
         End Function
 
-        Public MustOverride Function GetEnumerator() As IEnumerator(Of Object) Implements IEnumerable(Of Object).GetEnumerator
+        Friend MustOverride Function GetEnumerator() As IEnumerator(Of Object) Implements IEnumerable(Of Object).GetEnumerator
 
-        Public Function GetEnumerator1() As IEnumerator Implements IEnumerable.GetEnumerator
+        Friend Function GetEnumerator1() As IEnumerator Implements IEnumerable.GetEnumerator
             Return GetEnumerator()
         End Function
 
     End Class
 
-    Public MustInherit Class StreamEnumerator : Implements IEnumerator(Of Object)
+    Friend MustInherit Class StreamEnumerator : Implements IEnumerator(Of Object)
 
         Protected Sub New()
         End Sub
 
-        Public MustOverride ReadOnly Property Current() As Object Implements IEnumerator(Of Object).Current, IEnumerator.Current
-        Public MustOverride Function MoveNext() As Boolean Implements IEnumerator.MoveNext
-        Public MustOverride Sub Reset() Implements IEnumerator.Reset
+        Friend MustOverride ReadOnly Property Current() As Object Implements IEnumerator(Of Object).Current, IEnumerator.Current
+        Friend MustOverride Function MoveNext() As Boolean Implements IEnumerator.MoveNext
+        Friend MustOverride Sub Reset() Implements IEnumerator.Reset
 
-        Public Sub Dispose() Implements IDisposable.Dispose
+        Friend Sub Dispose() Implements IDisposable.Dispose
             Dispose(True)
             GC.SuppressFinalize(Me)
         End Sub
@@ -289,38 +291,38 @@ Namespace Huggle.Scripting
 
     End Class
 
-    Public Class QueryPipe : Inherits Pipe
+    Friend Class QueryPipe : Inherits Pipe
 
         Private Query As ListQuery
 
-        Public Sub New(ByVal evaluator As Evaluator, ByVal query As ListQuery)
+        Friend Sub New(ByVal evaluator As Evaluator, ByVal query As ListQuery)
             MyBase.New(evaluator, query.Description)
             Me.Query = query
         End Sub
 
-        Public Overrides Function GetEnumerator() As IEnumerator(Of Object)
+        Friend Overrides Function GetEnumerator() As IEnumerator(Of Object)
             Return New QueryPipeEnumerator(Query)
         End Function
 
     End Class
 
-    Public Class QueryPipeEnumerator : Inherits StreamEnumerator
+    Friend Class QueryPipeEnumerator : Inherits StreamEnumerator
 
         Private _Current As Object
         Private Index As Integer
         Private Query As ListQuery
 
-        Public Sub New(ByVal query As ListQuery)
+        Friend Sub New(ByVal query As ListQuery)
             Me.Query = query
         End Sub
 
-        Public Overrides ReadOnly Property Current() As Object
+        Friend Overrides ReadOnly Property Current() As Object
             Get
                 Return _Current
             End Get
         End Property
 
-        Public Overrides Function MoveNext() As Boolean
+        Friend Overrides Function MoveNext() As Boolean
             If Query.Items.Count <= Index Then
                 If Query.IsAtEnd Then Return False
                 Query.DoOne()
@@ -334,30 +336,30 @@ Namespace Huggle.Scripting
             Return True
         End Function
 
-        Public Overrides Sub Reset()
+        Friend Overrides Sub Reset()
             Index = 0
         End Sub
 
     End Class
 
-    Public Class TransformPipe : Inherits Pipe
+    Friend Class TransformPipe : Inherits Pipe
 
         Private Source As IEnumerable
         Private Transform As Token
 
-        Public Sub New(ByVal evaluator As Evaluator, ByVal source As IEnumerable, ByVal transform As Token)
+        Friend Sub New(ByVal evaluator As Evaluator, ByVal source As IEnumerable, ByVal transform As Token)
             MyBase.New(evaluator, "Transform")
             Me.Source = source
             Me.Transform = transform
         End Sub
 
-        Public Overrides Function GetEnumerator() As IEnumerator(Of Object)
+        Friend Overrides Function GetEnumerator() As IEnumerator(Of Object)
             Return New TransformPipeEnumerator(Evaluator, Source.GetEnumerator, Transform)
         End Function
 
     End Class
 
-    Public Class TransformPipeEnumerator : Inherits StreamEnumerator
+    Friend Class TransformPipeEnumerator : Inherits StreamEnumerator
 
         Private _Current As Object
 
@@ -365,19 +367,19 @@ Namespace Huggle.Scripting
         Private Source As IEnumerator
         Private Transform As Token
 
-        Public Sub New(ByVal evaluator As Evaluator, ByVal source As IEnumerator, ByVal transform As Token)
+        Friend Sub New(ByVal evaluator As Evaluator, ByVal source As IEnumerator, ByVal transform As Token)
             Me.Evaluator = evaluator
             Me.Source = source
             Me.Transform = transform
         End Sub
 
-        Public Overrides ReadOnly Property Current() As Object
+        Friend Overrides ReadOnly Property Current() As Object
             Get
                 Return _Current
             End Get
         End Property
 
-        Public Overrides Function MoveNext() As Boolean
+        Friend Overrides Function MoveNext() As Boolean
             If Source.MoveNext() Then
                 _Current = Evaluator.EvalToken(Source.Current, Transform).Value
                 Return True
@@ -387,30 +389,30 @@ Namespace Huggle.Scripting
             End If
         End Function
 
-        Public Overrides Sub Reset()
+        Friend Overrides Sub Reset()
             Source.Reset()
         End Sub
 
     End Class
 
-    Public Class FilterPipe : Inherits Pipe
+    Friend Class FilterPipe : Inherits Pipe
 
         Private Filter As Token
         Private Source As IEnumerable
 
-        Public Sub New(ByVal evaluator As Evaluator, ByVal source As IEnumerable, ByVal filter As Token)
+        Friend Sub New(ByVal evaluator As Evaluator, ByVal source As IEnumerable, ByVal filter As Token)
             MyBase.New(evaluator, "Filter")
             Me.Filter = filter
             Me.Source = source
         End Sub
 
-        Public Overrides Function GetEnumerator() As IEnumerator(Of Object)
+        Friend Overrides Function GetEnumerator() As IEnumerator(Of Object)
             Return New FilterPipeEnumerator(Evaluator, Source.GetEnumerator, Filter)
         End Function
 
     End Class
 
-    Public Class FilterPipeEnumerator : Inherits StreamEnumerator
+    Friend Class FilterPipeEnumerator : Inherits StreamEnumerator
 
         Private _Current As Object
 
@@ -418,19 +420,19 @@ Namespace Huggle.Scripting
         Private Filter As Token
         Private Source As IEnumerator
 
-        Public Sub New(ByVal evaluator As Evaluator, ByVal source As IEnumerator, ByVal filter As Token)
+        Friend Sub New(ByVal evaluator As Evaluator, ByVal source As IEnumerator, ByVal filter As Token)
             Me.Evaluator = evaluator
             Me.Filter = filter
             Me.Source = source
         End Sub
 
-        Public Overrides ReadOnly Property Current() As Object
+        Friend Overrides ReadOnly Property Current() As Object
             Get
                 Return _Current
             End Get
         End Property
 
-        Public Overrides Function MoveNext() As Boolean
+        Friend Overrides Function MoveNext() As Boolean
             While Source.MoveNext
                 If Evaluator.EvalToken(Source.Current, Filter).AsBool Then
                     _Current = Source.Current
@@ -442,7 +444,7 @@ Namespace Huggle.Scripting
             Return False
         End Function
 
-        Public Overrides Sub Reset()
+        Friend Overrides Sub Reset()
             Source.Reset()
         End Sub
 

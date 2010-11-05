@@ -4,7 +4,7 @@ Namespace Huggle
 
     'Represents a review flag as used by "flagged revisions"
 
-    Public Class ReviewFlag
+    Friend Class ReviewFlag
 
         Private _DefaultLevel As Integer
         Private _DisplayName As String
@@ -14,11 +14,11 @@ Namespace Huggle
         Private _Levels As Integer
         Private _Wiki As Wiki
 
-        Public Sub New(ByVal wiki As Wiki, ByVal name As String)
+        Friend Sub New(ByVal wiki As Wiki, ByVal name As String)
             _Name = name
         End Sub
 
-        Public Property DefaultLevel() As Integer
+        Friend Property DefaultLevel() As Integer
             Get
                 Return _DefaultLevel
             End Get
@@ -27,7 +27,7 @@ Namespace Huggle
             End Set
         End Property
 
-        Public Property DisplayName() As String
+        Friend Property DisplayName() As String
             Get
                 Return _DisplayName
             End Get
@@ -36,19 +36,19 @@ Namespace Huggle
             End Set
         End Property
 
-        Public ReadOnly Property Name() As String
+        Friend ReadOnly Property Name() As String
             Get
                 Return _Name
             End Get
         End Property
 
-        Public ReadOnly Property LevelName(ByVal level As Integer) As String
+        Friend ReadOnly Property LevelName(ByVal level As Integer) As String
             Get
                 Return Wiki.Message("revreview-" & Name & "-" & CStr(level))
             End Get
         End Property
 
-        Public Property Levels() As Integer
+        Friend Property Levels() As Integer
             Get
                 Return _Levels
             End Get
@@ -57,7 +57,7 @@ Namespace Huggle
             End Set
         End Property
 
-        Public Property PristineLevel() As Integer
+        Friend Property PristineLevel() As Integer
             Get
                 Return _PristineLevel
             End Get
@@ -66,7 +66,7 @@ Namespace Huggle
             End Set
         End Property
 
-        Public Property QualityLevel() As Integer
+        Friend Property QualityLevel() As Integer
             Get
                 Return _QualityLevel
             End Get
@@ -75,7 +75,7 @@ Namespace Huggle
             End Set
         End Property
 
-        Public ReadOnly Property Wiki() As Wiki
+        Friend ReadOnly Property Wiki() As Wiki
             Get
                 Return _Wiki
             End Get
@@ -83,27 +83,27 @@ Namespace Huggle
 
     End Class
 
-    Public Class ReviewFlagCollection
+    Friend Class ReviewFlagCollection
 
         Private Wiki As Wiki
 
         Private ReadOnly _All As New Dictionary(Of String, ReviewFlag)
 
-        Public Sub New(ByVal wiki As Wiki)
+        Friend Sub New(ByVal wiki As Wiki)
             Me.Wiki = wiki
         End Sub
 
-        Public ReadOnly Property All() As IList(Of ReviewFlag)
+        Friend ReadOnly Property All() As IList(Of ReviewFlag)
             Get
                 Return _All.Values.ToList.AsReadOnly
             End Get
         End Property
 
-        Public Sub Clear()
+        Friend Sub Clear()
             _All.Clear()
         End Sub
 
-        Default Public ReadOnly Property Item(ByVal name As String) As ReviewFlag
+        Default Friend ReadOnly Property Item(ByVal name As String) As ReviewFlag
             Get
                 If Not _All.ContainsKey(name) Then _All.Add(name, New ReviewFlag(Wiki, name))
                 Return _All(name)

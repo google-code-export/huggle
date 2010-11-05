@@ -2,11 +2,11 @@
 
 Namespace Huggle
 
-    Public Class MessageConfig : Inherits Config
+    Friend Class MessageConfig : Inherits Config
 
         Private Language As Language
 
-        Public Sub New(ByVal language As Language)
+        Friend Sub New(ByVal language As Language)
             Me.Language = language
         End Sub
 
@@ -16,7 +16,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Public Overrides Sub Load(ByVal text As String)
+        Friend Overrides Sub Load(ByVal text As String)
             MyBase.Load(text)
             Language.IsLocalized = True
         End Sub
@@ -26,7 +26,7 @@ Namespace Huggle
             If Language.Messages.ContainsKey("name") Then Language.Name = Language.Messages("name")
         End Sub
 
-        Public Overrides Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
+        Friend Overrides Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
             Return Language.Messages.ToDictionary(Of String, Object)()
         End Function
 

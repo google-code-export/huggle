@@ -5,12 +5,12 @@ Namespace Huggle.Actions
 
     'Change user rights
 
-    Public Class UserRights : Inherits Query
+    Friend Class UserRights : Inherits Query
 
         Private _Comment As String
         Private _Target As User
 
-        Public Sub New(ByVal session As Session, ByVal target As User, ByVal comment As String)
+        Friend Sub New(ByVal session As Session, ByVal target As User, ByVal comment As String)
             MyBase.New(session, Msg("userrights-desc", target.Name))
 
             If target Is Nothing Then Throw New ArgumentNullException("target")
@@ -19,25 +19,25 @@ Namespace Huggle.Actions
             _Target = target
         End Sub
 
-        Public Property AddGroups As List(Of UserGroup)
+        Friend Property AddGroups As List(Of UserGroup)
 
-        Public ReadOnly Property Comment As String
+        Friend ReadOnly Property Comment As String
             Get
                 Return _Comment
             End Get
         End Property
 
-        Public Property RemoveGroups As List(Of UserGroup)
+        Friend Property RemoveGroups As List(Of UserGroup)
 
-        Public ReadOnly Property Target() As User
+        Friend ReadOnly Property Target() As User
             Get
                 Return _Target
             End Get
         End Property
 
-        Public Property Watch As WatchAction
+        Friend Property Watch As WatchAction
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             OnProgress(Msg("userrights-progress", User))
 
             'Get token

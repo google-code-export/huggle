@@ -1,17 +1,17 @@
 ﻿Namespace Huggle.Actions
 
-    Public Class Watch : Inherits Query
+    Friend Class Watch : Inherits Query
 
         Private _Action As WatchAction
         Private _Page As Page
 
-        Public Sub New(ByVal session As Session, ByVal page As Page, ByVal action As WatchAction)
+        Friend Sub New(ByVal session As Session, ByVal page As Page, ByVal action As WatchAction)
             MyBase.New(session, Msg("watch-desc", page))
             _Action = action
             _Page = page.SubjectPage
         End Sub
 
-        Public Property Action() As WatchAction
+        Friend Property Action() As WatchAction
             Get
                 Return _Action
             End Get
@@ -20,13 +20,13 @@
             End Set
         End Property
 
-        Public ReadOnly Property Page() As Page
+        Friend ReadOnly Property Page() As Page
             Get
                 Return _Page
             End Get
         End Property
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
 
             If Action = WatchAction.Preferences Then _
                 If User.Preferences.WatchEdits Then Action = WatchAction.Watch _

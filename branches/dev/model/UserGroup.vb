@@ -4,7 +4,7 @@ Imports System.Collections.Generic
 Namespace Huggle
 
     <Diagnostics.DebuggerDisplay("{Name}")>
-    Public Class UserGroup
+    Friend Class UserGroup
 
         'Represents a MediaWiki user group
 
@@ -12,15 +12,15 @@ Namespace Huggle
         Private _Rights As New List(Of String)
         Private _Wiki As Wiki
 
-        Public Sub New(ByVal wiki As Wiki, ByVal name As String)
+        Friend Sub New(ByVal wiki As Wiki, ByVal name As String)
             _Name = name
             _Wiki = wiki
         End Sub
 
-        Public Property Count() As Integer = -1
-        Public Property IsImplicit As Boolean
+        Friend Property Count() As Integer = -1
+        Friend Property IsImplicit As Boolean
 
-        Public ReadOnly Property Description As String
+        Friend ReadOnly Property Description As String
             Get
                 If Name = "*" Then Return Msg("view-usergroup-all")
                 If Wiki.Messages.ContainsKey("group-" & Name) Then Return Wiki.Message("group-" & Name)
@@ -28,19 +28,19 @@ Namespace Huggle
             End Get
         End Property
 
-        Public ReadOnly Property Name() As String
+        Friend ReadOnly Property Name() As String
             Get
                 Return _Name
             End Get
         End Property
 
-        Public ReadOnly Property Rights() As List(Of String)
+        Friend ReadOnly Property Rights() As List(Of String)
             Get
                 Return _Rights
             End Get
         End Property
 
-        Public ReadOnly Property Wiki() As Wiki
+        Friend ReadOnly Property Wiki() As Wiki
             Get
                 Return _Wiki
             End Get
@@ -52,31 +52,31 @@ Namespace Huggle
 
     End Class
 
-    Public Class UserGroupCollection
+    Friend Class UserGroupCollection
 
         Private Wiki As Wiki
 
         Private ReadOnly _All As New Dictionary(Of String, UserGroup)
 
-        Public Sub New(ByVal wiki As Wiki)
+        Friend Sub New(ByVal wiki As Wiki)
             Me.Wiki = wiki
             Reset()
         End Sub
 
-        Public ReadOnly Property All() As IList(Of UserGroup)
+        Friend ReadOnly Property All() As IList(Of UserGroup)
             Get
                 Return _All.Values.ToList.AsReadOnly
             End Get
         End Property
 
-        Default Public ReadOnly Property Item(ByVal name As String) As UserGroup
+        Default Friend ReadOnly Property Item(ByVal name As String) As UserGroup
             Get
                 If Not _All.ContainsKey(name) Then _All.Add(name, New UserGroup(Wiki, name))
                 Return _All(name)
             End Get
         End Property
 
-        Public Sub Reset()
+        Friend Sub Reset()
             _All.Clear()
 
             Item("*").IsImplicit = True
@@ -85,22 +85,22 @@ Namespace Huggle
 
     End Class
 
-    Public Class UserGroupChange
+    Friend Class UserGroupChange
 
         Private _Group As UserGroup
         Private User As User
 
-        Public Sub New(ByVal user As User, ByVal group As UserGroup)
+        Friend Sub New(ByVal user As User, ByVal group As UserGroup)
             _Group = group
             Me.User = user
         End Sub
 
-        Public Property CanAdd As Boolean
-        Public Property CanAddSelf As Boolean
-        Public Property CanRemove As Boolean
-        Public Property CanRemoveSelf As Boolean
+        Friend Property CanAdd As Boolean
+        Friend Property CanAddSelf As Boolean
+        Friend Property CanRemove As Boolean
+        Friend Property CanRemoveSelf As Boolean
 
-        Public ReadOnly Property Group() As UserGroup
+        Friend ReadOnly Property Group() As UserGroup
             Get
                 Return _Group
             End Get
@@ -112,30 +112,30 @@ Namespace Huggle
 
     End Class
 
-    Public Class UserGroupChangeCollection
+    Friend Class UserGroupChangeCollection
 
         Private _All As New Dictionary(Of UserGroup, UserGroupChange)
 
         Private User As User
 
-        Public Sub New(ByVal user As User)
+        Friend Sub New(ByVal user As User)
             Me.User = user
         End Sub
 
-        Public ReadOnly Property All As IList(Of UserGroupChange)
+        Friend ReadOnly Property All As IList(Of UserGroupChange)
             Get
                 Return _All.Values.ToList.AsReadOnly
             End Get
         End Property
 
-        Default Public ReadOnly Property Item(ByVal group As UserGroup) As UserGroupChange
+        Default Friend ReadOnly Property Item(ByVal group As UserGroup) As UserGroupChange
             Get
                 If Not _All.ContainsKey(group) Then _All.Add(group, New UserGroupChange(User, group))
                 Return _All(group)
             End Get
         End Property
 
-        Public Sub Reset()
+        Friend Sub Reset()
             For Each group As UserGroupChange In All
                 group.CanAdd = False
                 group.CanAddSelf = False

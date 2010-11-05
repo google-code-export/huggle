@@ -10,7 +10,7 @@ Imports System.Windows.Forms
 
 Namespace Huggle
 
-    Public Module App
+    Friend Module App
 
         Private _Families As FamilyCollection
         Private _Languages As LanguageCollection
@@ -18,7 +18,7 @@ Namespace Huggle
         Private _Sessions As SessionCollection
         Private _Wikis As WikiCollection
 
-        Public Sub Run()
+        Friend Sub Run()
             Windows.Forms.Application.EnableVisualStyles()
             Windows.Forms.Application.SetCompatibleTextRenderingDefault(False)
 
@@ -114,79 +114,79 @@ Namespace Huggle
             End While
         End Sub
 
-        Public ReadOnly Property Families() As FamilyCollection
+        Friend ReadOnly Property Families() As FamilyCollection
             Get
                 If _Families Is Nothing Then _Families = New FamilyCollection
                 Return _Families
             End Get
         End Property
 
-        Public ReadOnly Property IsMono() As Boolean
+        Friend ReadOnly Property IsMono() As Boolean
             Get
                 Return Type.GetType("Mono.Runtime", False) IsNot Nothing
             End Get
         End Property
 
-        Public ReadOnly Property Languages() As LanguageCollection
+        Friend ReadOnly Property Languages() As LanguageCollection
             Get
                 If _Languages Is Nothing Then _Languages = New LanguageCollection
                 Return _Languages
             End Get
         End Property
 
-        Public ReadOnly Property Name As String
+        Friend ReadOnly Property Name As String
             Get
                 Return Windows.Forms.Application.ProductName
             End Get
         End Property
 
-        Public ReadOnly Property Randomness As Random
+        Friend ReadOnly Property Randomness As Random
             Get
                 Return _Randomness
             End Get
         End Property
 
-        Public ReadOnly Property Sessions() As SessionCollection
+        Friend ReadOnly Property Sessions() As SessionCollection
             Get
                 If _Sessions Is Nothing Then _Sessions = New SessionCollection
                 Return _Sessions
             End Get
         End Property
 
-        Public ReadOnly Property Version As Version
+        Friend ReadOnly Property Version As Version
             Get
                 Return Reflection.Assembly.GetExecutingAssembly.GetName.Version
             End Get
         End Property
 
-        Public ReadOnly Property VersionString As String
+        Friend ReadOnly Property VersionString As String
             Get
                 Return Windows.Forms.Application.ProductVersion
             End Get
         End Property
 
-        Public ReadOnly Property Wikis() As WikiCollection
+        Friend ReadOnly Property Wikis() As WikiCollection
             Get
                 If _Wikis Is Nothing Then _Wikis = New WikiCollection
                 Return _Wikis
             End Get
         End Property
 
-        Public Function ShowError(ByVal result As Result, Optional ByVal showRetry As Boolean = False) As DialogResult
+        Friend Function ShowError(ByVal result As Result, Optional ByVal showRetry As Boolean = False) As DialogResult
 
             Using form As New ErrorForm(result.ErrorMessage, showRetry)
                 Return form.ShowDialog()
             End Using
         End Function
 
-        Public Function ShowPrompt(
+        Friend Function ShowPrompt(
             ByVal title As String, ByVal largeText As String, ByVal smallText As String,
             ByVal defaultButton As Integer, ByVal ParamArray buttons As String()) As Integer
 
             Return Prompt.Show(title, largeText, smallText, defaultButton, buttons)
         End Function
 
-        Public Sub UserWaitForProcess(ByVal process As Process,
+        Friend Sub UserWaitForProcess(ByVal process As Process,
             Optional ByVal errorMessage As String = Nothing, Optional ByVal retryable As Boolean = False)
 
             'Display cancellable progress dialog while executing an action on another thread
@@ -224,11 +224,11 @@ Namespace Huggle
             End While
         End Sub
 
-        Public Sub WaitOn(ByVal process As Process)
+        Friend Sub WaitOn(ByVal process As Process)
             WaitFor(Function() process.IsComplete)
         End Sub
 
-        Public Sub DoParallel(ByVal processes As IEnumerable(Of Process))
+        Friend Sub DoParallel(ByVal processes As IEnumerable(Of Process))
             For Each process As Process In processes
                 If Not process.IsRunning Then CreateThread(AddressOf process.Start)
             Next process
@@ -277,7 +277,7 @@ Namespace Huggle
 
     End Module
 
-    Public NotInheritable Class Icons
+    Friend NotInheritable Class Icons
 
         Private Sub New()
         End Sub
@@ -316,13 +316,13 @@ Namespace Huggle
     End Class
 
     <Serializable()>
-    Public Class HuggleException : Inherits ApplicationException
+    Public Class HuggleException : Inherits Exception
 
-        Public Sub New(ByVal message As String)
+        Friend Sub New(ByVal message As String)
             MyBase.New(message)
         End Sub
 
-        Public Sub New(ByVal message As String, ByVal innerException As Exception)
+        Friend Sub New(ByVal message As String, ByVal innerException As Exception)
             MyBase.New(message, innerException)
         End Sub
 

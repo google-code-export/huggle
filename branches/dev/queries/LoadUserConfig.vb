@@ -7,13 +7,13 @@ Namespace Huggle.Actions
     'Load essential wiki and user configuration only --
     'non-essential configuration is loaded later by ExtraWikiConfig
 
-    Public Class LoadUserConfig : Inherits Query
+    Friend Class LoadUserConfig : Inherits Query
 
-        Public Sub New(ByVal session As Session)
+        Friend Sub New(ByVal session As Session)
             MyBase.New(session, Msg("userconfig-desc", session.User.FullName))
         End Sub
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             OnStarted()
             OnProgress(Msg("userconfig-progress", Session.User.FullName))
 
@@ -35,7 +35,7 @@ Namespace Huggle.Actions
                     If Wiki.Config.IsCurrent Then Wiki.Config.SaveLocal() _
                         Else Log.Debug("Outdated in cloud: wiki\{0}".FormatI(Wiki.Code))
                 End If
-                
+
                 If updateUser Then
                     If User.Config.IsCurrent Then User.Config.SaveLocal() _
                         Else Log.Debug("Outdated in cloud: user\{0}".FormatI(User.FullName))

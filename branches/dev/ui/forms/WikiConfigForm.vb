@@ -1,6 +1,6 @@
 ﻿Namespace Huggle.UI
 
-    Public Class WikiConfigForm : Inherits HuggleForm
+    Friend Class WikiConfigForm : Inherits HuggleForm
 
     End Class
 

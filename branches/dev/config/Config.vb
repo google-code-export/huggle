@@ -9,7 +9,7 @@ Imports System.Windows.Forms
 
 Namespace Huggle
 
-    Public MustInherit Class Config
+    Friend MustInherit Class Config
 
         Private Shared _BaseLocation As String
         Private Shared _Global As GlobalConfig
@@ -23,25 +23,25 @@ Namespace Huggle
 
         Protected MustOverride ReadOnly Property Location() As String
         Protected MustOverride Sub ReadConfig(ByVal text As String)
-        Public MustOverride Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
+        Friend MustOverride Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
 
-        Public Property Updated As Date
+        Friend Property Updated As Date
 
-        Public Shared ReadOnly Property [Global] As GlobalConfig
+        Friend Shared ReadOnly Property [Global] As GlobalConfig
             Get
                 If _Global Is Nothing Then _Global = New GlobalConfig
                 Return _Global
             End Get
         End Property
 
-        Public Shared ReadOnly Property Local As LocalConfig
+        Friend Shared ReadOnly Property Local As LocalConfig
             Get
                 If _Local Is Nothing Then _Local = New LocalConfig
                 Return _Local
             End Get
         End Property
 
-        Public Shared ReadOnly Property BaseLocation() As String
+        Friend Shared ReadOnly Property BaseLocation() As String
             Get
                 _BaseLocation = DetermineBaseLocation()
                 Return _BaseLocation
@@ -58,13 +58,13 @@ Namespace Huggle
             Return str
         End Function
 
-        Public ReadOnly Property IsCurrent() As Boolean
+        Friend ReadOnly Property IsCurrent() As Boolean
             Get
                 Return Updated.Add(UpdateInterval) > Date.UtcNow
             End Get
         End Property
 
-        Public ReadOnly Property IsLoaded As Boolean
+        Friend ReadOnly Property IsLoaded As Boolean
             Get
                 Return _IsLoaded
             End Get
@@ -218,7 +218,7 @@ Namespace Huggle
             Throw New ConfigException("No suitable location for configuration data")
         End Function
 
-        Public Sub LoadCloud()
+        Friend Sub LoadCloud()
             Dim cloudQuery As New CloudQuery(Config.GetValidCloudKey(Location))
             cloudQuery.Start()
 
@@ -234,12 +234,12 @@ Namespace Huggle
             End If
         End Sub
 
-        Public Overridable Sub LoadLocal()
+        Friend Overridable Sub LoadLocal()
             If Not LocalMissing Then Load(LoadFile(Location))
             If Not IsLoaded Then LocalMissing = True
         End Sub
 
-        Public Overridable Sub Load(ByVal text As String)
+        Friend Overridable Sub Load(ByVal text As String)
             If text Is Nothing Then Return
 
             ReadConfig(text)
@@ -267,7 +267,7 @@ Namespace Huggle
             Return Nothing
         End Function
 
-        Public Sub SaveCloud()
+        Friend Sub SaveCloud()
             Dim cloudQuery As New CloudStore(Config.GetValidCloudKey(Location), Save(ConfigTarget.Cloud))
             cloudQuery.Start()
 
@@ -278,7 +278,7 @@ Namespace Huggle
             End If
         End Sub
 
-        Public Overridable Sub SaveLocal()
+        Friend Overridable Sub SaveLocal()
             Config.SaveFile(Location, Save(ConfigTarget.Local))
             LocalMissing = False
         End Sub
@@ -305,19 +305,19 @@ Namespace Huggle
     End Class
 
     <Serializable()>
-    Public Class ConfigException : Inherits ApplicationException
+    Friend Class ConfigException : Inherits HuggleException
 
-        Public Sub New(ByVal message As String)
+        Friend Sub New(ByVal message As String)
             MyBase.New(message)
         End Sub
 
-        Public Sub New(ByVal message As String, ByVal innerException As Exception)
+        Friend Sub New(ByVal message As String, ByVal innerException As Exception)
             MyBase.New(message, innerException)
         End Sub
 
     End Class
 
-    Public Enum ConfigTarget As Integer
+    Friend Enum ConfigTarget As Integer
         : Local : Cloud : Wiki
     End Enum
 

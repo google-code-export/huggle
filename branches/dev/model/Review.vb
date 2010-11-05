@@ -5,14 +5,14 @@ Namespace Huggle
 
     'Represents anything that reviews a revision (patrolling, 'flagged revisions', etc.)
 
-    Public Class Review : Inherits LogItem
+    Friend Class Review : Inherits LogItem
 
         Private _Auto As Boolean
         Private _Levels As Dictionary(Of ReviewFlag, Integer)
         Private _Revision As Revision
         Private _Type As String
 
-        Public Sub New(ByVal time As Date, ByVal revision As Revision, ByVal user As User, _
+        Friend Sub New(ByVal time As Date, ByVal revision As Revision, ByVal user As User, _
             ByVal type As String, ByVal auto As Boolean, ByVal comment As String, ByVal id As Integer, ByVal rcid As Integer)
 
             MyBase.New(user.Wiki, Id, rcid)
@@ -34,31 +34,31 @@ Namespace Huggle
             End If
         End Sub
 
-        Public ReadOnly Property Auto() As Boolean
+        Friend ReadOnly Property Auto() As Boolean
             Get
                 Return _Auto
             End Get
         End Property
 
-        Public ReadOnly Property Revision() As Revision
+        Friend ReadOnly Property Revision() As Revision
             Get
                 Return _Revision
             End Get
         End Property
 
-        Public ReadOnly Property Levels() As Dictionary(Of ReviewFlag, Integer)
+        Friend ReadOnly Property Levels() As Dictionary(Of ReviewFlag, Integer)
             Get
                 Return _Levels
             End Get
         End Property
 
-        Public ReadOnly Property Type() As String
+        Friend ReadOnly Property Type() As String
             Get
                 Return _Type
             End Get
         End Property
 
-        Public Overrides ReadOnly Property Target() As String
+        Friend Overrides ReadOnly Property Target() As String
             Get
                 If Revision Is Nothing Then Return Nothing Else Return Revision.Page.Name
             End Get

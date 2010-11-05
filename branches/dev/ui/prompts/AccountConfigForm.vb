@@ -1,6 +1,6 @@
 ﻿Namespace Huggle.UI
 
-    Public Class AccountConfigForm : Inherits HuggleForm
+    Friend Class AccountConfigForm : Inherits HuggleForm
 
     End Class
 

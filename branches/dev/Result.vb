@@ -5,14 +5,14 @@ Imports System.Diagnostics
 Namespace Huggle
 
     <Diagnostics.DebuggerDisplay("{LogMessage}")>
-    Public Class Result
+    Friend Class Result
 
         Private _Inner As Result
         Private _Message As String = "Unknown error"
 
         Private Shared ReadOnly _Success As New Result("No error")
 
-        Public Sub New(ByVal messages As String(), Optional ByVal errorCode As String = Nothing)
+        Friend Sub New(ByVal messages As String(), Optional ByVal errorCode As String = Nothing)
             If messages.Length = 0 Then Return
             _Message = messages(0)
             _Code = errorCode
@@ -27,17 +27,17 @@ Namespace Huggle
             Next i
         End Sub
 
-        Public Sub New(ByVal message As String, Optional ByVal errorCode As String = Nothing)
+        Friend Sub New(ByVal message As String, Optional ByVal errorCode As String = Nothing)
             Me.New({message}, errorCode)
         End Sub
 
-        Public Property Code() As String
+        Friend Property Code() As String
 
-        Public Function LogMessage() As String
+        Friend Function LogMessage() As String
             Return GenerateMessage(False)
         End Function
 
-        Public Function ErrorMessage() As String
+        Friend Function ErrorMessage() As String
             Return GenerateMessage(True)
         End Function
 
@@ -57,29 +57,29 @@ Namespace Huggle
             Return result
         End Function
 
-        Public ReadOnly Property Inner() As Result
+        Friend ReadOnly Property Inner() As Result
             Get
                 Return _Inner
             End Get
         End Property
 
-        Public ReadOnly Property IsError() As Boolean
+        Friend ReadOnly Property IsError() As Boolean
             Get
                 Return Not (Success Is Me)
             End Get
         End Property
 
-        Public ReadOnly Property Message() As String
+        Friend ReadOnly Property Message() As String
             Get
                 Return _Message
             End Get
         End Property
 
-        Public Function Append(ByVal message As String) As Result
+        Friend Function Append(ByVal message As String) As Result
             Return Append(New Result(message))
         End Function
 
-        Public Function Append(ByVal result As Result) As Result
+        Friend Function Append(ByVal result As Result) As Result
             Dim r As Result = Me
 
             While r.Inner IsNot Nothing
@@ -90,7 +90,7 @@ Namespace Huggle
             Return Me
         End Function
 
-        Public Function Wrap(ByVal message As String) As Result
+        Friend Function Wrap(ByVal message As String) As Result
             Dim msg As String = _Message
             Dim r As Result = Me
 
@@ -110,13 +110,13 @@ Namespace Huggle
             Return LogMessage()
         End Function
 
-        Public Shared ReadOnly Property Success As Result
+        Friend Shared ReadOnly Property Success As Result
             Get
                 Return _Success
             End Get
         End Property
 
-        Public Shared Function FromException(ByVal ex As Exception, Optional ByVal inner As Boolean = False) As Result
+        Friend Shared Function FromException(ByVal ex As Exception, Optional ByVal inner As Boolean = False) As Result
             Dim message As String = ""
 
             If TypeOf ex Is ApplicationException Then

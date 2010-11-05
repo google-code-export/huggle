@@ -5,7 +5,7 @@
 '        Private User As User, Action, Avoid, Message, Summary, Title As String
 '        Private AutoSign, AutoSummary, Bot, Minor, Watch As Boolean
 
-'        Public Sub New(ByVal User As User, ByVal Summary As String, ByVal Message As String, _
+'        Friend Sub New(ByVal User As User, ByVal Summary As String, ByVal Message As String, _
 '            Optional ByVal Title As String = Nothing, Optional ByVal Action As String = Nothing, _
 '            Optional ByVal Avoid As String = Nothing, Optional ByVal Watch As Boolean = False, _
 '            Optional ByVal Minor As Boolean = False, Optional ByVal Bot As Boolean = False, _

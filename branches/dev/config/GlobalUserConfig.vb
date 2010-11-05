@@ -9,15 +9,15 @@ Imports KVP = System.Collections.Generic.KeyValuePair(Of String, String)
 
 Namespace Huggle
 
-    Public Class GlobalUserConfig : Inherits Config
+    Friend Class GlobalUserConfig : Inherits Config
 
         Private GlobalUser As GlobalUser
 
-        Public Property AutoUnifiedLogin As Boolean
-        Public Property Extra As Boolean
-        Public Property ExtraLoader As ExtraGlobaluserConfig
+        Friend Property AutoUnifiedLogin As Boolean
+        Friend Property Extra As Boolean
+        Friend Property ExtraLoader As ExtraGlobaluserConfig
 
-        Public Sub New(ByVal globalUser As GlobalUser)
+        Friend Sub New(ByVal globalUser As GlobalUser)
             Me.GlobalUser = globalUser
         End Sub
 
@@ -81,7 +81,7 @@ Namespace Huggle
             Next item
         End Sub
 
-        Public Overrides Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
+        Friend Overrides Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
             Dim items As New Dictionary(Of String, Object)
 
             If target = ConfigTarget.Local Then
@@ -115,7 +115,7 @@ Namespace Huggle
             Return items
         End Function
 
-        Public Function Copy(ByVal globalUser As GlobalUser) As GlobalUserConfig
+        Friend Function Copy(ByVal globalUser As GlobalUser) As GlobalUserConfig
             Dim result As New GlobalUserConfig(globalUser)
             result.ReadConfig(Config.MakeConfig(WriteConfig(ConfigTarget.Local)))
             Return result

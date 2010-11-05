@@ -7,12 +7,24 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class WikiPropertiesForm : Inherits HuggleForm
+    Friend Class WikiPropertiesForm : Inherits HuggleForm
 
         Private LoadedViews As New List(Of Viewer)
         Private Session As Session
 
-        Public Sub New(ByVal session As Session)
+        Private WithEvents AbuseFilterView As AbuseFilterView
+        Private WithEvents ChangeTagView As ChangeTagView
+        Private WithEvents ExtensionView As ExtensionView
+        Private WithEvents GadgetView As GadgetView
+        Private WithEvents GeneralWikiView As GeneralWikiView
+        Private WithEvents ModerationView As ModerationView
+        Private WithEvents NamespaceView As NamespaceView
+        Private WithEvents SpamListView As SpamListView
+        Private WithEvents TitleListView As TitleListView
+        Private WithEvents UserGroupView As UserGroupView
+        Private WithEvents UserRightView As UserRightView
+
+        Friend Sub New(ByVal session As Session)
             InitializeComponent()
             Size = New Size(720, 480)
             Me.Session = session
@@ -49,8 +61,8 @@ Namespace Huggle.UI
                 'Extension views
                 If Wiki.Extensions.Contains(Extension.Moderation) Then Views.Items.Add(Msg("view-moderation-title"))
                 If Wiki.Extensions.Contains(Extension.Gadgets) Then Views.Items.Add(Msg("view-gadget-title"))
-                If Wiki.Extensions.Contains(Extension.SpamList) Then Views.Items.Add(Msg("view-spamblacklist-title"))
-                If Wiki.Extensions.Contains(Extension.TitleList) Then Views.Items.Add(Msg("view-titleblacklist-title"))
+                If Wiki.Extensions.Contains(Extension.SpamList) Then Views.Items.Add(Msg("view-spamlist-title"))
+                If Wiki.Extensions.Contains(Extension.TitleList) Then Views.Items.Add(Msg("view-titlelist-title"))
 
                 If Wiki.Extensions.Contains(Extension.AbuseFilter) Then
                     Views.Items.Add(Msg("view-abusefilter-title"))
@@ -66,54 +78,61 @@ Namespace Huggle.UI
         Private Sub Views_SelectedIndexChanged() Handles Views.SelectedIndexChanged
             Select Case Views.SelectedItem.ToString
                 Case Msg("view-wikigeneral-title")
-                    If Not LoadedViews.ContainsInstance(Of GeneralWikiView)() Then LoadedViews.Add(New GeneralWikiView(Session))
-                    ViewInstance(Of GeneralWikiView)()
+                    If GeneralWikiView Is Nothing Then GeneralWikiView = New GeneralWikiView(Session)
+                    SwitchTo(GeneralWikiView)
 
                 Case Msg("view-namespace-title")
-                    If Not LoadedViews.ContainsInstance(Of NamespaceView)() Then LoadedViews.Add(New NamespaceView(Session))
-                    ViewInstance(Of NamespaceView)()
+                    If NamespaceView Is Nothing Then NamespaceView = New NamespaceView(Session)
+                    SwitchTo(NamespaceView)
 
                 Case Msg("view-usergroup-title")
-                    If Not LoadedViews.ContainsInstance(Of UserGroupView)() Then LoadedViews.Add(New UserGroupView(Session))
-                    ViewInstance(Of UserGroupView)()
+                    If UserGroupView Is Nothing Then UserGroupView = New UserGroupView(Session)
+                    SwitchTo(UserGroupView)
 
                 Case Msg("view-userright-title")
-                    If Not LoadedViews.ContainsInstance(Of UserRightsView)() Then LoadedViews.Add(New UserRightsView(Session))
-                    ViewInstance(Of UserRightsView)()
+                    If UserRightView Is Nothing Then UserRightView = New UserRightView(Session)
+                    SwitchTo(UserRightView)
 
                 Case Msg("view-extension-title")
-                    If Not LoadedViews.ContainsInstance(Of ExtensionView)() Then LoadedViews.Add(New ExtensionView(Session))
-                    ViewInstance(Of ExtensionView)()
+                    If ExtensionView Is Nothing Then ExtensionView = New ExtensionView(Session)
+                    SwitchTo(ExtensionView)
 
-                Case Msg("view-titleblacklist-title")
-                    If Not LoadedViews.ContainsInstance(Of TitleBlacklistView)() Then LoadedViews.Add(New TitleBlacklistView(Session))
-                    ViewInstance(Of TitleBlacklistView)()
+                Case Msg("view-titlelist-title")
+                    If TitleListView Is Nothing Then TitleListView = New TitleListView(Session)
+                    SwitchTo(TitleListView)
 
                 Case Msg("view-gadget-title")
-                    If Not LoadedViews.ContainsInstance(Of GadgetView)() Then LoadedViews.Add(New GadgetView(Session))
-                    ViewInstance(Of GadgetView)()
+                    If GadgetView Is Nothing Then GadgetView = New GadgetView(Session)
+                    SwitchTo(GadgetView)
 
                 Case Msg("view-moderation-title")
-                    If Not LoadedViews.ContainsInstance(Of ModerationView)() Then LoadedViews.Add(New ModerationView(Session))
-                    ViewInstance(Of ModerationView)()
+                    If ModerationView Is Nothing Then ModerationView = New ModerationView(Session)
+                    SwitchTo(ModerationView)
 
                 Case Msg("view-changetag-title")
-                    If Not LoadedViews.ContainsInstance(Of ChangeTagView)() Then LoadedViews.Add(New ChangeTagView(Session))
-                    ViewInstance(Of ChangeTagView)()
+                    If ChangeTagView Is Nothing Then ChangeTagView = New ChangeTagView(Session)
+                    SwitchTo(ChangeTagView)
 
                 Case Msg("view-abusefilter-title")
-                    If Not LoadedViews.ContainsInstance(Of AbuseFilterView)() Then LoadedViews.Add(New AbuseFilterView(Session))
-                    ViewInstance(Of AbuseFilterView)()
+                    If AbuseFilterView Is Nothing Then AbuseFilterView = New AbuseFilterView(Session)
+                    SwitchTo(AbuseFilterView)
 
-                Case Msg("view-spamblacklist-title")
-                    If Not LoadedViews.ContainsInstance(Of SpamList)() Then LoadedViews.Add(New SpamListView(Session))
-                    ViewInstance(Of SpamListView)()
+                Case Msg("view-spamlist-title")
+                    If SpamListView Is Nothing Then SpamListView = New SpamListView(Session)
+                    SwitchTo(SpamListView)
             End Select
         End Sub
 
-        Private Sub ViewInstance(Of T As Viewer)()
-            ViewContainer.Controls.Clear()
-            ViewContainer.Controls.Add(LoadedViews.FirstInstance(Of T))
+        Private Sub SwitchTo(ByVal view As Viewer)
+            ViewContainer.SuspendLayout()
+
+            For Each control As Control In ViewContainer.Controls
+                control.Visible = (control Is view)
+            Next control
+
+            If Not ViewContainer.Controls.Contains(view) Then ViewContainer.Controls.Add(view)
+
+            ViewContainer.ResumeLayout()
         End Sub
 
         Private Sub Views_DrawItem(ByVal sender As Object, ByVal e As DrawItemEventArgs) Handles Views.DrawItem
@@ -122,6 +141,11 @@ Namespace Huggle.UI
 
             TextRenderer.DrawText(e.Graphics, Views.Items(e.Index).ToString,
                 Views.Font, e.Bounds, e.ForeColor, e.BackColor, TextFormatFlags.VerticalCenter)
+        End Sub
+
+        Private Sub ViewRight(ByVal sender As Object, ByVal e As EventArgs(Of String)) Handles UserGroupView.ViewRight
+            Views.SelectedItem = Msg("view-userright-title")
+            UserRightView.SelectedRight = e.Value
         End Sub
 
     End Class

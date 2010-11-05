@@ -6,10 +6,8 @@ Namespace Huggle
 
     'Represents a diff between two revisions
 
-    <Diagnostics.DebuggerDisplay("{_Key}")> _
-    Public Class Diff
-
-        Private CachedAt As Date
+    <Diagnostics.DebuggerDisplay("{_Key}")>
+    Friend Class Diff
 
         Private ReadOnly _Wiki As Wiki
 
@@ -21,30 +19,23 @@ Namespace Huggle
         Private WithEvents _Older As Revision
         Private WithEvents _Newer As Revision
 
-        Private Const CacheTrimInterval As Integer = 60000
-        Private Shared ReadOnly CacheTime As New TimeSpan(0, 10, 0)
-        Private Shared WithEvents CacheTimer As New Windows.Forms.Timer
+        Friend Shared Event [New] As SimpleEventHandler(Of Diff)
+        Friend Event StateChanged As SimpleEventHandler(Of Diff)
 
-        Public Shared Event [New] As SimpleEventHandler(Of Diff)
-        Public Event StateChanged As SimpleEventHandler(Of Diff)
-
-        Shared Sub New()
-            CacheTimer.Interval = CacheTrimInterval
-            CacheTimer.Start()
-        End Sub
-
-        Public Sub New(ByVal key As String, ByVal wiki As Wiki)
+        Friend Sub New(ByVal key As String, ByVal wiki As Wiki)
             _Key = key
             _Wiki = wiki
         End Sub
 
-        Public ReadOnly Property AddedText() As String
+        Friend ReadOnly Property AddedText() As String
             Get
                 Return _AddedText
             End Get
         End Property
 
-        Public Property CacheState() As CacheState
+        Friend Property CachedAt As Date
+
+        Friend Property CacheState() As CacheState
             Get
                 Return _CacheState
             End Get
@@ -55,7 +46,7 @@ Namespace Huggle
             End Set
         End Property
 
-        Public ReadOnly Property Change() As Integer
+        Friend ReadOnly Property Change() As Integer
             Get
                 If _Older Is Nothing OrElse _Newer Is Nothing Then Return Integer.MinValue
                 If _Older.Bytes = Integer.MinValue OrElse _Newer.Bytes = Integer.MinValue Then Return Integer.MinValue
@@ -63,9 +54,9 @@ Namespace Huggle
             End Get
         End Property
 
-        Public Property Exists() As Boolean
+        Friend Property Exists() As Boolean
 
-        Public Property Html() As String
+        Friend Property Html() As String
             Get
                 Return _Html
             End Get
@@ -145,46 +136,46 @@ Namespace Huggle
             End Set
         End Property
 
-        Public ReadOnly Property Key() As String
+        Friend ReadOnly Property Key() As String
             Get
                 Return _Key
             End Get
         End Property
 
-        Public ReadOnly Property Newer() As Revision
+        Friend ReadOnly Property Newer() As Revision
             Get
                 Return _Newer
             End Get
         End Property
 
-        Public ReadOnly Property NewId() As String
+        Friend ReadOnly Property NewId() As String
             Get
                 If _Newer IsNot Nothing Then Return CStr(_Newer.Id)
                 Return "cur"
             End Get
         End Property
 
-        Public ReadOnly Property Older() As Revision
+        Friend ReadOnly Property Older() As Revision
             Get
                 Return _Older
             End Get
         End Property
 
-        Public ReadOnly Property OldId() As String
+        Friend ReadOnly Property OldId() As String
             Get
                 If _Older IsNot Nothing Then Return CStr(_Older.Id)
                 Return "prev"
             End Get
         End Property
 
-        Public ReadOnly Property Page() As Page
+        Friend ReadOnly Property Page() As Page
             Get
                 If Newer IsNot Nothing Then Return Newer.Page
                 Return Wiki.Pages(_Key.FromLast("|"))
             End Get
         End Property
 
-        Public ReadOnly Property Wiki() As Wiki
+        Friend ReadOnly Property Wiki() As Wiki
             Get
                 Return _Wiki
             End Get
@@ -198,43 +189,41 @@ Namespace Huggle
             Return _Key
         End Function
 
-        Private Shared Sub TrimCache() Handles CacheTimer.Tick
-            For Each wiki As Wiki In App.Wikis.All
-                Dim diffs As New List(Of Diff)(wiki.Diffs.All)
-
-                For Each diff As Diff In diffs
-                    If diff.CachedAt.Add(CacheTime) > Date.UtcNow Then wiki.Diffs.All.Remove(diff)
-                Next diff
-            Next wiki
-        End Sub
-
     End Class
 
-    Public Class DiffCollection
+    Friend Class DiffCollection
 
         Private Wiki As Wiki
         Private ReadOnly _All As New Dictionary(Of String, Diff)
 
-        Public Sub New(ByVal wiki As Wiki)
+        Private Const CacheTrimInterval As Integer = 60000
+        Private ReadOnly CacheTime As New TimeSpan(0, 10, 0)
+        Private WithEvents CacheTimer As Windows.Forms.Timer
+
+        Friend Sub New(ByVal wiki As Wiki)
             Me.Wiki = wiki
+
+            CacheTimer = New Windows.Forms.Timer
+            CacheTimer.Interval = CacheTrimInterval
+            CacheTimer.Start()
         End Sub
 
-        Public ReadOnly Property All() As IList(Of Diff)
+        Friend ReadOnly Property All() As IList(Of Diff)
             Get
                 Return _All.Values.ToList.AsReadOnly
             End Get
         End Property
 
-        Public Sub Rekey(ByVal diff As Diff, ByVal newKey As String)
+        Friend Sub Rekey(ByVal diff As Diff, ByVal newKey As String)
             _All.Unmerge(diff.Key)
             _All.Merge(newKey, diff)
         End Sub
 
-        Public Sub Remove(ByVal diff As Diff)
+        Friend Sub Remove(ByVal diff As Diff)
             _All.Unmerge(diff.Key)
         End Sub
 
-        Default Public ReadOnly Property Item(ByVal first As Revision, ByVal second As Revision) As Diff
+        Default Friend ReadOnly Property Item(ByVal first As Revision, ByVal second As Revision) As Diff
             Get
                 Dim key As String = CStr(Math.Max(first.Id, second.Id) & "|" & Math.Min(first.Id, second.Id))
 
@@ -244,7 +233,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Default Public ReadOnly Property Item(ByVal newer As Revision) As Diff
+        Default Friend ReadOnly Property Item(ByVal newer As Revision) As Diff
             Get
                 If newer.Prev IsNot Nothing Then Return Item(newer.Prev, newer)
                 If Not _All.ContainsKey(CStr(newer.Id) & "|prev") _
@@ -253,7 +242,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Default Public ReadOnly Property Item(ByVal page As Page) As Diff
+        Default Friend ReadOnly Property Item(ByVal page As Page) As Diff
             Get
                 If page.LastRev IsNot Nothing Then Return Item(page.LastRev)
                 If Not _All.ContainsKey("cur|prev|" & page.Title) _
@@ -261,6 +250,12 @@ Namespace Huggle
                 Return _All(CStr("cur|prev|" & page.Title))
             End Get
         End Property
+
+        Private Sub TrimCache() Handles CacheTimer.Tick
+            For Each diff As Diff In All
+                If diff.CachedAt.Add(CacheTime) > Date.UtcNow Then Remove(diff)
+            Next diff
+        End Sub
 
     End Class
 

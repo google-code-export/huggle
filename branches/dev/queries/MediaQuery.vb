@@ -3,35 +3,35 @@ Imports System.Text
 
 Namespace Huggle.Actions
 
-    Public Class MediaQuery : Inherits Query
+    Friend Class MediaQuery : Inherits Query
 
         Private _Media As File
         Private _ThumbSize As Integer
 
-        Public Sub New(ByVal session As Session, ByVal media As File)
+        Friend Sub New(ByVal session As Session, ByVal media As File)
             MyBase.New(session, Msg("media-desc", media))
             _Media = media
         End Sub
 
-        Public Sub New(ByVal session As Session, ByVal media As File, ByVal thumbSize As Integer)
+        Friend Sub New(ByVal session As Session, ByVal media As File, ByVal thumbSize As Integer)
             MyBase.New(session, Msg("mediathumb-desc", media, thumbSize))
             _Media = media
             _ThumbSize = thumbSize
         End Sub
 
-        Public ReadOnly Property Media() As File
+        Friend ReadOnly Property Media() As File
             Get
                 Return _Media
             End Get
         End Property
 
-        Public ReadOnly Property ThumbSize() As Integer
+        Friend ReadOnly Property ThumbSize() As Integer
             Get
                 Return _ThumbSize
             End Get
         End Property
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             OnProgress(Msg("media-progress", Media))
             OnStarted()
 

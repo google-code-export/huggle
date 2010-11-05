@@ -4,7 +4,7 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class DataView
+    Friend Class DataView
 
         Private _value As Object
 
@@ -12,7 +12,7 @@ Namespace Huggle.UI
             Value = ""
         End Sub
 
-        Public Property Value() As Object
+        Friend Property Value() As Object
             Get
                 Return _value
             End Get
@@ -32,7 +32,7 @@ Namespace Huggle.UI
             End Set
         End Property
 
-        Public Sub UnsetAll()
+        Friend Sub UnsetAll()
             For Each item As ToolStripItem In ToolBar.Items
                 If TypeOf item Is ToolStripButton Then DirectCast(item, ToolStripButton).Checked = False
             Next item

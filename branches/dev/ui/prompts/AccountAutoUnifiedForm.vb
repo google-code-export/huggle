@@ -3,12 +3,12 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Public Class AccountAutoUnifiedForm : Inherits HuggleForm
+    Friend Class AccountAutoUnifiedForm : Inherits HuggleForm
 
         Private Requester As String
         Private User As User
 
-        Public Sub New(ByVal user As User, ByVal requester As String)
+        Friend Sub New(ByVal user As User, ByVal requester As String)
             InitializeComponent()
             Me.Requester = requester
             Me.User = user

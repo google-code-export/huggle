@@ -2,9 +2,9 @@
 
 Namespace Huggle.UI
 
-    Public Class GadgetView : Inherits Viewer
+    Friend Class GadgetView : Inherits Viewer
 
-        Public Sub New(ByVal session As Session)
+        Friend Sub New(ByVal session As Session)
             MyBase.New(session)
             InitializeComponent()
         End Sub

@@ -7,13 +7,13 @@ Namespace Huggle.Actions
 
         Private Items As List(Of String), Page As Page
 
-        Public Sub New(ByVal session As Session, ByVal Items As List(Of String), Optional ByVal Page As Page = Nothing)
+        Friend Sub New(ByVal session As Session, ByVal Items As List(Of String), Optional ByVal Page As Page = Nothing)
             MyBase.New(session, Msg("expandtemplates-desc"))
             Me.Items = Items
             Me.Page = Page
         End Sub
 
-        Public Overrides Sub Start()
+        Friend Overrides Sub Start()
             OnProgress(Msg("expandtemplates-progress"))
             OnStarted()
 
@@ -27,7 +27,7 @@ Namespace Huggle.Actions
             OnSuccess()
         End Sub
 
-        Public Shared ReadOnly Property Separator() As String
+        Friend Shared ReadOnly Property Separator() As String
             Get
                 'Item separator, to expand multiple snippets in one request
                 Return "__FNORD__"

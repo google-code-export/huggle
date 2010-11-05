@@ -7,7 +7,7 @@ Namespace Huggle.Actions
 
     Namespace Lists
 
-        Public Class AllPagesQuery : Inherits ListQuery
+        Friend Class AllPagesQuery : Inherits ListQuery
 
             Sub New(ByVal session As Session, ByVal space As Space)
                 MyBase.New(session, "list", "allpages", "ap", _
@@ -26,7 +26,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Public Class BacklinksQuery : Inherits ListQuery
+        Friend Class BacklinksQuery : Inherits ListQuery
 
             'Get pages that link to another page
 
@@ -44,7 +44,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Public Class CategoryQuery : Inherits ListQuery
+        Friend Class CategoryQuery : Inherits ListQuery
 
             'Get the contents of a category
 
@@ -67,7 +67,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Public Class ContribsQuery : Inherits ListQuery
+        Friend Class ContribsQuery : Inherits ListQuery
 
             'Get user's contributions
 
@@ -88,7 +88,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Public Class DeletedContribsQuery : Inherits ListQuery
+        Friend Class DeletedContribsQuery : Inherits ListQuery
 
             'Get a user's deleted contributions
 
@@ -99,7 +99,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Public Class DeletedHistoryQuery : Inherits ListQuery
+        Friend Class DeletedHistoryQuery : Inherits ListQuery
 
             'Get deleted history for page
 
@@ -110,7 +110,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Public Class ExternalLinkUsageQuery : Inherits ListQuery
+        Friend Class ExternalLinkUsageQuery : Inherits ListQuery
 
             'Get pages that use an external link
 
@@ -128,18 +128,18 @@ Namespace Huggle.Actions
 
         End Class
 
-        Public Class FileQuery : Inherits ListQuery
+        Friend Class FileQuery : Inherits ListQuery
 
             'Read list from a file
 
             Private Filename As String
 
-            Public Sub New(ByVal session As Session, ByVal filename As String)
+            Friend Sub New(ByVal session As Session, ByVal filename As String)
                 MyBase.New(session, "", "", "", Nothing, Msg("listdesc-file"))
                 Me.Filename = filename
             End Sub
 
-            Public Overrides Sub Start()
+            Friend Overrides Sub Start()
                 Dim data As String()
 
                 Try
@@ -160,13 +160,13 @@ Namespace Huggle.Actions
                 OnSuccess()
             End Sub
 
-            Public Overrides Sub DoOne()
+            Friend Overrides Sub DoOne()
                 Start()
             End Sub
 
         End Class
 
-        Public Class GlobalBlocksQuery : Inherits ListQuery
+        Friend Class GlobalBlocksQuery : Inherits ListQuery
 
             'Get global blocks
 
@@ -177,7 +177,7 @@ Namespace Huggle.Actions
             End Sub
         End Class
 
-        Public Class GlobalMediaUsageQuery : Inherits ListQuery
+        Friend Class GlobalMediaUsageQuery : Inherits ListQuery
 
             'Get global media usage
 
@@ -193,7 +193,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Public Class HistoryQuery : Inherits ListQuery
+        Friend Class HistoryQuery : Inherits ListQuery
 
             'Get history of a page
 
@@ -213,7 +213,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Public Class LinksQuery : Inherits ListQuery
+        Friend Class LinksQuery : Inherits ListQuery
 
             'Get links on a page
 
@@ -224,7 +224,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Public Class LogsQuery : Inherits ListQuery
+        Friend Class LogsQuery : Inherits ListQuery
 
             Sub New(ByVal session As Session)
                 MyBase.New(session, "list", "logevents", "le", Nothing, Msg("listdesc-logs"))
@@ -258,18 +258,18 @@ Namespace Huggle.Actions
 
         End Class
 
-        Public Class ManualQuery : Inherits ListQuery
+        Friend Class ManualQuery : Inherits ListQuery
 
             'Request that just echoes an input list of titles
 
             Private Titles As List(Of String)
 
-            Public Sub New(ByVal session As Session, ByVal titles As List(Of String))
+            Friend Sub New(ByVal session As Session, ByVal titles As List(Of String))
                 MyBase.New(session, "", "", "", Nothing, Msg("listdesc-manual"))
                 Me.Titles = titles
             End Sub
 
-            Public Overrides Sub Start()
+            Friend Overrides Sub Start()
                 For Each title As String In Titles
                     title = Wiki.Pages.SanitizeTitle(title)
                     If title IsNot Nothing Then Items.Add(Wiki.Pages(title))
@@ -278,13 +278,13 @@ Namespace Huggle.Actions
                 OnSuccess()
             End Sub
 
-            Public Overrides Sub DoOne()
+            Friend Overrides Sub DoOne()
                 Start()
             End Sub
 
         End Class
 
-        Public Class MediaQuery : Inherits ListQuery
+        Friend Class MediaQuery : Inherits ListQuery
 
             'Get files on a page
 
@@ -295,7 +295,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Public Class MediaUsageQuery : Inherits ListQuery
+        Friend Class MediaUsageQuery : Inherits ListQuery
 
             'Get pages that include a file
 
@@ -313,7 +313,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Public Class PrefixQuery : Inherits ListQuery
+        Friend Class PrefixQuery : Inherits ListQuery
 
             Sub New(ByVal session As Session, ByVal space As Space, ByVal prefix As String)
                 MyBase.New(session, "list", "allpages", "ap", _
@@ -323,7 +323,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Public Class ProtectedPagesRequest : Inherits ListQuery
+        Friend Class ProtectedPagesRequest : Inherits ListQuery
 
             Sub New(ByVal session As Session, ByVal space As Space)
                 MyBase.New(session, "list", "allpages", "ap", _
@@ -344,7 +344,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Public Class ProtectedTitlesRequest : Inherits ListQuery
+        Friend Class ProtectedTitlesRequest : Inherits ListQuery
 
             Sub New(ByVal session As Session)
                 MyBase.New(session, "list", "protectedtitles", "pt", _
@@ -359,7 +359,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Public Class RandomQuery : Inherits ListQuery
+        Friend Class RandomQuery : Inherits ListQuery
 
             'Get random pages
 
@@ -375,7 +375,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Public Class RedirectsQuery : Inherits ListQuery
+        Friend Class RedirectsQuery : Inherits ListQuery
 
             'Get redirects to a page
 
@@ -386,7 +386,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Public Class SearchQuery : Inherits ListQuery
+        Friend Class SearchQuery : Inherits ListQuery
 
             'Get search results
 
@@ -404,7 +404,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Public Class SubcatsQuery : Inherits ListQuery
+        Friend Class SubcatsQuery : Inherits ListQuery
 
             Sub New(ByVal session As Session, ByVal category As Category)
                 MyBase.New(session, "list", "categorymembers", "cm", _
@@ -424,7 +424,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Public Class TransclusionsQuery : Inherits ListQuery
+        Friend Class TransclusionsQuery : Inherits ListQuery
 
             'Get pages that transclude another page
 
@@ -442,7 +442,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Public Class UnreviewedQuery : Inherits ListQuery
+        Friend Class UnreviewedQuery : Inherits ListQuery
 
             'Get pages with unreviewed revisions
 
@@ -452,7 +452,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Public Class UserGroupQuery : Inherits ListQuery
+        Friend Class UserGroupQuery : Inherits ListQuery
 
             'Get members of a user group
 
@@ -469,7 +469,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Public Class UsersQuery : Inherits ListQuery
+        Friend Class UsersQuery : Inherits ListQuery
 
             'Get all users
 
@@ -485,7 +485,7 @@ Namespace Huggle.Actions
 
         End Class
 
-        Public Class WatchlistQuery : Inherits ListQuery
+        Friend Class WatchlistQuery : Inherits ListQuery
 
             'Get contents of user's watchlist
 
