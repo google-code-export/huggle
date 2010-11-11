@@ -2,11 +2,11 @@
 
     Friend Class Logout : Inherits Query
 
-        Friend Sub New(ByVal session As Session)
+        Public Sub New(ByVal session As Session)
             MyBase.New(session, Msg("logout-desc", session.User.FullName))
         End Sub
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             'Don't send a logout request if the wiki is using unified login. Unified login logs out
             '*all* an account's login sessions, not just the active one. So logging out your primary 
             'account in Huggle would also destroy your browser's session, which is undesirable.

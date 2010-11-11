@@ -93,7 +93,7 @@
             Me.ResumeLayout(False)
 
         End Sub
-        Friend WithEvents Label1 As System.Windows.Forms.Label
+        Public WithEvents Label1 As System.Windows.Forms.Label
         Private WithEvents Button1 As System.Windows.Forms.Button
         Private WithEvents Button2 As System.Windows.Forms.Button
         Private WithEvents Button3 As System.Windows.Forms.Button

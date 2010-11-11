@@ -10,7 +10,7 @@ Namespace Huggle.Actions
         Private _Comment As String
         Private _Target As User
 
-        Friend Sub New(ByVal session As Session, ByVal target As User, ByVal comment As String)
+        Public Sub New(ByVal session As Session, ByVal target As User, ByVal comment As String)
             MyBase.New(session, Msg("userrights-desc", target.Name))
 
             If target Is Nothing Then Throw New ArgumentNullException("target")
@@ -19,25 +19,25 @@ Namespace Huggle.Actions
             _Target = target
         End Sub
 
-        Friend Property AddGroups As List(Of UserGroup)
+        Public Property AddGroups As List(Of UserGroup)
 
-        Friend ReadOnly Property Comment As String
+        Public ReadOnly Property Comment As String
             Get
                 Return _Comment
             End Get
         End Property
 
-        Friend Property RemoveGroups As List(Of UserGroup)
+        Public Property RemoveGroups As List(Of UserGroup)
 
-        Friend ReadOnly Property Target() As User
+        Public ReadOnly Property Target() As User
             Get
                 Return _Target
             End Get
         End Property
 
-        Friend Property Watch As WatchAction
+        Public Property Watch As WatchAction
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             OnProgress(Msg("userrights-progress", User))
 
             'Get token

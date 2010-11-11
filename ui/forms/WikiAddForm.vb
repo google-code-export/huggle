@@ -9,13 +9,13 @@ Namespace Huggle.UI
         Private _User As User
         Private _Wiki As Wiki
 
-        Friend ReadOnly Property User() As User
+        Public ReadOnly Property User() As User
             Get
                 Return _User
             End Get
         End Property
 
-        Friend ReadOnly Property Wiki() As Wiki
+        Public ReadOnly Property Wiki() As Wiki
             Get
                 Return _Wiki
             End Get

@@ -16,7 +16,7 @@ Namespace Huggle.Wikitext
         Private _Selection As Selection
         Private _Title As String
 
-        Friend Sub New(ByVal document As Document, ByVal title As String,
+        Public Sub New(ByVal document As Document, ByVal title As String,
             ByVal level As Integer, ByVal selection As Selection)
 
             Me.Document = document
@@ -25,19 +25,19 @@ Namespace Huggle.Wikitext
             _Selection = selection
         End Sub
 
-        Friend ReadOnly Property Level() As Integer
+        Public ReadOnly Property Level() As Integer
             Get
                 Return _Level
             End Get
         End Property
 
-        Friend ReadOnly Property Selection() As Selection
+        Public ReadOnly Property Selection() As Selection
             Get
                 Return _Selection
             End Get
         End Property
 
-        Friend Property Text() As String
+        Public Property Text() As String
             Get
                 Return Document.Text.Substring(Selection.Start, Selection.Length)
             End Get
@@ -48,17 +48,17 @@ Namespace Huggle.Wikitext
             End Set
         End Property
 
-        Friend ReadOnly Property Title() As String
+        Public ReadOnly Property Title() As String
             Get
                 Return _Title
             End Get
         End Property
 
-        Friend Sub Append(ByVal text As String)
+        Public Sub Append(ByVal text As String)
             Document.Text = Document.Text.Insert(Selection.Start + Selection.Length, text)
         End Sub
 
-        Friend Sub Prepend(ByVal text As String)
+        Public Sub Prepend(ByVal text As String)
             Document.Text = Document.Text.Insert(Selection.Start + Me.Text.IndexOfI(LF) + 1, text)
         End Sub
 
@@ -71,7 +71,7 @@ Namespace Huggle.Wikitext
         Private Document As Document
         Private Items As New List(Of Section)
 
-        Friend Sub New(ByVal document As Document)
+        Public Sub New(ByVal document As Document)
             Me.Document = document
 
             Dim matches As MatchCollection = Parsing.SectionPattern.Matches(document.Text)
@@ -94,25 +94,25 @@ Namespace Huggle.Wikitext
             End If
         End Sub
 
-        Friend ReadOnly Property All() As IList(Of Section)
+        Public ReadOnly Property All() As IList(Of Section)
             Get
                 Return Items.AsReadOnly
             End Get
         End Property
 
-        Friend ReadOnly Property Contains(ByVal title As String) As Boolean
+        Public ReadOnly Property Contains(ByVal title As String) As Boolean
             Get
                 Return (Item(title) IsNot Nothing)
             End Get
         End Property
 
-        Friend ReadOnly Property Count() As Integer
+        Public ReadOnly Property Count() As Integer
             Get
                 Return All.Count
             End Get
         End Property
 
-        Default Friend ReadOnly Property Item(ByVal title As String) As Section
+        Default Public ReadOnly Property Item(ByVal title As String) As Section
             Get
                 For Each section As Section In All
                     If section.Title = title Then Return section
@@ -122,17 +122,17 @@ Namespace Huggle.Wikitext
             End Get
         End Property
 
-        Default Friend ReadOnly Property Item(ByVal index As Integer) As Section
+        Default Public ReadOnly Property Item(ByVal index As Integer) As Section
             Get
                 If All.Count > index Then Return All(index) Else Return Nothing
             End Get
         End Property
 
-        Friend Sub Append(ByVal title As String, ByVal text As String, Optional ByVal level As Integer = 1)
+        Public Sub Append(ByVal title As String, ByVal text As String, Optional ByVal level As Integer = 1)
             Insert(title, text, -1, level)
         End Sub
 
-        Friend Sub Insert(ByVal title As String, ByVal text As String,
+        Public Sub Insert(ByVal title As String, ByVal text As String,
             ByVal index As Integer, Optional ByVal level As Integer = 1)
 
             Dim HeaderMarkup As String = (New StringBuilder).Append("=", 0, level + 1).ToString
@@ -145,7 +145,7 @@ Namespace Huggle.Wikitext
             End If
         End Sub
 
-        Friend Sub Remove(ByVal index As Integer)
+        Public Sub Remove(ByVal index As Integer)
             Document.Text = Document.Text.Remove(All(index).Selection.Start, All(index).Selection.Length)
         End Sub
 

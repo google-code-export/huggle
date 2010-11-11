@@ -5,12 +5,12 @@ Namespace Huggle.UI
 
     Friend Class UserRightView : Inherits Viewer
 
-        Friend Sub New(ByVal session As Session)
+        Public Sub New(ByVal session As Session)
             MyBase.New(session)
             InitializeComponent()
         End Sub
 
-        Friend Property SelectedRight As String
+        Public Property SelectedRight As String
             Get
                 Return RightsList.SelectedValue
             End Get
@@ -21,11 +21,7 @@ Namespace Huggle.UI
         End Property
 
         Private Sub _Load() Handles Me.Load
-            Dim rights As List(Of String) = Wiki.UserRights
-            rights.Sort()
-
-            RightsList.BeginUpdate()
-            RightsList.Items.Clear()
+            Dim rows As New List(Of String())
 
             For Each right As String In Wiki.UserRights
                 Dim groups As New List(Of UserGroup)
@@ -34,11 +30,11 @@ Namespace Huggle.UI
                     If group.Rights.Contains(right) Then groups.Add(group)
                 Next group
 
-                RightsList.AddRow(right, WikiStripMarkup(Wiki.Message("right-" & right)), If(groups.Count = 0, Msg("view-userright-nobody"), groups.Join(", ")))
+                rows.Add({right, WikiStripMarkup(Wiki.Message("right-" & right)),
+                    If(groups.Count = 0, Msg("view-userright-nobody"), groups.Join(", "))})
             Next right
 
-            RightsList.EndUpdate()
-            RightsList.SortBy(0)
+            RightsList.SetItems(rows)
             Count.Text = Msg("a-count", RightsList.Items.Count)
         End Sub
 

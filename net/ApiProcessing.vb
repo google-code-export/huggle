@@ -81,15 +81,18 @@ Namespace Huggle
                             '''
 
                         Case "login"
-                            _LoginResponse = New LoginResponse
+                            If node.HasAttribute("result") Then
+                                Dim response As String = node.Attribute("result").ToLowerI
 
-                            If node.HasAttribute("result") Then LoginResponse.Result = node.Attribute("result").ToLowerI
-                            If LoginResponse.Result = "wrongpluginpass" Then LoginResponse.Result = "wrongpass"
-                            If node.HasAttribute("token") Then LoginResponse.Token = node.Attribute("token")
-                            If node.HasAttribute("wait") Then LoginResponse.Wait = New TimeSpan(0, 0, CInt(node.Attribute("wait")))
+                                'Clear saved password if it's wrong
+                                If response = "wrongpluginpass" Then response = "wrongpass"
+                                If response = "wrongpass" Then User.Password = Nothing
 
-                            'Clear saved password if it's wrong
-                            If LoginResponse.Result = "wrongpass" Then User.Password = Nothing
+                                _LoginResponse = New LoginResponse(response)
+                                If node.HasAttribute("token") Then LoginResponse.Token = node.Attribute("token")
+                                If node.HasAttribute("wait") Then LoginResponse.Wait =
+                                    New TimeSpan(0, 0, CInt(node.Attribute("wait")))
+                            End If
 
                         Case "move" 'Action
 
@@ -662,13 +665,13 @@ Namespace Huggle
                         For Each account As XmlNode In node.ChildNodes
                             AssertApi(account.Name, "account")
 
-                            Dim wiki As Wiki = App.Wikis.FromInternalCode(account.Attribute("wiki"))
+                            Dim wikiCode As String = account.Attribute("wiki")
 
                             'MediaWiki keeps accounts on the list of unified accounts
                             'even when a wiki is deleted; we don't want these
-                            If wiki Is Nothing Then Continue For
+                            If Not App.Wikis.Contains(wikiCode) Then Continue For
 
-                            Dim user As User = App.Wikis.FromInternalCode(account.Attribute("wiki")).Users(globalUser.Name)
+                            Dim user As User = App.Wikis(wikiCode).Users(globalUser.Name)
 
                             globalUser.Users.Add(user)
                             globalUser.Wikis.Add(user.Wiki)
@@ -1469,8 +1472,8 @@ Namespace Huggle
                             wiki.Type = "special"
 
                             wiki.Name = UcFirst(wiki.Code)
-                            wiki.FileUrl = New Uri(InternalConfig.WikimediaFilePath & "wikipedia/" & wiki.Code & "/")
-                            wiki.SecureUrl = New Uri(InternalConfig.WikimediaSecurePath & "wikipedia/" & wiki.Code & "/w/")
+                            wiki.FileUrl = New Uri(InternalConfig.WMFilePath & "wikipedia/" & wiki.Code & "/")
+                            wiki.SecureUrl = New Uri(InternalConfig.WMSecurePath & "wikipedia/" & wiki.Code & "/w/")
                             wiki.Url = New Uri(special.Attribute("url") & "/w/")
 
                             If special.HasAttribute("private") Then
@@ -1503,17 +1506,19 @@ Namespace Huggle
                             For Each site As XmlNode In outerSite.ChildNodes
                                 AssertApi(site.Name, "site")
 
-                                Dim code As String = site.Attribute("code")
-                                Dim type As String = If(code = "wiki", "wikipedia", code)
+                                Dim siteCode As String = site.Attribute("code")
+                                Dim wiki As Wiki = App.Wikis(language.Code & siteCode)
+                                Dim siteCodeForUser As String = If(siteCode = "wiki", "wikipedia", siteCode)
 
-                                Dim wiki As Wiki = App.Wikis(node.Attribute("code") & "." & type)
                                 wiki.Channel = "#" & site.Attribute("url").FromFirst("http://").ToFirst(".org")
                                 wiki.Family = App.Families.Wikimedia
                                 wiki.Language = language
-                                wiki.Type = type
-                                wiki.Name = wiki.Code
-                                wiki.FileUrl = New Uri(InternalConfig.WikimediaFilePath & type & "/" & language.Code & "/")
-                                wiki.SecureUrl = New Uri(InternalConfig.WikimediaSecurePath & type & "/" & language.Code & "/w/")
+                                wiki.Type = siteCodeForUser
+                                wiki.Name = language.Code & "." & siteCodeForUser
+                                wiki.FileUrl = New Uri(InternalConfig.WMFilePath &
+                                    siteCodeForUser & "/" & language.Code & "/")
+                                wiki.SecureUrl = New Uri(InternalConfig.WMSecurePath &
+                                    siteCodeForUser & "/" & language.Code & "/w/")
                                 wiki.Url = New Uri(site.Attribute("url") & "/w/")
                             Next site
                         Next outerSite

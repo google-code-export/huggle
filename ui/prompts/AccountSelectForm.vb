@@ -8,7 +8,7 @@ Namespace Huggle.UI
 
         Private Wiki As Wiki
 
-        Friend Sub New(ByVal requester As String, ByVal wiki As Wiki)
+        Public Sub New(ByVal requester As String, ByVal wiki As Wiki)
             InitializeComponent()
             If wiki Is Nothing Then Throw New ArgumentNullException("wiki")
             Me.Wiki = wiki
@@ -27,7 +27,7 @@ Namespace Huggle.UI
             End If
         End Sub
 
-        Friend ReadOnly Property User() As User
+        Public ReadOnly Property User() As User
             Get
                 Return _User
             End Get

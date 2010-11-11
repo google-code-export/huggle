@@ -80,10 +80,10 @@ Namespace Huggle.Scripting
         End Sub
 
         Structure FuncData
-            Friend Context As Object
-            Friend Func As Token
-            Friend Arg As Token()
-            Friend Named As Dictionary(Of String, Token)
+            Public Context As Object
+            Public Func As Token
+            Public Arg As Token()
+            Public Named As Dictionary(Of String, Token)
         End Structure
 
     End Class

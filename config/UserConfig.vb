@@ -13,49 +13,49 @@ Namespace Huggle
         Private LocalMissing As Boolean
         Private User As User
 
-        Friend Sub New(ByVal user As User)
+        Public Sub New(ByVal user As User)
             Me.User = user
         End Sub
 
-        Friend Property AutoIgnoreAfter As Integer
-        Friend Property AutoIgnoreLocalCondition As String
-        Friend Property AutoIgnoreListCondition As String
-        Friend Property ConfirmBlock As Boolean
-        Friend Property ConfirmBlocked As Boolean
-        Friend Property ConfirmBlockIgnored As Boolean
-        Friend Property ConfirmBlockPrivileged As Boolean
-        Friend Property ConfirmBlockReported As Boolean
-        Friend Property ConfirmBlockScary As Boolean
-        Friend Property ConfirmBlockWarned As Boolean
-        Friend Property ConfirmIgnoredUser As Boolean
-        Friend Property ConfirmIgnoredPage As Boolean
-        Friend Property ConfirmMultiple As Boolean
-        Friend Property ConfirmPartialSeries As Boolean
-        Friend Property ConfirmRange As Boolean
-        Friend Property ConfirmReport As Boolean
-        Friend Property ConfirmReportIgnored As Boolean
-        Friend Property ConfirmReportUnwarned As Boolean
-        Friend Property ConfirmRevertedRev As Boolean
-        Friend Property ConfirmRevertedUser As Boolean
-        Friend Property ConfirmRollback As Boolean
-        Friend Property ConfirmSameUser As Boolean
-        Friend Property ConfirmSelf As Boolean
-        Friend Property ConfirmSemiIgnored As Boolean
-        Friend Property ConfirmUseful As Boolean
-        Friend Property ConfirmWarnedRev As Boolean
-        Friend Property ConfirmWarnedUser As Boolean
-        Friend Property EmailAuthenticated As Date
-        Friend Property Minor As New Dictionary(Of String, Boolean)
-        Friend Property OldSession As Boolean
-        Friend Property RememberPassword As Boolean
-        Friend Property RevertAlwaysBlank As Boolean
-        Friend Property RevertCheckRollbackTarget As Boolean
-        Friend Property RevertDelete As Boolean
-        Friend Property RevertRollback As Boolean
-        Friend Property RevertSelfSummary As String
-        Friend Property RevertSpeedy As Boolean
-        Friend Property SemiIgnoreAfter As Integer
-        Friend Property Watch As New List(Of String)
+        Public Property AutoIgnoreAfter As Integer
+        Public Property AutoIgnoreLocalCondition As String
+        Public Property AutoIgnoreListCondition As String
+        Public Property ConfirmBlock As Boolean
+        Public Property ConfirmBlocked As Boolean
+        Public Property ConfirmBlockIgnored As Boolean
+        Public Property ConfirmBlockPrivileged As Boolean
+        Public Property ConfirmBlockReported As Boolean
+        Public Property ConfirmBlockScary As Boolean
+        Public Property ConfirmBlockWarned As Boolean
+        Public Property ConfirmIgnoredUser As Boolean
+        Public Property ConfirmIgnoredPage As Boolean
+        Public Property ConfirmMultiple As Boolean
+        Public Property ConfirmPartialSeries As Boolean
+        Public Property ConfirmRange As Boolean
+        Public Property ConfirmReport As Boolean
+        Public Property ConfirmReportIgnored As Boolean
+        Public Property ConfirmReportUnwarned As Boolean
+        Public Property ConfirmRevertedRev As Boolean
+        Public Property ConfirmRevertedUser As Boolean
+        Public Property ConfirmRollback As Boolean
+        Public Property ConfirmSameUser As Boolean
+        Public Property ConfirmSelf As Boolean
+        Public Property ConfirmSemiIgnored As Boolean
+        Public Property ConfirmUseful As Boolean
+        Public Property ConfirmWarnedRev As Boolean
+        Public Property ConfirmWarnedUser As Boolean
+        Public Property EmailAuthenticated As Date
+        Public Property Minor As New Dictionary(Of String, Boolean)
+        Public Property OldSession As Boolean
+        Public Property RememberPassword As Boolean
+        Public Property RevertAlwaysBlank As Boolean
+        Public Property RevertCheckRollbackTarget As Boolean
+        Public Property RevertDelete As Boolean
+        Public Property RevertRollback As Boolean
+        Public Property RevertSelfSummary As String
+        Public Property RevertSpeedy As Boolean
+        Public Property SemiIgnoreAfter As Integer
+        Public Property Watch As New List(Of String)
 
         Protected Overrides ReadOnly Property Location() As String
             Get
@@ -63,7 +63,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend ReadOnly Property IsWatch(ByVal key As String) As Boolean
+        Public ReadOnly Property IsWatch(ByVal key As String) As Boolean
             Get
                 Return (Watch.Contains(key))
             End Get
@@ -164,7 +164,7 @@ Namespace Huggle
             Next item
         End Sub
 
-        Friend Overrides Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
+        Public Overrides Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
             Dim items As New Dictionary(Of String, Object)
 
             If target = ConfigTarget.Local Then
@@ -240,7 +240,7 @@ Namespace Huggle
             Return items
         End Function
 
-        Friend Function Copy(ByVal user As User) As UserConfig
+        Public Function Copy(ByVal user As User) As UserConfig
             Dim result As New UserConfig(user)
             result.ReadConfig(Config.MakeConfig(WriteConfig(ConfigTarget.Local)))
             Return result

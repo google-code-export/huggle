@@ -8,12 +8,12 @@ Namespace Huggle.Actions
 
         Private GlobalUser As GlobalUser
 
-        Friend Sub New(ByVal globalUser As GlobalUser)
+        Public Sub New(ByVal globalUser As GlobalUser)
             MyBase.New(App.Sessions(globalUser.Family), Msg("globaluserconfig-desc", globalUser.FullName))
             Me.GlobalUser = globalUser
         End Sub
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             OnStarted()
             OnProgress(Msg("globaluserconfig-progress", GlobalUser.FullName))
 

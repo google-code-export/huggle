@@ -12,45 +12,45 @@ Namespace Huggle
         Protected Sub New()
         End Sub
 
-        Friend Overridable ReadOnly Property FilterVars() As Dictionary(Of String, Object)
+        Public Overridable ReadOnly Property FilterVars() As Dictionary(Of String, Object)
             Get
                 Return Nothing
             End Get
         End Property
 
-        Friend Overridable ReadOnly Property Icon() As Image
+        Public Overridable ReadOnly Property Icon() As Image
             Get
                 Return Nothing
             End Get
         End Property
 
-        Friend MustOverride ReadOnly Property Key() As Integer
+        Public MustOverride ReadOnly Property Key() As Integer
 
-        Friend Overridable ReadOnly Property Label() As String
+        Public Overridable ReadOnly Property Label() As String
             Get
                 Return String.Empty
             End Get
         End Property
 
-        Friend Overridable ReadOnly Property LabelBackColor() As Color
+        Public Overridable ReadOnly Property LabelBackColor() As Color
             Get
                 Return Color.White
             End Get
         End Property
 
-        Friend Overridable ReadOnly Property LabelForeColor() As Color
+        Public Overridable ReadOnly Property LabelForeColor() As Color
             Get
                 Return Color.Black
             End Get
         End Property
 
-        Friend Overridable ReadOnly Property LabelStyle() As FontStyle
+        Public Overridable ReadOnly Property LabelStyle() As FontStyle
             Get
                 Return 0
             End Get
         End Property
 
-        Friend MustOverride ReadOnly Property Wiki() As Wiki
+        Public MustOverride ReadOnly Property Wiki() As Wiki
 
     End Class
 

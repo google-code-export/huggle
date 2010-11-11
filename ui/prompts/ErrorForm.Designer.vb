@@ -140,6 +140,6 @@
         Private WithEvents MessageBox As System.Windows.Forms.Label
         Private WithEvents Copy As System.Windows.Forms.Button
         Private WithEvents Retry As System.Windows.Forms.Button
-        Friend WithEvents Buttons As System.Windows.Forms.FlowLayoutPanel
+        Public WithEvents Buttons As System.Windows.Forms.FlowLayoutPanel
     End Class
 End Namespace

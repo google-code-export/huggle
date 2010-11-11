@@ -7,24 +7,24 @@ Namespace Huggle.Actions
         Private _Name As String
         Private _Status As CheckStatus
 
-        Friend Sub New(ByVal session As Session, ByVal name As String)
+        Public Sub New(ByVal session As Session, ByVal name As String)
             MyBase.New(session, Msg("usernamecheck-desc", name))
             _Name = name
         End Sub
 
-        Friend ReadOnly Property Name() As String
+        Public ReadOnly Property Name() As String
             Get
                 Return _Name
             End Get
         End Property
 
-        Friend ReadOnly Property Status() As CheckStatus
+        Public ReadOnly Property Status() As CheckStatus
             Get
                 Return _Status
             End Get
         End Property
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
 
             'Check title blacklists
             If Wiki.Family IsNot Nothing AndAlso Wiki.Family.GlobalTitleBlacklist IsNot Nothing _
@@ -42,9 +42,9 @@ Namespace Huggle.Actions
             End If
 
             'Check validity and existence
-            Dim req As New ApiRequest(Session, Description, New QueryString( _
-                "action", "query", _
-                "list", "users", _
+            Dim req As New ApiRequest(Session, Description, New QueryString(
+                "action", "query",
+                "list", "users",
                 "ususers", Name))
 
             req.Start()
@@ -54,7 +54,7 @@ Namespace Huggle.Actions
                 OnFail(req.Result) : Return
             End If
 
-            Dim node As XmlNodeList = req.Response.GetElementsByTagName("user")
+            Dim node As XmlNodeList = req.ResponseXml.GetElementsByTagName("user")
 
             If node.Count = 0 OrElse node(0).HasAttribute("invalid") Then
                 _Status = CheckStatus.Invalid
@@ -69,7 +69,7 @@ Namespace Huggle.Actions
 
     End Class
 
-    Friend Enum CheckStatus As Integer
+    Public Enum CheckStatus As Integer
         : None : Checking : GlobalBlacklisted : Invalid : LocalBlacklisted : Used : OK : [Error]
     End Enum
 

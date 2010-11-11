@@ -9,32 +9,32 @@
         Private _Page As Page
         Private _Target As User
 
-        Friend Sub New(ByVal session As Session)
+        Public Sub New(ByVal session As Session)
             MyBase.New(session, Msg("abuseinfo-desc"))
         End Sub
 
-        Friend Sub New(ByVal session As Session, ByVal page As Page)
+        Public Sub New(ByVal session As Session, ByVal page As Page)
             MyBase.New(session, Msg("abuseinfo-descp", page))
             _Page = page
         End Sub
 
-        Friend Sub New(ByVal session As Session, ByVal target As User)
+        Public Sub New(ByVal session As Session, ByVal target As User)
             MyBase.New(session, Msg("abuseinfo-descu", target))
             _Target = User
         End Sub
 
-        Friend Sub New(ByVal session As Session, ByVal filter As AbuseFilter)
+        Public Sub New(ByVal session As Session, ByVal filter As AbuseFilter)
             MyBase.new(session, Msg("abuseinfo-descf", filter))
             _Target = User
         End Sub
 
-        Friend ReadOnly Property Filter() As AbuseFilter
+        Public ReadOnly Property Filter() As AbuseFilter
             Get
                 Return _Filter
             End Get
         End Property
 
-        Friend Property Limit() As Integer
+        Public Property Limit() As Integer
             Get
                 Return _Limit
             End Get
@@ -43,19 +43,19 @@
             End Set
         End Property
 
-        Friend ReadOnly Property Page() As Page
+        Public ReadOnly Property Page() As Page
             Get
                 Return _Page
             End Get
         End Property
 
-        Friend ReadOnly Property Target() As User
+        Public ReadOnly Property Target() As User
             Get
                 Return _Target
             End Get
         End Property
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             OnProgress(Msg("abuseinfo-progress"))
             OnStarted()
 

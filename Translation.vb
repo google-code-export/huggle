@@ -4,86 +4,87 @@ Namespace Huggle
 
     'Handles translations of Huggle interface messages
 
-    Class Translation
+    Friend Class Translation
 
-        Private _OldValue, _NewValue As String
+        Private _OldValue As String
+        Private _NewValue As String
         Private Shared _All As New Dictionary(Of Language, Dictionary(Of String, Translation))
 
-        Private Sub New(ByVal OldValue As String, ByVal NewValue As String)
-            _OldValue = OldValue
-            _NewValue = NewValue
+        Private Sub New(ByVal oldValue As String, ByVal newValue As String)
+            _OldValue = oldValue
+            _NewValue = newValue
         End Sub
 
-        Friend ReadOnly Property OldValue() As String
+        Public ReadOnly Property OldValue() As String
             Get
                 Return _OldValue
             End Get
         End Property
 
-        Friend ReadOnly Property NewValue() As String
+        Public ReadOnly Property NewValue() As String
             Get
                 Return _NewValue
             End Get
         End Property
 
-        Friend Shared Sub Add(ByVal Language As Language, ByVal Message As String, ByVal NewValue As String)
+        Public Shared Sub Add(ByVal language As Language, ByVal message As String, ByVal newValue As String)
 
-            Dim OldValue As String = Nothing
+            Dim oldValue As String = Nothing
 
-            If Language.Messages.ContainsKey(Message) Then
-                OldValue = Language.Messages(Message)
-                If NewValue Is Nothing _
-                    Then Language.Messages.Remove(Message) Else Language.Messages(Message) = NewValue
+            If language.Messages.ContainsKey(message) Then
+                oldValue = language.Messages(message)
+                If newValue Is Nothing _
+                    Then language.Messages.Remove(message) Else language.Messages(message) = newValue
             Else
-                Language.Messages.Add(Message, NewValue)
+                language.Messages.Add(message, newValue)
             End If
 
-            If Not All.ContainsKey(Language) _
-                Then All.Merge(Language, New Dictionary(Of String, Translation))
+            If Not All.ContainsKey(language) _
+                Then All.Merge(language, New Dictionary(Of String, Translation))
 
-            If All(Language).ContainsKey(Message) Then
-                If NewValue Is Nothing Then
-                    All(Language).Remove(Message)
-                ElseIf All(Language)(Message).OldValue = All(Language)(Message).NewValue Then
-                    All(Language).Remove(Message)
+            If All(language).ContainsKey(message) Then
+                If newValue Is Nothing Then
+                    All(language).Remove(message)
+                ElseIf All(language)(message).OldValue = All(language)(message).NewValue Then
+                    All(language).Remove(message)
                 Else
-                    All(Language)(Message)._NewValue = NewValue
+                    All(language)(message)._NewValue = newValue
                 End If
             Else
-                All(Language).Add(Message, New Translation(OldValue, NewValue))
+                All(language).Add(message, New Translation(oldValue, newValue))
             End If
         End Sub
 
-        Friend Shared Sub Undo()
-            For Each Item As KeyValuePair(Of Language, Dictionary(Of String, Translation)) In All
-                Dim Language As Language = Item.Key
+        Public Shared Sub Undo()
+            For Each item As KeyValuePair(Of Language, Dictionary(Of String, Translation)) In All
+                Dim language As Language = item.Key
 
-                For Each Subitem As KeyValuePair(Of String, Translation) In Item.Value
-                    Dim Message As String = Subitem.Key
-                    Dim Translation As Translation = Subitem.Value
+                For Each subitem As KeyValuePair(Of String, Translation) In item.Value
+                    Dim message As String = subitem.Key
+                    Dim translation As Translation = subitem.Value
 
-                    If Language.Messages.ContainsKey(Message) Then
-                        If Translation.OldValue Is Nothing Then
-                            Language.Messages.Remove(Message)
+                    If language.Messages.ContainsKey(message) Then
+                        If translation.OldValue Is Nothing Then
+                            language.Messages.Remove(message)
                         Else
-                            Language.Messages(Message) = Translation.OldValue
+                            language.Messages(message) = translation.OldValue
                         End If
-                    ElseIf Translation.OldValue IsNot Nothing Then
-                        Language.Messages.Add(Message, Translation.OldValue)
+                    ElseIf translation.OldValue IsNot Nothing Then
+                        language.Messages.Add(message, translation.OldValue)
                     End If
-                Next Subitem
-            Next Item
+                Next subitem
+            Next item
 
             ResetState()
         End Sub
 
-        Friend Shared ReadOnly Property All() As Dictionary(Of Language, Dictionary(Of String, Translation))
+        Public Shared ReadOnly Property All() As Dictionary(Of Language, Dictionary(Of String, Translation))
             Get
                 Return _All
             End Get
         End Property
 
-        Friend Shared Sub ResetState()
+        Public Shared Sub ResetState()
             All.Clear()
         End Sub
 

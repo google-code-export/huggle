@@ -13,7 +13,7 @@ Namespace Huggle
         Private _Type As SanctionType
         Private _TargetUser As User
 
-        Friend Sub New(ByVal time As Date, ByVal user As User, ByVal issuer As User, _
+        Public Sub New(ByVal time As Date, ByVal user As User, ByVal issuer As User, _
             ByVal type As SanctionType, ByVal regarding As Revision)
 
             MyBase.New(user.Wiki, 0, 0)
@@ -27,7 +27,7 @@ Namespace Huggle
             _TargetUser = user
         End Sub
 
-        Friend Overrides ReadOnly Property Icon() As Image
+        Public Overrides ReadOnly Property Icon() As Image
             Get
                 If Type.Name = "warning" Then
                     Select Case Type.Level
@@ -44,49 +44,49 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend ReadOnly Property IsCurrent() As Boolean
+        Public ReadOnly Property IsCurrent() As Boolean
             Get
                 Return (Time.Add(Wiki.Config.WarningAge) > Wiki.ServerTime)
             End Get
         End Property
 
-        Friend ReadOnly Property IsFinal() As Boolean
+        Public ReadOnly Property IsFinal() As Boolean
             Get
                 Return (Type.Level >= Wiki.Config.WarningLevels)
             End Get
         End Property
 
-        Friend ReadOnly Property IsWarning() As Boolean
+        Public ReadOnly Property IsWarning() As Boolean
             Get
                 Return (Type.Name = "warning")
             End Get
         End Property
 
-        Friend ReadOnly Property Level() As Integer
+        Public ReadOnly Property Level() As Integer
             Get
                 Return _Type.Level
             End Get
         End Property
 
-        Friend ReadOnly Property Regarding() As Revision
+        Public ReadOnly Property Regarding() As Revision
             Get
                 Return _Regarding
             End Get
         End Property
 
-        Friend Overrides ReadOnly Property Target() As String
+        Public Overrides ReadOnly Property Target() As String
             Get
                 Return _TargetUser.Name
             End Get
         End Property
 
-        Friend ReadOnly Property TargetUser() As User
+        Public ReadOnly Property TargetUser() As User
             Get
                 Return _TargetUser
             End Get
         End Property
 
-        Friend ReadOnly Property Type() As SanctionType
+        Public ReadOnly Property Type() As SanctionType
             Get
                 Return _Type
             End Get
@@ -94,31 +94,31 @@ Namespace Huggle
 
     End Class
 
-    Friend Structure SanctionType
+    Public Structure SanctionType
 
         Private _Level As Integer
         Private _Name As String
         Private _Subtype As String
 
-        Friend Sub New(ByVal name As String, ByVal subtype As String, ByVal level As Integer)
+        Public Sub New(ByVal name As String, ByVal subtype As String, ByVal level As Integer)
             _Level = level
             _Subtype = subtype
             _Name = name
         End Sub
 
-        Friend ReadOnly Property Level() As Integer
+        Public ReadOnly Property Level() As Integer
             Get
                 Return _Level
             End Get
         End Property
 
-        Friend ReadOnly Property Name() As String
+        Public ReadOnly Property Name() As String
             Get
                 Return _Name
             End Get
         End Property
 
-        Friend ReadOnly Property Subtype() As String
+        Public ReadOnly Property Subtype() As String
             Get
                 Return _Subtype
             End Get

@@ -16,27 +16,27 @@ Namespace Huggle
             _All.Merge(Me)
         End Sub
 
-        Friend Property Description() As String
+        Public Property Description() As String
 
-        Friend Property Link() As String
+        Public Property Link() As String
 
-        Friend Property Name() As String
+        Public Property Name() As String
 
-        Friend Property Pattern() As Regex
+        Public Property Pattern() As Regex
 
-        Friend Property Type() As String
+        Public Property Type() As String
 
         Public Overrides Function ToString() As String
             Return Name
         End Function
 
-        Friend Shared ReadOnly Property All() As List(Of Tool)
+        Public Shared ReadOnly Property All() As List(Of Tool)
             Get
                 Return _All
             End Get
         End Property
 
-        Friend Shared Function FromName(ByVal name As String) As Tool
+        Public Shared Function FromName(ByVal name As String) As Tool
             For Each tool As Tool In All
                 If tool.Name = name Then Return tool
             Next tool
@@ -44,7 +44,7 @@ Namespace Huggle
             Return New Tool(name)
         End Function
 
-        Friend Shared Sub ResetState()
+        Public Shared Sub ResetState()
             _All.Clear()
         End Sub
 

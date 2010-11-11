@@ -4,11 +4,11 @@
 
     Class TokenQuery : Inherits Query
 
-        Friend Sub New(ByVal session As Session)
+        Public Sub New(ByVal session As Session)
             MyBase.New(session, Msg("token-desc"))
         End Sub
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             OnProgress(Msg("token-progress"))
             OnStarted()
 

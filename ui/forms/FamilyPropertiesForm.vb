@@ -10,7 +10,7 @@ Namespace Huggle.UI
         Private LoadedViews As New List(Of Viewer)
         Private Session As Session
 
-        Friend Sub New(ByVal session As Session)
+        Public Sub New(ByVal session As Session)
             InitializeComponent()
             Size = New Size(720, 480)
             Me.Session = session
@@ -56,14 +56,6 @@ Namespace Huggle.UI
         Private Sub ViewInstance(Of T As Viewer)()
             ViewContainer.Controls.Clear()
             ViewContainer.Controls.Add(LoadedViews.FirstInstance(Of T))
-        End Sub
-
-        Private Sub Views_DrawItem(ByVal sender As Object, ByVal e As DrawItemEventArgs) Handles Views.DrawItem
-            e.DrawBackground()
-            e.DrawFocusRectangle()
-
-            TextRenderer.DrawText(e.Graphics, Views.Items(e.Index).ToString,
-                Views.Font, e.Bounds, e.ForeColor, e.BackColor, TextFormatFlags.VerticalCenter)
         End Sub
 
     End Class

@@ -23,7 +23,7 @@
         'Do not modify it using the code editor.
         <System.Diagnostics.DebuggerStepThrough()> _
         Private Sub InitializeComponent()
-            Me.Views = New System.Windows.Forms.ListBox()
+            Me.Views = New System.Windows.Forms.EnhancedListBox()
             Me.ViewContainer = New System.Windows.Forms.Panel()
             Me.SuspendLayout()
             '
@@ -63,7 +63,7 @@
             Me.ResumeLayout(False)
 
         End Sub
-        Private WithEvents Views As System.Windows.Forms.ListBox
         Private WithEvents ViewContainer As System.Windows.Forms.Panel
+        Private WithEvents Views As System.Windows.Forms.EnhancedListBox
     End Class
 End Namespace

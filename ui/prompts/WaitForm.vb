@@ -11,7 +11,7 @@ Namespace Huggle.UI
 
         Private Message As String
 
-        Friend Sub New(ByVal message As String)
+        Public Sub New(ByVal message As String)
             InitializeComponent()
             Me.Message = message
         End Sub
@@ -28,27 +28,27 @@ Namespace Huggle.UI
             Indicator.Stop()
         End Sub
 
-        Friend ReadOnly Property Cancelled() As Boolean
+        Public ReadOnly Property Cancelled() As Boolean
             Get
                 Return _Cancelled
             End Get
         End Property
 
-        Friend Sub CloseByProcess(ByVal sender As Object, ByVal e As EventArgs(Of Process))
+        Public Sub CloseByProcess(ByVal sender As Object, ByVal e As EventArgs(Of Process))
             Done()
         End Sub
 
-        Friend Sub UpdateByProcess(ByVal sender As Object, ByVal e As EventArgs(Of Process))
+        Public Sub UpdateByProcess(ByVal sender As Object, ByVal e As EventArgs(Of Process))
             SetMessage(e.Value.Message)
         End Sub
 
-        Friend Sub SetMessage(ByVal message As String)
+        Public Sub SetMessage(ByVal message As String)
             If Not IsAvailable Then Return
 
             Indicator.Text = message
 
             'Resize to accommodate message
-            Width = Math.Max(280, Indicator.Width + 60)
+            Width = Math.Max(280, Indicator.Width + 32)
             Height = Math.Max(100, Indicator.Height + 80)
 
             CenterToScreen()
@@ -59,7 +59,7 @@ Namespace Huggle.UI
             Close()
         End Sub
 
-        Friend Function Done() As Object
+        Public Function Done() As Object
             _Cancelled = False
             Close()
             Return Nothing

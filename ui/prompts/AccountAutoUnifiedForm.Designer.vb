@@ -92,8 +92,8 @@
 
         End Sub
         Private WithEvents Request As System.Windows.Forms.Label
-        Friend WithEvents Cancel As System.Windows.Forms.Button
-        Friend WithEvents AutoUnifiedLogin As System.Windows.Forms.CheckBox
+        Public WithEvents Cancel As System.Windows.Forms.Button
+        Public WithEvents AutoUnifiedLogin As System.Windows.Forms.CheckBox
         Private WithEvents OK As System.Windows.Forms.Button
     End Class
 End Namespace

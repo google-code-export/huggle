@@ -7,18 +7,18 @@
 
         Private _Filter As AbuseFilter
 
-        Friend Sub New(ByVal session As Session, ByVal filter As AbuseFilter)
+        Public Sub New(ByVal session As Session, ByVal filter As AbuseFilter)
             MyBase.New(session, Msg("editabusefilter-desc"))
             _Filter = filter
         End Sub
 
-        Friend ReadOnly Property Filter() As AbuseFilter
+        Public ReadOnly Property Filter() As AbuseFilter
             Get
                 Return _Filter
             End Get
         End Property
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             If Filter Is Nothing Then OnProgress(Msg("editabusefilter-progressnew")) _
                 Else OnProgress(Msg("editabusefilter-progress", Filter.Id))
             OnStarted()

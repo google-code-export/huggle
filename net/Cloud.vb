@@ -18,7 +18,7 @@ Namespace Huggle.Actions
         Private Key As String
         Private _Value As String
 
-        Friend Shared ReadOnly Property KeyPrefix As String
+        Public Shared ReadOnly Property KeyPrefix As String
             Get
 #If DEBUG Then
                 'lets not stomp all over production
@@ -29,7 +29,7 @@ Namespace Huggle.Actions
             End Get
         End Property
 
-        Friend ReadOnly Property Value As String
+        Public ReadOnly Property Value As String
             Get
                 Return _Value
             End Get
@@ -39,11 +39,10 @@ Namespace Huggle.Actions
             Me.Key = key
         End Sub
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             OnStarted()
 
-            Dim req As New Request(Nothing)
-            req.Url = New Uri(InternalConfig.CloudUrl.ToString & UrlEncode(KeyPrefix & Key))
+            Dim req As New FileRequest(New Uri(InternalConfig.CloudUrl.ToString & UrlEncode(KeyPrefix & Key)))
             req.Start()
 
             'Key does not exist yet
@@ -89,15 +88,15 @@ Namespace Huggle.Actions
         Private Key As String
         Private Value As String
 
-        Friend Sub New(ByVal key As String, ByVal value As String)
+        Public Sub New(ByVal key As String, ByVal value As String)
             Me.Key = key
             Me.Value = value
         End Sub
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             OnStarted()
 
-            Dim req As New Request(Nothing)
+            Dim req As New FileRequest(Nothing)
             req.Url = New Uri(InternalConfig.CloudUrl.ToString)
 
             'Prefix data as a rudimentary guard against tampering

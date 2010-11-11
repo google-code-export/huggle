@@ -11,31 +11,31 @@ Namespace Huggle
 
     Friend Class GlobalConfig : Inherits Config
 
-        Friend Property AnonymousLogin As Boolean
-        Friend Property AutoUnifiedLogin As Boolean
-        Friend Property DownloadLocation As String
-        Friend Property LatestVersion As Version
-        Friend Property ScaryPattern As Regex
-        Friend Property TimeZones As Dictionary(Of String, Integer)
-        Friend Property TopWiki As Wiki
-        Friend Property WikiConfigPageTitle As String
+        Public Property AnonymousLogin As Boolean
+        Public Property AutoUnifiedLogin As Boolean
+        Public Property DownloadLocation As String
+        Public Property LatestVersion As Version
+        Public Property ScaryPattern As Regex
+        Public Property TimeZones As Dictionary(Of String, Integer)
+        Public Property TopWiki As Wiki
+        Public Property WikiConfigPageTitle As String
 
         Private _Loader As LoadGlobalConfig
 
-        Friend Sub New()
+        Public Sub New()
             DownloadLocation = InternalConfig.DownloadUrl.ToString
             LatestVersion = App.Version
             WikiConfigPageTitle = "Project:Huggle/Config"
         End Sub
 
-        Friend ReadOnly Property Loader As LoadGlobalConfig
+        Public ReadOnly Property Loader As LoadGlobalConfig
             Get
                 If _Loader Is Nothing Then _Loader = New LoadGlobalConfig
                 Return _Loader
             End Get
         End Property
 
-        Friend Shared ReadOnly Property LocalizationPageName(ByVal code As String) As String
+        Public Shared ReadOnly Property LocalizationPageName(ByVal code As String) As String
             Get
                 Return "Huggle/messages/" & code
             End Get
@@ -47,7 +47,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend Shared ReadOnly Property PageTitle() As String
+        Public Shared ReadOnly Property PageTitle() As String
             Get
                 Return "Huggle/test config"
             End Get
@@ -121,22 +121,20 @@ Namespace Huggle
                 If Not props.ContainsKey("family") Then
                     wiki.Family = App.Families.Wikimedia
 
-                    If wiki.Code.Contains(".") Then
-                        wiki.Channel = "#" & wiki.Code
-                        wiki.Language = App.Languages(wiki.Code.ToFirst("."))
-                        wiki.Type = wiki.Code.FromFirst(".")
-
-                        wiki.Name = wiki.Code
-                        wiki.FileUrl = New Uri(InternalConfig.WikimediaFilePath & wiki.Type & "/" & wiki.Language.Code & "/")
-                        wiki.SecureUrl = New Uri(InternalConfig.WikimediaSecurePath & wiki.Type & "/" & wiki.Language.Code & "/w/")
-                        wiki.Url = New Uri("http://" & wiki.Code & ".org/w/")
+                    If props.ContainsKey("name") AndAlso props("name").Contains(".") Then
+                        wiki.Name = props("name")
+                        wiki.Channel = "#" & wiki.Name
+                        wiki.Language = App.Languages(wiki.Name.ToFirst("."))
+                        wiki.Type = wiki.Name.FromFirst(".")
+                        wiki.FileUrl = New Uri(InternalConfig.WMFilePath & wiki.Type & "/" & wiki.Language.Code & "/")
+                        wiki.SecureUrl = New Uri(InternalConfig.WMSecurePath & wiki.Type & "/" & wiki.Language.Code & "/w/")
+                        wiki.Url = New Uri("http://" & wiki.Name & ".org/w/")
                     Else
                         wiki.Channel = "#" & wiki.Code & ".wikimedia"
-                        wiki.Type = "special"
-
                         wiki.Name = UcFirst(wiki.Code)
-                        wiki.FileUrl = New Uri(InternalConfig.WikimediaFilePath & "wikipedia/" & wiki.Code & "/")
-                        wiki.SecureUrl = New Uri(InternalConfig.WikimediaSecurePath & "wikipedia/" & wiki.Code & "/w/")
+                        wiki.Type = "special"
+                        wiki.FileUrl = New Uri(InternalConfig.WMFilePath & "wikipedia/" & wiki.Code & "/")
+                        wiki.SecureUrl = New Uri(InternalConfig.WMSecurePath & "wikipedia/" & wiki.Code & "/w/")
                         wiki.Url = New Uri("http://" & wiki.Code & ".wikimedia.org/w/")
                     End If
                 End If
@@ -165,7 +163,7 @@ Namespace Huggle
             Next wiki
         End Sub
 
-        Friend Overrides Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
+        Public Overrides Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
             Dim items As New Dictionary(Of String, Object)
 
             items.Add("anon-login", AnonymousLogin)
@@ -229,21 +227,23 @@ Namespace Huggle
                 If wiki.IsWikimedia Then
                     wikiItems.Remove("family")
 
-                    If wiki.Code.Contains(".") Then
-                        If wiki.Channel = "#" & wiki.Code Then wikiItems.Remove("channel")
-                        If wiki.Language IsNot Nothing AndAlso wiki.Language.Code = wiki.Code.ToFirst(".") Then wikiItems.Remove("language")
-                        If wiki.Language IsNot Nothing AndAlso wiki.FileUrl.ToString = InternalConfig.WikimediaFilePath _
+                    If wiki.Name.Contains(".") Then
+                        If wiki.Channel = "#" & wiki.Name Then wikiItems.Remove("channel")
+                        If wiki.Language IsNot Nothing AndAlso wiki.Language.Code = wiki.Name.ToFirst(".") _
+                            Then wikiItems.Remove("language")
+                        If wiki.Language IsNot Nothing AndAlso wiki.FileUrl.ToString = InternalConfig.WMFilePath _
                             & wiki.Type & "/" & wiki.Language.Code & "/" Then wikiItems.Remove("files")
-                        If wiki.Language IsNot Nothing AndAlso wiki.SecureUrl.ToString = InternalConfig.WikimediaSecurePath _
+                        If wiki.Language IsNot Nothing AndAlso wiki.SecureUrl.ToString = InternalConfig.WMSecurePath _
                             & wiki.Type & "/" & wiki.Language.Code & "/w/" Then wikiItems.Remove("secure")
-                        If wiki.Name = wiki.Code Then wikiItems.Remove("name")
-                        If wiki.Type = wiki.Code.FromFirst(".") Then wikiItems.Remove("type")
-                        If wiki.Url.ToString = "http://" & wiki.Language.Code & "." & wiki.Type & ".org/w/" Then wikiItems.Remove("url")
+                        If wiki.Type = wiki.Name.FromFirst(".") Then wikiItems.Remove("type")
+                        If wiki.Url.ToString = "http://" & wiki.Language.Code &
+                            "." & wiki.Type & ".org/w/" Then wikiItems.Remove("url")
                     Else
                         If wiki.Channel = "#" & wiki.Code & ".wikimedia" Then wikiItems.Remove("channel")
-                        If wiki.FileUrl.ToString = InternalConfig.WikimediaFilePath & "wikipedia/" & wiki.Code & "/" _
+                        If wiki.FileUrl.ToString = InternalConfig.WMFilePath & "wikipedia/" & wiki.Code & "/" _
                             Then wikiItems.Remove("files")
-                        If wiki.SecureUrl.ToString = InternalConfig.WikimediaSecurePath & "wikipedia/" & wiki.Code & "/w/" _
+                        If wiki.Name.ToLowerI = wiki.Code Then wikiItems.Remove("name")
+                        If wiki.SecureUrl.ToString = InternalConfig.WMSecurePath & "wikipedia/" & wiki.Code & "/w/" _
                             Then wikiItems.Remove("secure")
                         If wiki.Type = "special" Then wikiItems.Remove("type")
                         If wiki.Url.ToString = "http://" & wiki.Code & ".wikimedia.org/w/" Then wikiItems.Remove("url")

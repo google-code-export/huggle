@@ -10,12 +10,12 @@ Namespace Huggle.UI
 
         Private Evaluator As Evaluator
 
-        Friend Sub New(ByVal session As Session)
+        Public Sub New(ByVal session As Session)
             InitializeComponent()
             _Session = session
         End Sub
 
-        Friend ReadOnly Property Session As Session
+        Public ReadOnly Property Session As Session
             Get
                 Return _Session
             End Get

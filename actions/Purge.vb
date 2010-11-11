@@ -9,23 +9,23 @@ Namespace Huggle.Actions
         Private _Pages As List(Of Page)
         Private _Watch As WatchAction
 
-        Friend Sub New(ByVal session As Session, ByVal page As Page)
+        Public Sub New(ByVal session As Session, ByVal page As Page)
             MyBase.New(session, Msg("purge-desc"))
             _Pages = List(page)
         End Sub
 
-        Friend Sub New(ByVal session As Session, ByVal pages As List(Of Page))
+        Public Sub New(ByVal session As Session, ByVal pages As List(Of Page))
             MyBase.New(session, Msg("purge-desc"))
             _Pages = pages
         End Sub
 
-        Friend ReadOnly Property Pages() As List(Of Page)
+        Public ReadOnly Property Pages() As List(Of Page)
             Get
                 Return _Pages
             End Get
         End Property
 
-        Friend Property Watch() As WatchAction
+        Public Property Watch() As WatchAction
             Get
                 Return _Watch
             End Get
@@ -34,7 +34,7 @@ Namespace Huggle.Actions
             End Set
         End Property
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             OnStarted()
             If Pages.Count = 0 Then OnSuccess() : Return
             If Pages.Count = 1 Then OnProgress(Msg("purge-progress", Pages(0))) _

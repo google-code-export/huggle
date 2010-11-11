@@ -6,7 +6,7 @@ Namespace Huggle.UI
 
     Friend Class ExtensionView : Inherits Viewer
 
-        Friend Sub New(ByVal session As Session)
+        Public Sub New(ByVal session As Session)
             MyBase.New(session)
             InitializeComponent()
         End Sub
@@ -17,11 +17,11 @@ Namespace Huggle.UI
             Dim types As New List(Of String)
 
             For Each extension As Extension In Wiki.Extensions.All
-                types.Merge(Msg("view-extension-type" & extension.Type))
+                types.Merge(Msg("view-extension-type-" & extension.Type))
             Next extension
 
             Type.BeginUpdate()
-            Type.Items.Add(Msg("view-extension-all"))
+            Type.Items.Add(Msg("view-extension-type-all"))
             Type.Items.AddRange(types.ToArray)
             Type.ResizeDropDown()
             Type.SelectedIndex = 0
@@ -58,19 +58,17 @@ Namespace Huggle.UI
         End Sub
 
         Private Sub PopulateList() Handles Type.SelectedIndexChanged
-            List.BeginUpdate()
-            List.Items.Clear()
+            Dim rows As New List(Of String())
 
             For Each extension As Extension In Wiki.Extensions.All
-                Dim extensionType As String = Msg("view-extension-type" & extension.Type)
+                Dim extensionType As String = Msg("view-extension-type-" & extension.Type)
 
                 If Type.SelectedIndex = 0 OrElse extensionType = Type.SelectedItem.ToString _
-                    Then List.AddRow(extension.Name, extensionType, extension.Version)
+                    Then rows.Add({extension.Name, extensionType, extension.Version})
             Next extension
 
-            List.EndUpdate()
-            List.SortBy(0)
-            Count.Text = Msg("a-count", List.Items.Count)
+            List.SetItems(rows)
+            Count.Text = Msg("view-misc-count", List.Items.Count)
         End Sub
 
     End Class

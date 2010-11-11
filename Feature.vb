@@ -17,25 +17,25 @@ Namespace Huggle
             All.Merge(_Name, Me)
         End Sub
 
-        Friend Property AccountAge() As TimeSpan
+        Public Property AccountAge() As TimeSpan
 
-        Friend Property AccountEdits() As Integer
+        Public Property AccountEdits() As Integer
 
-        Friend ReadOnly Property AvailableTo(ByVal account As User) As Boolean
+        Public ReadOnly Property AvailableTo(ByVal account As User) As Boolean
             Get
                 Return (DisabledReasonFor(account) Is Nothing)
             End Get
         End Property
 
-        Friend Property Comment() As String
+        Public Property Comment() As String
 
-        Friend ReadOnly Property Description() As String
+        Public ReadOnly Property Description() As String
             Get
                 Return Msg("feature-" & Name)
             End Get
         End Property
 
-        Friend ReadOnly Property DisabledReasonFor(ByVal account As User) As String
+        Public ReadOnly Property DisabledReasonFor(ByVal account As User) As String
             Get
                 If Version > account.Wiki.Config.EngineRevision _
                     Then Return Msg("access-version", Version)
@@ -81,39 +81,39 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend ReadOnly Property Enabled() As Boolean
+        Public ReadOnly Property Enabled() As Boolean
             Get
                 Return _Enabled
             End Get
         End Property
 
-        Friend Property Extension() As String
+        Public Property Extension() As String
 
-        Friend Property Groups() As List(Of String)
+        Public Property Groups() As List(Of String)
 
-        Friend ReadOnly Property Name() As String
+        Public ReadOnly Property Name() As String
             Get
                 Return _Name
             End Get
         End Property
 
-        Friend Property Rights() As List(Of String)
+        Public Property Rights() As List(Of String)
 
-        Friend Property Users() As List(Of String)
+        Public Property Users() As List(Of String)
 
-        Friend Property Version() As Integer
+        Public Property Version() As Integer
 
-        Friend Shared ReadOnly Property All() As Dictionary(Of String, Feature)
+        Public Shared ReadOnly Property All() As Dictionary(Of String, Feature)
             Get
                 Return _All
             End Get
         End Property
 
-        Friend Shared Function FromName(ByVal name As String) As Feature
+        Public Shared Function FromName(ByVal name As String) As Feature
             If All.ContainsKey(name) Then Return All(name) Else Return New Feature(name)
         End Function
 
-        Friend Shared Sub ResetState()
+        Public Shared Sub ResetState()
             All.Clear()
         End Sub
 

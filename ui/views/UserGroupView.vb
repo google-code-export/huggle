@@ -8,14 +8,14 @@ Namespace Huggle.UI
 
         Private _SelectedGroup As UserGroup
 
-        Friend Event ViewRight As SimpleEventHandler(Of String)
+        Public Event ViewRight As SimpleEventHandler(Of String)
 
-        Friend Sub New(ByVal session As Session)
+        Public Sub New(ByVal session As Session)
             MyBase.New(session)
             InitializeComponent()
         End Sub
 
-        Friend Property SelectedGroup As UserGroup
+        Public Property SelectedGroup As UserGroup
             Get
                 Return _SelectedGroup
             End Get
@@ -24,7 +24,7 @@ Namespace Huggle.UI
             End Set
         End Property
 
-        Friend Property SelectedRight As String
+        Public Property SelectedRight As String
             Get
                 Return RightsList.SelectedValue
             End Get
@@ -35,8 +35,7 @@ Namespace Huggle.UI
         End Property
 
         Private Sub _Load() Handles Me.Load
-            GroupList.BeginUpdate()
-            GroupList.Items.Clear()
+            Dim rows As New List(Of String())
 
             For Each group As UserGroup In Wiki.UserGroups.All
                 Dim groupCountString As String
@@ -44,15 +43,14 @@ Namespace Huggle.UI
                 If group.IsImplicit Then groupCountString = Msg("view-usergroup-implicit") _
                     Else groupCountString = If(group.Count < 0, Msg("a-unknown"), group.Count.ToStringForUser)
 
-                GroupList.AddRow(group.Description, groupCountString)
+                rows.Add({group.Description, groupCountString})
             Next group
 
             GroupList.SortMethods(1) = SortMethod.Integer
-            GroupList.SortBy(0)
-            GroupList.SelectedIndices.Add(0)
-            GroupList.EndUpdate()
+            GroupList.SetItems(rows)
+            If GroupList.VirtualListSize > 0 Then GroupList.SelectedIndices.Add(0)
 
-            GroupCount.Text = Msg("a-count", GroupList.Items.Count)
+            GroupCount.Text = Msg("a-count", rows.Count)
         End Sub
 
         Private Sub GroupList_SelectedIndexChanged() Handles GroupList.SelectedIndexChanged
@@ -69,15 +67,14 @@ Namespace Huggle.UI
 
             GroupName.Text = SelectedGroup.Description
 
-            RightsList.BeginUpdate()
-            RightsList.Items.Clear()
+            Dim rows As New List(Of String())
 
             For Each right As String In SelectedGroup.Rights
-                RightsList.AddRow(right)
+                rows.Add({right})
             Next right
 
-            RightsCount.Text = Msg("a-count", RightsList.Items.Count)
-            RightsList.EndUpdate()
+            RightsList.SetItems(rows)
+            RightsCount.Text = Msg("a-count", rows.Count)
         End Sub
 
         Private Sub RightsList_DoubleClick() Handles RightsList.DoubleClick

@@ -148,16 +148,16 @@
 
         End Sub
         Private WithEvents ListView1 As System.Windows.Forms.ListView
-        Friend WithEvents ColumnHeader2 As System.Windows.Forms.ColumnHeader
-        Friend WithEvents ColumnHeader3 As System.Windows.Forms.ColumnHeader
-        Friend WithEvents Button2 As System.Windows.Forms.Button
+        Public WithEvents ColumnHeader2 As System.Windows.Forms.ColumnHeader
+        Public WithEvents ColumnHeader3 As System.Windows.Forms.ColumnHeader
+        Public WithEvents Button2 As System.Windows.Forms.Button
         Private WithEvents Button3 As System.Windows.Forms.Button
         Private WithEvents Button4 As System.Windows.Forms.Button
         Private WithEvents ListView2 As System.Windows.Forms.ListView
         Private WithEvents ScriptColumn As System.Windows.Forms.ColumnHeader
         Private WithEvents ScheduleColumn As System.Windows.Forms.ColumnHeader
         Private WithEvents Label1 As System.Windows.Forms.Label
-        Friend WithEvents Label2 As System.Windows.Forms.Label
+        Public WithEvents Label2 As System.Windows.Forms.Label
         Private WithEvents ColumnHeader1 As System.Windows.Forms.ColumnHeader
     End Class
 

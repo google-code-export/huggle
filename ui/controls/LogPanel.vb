@@ -30,27 +30,27 @@ Namespace Huggle.UI
         End Sub
 
         Private Sub Log_UpdateAction(ByVal sender As Object, ByVal e As EventArgs(Of Process))
-            Dim action As Process = e.Value
+            'Dim action As Process = e.Value
 
-            For i As Integer = 0 To LogList.Items.Count - 1
-                If LogList.Items(i).Tag Is action Then
-                    If action.IsComplete Then LogList.Items.RemoveAt(i) _
-                        Else LogList.Items(i).SubItems(0).Text = action.Message
-                    Return
-                End If
-            Next i
+            'For i As Integer = 0 To LogList.Items.Count - 1
+            '    If LogList.Items(i).Tag Is action Then
+            '        If action.IsComplete Then LogList.Items.RemoveAt(i) _
+            '            Else LogList.Items(i).SubItems(0).Text = action.Message
+            '        Return
+            '    End If
+            'Next i
 
-            If Not action.IsComplete Then
-                LogList.InsertRow(0, FullDateString(Date.Now), action.Message)
-                LogList.Items(0).UseItemStyleForSubItems = True
-                LogList.Items(0).ForeColor = Color.Red
-                LogList.Items(0).Tag = action
-            End If
+            'If Not action.IsComplete Then
+            '    LogList.InsertRow(0, FullDateString(Date.Now), action.Message)
+            '    LogList.Items(0).UseItemStyleForSubItems = True
+            '    LogList.Items(0).ForeColor = Color.Red
+            '    LogList.Items(0).Tag = action
+            'End If
         End Sub
 
         Private Sub Log_Written(ByVal sender As Object, ByVal e As EventArgs(Of LogMessage))
-            If Config.Local.DebugVisible OrElse Not e.Value.IsDebug _
-                Then LogList.InsertRow(0, FullDateString(e.Value.Time), e.Value.Message)
+            'If Config.Local.DebugVisible OrElse Not e.Value.IsDebug _
+            '    Then LogList.InsertRow(0, FullDateString(e.Value.Time), e.Value.Message)
         End Sub
 
         Private Sub LogCopy_Click() Handles LogCopy.Click

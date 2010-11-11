@@ -5,91 +5,91 @@ Imports System.Collections.Generic
 
 Namespace Huggle.Scripting
 
-    <Diagnostics.DebuggerDisplay("{Value}")> _
+    <Diagnostics.DebuggerDisplay("{Value}")>
     Friend Class Token
 
         'Represents a symbol or value during parsing and evaluation
 
-        Friend Sub New(ByVal value As Object, Optional ByVal type As TokenType = TokenType.Constant)
+        Public Sub New(ByVal value As Object, Optional ByVal type As TokenType = TokenType.Constant)
             Me.Value = value
             Me.Type = type
         End Sub
 
-        Friend Property Arguments() As Integer
+        Public Property Arguments() As Integer
 
-        Friend Function AsBool() As Boolean
+        Public Function AsBool() As Boolean
             Return [As](Of Boolean)()
         End Function
 
-        Friend Function AsDictionary() As Hashtable
+        Public Function AsDictionary() As Hashtable
             Return [As](Of Hashtable)()
         End Function
 
-        Friend Function AsList() As ArrayList
+        Public Function AsList() As ArrayList
             Return [As](Of ArrayList)()
         End Function
 
-        Friend Function AsMedia() As File
+        Public Function AsMedia() As File
             Return [As](Of File)()
         End Function
 
-        Friend Function AsNumber() As Double
+        Public Function AsNumber() As Double
             If TypeOf Value Is Double Then Return CDbl(Value)
             If TypeOf Value Is Integer Then Return CInt(Value)
             If TypeOf Value Is Long Then Return CLng(Value)
             Throw New ScriptException(Msg("query-typemismatch", "Number", ValueType.ToString))
         End Function
 
-        Friend Function AsPage() As Page
+        Public Function AsPage() As Page
             Return [As](Of Page)()
         End Function
 
-        Friend Function AsQItem() As QueueItem
+        Public Function AsQItem() As QueueItem
             Return [As](Of QueueItem)()
         End Function
 
-        Friend Function AsRevision() As Revision
+        Public Function AsRevision() As Revision
             Return [As](Of Revision)()
         End Function
 
-        Friend Function AsSpace() As Space
+        Public Function AsSpace() As Space
             Return [As](Of Space)()
         End Function
 
-        Friend Function AsString() As String
+        Public Function AsString() As String
             If TypeOf Value Is String Then Return CStr(Value)
             If Value IsNot Nothing Then Return Value.ToString
             Throw New ScriptException(Msg("query-typemismatch", "String", ValueType.ToString))
         End Function
 
-        Friend Function AsTime() As Date
+        Public Function AsTime() As Date
             Return [As](Of Date)()
         End Function
 
-        Friend Function AsUser() As User
+        Public Function AsUser() As User
             Return [As](Of User)()
         End Function
 
-        Friend Property FirstChild() As Token
+        Public Property FirstChild() As Token
 
-        Friend Property NextSibling() As Token
+        Public Property NextSibling() As Token
 
-        Friend Property Parent() As Token
+        Public Property Parent() As Token
 
-        Friend Property Precedence() As Integer
+        Public Property Precedence() As Integer
 
-        Friend Property RightAssociative() As Boolean
+        Public Property RightAssociative() As Boolean
 
-        Friend Property Type() As TokenType
+        Public Property Type() As TokenType
 
         Private Function [As](Of T)() As T
             If TypeOf Value Is T Then Return CType(Value, T)
             Throw New ScriptException(Msg("query-typemismatch", GetType(T).Name, ValueType.ToString))
         End Function
 
-        Friend Property Value() As Object
+        Public Property Value() As Object
 
-        Friend ReadOnly Property ValueType() As String
+        Public ReadOnly Property ValueType() As String
             Get
                 If TypeOf Value Is Double OrElse TypeOf Value Is Integer OrElse TypeOf Value Is Long Then
                     Return "Number"
@@ -113,7 +113,7 @@ Namespace Huggle.Scripting
 
     Friend Class ItemComparer : Implements IComparer
 
-        Friend Function Compare(ByVal x As Object, ByVal y As Object) As Integer Implements IComparer.Compare
+        Public Function Compare(ByVal x As Object, ByVal y As Object) As Integer Implements IComparer.Compare
             If x Is Nothing Then Return -1
             If y Is Nothing Then Return 1
 
@@ -153,8 +153,8 @@ Namespace Huggle.Scripting
 
     Friend Class Func
 
-        Friend ArgNames As New List(Of String)
-        Friend Token As Token
+        Public ArgNames As New List(Of String)
+        Public Token As Token
 
         Public Overrides Function ToString() As String
             Return "function(" & ArgNames.Join(", ") & ")"
@@ -167,7 +167,7 @@ Namespace Huggle.Scripting
 
         'Represents an error raised during parsing or evaluation of a script
 
-        Friend Sub New(ByVal message As String)
+        Public Sub New(ByVal message As String)
             MyBase.New(message)
         End Sub
 
@@ -176,7 +176,7 @@ Namespace Huggle.Scripting
     <Serializable()>
     Friend Class TaskCancelledException : Inherits HuggleException
 
-        Friend Sub New()
+        Public Sub New()
             MyBase.New(Msg("script-usercancelled"))
         End Sub
 
@@ -186,11 +186,11 @@ Namespace Huggle.Scripting
 
         Private _Result As Result
 
-        Friend Sub New(ByVal result As Result)
+        Public Sub New(ByVal result As Result)
             _Result = result
         End Sub
 
-        Friend ReadOnly Property Result() As Result
+        Public ReadOnly Property Result() As Result
             Get
                 Return _Result
             End Get
@@ -202,11 +202,11 @@ Namespace Huggle.Scripting
 
         Private _Message As String
 
-        Friend Sub New(ByVal message As String)
+        Public Sub New(ByVal message As String)
             _Message = message
         End Sub
 
-        Friend ReadOnly Property Message() As String
+        Public ReadOnly Property Message() As String
             Get
                 Return _Message
             End Get
@@ -216,16 +216,16 @@ Namespace Huggle.Scripting
 
     Friend Class ScriptTable
 
-        Friend Property Columns As List(Of String)
-        Friend Property ColumnTypes As List(Of String)
-        Friend Property Rows As List(Of ScriptTableRow)
+        Public Property Columns As List(Of String)
+        Public Property ColumnTypes As List(Of String)
+        Public Property Rows As List(Of ScriptTableRow)
 
     End Class
 
     Friend Class ScriptTableRow
 
-        Friend Property Columns As List(Of String)
-        Friend Property Items As ArrayList
+        Public Property Columns As List(Of String)
+        Public Property Items As ArrayList
 
     End Class
 
@@ -239,7 +239,7 @@ Namespace Huggle.Scripting
             _Evaluator = evaluator
         End Sub
 
-        Friend ReadOnly Property Description() As String
+        Public ReadOnly Property Description() As String
             Get
                 Return _Description
             End Get
@@ -251,7 +251,7 @@ Namespace Huggle.Scripting
             End Get
         End Property
 
-        Friend Function ReadAll() As ArrayList
+        Public Function ReadAll() As ArrayList
             Evaluator.DoProgress(Msg("eval-stream", Description))
 
             Dim result As New ArrayList
@@ -264,9 +264,9 @@ Namespace Huggle.Scripting
             Return result
         End Function
 
-        Friend MustOverride Function GetEnumerator() As IEnumerator(Of Object) Implements IEnumerable(Of Object).GetEnumerator
+        Public MustOverride Function GetEnumerator() As IEnumerator(Of Object) Implements IEnumerable(Of Object).GetEnumerator
 
-        Friend Function GetEnumerator1() As IEnumerator Implements IEnumerable.GetEnumerator
+        Public Function GetEnumerator1() As IEnumerator Implements IEnumerable.GetEnumerator
             Return GetEnumerator()
         End Function
 
@@ -277,11 +277,11 @@ Namespace Huggle.Scripting
         Protected Sub New()
         End Sub
 
-        Friend MustOverride ReadOnly Property Current() As Object Implements IEnumerator(Of Object).Current, IEnumerator.Current
-        Friend MustOverride Function MoveNext() As Boolean Implements IEnumerator.MoveNext
-        Friend MustOverride Sub Reset() Implements IEnumerator.Reset
+        Public MustOverride ReadOnly Property Current() As Object Implements IEnumerator(Of Object).Current, IEnumerator.Current
+        Public MustOverride Function MoveNext() As Boolean Implements IEnumerator.MoveNext
+        Public MustOverride Sub Reset() Implements IEnumerator.Reset
 
-        Friend Sub Dispose() Implements IDisposable.Dispose
+        Public Sub Dispose() Implements IDisposable.Dispose
             Dispose(True)
             GC.SuppressFinalize(Me)
         End Sub
@@ -295,12 +295,12 @@ Namespace Huggle.Scripting
 
         Private Query As ListQuery
 
-        Friend Sub New(ByVal evaluator As Evaluator, ByVal query As ListQuery)
+        Public Sub New(ByVal evaluator As Evaluator, ByVal query As ListQuery)
             MyBase.New(evaluator, query.Description)
             Me.Query = query
         End Sub
 
-        Friend Overrides Function GetEnumerator() As IEnumerator(Of Object)
+        Public Overrides Function GetEnumerator() As IEnumerator(Of Object)
             Return New QueryPipeEnumerator(Query)
         End Function
 
@@ -312,17 +312,17 @@ Namespace Huggle.Scripting
         Private Index As Integer
         Private Query As ListQuery
 
-        Friend Sub New(ByVal query As ListQuery)
+        Public Sub New(ByVal query As ListQuery)
             Me.Query = query
         End Sub
 
-        Friend Overrides ReadOnly Property Current() As Object
+        Public Overrides ReadOnly Property Current() As Object
             Get
                 Return _Current
             End Get
         End Property
 
-        Friend Overrides Function MoveNext() As Boolean
+        Public Overrides Function MoveNext() As Boolean
             If Query.Items.Count <= Index Then
                 If Query.IsAtEnd Then Return False
                 Query.DoOne()
@@ -336,7 +336,7 @@ Namespace Huggle.Scripting
             Return True
         End Function
 
-        Friend Overrides Sub Reset()
+        Public Overrides Sub Reset()
             Index = 0
         End Sub
 
@@ -347,13 +347,13 @@ Namespace Huggle.Scripting
         Private Source As IEnumerable
         Private Transform As Token
 
-        Friend Sub New(ByVal evaluator As Evaluator, ByVal source As IEnumerable, ByVal transform As Token)
+        Public Sub New(ByVal evaluator As Evaluator, ByVal source As IEnumerable, ByVal transform As Token)
             MyBase.New(evaluator, "Transform")
             Me.Source = source
             Me.Transform = transform
         End Sub
 
-        Friend Overrides Function GetEnumerator() As IEnumerator(Of Object)
+        Public Overrides Function GetEnumerator() As IEnumerator(Of Object)
             Return New TransformPipeEnumerator(Evaluator, Source.GetEnumerator, Transform)
         End Function
 
@@ -367,19 +367,19 @@ Namespace Huggle.Scripting
         Private Source As IEnumerator
         Private Transform As Token
 
-        Friend Sub New(ByVal evaluator As Evaluator, ByVal source As IEnumerator, ByVal transform As Token)
+        Public Sub New(ByVal evaluator As Evaluator, ByVal source As IEnumerator, ByVal transform As Token)
             Me.Evaluator = evaluator
             Me.Source = source
             Me.Transform = transform
         End Sub
 
-        Friend Overrides ReadOnly Property Current() As Object
+        Public Overrides ReadOnly Property Current() As Object
             Get
                 Return _Current
             End Get
         End Property
 
-        Friend Overrides Function MoveNext() As Boolean
+        Public Overrides Function MoveNext() As Boolean
             If Source.MoveNext() Then
                 _Current = Evaluator.EvalToken(Source.Current, Transform).Value
                 Return True
@@ -389,7 +389,7 @@ Namespace Huggle.Scripting
             End If
         End Function
 
-        Friend Overrides Sub Reset()
+        Public Overrides Sub Reset()
             Source.Reset()
         End Sub
 
@@ -400,13 +400,13 @@ Namespace Huggle.Scripting
         Private Filter As Token
         Private Source As IEnumerable
 
-        Friend Sub New(ByVal evaluator As Evaluator, ByVal source As IEnumerable, ByVal filter As Token)
+        Public Sub New(ByVal evaluator As Evaluator, ByVal source As IEnumerable, ByVal filter As Token)
             MyBase.New(evaluator, "Filter")
             Me.Filter = filter
             Me.Source = source
         End Sub
 
-        Friend Overrides Function GetEnumerator() As IEnumerator(Of Object)
+        Public Overrides Function GetEnumerator() As IEnumerator(Of Object)
             Return New FilterPipeEnumerator(Evaluator, Source.GetEnumerator, Filter)
         End Function
 
@@ -420,19 +420,19 @@ Namespace Huggle.Scripting
         Private Filter As Token
         Private Source As IEnumerator
 
-        Friend Sub New(ByVal evaluator As Evaluator, ByVal source As IEnumerator, ByVal filter As Token)
+        Public Sub New(ByVal evaluator As Evaluator, ByVal source As IEnumerator, ByVal filter As Token)
             Me.Evaluator = evaluator
             Me.Filter = filter
             Me.Source = source
         End Sub
 
-        Friend Overrides ReadOnly Property Current() As Object
+        Public Overrides ReadOnly Property Current() As Object
             Get
                 Return _Current
             End Get
         End Property
 
-        Friend Overrides Function MoveNext() As Boolean
+        Public Overrides Function MoveNext() As Boolean
             While Source.MoveNext
                 If Evaluator.EvalToken(Source.Current, Filter).AsBool Then
                     _Current = Source.Current
@@ -444,7 +444,7 @@ Namespace Huggle.Scripting
             Return False
         End Function
 
-        Friend Overrides Sub Reset()
+        Public Overrides Sub Reset()
             Source.Reset()
         End Sub
 

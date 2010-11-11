@@ -8,7 +8,7 @@ Namespace Huggle.UI
         Private Filter As AbuseFilter
         Private Session As Session
 
-        Friend Sub New(ByVal session As Session, Optional ByVal filter As AbuseFilter = Nothing)
+        Public Sub New(ByVal session As Session, Optional ByVal filter As AbuseFilter = Nothing)
             InitializeComponent()
             Me.Filter = If(filter Is Nothing, New AbuseFilter(App.Wikis.Default, 0), filter)
             Me.Session = session
@@ -19,15 +19,15 @@ Namespace Huggle.UI
             App.UserWaitForProcess(getter)
             If getter.IsCancelled Then Close() : Return
 
-            BlockCheck.Visible = getter.AllowedActions.Contains("block")
-            BlockAutopromoteCheck.Visible = getter.AllowedActions.Contains("blockautopromote")
-            DegroupCheck.Visible = getter.AllowedActions.Contains("degroup")
-            DisallowCheck.Visible = getter.AllowedActions.Contains("disallow")
-            RangeblockCheck.Visible = getter.AllowedActions.Contains("rangeblock")
+            BlockCheck.Visible = Session.Wiki.Config.AbuseFilterActions.Contains("block")
+            BlockAutopromoteCheck.Visible = Session.Wiki.Config.AbuseFilterActions.Contains("blockautopromote")
+            DegroupCheck.Visible = Session.Wiki.Config.AbuseFilterActions.Contains("degroup")
+            DisallowCheck.Visible = Session.Wiki.Config.AbuseFilterActions.Contains("disallow")
+            RangeblockCheck.Visible = Session.Wiki.Config.AbuseFilterActions.Contains("rangeblock")
 
-            If Not getter.AllowedActions.Contains("warn") Then Tabs.TabPages(1).Hide()
-            If Not getter.AllowedActions.Contains("throttle") Then Tabs.TabPages(2).Hide()
-            If Not getter.AllowedActions.Contains("tag") Then Tabs.TabPages(3).Hide()
+            If Not Session.Wiki.Config.AbuseFilterActions.Contains("warn") Then Tabs.TabPages(1).Hide()
+            If Not Session.Wiki.Config.AbuseFilterActions.Contains("throttle") Then Tabs.TabPages(2).Hide()
+            If Not Session.Wiki.Config.AbuseFilterActions.Contains("tag") Then Tabs.TabPages(3).Hide()
 
             If Filter.Id > 0 Then
                 Text = Msg("abusefilteredit-title", Filter.Id)

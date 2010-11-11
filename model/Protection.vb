@@ -14,7 +14,7 @@ Namespace Huggle
         Private _Move As ProtectionPart
         Private _Page As Page
 
-        Friend Sub New(ByVal time As Date, ByVal page As Page, ByVal user As User, _
+        Public Sub New(ByVal time As Date, ByVal page As Page, ByVal user As User, _
             ByVal action As String, ByVal comment As String, ByVal cascade As Boolean, _
             ByVal levels As String, ByVal hidden As Boolean, ByVal id As Integer, ByVal rcid As Integer)
 
@@ -35,43 +35,43 @@ Namespace Huggle
             If _Page IsNot Nothing Then _Page.Logs.Add(Me)
         End Sub
 
-        Friend ReadOnly Property Cascade() As Boolean
+        Public ReadOnly Property Cascade() As Boolean
             Get
                 Return _Cascade
             End Get
         End Property
 
-        Friend ReadOnly Property Create() As ProtectionPart
+        Public ReadOnly Property Create() As ProtectionPart
             Get
                 Return _Create
             End Get
         End Property
 
-        Friend ReadOnly Property Edit() As ProtectionPart
+        Public ReadOnly Property Edit() As ProtectionPart
             Get
                 Return _Edit
             End Get
         End Property
 
-        Friend ReadOnly Property Move() As ProtectionPart
+        Public ReadOnly Property Move() As ProtectionPart
             Get
                 Return _Move
             End Get
         End Property
 
-        Friend Overrides ReadOnly Property Icon() As Drawing.Image
+        Public Overrides ReadOnly Property Icon() As Drawing.Image
             Get
                 Return Resources.blob_log_protect
             End Get
         End Property
 
-        Friend ReadOnly Property Page() As Page
+        Public ReadOnly Property Page() As Page
             Get
                 Return _Page
             End Get
         End Property
 
-        Friend Overrides ReadOnly Property Target() As String
+        Public Overrides ReadOnly Property Target() As String
             Get
                 Return _Page.Name
             End Get
@@ -79,33 +79,33 @@ Namespace Huggle
 
     End Class
 
-    Friend Structure ProtectionPart
+    Public Structure ProtectionPart
 
         Private _Expires As Date, _Level As String
 
         Private Shared ReadOnly ProtectionLevelsMatch As New Regex _
             ("\[(.+?)=(.+?)\] \((?:indefinite|expires (.+?) \(UTC\))\)", RegexOptions.Compiled)
 
-        Friend Shared ReadOnly None As New ProtectionPart(Date.MinValue, Nothing)
+        Public Shared ReadOnly None As New ProtectionPart(Date.MinValue, Nothing)
 
-        Friend Sub New(ByVal expires As Date, ByVal level As String)
+        Public Sub New(ByVal expires As Date, ByVal level As String)
             _Expires = expires
             _Level = level
         End Sub
 
-        Friend ReadOnly Property Expires() As Date
+        Public ReadOnly Property Expires() As Date
             Get
                 Return _Expires
             End Get
         End Property
 
-        Friend ReadOnly Property Level() As String
+        Public ReadOnly Property Level() As String
             Get
                 Return _Level
             End Get
         End Property
 
-        Friend Shared Function FromString(ByVal str As String, ByVal type As String) As ProtectionPart
+        Public Shared Function FromString(ByVal str As String, ByVal type As String) As ProtectionPart
 
             'Extract protection levels and expiry of each level from MediaWiki's internal representation
             If str Is Nothing Then Return ProtectionPart.None

@@ -26,7 +26,7 @@ Namespace Huggle.Scripting
         Private Postfix As List(Of Token)
         Private ConditionEnd As Integer
 
-        Friend Function Parse(ByVal expression As String) As Token
+        Public Function Parse(ByVal expression As String) As Token
             If expression = "require" Then Return New Token(False)
 
             Dim expr As String = expression.Remove(Tab, CR, LF)

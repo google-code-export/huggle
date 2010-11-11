@@ -1,8 +1,10 @@
-﻿Namespace Huggle.UI
+﻿Imports System.Collections.Generic
+
+Namespace Huggle.UI
 
     Friend Class TitleListView : Inherits Viewer
 
-        Friend Sub New(ByVal session As Session)
+        Public Sub New(ByVal session As Session)
             MyBase.New(session)
             InitializeComponent()
         End Sub
@@ -36,8 +38,7 @@
         Private Sub Filter_SelectedIndexChanged() Handles Filter.SelectedIndexChanged
             If Not Filter.Enabled Then Return
 
-            Entries.BeginUpdate()
-            Entries.Clear()
+            Dim rows As New List(Of String())
 
             For Each entry As TitleListEntry In Wiki.TitleList.Entries
                 Select Case Filter.SelectedItem.ToString
@@ -64,10 +65,10 @@
                             entry.Options.Contains(TitleListOption.ReUpload) Then Continue For
                 End Select
 
-                Entries.AddRow(entry.Pattern, entry.Options.ToStringArray.Join(", "), entry.ErrorMessage)
+                rows.Add({entry.Pattern, entry.Options.ToStringArray.Join(", "), entry.ErrorMessage})
             Next entry
 
-            Entries.EndUpdate()
+            Entries.SetItems(rows)
             Count.Text = Msg("a-count", Entries.Items.Count)
         End Sub
 

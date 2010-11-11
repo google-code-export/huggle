@@ -8,24 +8,24 @@ Namespace Huggle.Actions
 
         Private _Rev As Revision
 
-        Friend Sub New(ByVal session As Session, ByVal rev As Revision)
+        Public Sub New(ByVal session As Session, ByVal rev As Revision)
             MyBase.New(session, Msg("review-desc"))
             _Rev = rev
         End Sub
 
-        Friend Property Levels() As Dictionary(Of ReviewFlag, Integer)
+        Public Property Levels() As Dictionary(Of ReviewFlag, Integer)
 
-        Friend ReadOnly Property Rev() As Revision
+        Public ReadOnly Property Rev() As Revision
             Get
                 Return _Rev
             End Get
         End Property
 
-        Friend Property Summary() As String
+        Public Property Summary() As String
 
-        Friend Property Watch() As WatchAction
+        Public Property Watch() As WatchAction
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             If User.Can("review") Then
                 If User.Can("quickreview") AndAlso Wiki.Config.QuickReview Then
                     If Levels Is Nothing Then Levels = Wiki.Config.QuickReviewLevels

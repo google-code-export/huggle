@@ -451,7 +451,7 @@
         Private WithEvents OptionsGroup As System.Windows.Forms.GroupBox
         Private WithEvents CheckBox1 As System.Windows.Forms.CheckBox
         Private WithEvents Label2 As System.Windows.Forms.Label
-        Friend WithEvents Button1 As System.Windows.Forms.Button
+        Public WithEvents Button1 As System.Windows.Forms.Button
         Private WithEvents ProjectLabel As System.Windows.Forms.Label
         Private WithEvents AccountLabel As System.Windows.Forms.Label
         Private WithEvents ComboBox2 As System.Windows.Forms.ComboBox
@@ -461,7 +461,7 @@
         Private WithEvents Panel3 As System.Windows.Forms.Panel
         Private WithEvents StartDefault As System.Windows.Forms.RadioButton
         Private WithEvents StartTime As System.Windows.Forms.DateTimePicker
-        Friend WithEvents StartAt As System.Windows.Forms.RadioButton
+        Public WithEvents StartAt As System.Windows.Forms.RadioButton
         Private WithEvents StartStartup As System.Windows.Forms.RadioButton
         Private WithEvents Panel2 As System.Windows.Forms.Panel
         Private WithEvents UntilStopped As System.Windows.Forms.RadioButton
@@ -469,7 +469,7 @@
         Private WithEvents UntilTime As System.Windows.Forms.DateTimePicker
         Private WithEvents NumericUpDown2 As System.Windows.Forms.NumericUpDown
         Private WithEvents RadioButton1 As System.Windows.Forms.RadioButton
-        Friend WithEvents UntilAt As System.Windows.Forms.RadioButton
+        Public WithEvents UntilAt As System.Windows.Forms.RadioButton
         Private WithEvents StartLabel As System.Windows.Forms.Label
         Private WithEvents RepeatInterval As System.Windows.Forms.NumericUpDown
         Private WithEvents RepeatUnit As System.Windows.Forms.ComboBox

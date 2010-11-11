@@ -14,7 +14,7 @@
 
 '        Protected RootPage, LogPage As Page
 
-'        Friend Property DiscussionSummary() As String
+'        Public Property DiscussionSummary() As String
 '            Get
 '                Return _DiscussionSummary
 '            End Get
@@ -23,7 +23,7 @@
 '            End Set
 '        End Property
 
-'        Friend Property Message() As String
+'        Public Property Message() As String
 '            Get
 '                Return _Message
 '            End Get
@@ -32,7 +32,7 @@
 '            End Set
 '        End Property
 
-'        Friend Property MessageSummary() As String
+'        Public Property MessageSummary() As String
 '            Get
 '                Return _MessageSummary
 '            End Get
@@ -41,7 +41,7 @@
 '            End Set
 '        End Property
 
-'        Friend Property MessageTitle() As String
+'        Public Property MessageTitle() As String
 '            Get
 '                Return _MessageTitle
 '            End Get
@@ -50,7 +50,7 @@
 '            End Set
 '        End Property
 
-'        Friend Property MultiSubpageFormat() As String
+'        Public Property MultiSubpageFormat() As String
 '            Get
 '                Return _MultiSubpageFormat
 '            End Get
@@ -59,7 +59,7 @@
 '            End Set
 '        End Property
 
-'        Friend Property TagSummary() As String
+'        Public Property TagSummary() As String
 '            Get
 '                Return _TagSummary
 '            End Get
@@ -68,7 +68,7 @@
 '            End Set
 '        End Property
 
-'        Friend Sub New(ByVal Page As Page, ByVal Reason As String, ByVal Notify As Boolean)
+'        Public Sub New(ByVal Page As Page, ByVal Reason As String, ByVal Notify As Boolean)
 '            Me.Notify = Notify
 '            Me.Page = Page
 '            Me.Reason = Reason

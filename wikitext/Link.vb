@@ -10,7 +10,7 @@ Namespace Huggle.Wikitext
         Private _Selection As Selection
         Private _Text As String
 
-        Friend Sub New(ByVal document As Document, ByVal page As Page,
+        Public Sub New(ByVal document As Document, ByVal page As Page,
             ByVal selection As Selection, ByVal text As String)
 
             Me.Document = document
@@ -19,19 +19,19 @@ Namespace Huggle.Wikitext
             _Text = text
         End Sub
 
-        Friend ReadOnly Property Page() As Page
+        Public ReadOnly Property Page() As Page
             Get
                 Return _Page
             End Get
         End Property
 
-        Friend ReadOnly Property Selection() As Selection
+        Public ReadOnly Property Selection() As Selection
             Get
                 Return _Selection
             End Get
         End Property
 
-        Friend ReadOnly Property Text() As String
+        Public ReadOnly Property Text() As String
             Get
                 Return _Text
             End Get
@@ -47,7 +47,7 @@ Namespace Huggle.Wikitext
 
         Private Document As Document
 
-        Friend Sub New(ByVal document As Document)
+        Public Sub New(ByVal document As Document)
             Me.Document = document
         End Sub
 

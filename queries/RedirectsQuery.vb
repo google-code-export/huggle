@@ -9,12 +9,12 @@ Namespace Huggle.Actions
 
         Private Pages As List(Of Page)
 
-        Friend Sub New(ByVal session As Session, ByVal pages As List(Of Page))
+        Public Sub New(ByVal session As Session, ByVal pages As List(Of Page))
             MyBase.New(session, Msg("redirects-desc"))
             Me.Pages = pages
         End Sub
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             Dim titles As New List(Of String)
 
             For Each page As Page In Pages

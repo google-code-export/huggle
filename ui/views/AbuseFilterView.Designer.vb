@@ -1,6 +1,6 @@
 ﻿Namespace Huggle.UI
     <Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
-    Partial Class AbuseFilterView
+    Partial Friend Class AbuseFilterView
         Inherits Viewer
 
         'UserControl overrides dispose to clean up the component list.
@@ -37,7 +37,7 @@
             Me.StatusSel = New System.Windows.Forms.ComboBox()
             Me.ActionSel = New System.Windows.Forms.ComboBox()
             Me.FilterCount = New System.Windows.Forms.Label()
-            Me.FilterDetail = New Huggle.UI.AbuseFilterDetailView()
+            Me.FilterDetailView = New Huggle.UI.AbuseFilterDetailView()
             Me.Splitter.Panel1.SuspendLayout()
             Me.Splitter.Panel2.SuspendLayout()
             Me.Splitter.SuspendLayout()
@@ -64,10 +64,9 @@
             '
             'Splitter.Panel2
             '
-            Me.Splitter.Panel2.Controls.Add(Me.FilterDetail)
+            Me.Splitter.Panel2.Controls.Add(Me.FilterDetailView)
             Me.Splitter.Size = New System.Drawing.Size(562, 432)
             Me.Splitter.SplitterDistance = 270
-            Me.Splitter.SplitterWidth = 6
             Me.Splitter.TabIndex = 8
             '
             'Title
@@ -108,11 +107,12 @@
             Me.FilterList.Name = "FilterList"
             Me.FilterList.SelectedValue = Nothing
             Me.FilterList.ShowGroups = False
-            Me.FilterList.Size = New System.Drawing.Size(556, 212)
+            Me.FilterList.Size = New System.Drawing.Size(556, 215)
             Me.FilterList.SortOnColumnClick = True
             Me.FilterList.TabIndex = 1
             Me.FilterList.UseCompatibleStateImageBehavior = False
             Me.FilterList.View = System.Windows.Forms.View.Details
+            Me.FilterList.VirtualMode = True
             '
             'IdColumn
             '
@@ -122,7 +122,7 @@
             'NameColumn
             '
             Me.NameColumn.Text = "Name"
-            Me.NameColumn.Width = 243
+            Me.NameColumn.Width = 238
             '
             'StatusColumn
             '
@@ -155,7 +155,6 @@
             '
             Me.VisibilitySel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
             Me.VisibilitySel.FormattingEnabled = True
-            Me.VisibilitySel.Items.AddRange(New Object() {"(Any visibility)", "Public", "Private"})
             Me.VisibilitySel.Location = New System.Drawing.Point(3, 3)
             Me.VisibilitySel.Name = "VisibilitySel"
             Me.VisibilitySel.Size = New System.Drawing.Size(140, 21)
@@ -165,7 +164,6 @@
             '
             Me.StatusSel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
             Me.StatusSel.FormattingEnabled = True
-            Me.StatusSel.Items.AddRange(New Object() {"(Any status)", "Enabled", "Disabled", "Deleted"})
             Me.StatusSel.Location = New System.Drawing.Point(149, 3)
             Me.StatusSel.Name = "StatusSel"
             Me.StatusSel.Size = New System.Drawing.Size(140, 21)
@@ -175,7 +173,6 @@
             '
             Me.ActionSel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
             Me.ActionSel.FormattingEnabled = True
-            Me.ActionSel.Items.AddRange(New Object() {"(All actions)", "Tag", "Warn", "Limit rate", "Disallow", "Remove confirmation", "Remove groups", "Block", "Block range"})
             Me.ActionSel.Location = New System.Drawing.Point(295, 3)
             Me.ActionSel.Name = "ActionSel"
             Me.ActionSel.Size = New System.Drawing.Size(140, 21)
@@ -191,17 +188,15 @@
             Me.FilterCount.Text = "0 items"
             Me.FilterCount.TextAlign = System.Drawing.ContentAlignment.TopRight
             '
-            'FilterDetail
+            'FilterDetailView
             '
-            Me.FilterDetail.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-                        Or System.Windows.Forms.AnchorStyles.Left) _
-                        Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-            Me.FilterDetail.Filter = Nothing
-            Me.FilterDetail.Location = New System.Drawing.Point(3, 3)
-            Me.FilterDetail.Name = "FilterDetail"
-            Me.FilterDetail.Session = Nothing
-            Me.FilterDetail.Size = New System.Drawing.Size(556, 150)
-            Me.FilterDetail.TabIndex = 0
+            Me.FilterDetailView.Dock = System.Windows.Forms.DockStyle.Fill
+            Me.FilterDetailView.Filter = Nothing
+            Me.FilterDetailView.Location = New System.Drawing.Point(0, 0)
+            Me.FilterDetailView.Name = "FilterDetailView"
+            Me.FilterDetailView.Session = Nothing
+            Me.FilterDetailView.Size = New System.Drawing.Size(562, 158)
+            Me.FilterDetailView.TabIndex = 0
             '
             'AbuseFilterView
             '
@@ -235,7 +230,7 @@
         Private WithEvents CountColumn As System.Windows.Forms.ColumnHeader
         Private WithEvents CreateFilter As System.Windows.Forms.LinkLabel
         Private WithEvents Title As System.Windows.Forms.Label
-        Private WithEvents FilterDetail As Huggle.UI.AbuseFilterDetailView
+        Public WithEvents FilterDetailView As Huggle.UI.AbuseFilterDetailView
 
     End Class
 End Namespace

@@ -30,7 +30,7 @@ Namespace Huggle
             "OemQuestion", "/" _
             }
 
-        Friend Sub New(ByVal command As String, ByVal key As Keys, _
+        Public Sub New(ByVal command As String, ByVal key As Keys, _
             ByVal control As Boolean, ByVal alt As Boolean, ByVal shift As Boolean)
 
             _Command = command
@@ -41,7 +41,7 @@ Namespace Huggle
             _All.Merge(command, Me)
         End Sub
 
-        Friend Sub New(ByVal command As String, ByVal shortcutString As String)
+        Public Sub New(ByVal command As String, ByVal shortcutString As String)
             _Command = command
 
             If Not String.IsNullOrEmpty(shortcutString) Then
@@ -68,31 +68,31 @@ Namespace Huggle
             End If
         End Sub
 
-        Friend ReadOnly Property Alt() As Boolean
+        Public ReadOnly Property Alt() As Boolean
             Get
                 Return _Alt
             End Get
         End Property
 
-        Friend ReadOnly Property Command() As String
+        Public ReadOnly Property Command() As String
             Get
                 Return _Command
             End Get
         End Property
 
-        Friend ReadOnly Property Control() As Boolean
+        Public ReadOnly Property Control() As Boolean
             Get
                 Return _Control
             End Get
         End Property
 
-        Friend ReadOnly Property Key() As Keys
+        Public ReadOnly Property Key() As Keys
             Get
                 Return _Key
             End Get
         End Property
 
-        Friend ReadOnly Property Shift() As Boolean
+        Public ReadOnly Property Shift() As Boolean
             Get
                 Return _Shift
             End Get
@@ -126,13 +126,13 @@ Namespace Huggle
             Return name
         End Function
 
-        Friend Shared ReadOnly Property All() As Dictionary(Of String, Shortcut)
+        Public Shared ReadOnly Property All() As Dictionary(Of String, Shortcut)
             Get
                 Return _All
             End Get
         End Property
 
-        Friend Shared Function GetCommand(ByVal key As Keys,
+        Public Shared Function GetCommand(ByVal key As Keys,
             ByVal shift As Boolean, ByVal alt As Boolean, ByVal control As Boolean) As String
 
             For Each shortcut As Shortcut In All.Values

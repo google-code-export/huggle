@@ -8,27 +8,20 @@ Namespace Huggle.Actions
 
     Friend Class AbuseFilterDetailQuery : Inherits Query
 
-        Private _AllowedActions As New List(Of String)
         Private _Filter As AbuseFilter
 
-        Friend Sub New(ByVal session As Session, ByVal filter As AbuseFilter)
+        Public Sub New(ByVal session As Session, ByVal filter As AbuseFilter)
             MyBase.New(session, Msg("abusefilterdetail-desc", filter))
             _Filter = filter
         End Sub
 
-        Friend ReadOnly Property AllowedActions() As List(Of String)
-            Get
-                Return _AllowedActions
-            End Get
-        End Property
-
-        Friend ReadOnly Property Filter() As AbuseFilter
+        Public ReadOnly Property Filter() As AbuseFilter
             Get
                 Return _Filter
             End Get
         End Property
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             OnStarted()
 
             Dim req As New UIRequest(Session, Description, New QueryString("title", "Special:AbuseFilter/" &
@@ -57,11 +50,20 @@ Namespace Huggle.Actions
                 Filter.RateLimit = RateLimit.None
             End If
 
-            For Each item As String In
+            Dim tagText As String = GetHtmlTextFromName(req.Response, "wpFilterTags")
+            Dim tags As New List(Of String)
+            If tagText IsNot Nothing Then tags.AddRange(tagText.Split(LF))
+            Filter.Tags = tags
+
+            Dim allowedActions As New List(Of String)
+
+            For Each action As String In
                 {"blockautopromote", "block", "degroup", "disallow", "tag", "throttle", "warn", "rangeblock"}
 
-                If req.Response.Contains("wpFilterAction" & UcFirst(item)) Then AllowedActions.Merge(item)
-            Next item
+                If req.Response.Contains("wpFilterAction" & UcFirst(action)) Then allowedActions.Merge(action)
+            Next action
+
+            Wiki.Config.AbuseFilterActions = allowedActions
 
             OnSuccess()
         End Sub

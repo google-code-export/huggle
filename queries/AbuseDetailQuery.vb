@@ -7,18 +7,18 @@
 
         Private _Abuse As Abuse
 
-        Friend Sub New(ByVal session As Session, ByVal abuse As Abuse)
+        Public Sub New(ByVal session As Session, ByVal abuse As Abuse)
             MyBase.New(session, Msg("abusedetail-desc", abuse))
             _Abuse = abuse
         End Sub
 
-        Friend ReadOnly Property Abuse() As Abuse
+        Public ReadOnly Property Abuse() As Abuse
             Get
                 Return _Abuse
             End Get
         End Property
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             OnProgress(Msg("abusedetail-progress", Abuse))
             OnStarted()
 

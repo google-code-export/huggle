@@ -207,7 +207,7 @@
         Private WithEvents ViewTable As System.Windows.Forms.ToolStripButton
         Private WithEvents ViewImage As System.Windows.Forms.ToolStripButton
         Private WithEvents ViewChart As System.Windows.Forms.ToolStripButton
-        Friend WithEvents TextData As System.Windows.Forms.RichTextBox
+        Public WithEvents TextData As System.Windows.Forms.RichTextBox
         Private WithEvents WebData As System.Windows.Forms.WebBrowser
         Private WithEvents ListData As System.Windows.Forms.ListView
         Private WithEvents ResultData As System.Windows.Forms.TextBox

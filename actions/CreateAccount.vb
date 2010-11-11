@@ -14,7 +14,7 @@ Namespace Huggle.Actions
         Private Confirmation As Confirmation
         Private NewUser As User
 
-        Friend Sub New(ByVal session As Session, ByVal newUser As User, ByVal confirmation As Confirmation)
+        Public Sub New(ByVal session As Session, ByVal newUser As User, ByVal confirmation As Confirmation)
             MyBase.New(session, Msg("createaccount-desc", session.Wiki, newUser))
             Interactive = True
 
@@ -22,7 +22,7 @@ Namespace Huggle.Actions
             Me.NewUser = newUser
         End Sub
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             OnProgress(Msg("createaccount-progress", NewUser.FullName))
 
             'Obtain a login token

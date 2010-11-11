@@ -68,8 +68,8 @@
 
         End Sub
         Private WithEvents LogList As System.Windows.Forms.EnhancedListView
-        Friend WithEvents LogMenu As System.Windows.Forms.ContextMenuStrip
-        Friend WithEvents LogCopy As System.Windows.Forms.ToolStripMenuItem
+        Public WithEvents LogMenu As System.Windows.Forms.ContextMenuStrip
+        Public WithEvents LogCopy As System.Windows.Forms.ToolStripMenuItem
 
     End Class
 End Namespace

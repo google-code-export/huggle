@@ -5,52 +5,52 @@ Imports System.Web.HttpUtility
 
 Namespace Huggle
 
-    <Diagnostics.DebuggerDisplay("{ToString()}")> _
+    <Diagnostics.DebuggerDisplay("{ToString()}")>
     Friend Class QueryString
 
         Private _Values As Dictionary(Of String, Object)
 
-        Friend Sub New(ByVal ParamArray values As Object())
+        Public Sub New(ByVal ParamArray values As Object())
             _Values = values.ToDictionary(Of String, Object)()
         End Sub
 
-        Friend ReadOnly Property Contains(ByVal name As String) As Boolean
+        Public ReadOnly Property Contains(ByVal name As String) As Boolean
             Get
                 Return (Values.ContainsKey(name))
             End Get
         End Property
 
-        Default Friend ReadOnly Property Value(ByVal name As String) As Object
+        Default Public ReadOnly Property Value(ByVal name As String) As Object
             Get
                 If Values.ContainsKey(name) Then Return Values(name) Else Return Nothing
             End Get
         End Property
 
-        Friend ReadOnly Property Values() As Dictionary(Of String, Object)
+        Public ReadOnly Property Values() As Dictionary(Of String, Object)
             Get
                 Return _Values
             End Get
         End Property
 
-        Friend Sub Add(ByVal name As String)
+        Public Sub Add(ByVal name As String)
             Values.Merge(name, "")
         End Sub
 
-        Friend Sub Add(ByVal name As String, ByVal value As Object)
+        Public Sub Add(ByVal name As String, ByVal value As Object)
             If value IsNot Nothing Then Values.Merge(name, value)
         End Sub
 
-        Friend Sub Merge(ByVal ParamArray items As Object())
+        Public Sub Merge(ByVal ParamArray items As Object())
             Merge(items.ToDictionary(Of String, Object))
         End Sub
 
-        Friend Sub Merge(ByVal items As Dictionary(Of String, Object))
+        Public Sub Merge(ByVal items As Dictionary(Of String, Object))
             For Each item As KeyValuePair(Of String, Object) In items
                 Values.Merge(item.Key, item.Value)
             Next item
         End Sub
 
-        Friend Sub Remove(ByVal name As String)
+        Public Sub Remove(ByVal name As String)
             If Values.ContainsKey(name) Then Values.Remove(name)
         End Sub
 
@@ -76,7 +76,7 @@ Namespace Huggle
             Return items.Join(" & ")
         End Function
 
-        Friend Function ToUrlString() As String
+        Public Function ToUrlString() As String
             If Values.Count = 0 Then Return ""
             Dim items As New List(Of String)
 
@@ -93,7 +93,7 @@ Namespace Huggle
             Return items.Join("&")
         End Function
 
-        Friend Function ToMultipart(ByVal boundary As String, ByVal filename As String) As Byte()
+        Public Function ToMultipart(ByVal boundary As String, ByVal filename As String) As Byte()
             Dim header As String = ""
             Dim fileparam As String = Nothing
             Dim footer As String = "--" & boundary & "--" & CRLF
@@ -102,8 +102,8 @@ Namespace Huggle
                 If TypeOf item.Value Is Byte() Then
                     fileparam = item.Key
                 Else
-                    header &= "--" & boundary & CRLF & "Content-Disposition: form-data; name=""" & item.Key & """" & _
-                        CRLF & CRLF & item.Value.ToString & CRLF
+                    header &= "--" & boundary & CRLF & "Content-Disposition: form-data; name=""" &
+                        item.Key & """" & CRLF & CRLF & item.Value.ToString & CRLF
                 End If
             Next item
 
@@ -111,7 +111,8 @@ Namespace Huggle
 
             If fileparam IsNot Nothing Then
                 header &= "--" & boundary & CRLF
-                header &= "Content-Disposition: form-data; name=""" & fileparam & """; filename=""" & filename & """" & CRLF
+                header &= "Content-Disposition: form-data; name=""" & fileparam & """; filename=""" &
+                    filename & """" & CRLF
                 header &= "Content-Type: " & MimeType(filename) & CRLF
                 header &= CRLF
                 file = CType(Values(fileparam), Byte())

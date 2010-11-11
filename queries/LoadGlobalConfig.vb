@@ -8,12 +8,12 @@ Namespace Huggle.Actions
 
     Friend Class LoadGlobalConfig : Inherits Query
 
-        Friend Sub New()
+        Public Sub New()
             MyBase.New(App.Sessions(App.Wikis.Global.Users.Anonymous), Msg("config-desc"))
             Interactive = True
         End Sub
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             OnStarted()
             OnProgress(Msg("config-progress"))
 
@@ -45,14 +45,13 @@ Namespace Huggle.Actions
             If Wiki.Family.GlobalTitleBlacklist IsNot Nothing _
                 Then configRequest.Pages.Merge(Wiki.Family.GlobalTitleBlacklist.Location)
 
-            Dim wikiRequest As New ApiRequest(
-                App.Sessions(App.Wikis.Global.Users.Anonymous), Description, New QueryString("action", "sitematrix"))
-            Dim closedRequest As New FileRequest(
-                Nothing, InternalConfig.WikimediaClosedWikisUrl)
-            Dim groupsRequest As New FileRequest(
-                Nothing, InternalConfig.WikimediaGlobalGroupsUrl)
+            Dim wikiRequest As New ApiRequest(App.Sessions(App.Wikis.Global.Users.Anonymous),
+                Description, New QueryString("action", "sitematrix"))
 
-            App.DoParallel({configRequest, wikiRequest, closedRequest, groupsRequest})
+            Dim groupsRequest As New TextRequest(InternalConfig.WMGlobalGroupsUrl)
+            Dim closedRequest As New TextRequest(InternalConfig.WMClosedWikisUrl)
+
+            App.DoParallel({configRequest, closedRequest, wikiRequest, groupsRequest})
 
             If configRequest.Result.IsError Then OnFail(configRequest.Result) : Return
             If wikiRequest.Result.IsError Then OnFail(wikiRequest.Result) : Return
@@ -79,22 +78,9 @@ Namespace Huggle.Actions
                 End Try
             End If
 
-            If closedRequest.IsSuccess Then
-                For Each code As String In Encoding.ASCII.GetString(closedRequest.File.ToArray).Split(LF)
-                    Dim wiki As Wiki = App.Wikis.FromInternalCode(code)
-
-                    If wiki IsNot Nothing Then
-                        wiki.IsPublicEditable = False
-                        wiki.IsPublicReadable = False
-                    End If
-                Next code
-            Else
-                Log.Write("Error loading closed wiki list: {0}".FormatI(closedRequest.Result.LogMessage))
-            End If
-
             'Scrape HTML of toolserver global groups list
             If groupsRequest.IsSuccess Then
-                Dim html As String = Encoding.UTF8.GetString(groupsRequest.File.ToArray)
+                Dim html As String = groupsRequest.Response
                 html = html.FromFirst("<div id=""toc"">").FromFirst("</div>").ToFirst("<!-- begin generated footer -->")
 
                 For Each groupItem As String In html.Split("<h2")
@@ -123,11 +109,16 @@ Namespace Huggle.Actions
 
                         For Each wikiItem As String In wikisTable.Split("<br />")
                             Dim wikiCode As String = wikiItem.Trim
-                            Dim wiki As Wiki = App.Wikis.FromInternalCode(wikiCode)
 
-                            Dim a As String = App.Wikis.All.Count.ToStringI
-                            If wiki IsNot Nothing AndAlso App.Families.Wikimedia.Wikis.All.Contains(wiki) _
-                                Then wikis.Merge(wiki)
+                            If App.Wikis.Contains(wikiCode) Then
+                                Dim wiki As Wiki = App.Wikis(wikiCode)
+
+                                Dim a As String = App.Wikis.All.Count.ToStringI
+                                If wiki IsNot Nothing AndAlso App.Families.Wikimedia.Wikis.All.Contains(wiki) _
+                                    Then wikis.Merge(wiki)
+                            Else
+                                Log.Debug("Could not locate wiki '{0}' referenced in global groups list".FormatI(wikiCode))
+                            End If
                         Next wikiItem
 
                         group.Wikis = wikis
@@ -148,6 +139,20 @@ Namespace Huggle.Actions
                 Next groupItem
             Else
                 Log.Write("Error loading global groups list: {0}".FormatI(groupsRequest.Result.LogMessage))
+            End If
+
+            'Closed wikis
+            If closedRequest.IsSuccess Then
+                For Each code As String In groupsRequest.Response.Split(LF)
+                    If App.Wikis.Contains(code) Then
+                        Dim wiki As Wiki = App.Wikis(code)
+
+                        wiki.IsPublicEditable = False
+                        wiki.IsPublicReadable = False
+                    End If
+                Next code
+            Else
+                Log.Write("Error loading closed wiki list: {0}".FormatI(closedRequest.Result.LogMessage))
             End If
 
             'Save configuration

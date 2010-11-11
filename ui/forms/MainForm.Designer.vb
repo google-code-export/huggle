@@ -26,15 +26,18 @@
             Me.MenuBar = New System.Windows.Forms.MenuStrip()
             Me.SystemMenu = New System.Windows.Forms.ToolStripMenuItem()
             Me.SystemLogout = New System.Windows.Forms.ToolStripMenuItem()
+            Me.MaintenanceToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+            Me.ClearCloudToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
             Me.SystemExit = New System.Windows.Forms.ToolStripMenuItem()
             Me.WikiToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-            Me.WikiFamilyProperties = New System.Windows.Forms.ToolStripMenuItem()
             Me.WikiProperties = New System.Windows.Forms.ToolStripMenuItem()
-            Me.AssessPageToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+            Me.WikiFamilyProperties = New System.Windows.Forms.ToolStripMenuItem()
+            Me.WikiRevisions = New System.Windows.Forms.ToolStripMenuItem()
             Me.UserToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
             Me.AccountGlobalProperties = New System.Windows.Forms.ToolStripMenuItem()
             Me.AccountProperties = New System.Windows.Forms.ToolStripMenuItem()
             Me.PageToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+            Me.AssessPageToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
             Me.UserToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
             Me.UserChangeGroups = New System.Windows.Forms.ToolStripMenuItem()
             Me.RevisionToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -47,8 +50,6 @@
             Me.OuterPanel = New System.Windows.Forms.ToolStripContainer()
             Me.LogSplit = New System.Windows.Forms.EnhancedSplitContainer()
             Me.QueueSplit = New System.Windows.Forms.EnhancedSplitContainer()
-            Me.MaintenanceToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-            Me.ClearCloudToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
             Me.MenuBar.SuspendLayout()
             Me.OuterPanel.ContentPanel.SuspendLayout()
             Me.OuterPanel.SuspendLayout()
@@ -75,39 +76,52 @@
             'SystemLogout
             '
             Me.SystemLogout.Name = "SystemLogout"
-            Me.SystemLogout.Size = New System.Drawing.Size(152, 22)
+            Me.SystemLogout.Size = New System.Drawing.Size(143, 22)
             Me.SystemLogout.Text = "Log out"
+            '
+            'MaintenanceToolStripMenuItem
+            '
+            Me.MaintenanceToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ClearCloudToolStripMenuItem})
+            Me.MaintenanceToolStripMenuItem.Name = "MaintenanceToolStripMenuItem"
+            Me.MaintenanceToolStripMenuItem.Size = New System.Drawing.Size(143, 22)
+            Me.MaintenanceToolStripMenuItem.Text = "Maintenance"
+            '
+            'ClearCloudToolStripMenuItem
+            '
+            Me.ClearCloudToolStripMenuItem.Name = "ClearCloudToolStripMenuItem"
+            Me.ClearCloudToolStripMenuItem.Size = New System.Drawing.Size(136, 22)
+            Me.ClearCloudToolStripMenuItem.Text = "Clear Cloud"
             '
             'SystemExit
             '
             Me.SystemExit.Name = "SystemExit"
-            Me.SystemExit.Size = New System.Drawing.Size(152, 22)
+            Me.SystemExit.Size = New System.Drawing.Size(143, 22)
             Me.SystemExit.Text = "Exit"
             '
             'WikiToolStripMenuItem
             '
-            Me.WikiToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.WikiFamilyProperties, Me.WikiProperties, Me.AssessPageToolStripMenuItem})
+            Me.WikiToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.WikiProperties, Me.WikiFamilyProperties, Me.WikiRevisions})
             Me.WikiToolStripMenuItem.Name = "WikiToolStripMenuItem"
             Me.WikiToolStripMenuItem.Size = New System.Drawing.Size(42, 20)
             Me.WikiToolStripMenuItem.Text = "Wiki"
             '
-            'WikiFamilyProperties
-            '
-            Me.WikiFamilyProperties.Name = "WikiFamilyProperties"
-            Me.WikiFamilyProperties.Size = New System.Drawing.Size(174, 22)
-            Me.WikiFamilyProperties.Text = "Family Properties..."
-            '
             'WikiProperties
             '
             Me.WikiProperties.Name = "WikiProperties"
-            Me.WikiProperties.Size = New System.Drawing.Size(174, 22)
-            Me.WikiProperties.Text = "Properties..."
+            Me.WikiProperties.Size = New System.Drawing.Size(165, 22)
+            Me.WikiProperties.Text = "Properties"
             '
-            'AssessPageToolStripMenuItem
+            'WikiFamilyProperties
             '
-            Me.AssessPageToolStripMenuItem.Name = "AssessPageToolStripMenuItem"
-            Me.AssessPageToolStripMenuItem.Size = New System.Drawing.Size(174, 22)
-            Me.AssessPageToolStripMenuItem.Text = "Assess page"
+            Me.WikiFamilyProperties.Name = "WikiFamilyProperties"
+            Me.WikiFamilyProperties.Size = New System.Drawing.Size(165, 22)
+            Me.WikiFamilyProperties.Text = "Family Properties"
+            '
+            'WikiRevisions
+            '
+            Me.WikiRevisions.Name = "WikiRevisions"
+            Me.WikiRevisions.Size = New System.Drawing.Size(165, 22)
+            Me.WikiRevisions.Text = "Revisions"
             '
             'UserToolStripMenuItem
             '
@@ -130,9 +144,16 @@
             '
             'PageToolStripMenuItem
             '
+            Me.PageToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.AssessPageToolStripMenuItem})
             Me.PageToolStripMenuItem.Name = "PageToolStripMenuItem"
             Me.PageToolStripMenuItem.Size = New System.Drawing.Size(45, 20)
             Me.PageToolStripMenuItem.Text = "Page"
+            '
+            'AssessPageToolStripMenuItem
+            '
+            Me.AssessPageToolStripMenuItem.Name = "AssessPageToolStripMenuItem"
+            Me.AssessPageToolStripMenuItem.Size = New System.Drawing.Size(137, 22)
+            Me.AssessPageToolStripMenuItem.Text = "Assess page"
             '
             'UserToolStripMenuItem1
             '
@@ -231,19 +252,6 @@
             Me.QueueSplit.SplitterDistance = 200
             Me.QueueSplit.TabIndex = 0
             '
-            'MaintenanceToolStripMenuItem
-            '
-            Me.MaintenanceToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ClearCloudToolStripMenuItem})
-            Me.MaintenanceToolStripMenuItem.Name = "MaintenanceToolStripMenuItem"
-            Me.MaintenanceToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
-            Me.MaintenanceToolStripMenuItem.Text = "Maintenance"
-            '
-            'ClearCloudToolStripMenuItem
-            '
-            Me.ClearCloudToolStripMenuItem.Name = "ClearCloudToolStripMenuItem"
-            Me.ClearCloudToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
-            Me.ClearCloudToolStripMenuItem.Text = "Clear Cloud"
-            '
             'MainForm
             '
             Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -267,31 +275,32 @@
             Me.PerformLayout()
 
         End Sub
-        Friend WithEvents SystemMenu As System.Windows.Forms.ToolStripMenuItem
-        Friend WithEvents SystemLogout As System.Windows.Forms.ToolStripMenuItem
-        Friend WithEvents SystemExit As System.Windows.Forms.ToolStripMenuItem
-        Friend WithEvents WikiToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-        Friend WithEvents UserToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-        Friend WithEvents WikiProperties As System.Windows.Forms.ToolStripMenuItem
-        Friend WithEvents PageToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-        Friend WithEvents UserToolStripMenuItem1 As System.Windows.Forms.ToolStripMenuItem
-        Friend WithEvents RevisionToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-        Friend WithEvents HelpToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-        Friend WithEvents AccountProperties As System.Windows.Forms.ToolStripMenuItem
+        Public WithEvents SystemMenu As System.Windows.Forms.ToolStripMenuItem
+        Public WithEvents SystemLogout As System.Windows.Forms.ToolStripMenuItem
+        Public WithEvents SystemExit As System.Windows.Forms.ToolStripMenuItem
+        Public WithEvents WikiToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+        Public WithEvents UserToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+        Public WithEvents WikiProperties As System.Windows.Forms.ToolStripMenuItem
+        Public WithEvents PageToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+        Public WithEvents UserToolStripMenuItem1 As System.Windows.Forms.ToolStripMenuItem
+        Public WithEvents RevisionToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+        Public WithEvents HelpToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+        Public WithEvents AccountProperties As System.Windows.Forms.ToolStripMenuItem
         Private WithEvents HelpAbout As System.Windows.Forms.ToolStripMenuItem
-        Friend WithEvents ToolStripSeparator4 As System.Windows.Forms.ToolStripSeparator
+        Public WithEvents ToolStripSeparator4 As System.Windows.Forms.ToolStripSeparator
         Private WithEvents HelpManual As System.Windows.Forms.ToolStripMenuItem
-        Friend WithEvents OuterPanel As System.Windows.Forms.ToolStripContainer
+        Public WithEvents OuterPanel As System.Windows.Forms.ToolStripContainer
         Private WithEvents LogSplit As System.Windows.Forms.EnhancedSplitContainer
         Private WithEvents QueueSplit As System.Windows.Forms.EnhancedSplitContainer
         Private WithEvents MenuBar As System.Windows.Forms.MenuStrip
-        Friend WithEvents AccountGlobalProperties As System.Windows.Forms.ToolStripMenuItem
-        Friend WithEvents WikiFamilyProperties As System.Windows.Forms.ToolStripMenuItem
+        Public WithEvents AccountGlobalProperties As System.Windows.Forms.ToolStripMenuItem
+        Public WithEvents WikiFamilyProperties As System.Windows.Forms.ToolStripMenuItem
         Private WithEvents UserChangeGroups As System.Windows.Forms.ToolStripMenuItem
-        Friend WithEvents AssessPageToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-        Friend WithEvents ToolStripMenuItem1 As System.Windows.Forms.ToolStripMenuItem
-        Friend WithEvents QueryWindowToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-        Friend WithEvents MaintenanceToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-        Friend WithEvents ClearCloudToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+        Public WithEvents ToolStripMenuItem1 As System.Windows.Forms.ToolStripMenuItem
+        Public WithEvents QueryWindowToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+        Public WithEvents MaintenanceToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+        Public WithEvents ClearCloudToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+        Friend WithEvents WikiRevisions As System.Windows.Forms.ToolStripMenuItem
+        Public WithEvents AssessPageToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     End Class
 End Namespace

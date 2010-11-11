@@ -198,10 +198,10 @@
         End Sub
         Private WithEvents Logo As System.Windows.Forms.PictureBox
         Private WithEvents Label2 As System.Windows.Forms.Label
-        Friend WithEvents MediaWiki As System.Windows.Forms.PictureBox
+        Public WithEvents MediaWiki As System.Windows.Forms.PictureBox
         Private WithEvents ManualLink As System.Windows.Forms.LinkLabel
-        Friend WithEvents SourceLink As System.Windows.Forms.LinkLabel
-        Friend WithEvents FeedbackLink As System.Windows.Forms.LinkLabel
+        Public WithEvents SourceLink As System.Windows.Forms.LinkLabel
+        Public WithEvents FeedbackLink As System.Windows.Forms.LinkLabel
         Private WithEvents LayoutPanel As System.Windows.Forms.FlowLayoutPanel
         Private WithEvents LinkLabel2 As System.Windows.Forms.LinkLabel
         Private WithEvents LinkLabel1 As System.Windows.Forms.LinkLabel

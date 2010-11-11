@@ -8,7 +8,7 @@
 
 '        Private Users As List(Of User)
 
-'        Friend Sub New(ByVal Account As User, ByVal Users As List(Of User))
+'        Public Sub New(ByVal Account As User, ByVal Users As List(Of User))
 '            MyBase.New(Account)
 '            Me.Users = Users
 '        End Sub

@@ -10,11 +10,11 @@ Namespace Huggle.Actions
 
     Friend Class ExtraWikiConfig : Inherits Query
 
-        Friend Sub New(ByVal wiki As Wiki)
+        Public Sub New(ByVal wiki As Wiki)
             MyBase.New(App.Sessions(wiki), Msg("extraconfig-desc"))
         End Sub
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             OnStarted()
             OnProgress(Msg("extraconfig-progress"))
 

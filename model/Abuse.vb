@@ -14,7 +14,7 @@ Namespace Huggle
         Private ReadOnly _Result As String
         Private ReadOnly _UserAction As String
 
-        Friend Sub New(ByVal time As Date, ByVal user As User,
+        Public Sub New(ByVal time As Date, ByVal user As User,
             ByVal filter As AbuseFilter, ByVal page As Page, ByVal result As String,
             ByVal userAction As String, ByVal id As Integer, ByVal rcid As Integer)
 
@@ -44,7 +44,7 @@ Namespace Huggle
             End If
         End Sub
 
-        Friend Property Diff() As String
+        Public Property Diff() As String
             Get
                 Return _Diff
             End Get
@@ -71,45 +71,45 @@ Namespace Huggle
             End Set
         End Property
 
-        Friend Property Rev() As Revision
+        Public Property Rev() As Revision
 
-        Friend ReadOnly Property Filter() As AbuseFilter
+        Public ReadOnly Property Filter() As AbuseFilter
             Get
                 Return _Filter
             End Get
         End Property
 
-        Friend ReadOnly Property IsStopped() As Boolean
+        Public ReadOnly Property IsStopped() As Boolean
             Get
                 Return (Result = "Disallow" OrElse Result = "Warn")
             End Get
         End Property
 
-        Friend Overrides ReadOnly Property Label() As String
+        Public Overrides ReadOnly Property Label() As String
             Get
                 Return "[" & Result & "] " & Filter.Id.ToStringForUser & " (" & Filter.Description & ")"
             End Get
         End Property
 
-        Friend ReadOnly Property Page() As Page
+        Public ReadOnly Property Page() As Page
             Get
                 Return _Page
             End Get
         End Property
 
-        Friend ReadOnly Property Result() As String
+        Public ReadOnly Property Result() As String
             Get
                 Return _Result
             End Get
         End Property
 
-        Friend Overrides ReadOnly Property Target() As String
+        Public Overrides ReadOnly Property Target() As String
             Get
                 Return User.Name
             End Get
         End Property
 
-        Friend ReadOnly Property UserAction() As String
+        Public ReadOnly Property UserAction() As String
             Get
                 Return _UserAction
             End Get

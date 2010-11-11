@@ -22,7 +22,7 @@ Namespace Huggle
         Private Shared ReadOnly RangeRegex As New Regex _
             ("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/\d{2}", RegexOptions.Compiled)
 
-        Friend Sub New(ByVal time As Date, ByVal target As String, _
+        Public Sub New(ByVal time As Date, ByVal target As String, _
             ByVal user As User, ByVal action As String, ByVal comment As String, ByVal id As Integer, _
             ByVal rcid As Integer, ByVal automatic As Boolean, ByVal anonOnly As Boolean, _
             ByVal autoBlock As Boolean, ByVal blockCreation As Boolean, ByVal blockEmail As Boolean, _
@@ -53,43 +53,43 @@ Namespace Huggle
             End If
         End Sub
 
-        Friend ReadOnly Property Duration() As String
+        Public ReadOnly Property Duration() As String
             Get
                 Return _Duration
             End Get
         End Property
 
-        Friend ReadOnly Property Expires() As Date
+        Public ReadOnly Property Expires() As Date
             Get
                 Return _Expires
             End Get
         End Property
 
-        Friend Overrides ReadOnly Property Icon() As Drawing.Image
+        Public Overrides ReadOnly Property Icon() As Drawing.Image
             Get
                 Return Resources.blob_log_block
             End Get
         End Property
 
-        Friend ReadOnly Property IsAutomatic() As Boolean
+        Public ReadOnly Property IsAutomatic() As Boolean
             Get
                 Return _IsAutomatic
             End Get
         End Property
 
-        Friend ReadOnly Property IsRangeblock() As Boolean
+        Public ReadOnly Property IsRangeblock() As Boolean
             Get
                 Return _IsRangeblock
             End Get
         End Property
 
-        Friend Overrides ReadOnly Property Target() As String
+        Public Overrides ReadOnly Property Target() As String
             Get
                 Return _Target
             End Get
         End Property
 
-        Friend ReadOnly Property TargetUser() As User
+        Public ReadOnly Property TargetUser() As User
             Get
                 Return _TargetUser
             End Get

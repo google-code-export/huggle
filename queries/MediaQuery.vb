@@ -8,30 +8,30 @@ Namespace Huggle.Actions
         Private _Media As File
         Private _ThumbSize As Integer
 
-        Friend Sub New(ByVal session As Session, ByVal media As File)
+        Public Sub New(ByVal session As Session, ByVal media As File)
             MyBase.New(session, Msg("media-desc", media))
             _Media = media
         End Sub
 
-        Friend Sub New(ByVal session As Session, ByVal media As File, ByVal thumbSize As Integer)
+        Public Sub New(ByVal session As Session, ByVal media As File, ByVal thumbSize As Integer)
             MyBase.New(session, Msg("mediathumb-desc", media, thumbSize))
             _Media = media
             _ThumbSize = thumbSize
         End Sub
 
-        Friend ReadOnly Property Media() As File
+        Public ReadOnly Property Media() As File
             Get
                 Return _Media
             End Get
         End Property
 
-        Friend ReadOnly Property ThumbSize() As Integer
+        Public ReadOnly Property ThumbSize() As Integer
             Get
                 Return _ThumbSize
             End Get
         End Property
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             OnProgress(Msg("media-progress", Media))
             OnStarted()
 
@@ -45,12 +45,12 @@ Namespace Huggle.Actions
                     hash(0) & hash(1) & "/" & Media.Name & "/" & Media.ThumbName(ThumbSize)) _
                     Else url = New Uri(Wiki.FileUrl.ToString & hash(0) & "/" & hash(0) & hash(1) & "/" & Media.Name)
 
-                Dim req As New FileRequest(Session, url)
+                Dim req As New FileRequest(url)
                 req.Start()
                 If req.IsFailed Then OnFail(req.Result)
 
-                If req.File IsNot Nothing Then
-                    If ThumbSize = 0 Then Media.Content = req.File Else Media.Thumb(ThumbSize) = req.File
+                If req.Response IsNot Nothing Then
+                    If ThumbSize = 0 Then Media.Content = req.Response Else Media.Thumb(ThumbSize) = req.Response
                 End If
             End If
 

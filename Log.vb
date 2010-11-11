@@ -12,10 +12,10 @@ Namespace Huggle
 
         Private Delegate Sub LogDelegate(ByVal message As LogMessage)
 
-        Friend Event UpdateProcess As SimpleEventHandler(Of Process)
-        Friend Event Written As SimpleEventHandler(Of LogMessage)
+        Public Event UpdateProcess As SimpleEventHandler(Of Process)
+        Public Event Written As SimpleEventHandler(Of LogMessage)
 
-        Friend ReadOnly Property Items() As List(Of LogMessage)
+        Public ReadOnly Property Items() As List(Of LogMessage)
             Get
                 Return _Items
             End Get
@@ -27,7 +27,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend Sub Initialize()
+        Public Sub Initialize()
             _Items.Clear()
 
             If IO.File.Exists(Path) Then
@@ -42,15 +42,15 @@ Namespace Huggle
             End If
         End Sub
 
-        Friend Sub AttachProcess(ByVal process As Process)
+        Public Sub AttachProcess(ByVal process As Process)
             CallOnMainThread(AddressOf _AttachProcess, process)
         End Sub
 
-        Friend Sub Debug(ByVal message As String)
+        Public Sub Debug(ByVal message As String)
             CallOnMainThread(AddressOf Write, New LogMessage(message, True))
         End Sub
 
-        Friend Sub Write(ByVal message As String)
+        Public Sub Write(ByVal message As String)
             CallOnMainThread(AddressOf Write, New LogMessage(message, False))
         End Sub
 
@@ -89,7 +89,7 @@ Namespace Huggle
             RaiseEvent Written(Me, New EventArgs(Of LogMessage)(message))
         End Sub
 
-        Friend Sub Dispose() Implements IDisposable.Dispose
+        Public Sub Dispose() Implements IDisposable.Dispose
             If Writer IsNot Nothing Then
                 Writer.Flush()
                 Writer.Close()
@@ -106,25 +106,25 @@ Namespace Huggle
         Private _Message As String
         Private _Time As Date
 
-        Friend Sub New(ByVal message As String, ByVal isDebug As Boolean)
+        Public Sub New(ByVal message As String, ByVal isDebug As Boolean)
             _Message = message
             _Time = Date.Now
             _IsDebug = isDebug
         End Sub
 
-        Friend ReadOnly Property IsDebug() As Boolean
+        Public ReadOnly Property IsDebug() As Boolean
             Get
                 Return _IsDebug
             End Get
         End Property
 
-        Friend ReadOnly Property Message() As String
+        Public ReadOnly Property Message() As String
             Get
                 Return _Message
             End Get
         End Property
 
-        Friend ReadOnly Property Time() As Date
+        Public ReadOnly Property Time() As Date
             Get
                 Return _Time
             End Get

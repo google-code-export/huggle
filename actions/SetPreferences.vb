@@ -6,18 +6,18 @@ Namespace Huggle.Actions
 
         Private _NewPrefs As Preferences
 
-        Friend Sub New(ByVal session As Session, ByVal newPrefs As Preferences)
+        Public Sub New(ByVal session As Session, ByVal newPrefs As Preferences)
             MyBase.New(session, Msg("setprefs-desc"))
             _NewPrefs = newPrefs
         End Sub
 
-        Friend ReadOnly Property NewPrefs() As Preferences
+        Public ReadOnly Property NewPrefs() As Preferences
             Get
                 Return _NewPrefs
             End Get
         End Property
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             If User.IsAnonymous Then OnFail(Msg("setprefs-anon")) : Return
             OnStarted()
             OnProgress(Msg("setprefs-progress", User.FullName))

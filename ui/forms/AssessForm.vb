@@ -10,12 +10,12 @@ Namespace Huggle.UI
 
         Private Session As Session
 
-        Friend Sub New(ByVal session As Session)
+        Public Sub New(ByVal session As Session)
             Me.Session = session
             InitializeComponent()
         End Sub
 
-        Friend ReadOnly Property Page As Page
+        Public ReadOnly Property Page As Page
             Get
                 Return _Page
             End Get

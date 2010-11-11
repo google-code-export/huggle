@@ -16,13 +16,13 @@ Namespace Huggle.Actions
         Private _Target As User
         Private _Watch As WatchAction
 
-        Friend Sub New(ByVal session As Session, ByVal target As User, Optional ByVal summary As String = Nothing)
+        Public Sub New(ByVal session As Session, ByVal target As User, Optional ByVal summary As String = Nothing)
             MyBase.New(session, Msg("block-desc", target))
             _Summary = summary
             _Target = target
         End Sub
 
-        Friend Property AnonOnly() As Boolean
+        Public Property AnonOnly() As Boolean
             Get
                 Return _AnonOnly
             End Get
@@ -31,7 +31,7 @@ Namespace Huggle.Actions
             End Set
         End Property
 
-        Friend Property AutoBlock() As Boolean
+        Public Property AutoBlock() As Boolean
             Get
                 Return _AutoBlock
             End Get
@@ -40,7 +40,7 @@ Namespace Huggle.Actions
             End Set
         End Property
 
-        Friend Property BlockCreation() As Boolean
+        Public Property BlockCreation() As Boolean
             Get
                 Return _BlockCreation
             End Get
@@ -49,7 +49,7 @@ Namespace Huggle.Actions
             End Set
         End Property
 
-        Friend Property BlockEmail() As Boolean
+        Public Property BlockEmail() As Boolean
             Get
                 Return _BlockEmail
             End Get
@@ -58,7 +58,7 @@ Namespace Huggle.Actions
             End Set
         End Property
 
-        Friend Property BlockTalk() As Boolean
+        Public Property BlockTalk() As Boolean
             Get
                 Return _BlockTalk
             End Get
@@ -67,7 +67,7 @@ Namespace Huggle.Actions
             End Set
         End Property
 
-        Friend Property Expiry() As String
+        Public Property Expiry() As String
             Get
                 Return _Expiry
             End Get
@@ -76,7 +76,7 @@ Namespace Huggle.Actions
             End Set
         End Property
 
-        Friend Property Summary() As String
+        Public Property Summary() As String
             Get
                 Return _Summary
             End Get
@@ -85,7 +85,7 @@ Namespace Huggle.Actions
             End Set
         End Property
 
-        Friend Property Target() As User
+        Public Property Target() As User
             Get
                 Return _Target
             End Get
@@ -94,7 +94,7 @@ Namespace Huggle.Actions
             End Set
         End Property
 
-        Friend Property Watch() As WatchAction
+        Public Property Watch() As WatchAction
             Get
                 Return _Watch
             End Get
@@ -103,7 +103,7 @@ Namespace Huggle.Actions
             End Set
         End Property
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             'Check user permissions
             If User.IsBlocked Then OnFail(Msg("error-blocked")) : Return
             If User.Wiki IsNot Target.Wiki OrElse Not User.HasRight("block") _

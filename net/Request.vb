@@ -14,46 +14,40 @@ Namespace Huggle
 
     'Represents an HTTP request
 
-    Friend Class Request : Inherits Process
+    Friend MustInherit Class Request : Inherits Process
 
+        Private _Response As MemoryStream
         Private _ResponseTime As TimeSpan
-        Private ReadOnly _Session As Session
 
         Private Const MaxAttempts As Integer = 3
         Private Shared ReadOnly RetryInterval As New TimeSpan(0, 0, 3)
         Private Shared ReadOnly DefaultTimeout As New TimeSpan(0, 0, 30)
 
-        Friend Sub New(ByVal session As Session)
-            _Session = session
-        End Sub
+        Public Property Boundary() As String
 
-        Friend Property Boundary() As String
+        Public Property Cookies() As CookieContainer
 
-        Friend Property Cookies() As CookieContainer
+        Public Property Data() As Byte()
 
-        Friend Property Data() As Byte()
+        Public Property IsMultipart() As Boolean
 
-        Friend Property IsMultipart() As Boolean
+        Protected ReadOnly Property Response() As MemoryStream
+            Get
+                Return _Response
+            End Get
+        End Property
 
-        Friend Property Response() As MemoryStream
-
-        Friend ReadOnly Property ResponseTime() As TimeSpan
+        Public ReadOnly Property ResponseTime() As TimeSpan
             Get
                 Return _ResponseTime
             End Get
         End Property
 
-        Friend ReadOnly Property Session() As Session
-            Get
-                Return _Session
-            End Get
-        End Property
+        Public Property Timeout As TimeSpan = DefaultTimeout
 
-        Friend Property Timeout As TimeSpan = DefaultTimeout
+        Public Property Url() As Uri
 
-        Friend Property Url() As Uri
-
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             OnStarted()
             Result = Result.Success
             Dim retries As Integer = MaxAttempts
@@ -101,7 +95,7 @@ Namespace Huggle
 
                     Using responseStream As Stream = webResponse.GetResponseStream
                         Dim buffer(255) As Byte, size As Integer
-                        Response = New MemoryStream
+                        _Response = New MemoryStream
 
                         Do
                             size = responseStream.Read(buffer, 0, buffer.Length)
@@ -112,7 +106,6 @@ Namespace Huggle
                     _ResponseTime = (Date.Now - startTime)
                     If Not App.IsMono AndAlso Cookies IsNot Nothing Then FixCookieContainer(Cookies, Url)
 
-                    OnSuccess()
                     Return
 
                 Catch ex As IOException
@@ -154,8 +147,6 @@ Namespace Huggle
                 If retries = 0 Then Result = New Result({Msg("error-noresponse"), Msg("error-connectionhelp")})
 
             Loop Until Result.IsError
-
-            OnFail(Result)
         End Sub
 
         Private Shared Sub FixCookieContainer(ByVal cookies As CookieContainer, ByVal url As Uri)
@@ -175,27 +166,6 @@ Namespace Huggle
 
             cookies.Add(url, old)
         End Sub
-
-        Protected Shared Function CheckForWikiError(ByVal response As String) As Result
-            'Check page title for error page
-            If Not (response.Contains("<title>") AndAlso response.Contains("</title>")) Then Return Result.Success
-            Dim title As String = response.FromFirst("<title>").ToFirst("</title>")
-
-            If title = "Wikimedia Error" Then
-                Return New Result(Msg("error-internal", "tsod"), "wikierror")
-
-            ElseIf title = "Database error" Then
-                'Match the equivalent API error
-                Return New Result(Msg("error-internal", "DB query error"), "internal-dbqueryerror")
-
-            ElseIf title.Contains("has a problem") _
-                AndAlso response.Contains("Try waiting a few minutes and reloading") Then
-
-                Return New Result(Msg("error-internal", "wikiproblem"), "wikierror")
-            End If
-
-            Return Result.Success
-        End Function
 
     End Class
 

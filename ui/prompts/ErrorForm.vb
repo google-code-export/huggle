@@ -8,7 +8,7 @@ Namespace Huggle.UI
         Private Message As String
         Private ShowRetry As Boolean
 
-        Friend Sub New(ByVal message As String, ByVal showRetry As Boolean)
+        Public Sub New(ByVal message As String, ByVal showRetry As Boolean)
             InitializeComponent()
             If message Is Nothing Then Throw New ArgumentNullException("message")
 

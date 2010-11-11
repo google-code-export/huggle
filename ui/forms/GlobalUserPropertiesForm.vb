@@ -11,7 +11,7 @@ Namespace Huggle.UI
         Private Session As Session
         Private HoveredItem As ListViewItem.ListViewSubItem
 
-        Friend Sub New(ByVal session As Session)
+        Public Sub New(ByVal session As Session)
             InitializeComponent()
             Me.Session = session
         End Sub
@@ -67,18 +67,16 @@ Namespace Huggle.UI
 
                 UserGroups.Text = Msg("globaluserprop-groups", If(groups.Count = 0, Msg("a-none"), groups.Join(", ")))
 
-                WikiList.BeginUpdate()
-                WikiList.Items.Clear()
+                Dim rows As New List(Of String())
 
                 For Each linkedUser As User In GlobalUser.Users
-                    WikiList.AddRow(linkedUser.Wiki.Name, linkedUser.UnificationMethod, _
-                        FullDateString(linkedUser.UnificationDate), CStr(linkedUser.Contributions))
+                    rows.Add({linkedUser.Wiki.Name, linkedUser.UnificationMethod, _
+                        FullDateString(linkedUser.UnificationDate), linkedUser.Contributions.ToStringI})
                 Next linkedUser
 
-                WikiList.EndUpdate()
                 WikiList.SortMethods.Add(2, SortMethod.Date)
                 WikiList.SortMethods.Add(3, SortMethod.Integer)
-                WikiList.SortBy(0)
+                WikiList.SetItems(rows)
 
                 WikiCount.Text = Msg("globaluserprop-wikis", GlobalUser.Users.Count)
 

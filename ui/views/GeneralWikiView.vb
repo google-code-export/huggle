@@ -1,10 +1,11 @@
 ﻿Imports System
+Imports System.Collections.Generic
 Imports System.Drawing
 
 Namespace Huggle.UI
     Friend Class GeneralWikiView : Inherits Viewer
 
-        Friend Sub New(ByVal session As Session)
+        Public Sub New(ByVal session As Session)
             MyBase.New(session)
             InitializeComponent()
         End Sub
@@ -53,15 +54,16 @@ Namespace Huggle.UI
             Database.Text = Msg("view-wikigeneral-database", databaseString)
 
             'Statistics
-            StatisticsList.BeginUpdate()
-            StatisticsList.Items.Clear()
-            StatisticsList.AddRow(Msg("view-wikistats-pages"), If(Wiki.Pages.Count < 0, Msg("a-unknown"), Wiki.Pages.Count.ToStringForUser))
-            StatisticsList.AddRow(Msg("view-wikistats-contentpages"), If(Wiki.ContentPages < 0, Msg("a-unknown"), Wiki.ContentPages.ToStringForUser))
-            StatisticsList.AddRow(Msg("view-wikistats-files"), If(Wiki.Files.Count < 0, Msg("a-unknown"), Wiki.Files.Count.ToStringForUser))
-            StatisticsList.AddRow(Msg("view-wikistats-revisions"), If(Wiki.Revisions.Count < 0, Msg("a-unknown"), Wiki.Revisions.Count.ToStringForUser))
-            StatisticsList.AddRow(Msg("view-wikistats-users"), If(Wiki.Users.Count < 0, Msg("a-unknown"), Wiki.Users.Count.ToStringForUser))
-            StatisticsList.AddRow(Msg("view-wikistats-activeusers"), If(Wiki.ActiveUsers < 0, Msg("a-unknown"), Wiki.ActiveUsers.ToStringForUser))
-            StatisticsList.EndUpdate()
+            Dim rows As New List(Of String())
+
+            rows.Add({Msg("view-wikistats-pages"), If(Wiki.Pages.Count < 0, Msg("a-unknown"), Wiki.Pages.Count.ToStringForUser)})
+            rows.Add({Msg("view-wikistats-contentpages"), If(Wiki.ContentPages < 0, Msg("a-unknown"), Wiki.ContentPages.ToStringForUser)})
+            rows.Add({Msg("view-wikistats-files"), If(Wiki.Files.Count < 0, Msg("a-unknown"), Wiki.Files.Count.ToStringForUser)})
+            rows.Add({Msg("view-wikistats-revisions"), If(Wiki.Revisions.Count < 0, Msg("a-unknown"), Wiki.Revisions.Count.ToStringForUser)})
+            rows.Add({Msg("view-wikistats-users"), If(Wiki.Users.Count < 0, Msg("a-unknown"), Wiki.Users.Count.ToStringForUser)})
+            rows.Add({Msg("view-wikistats-activeusers"), If(Wiki.ActiveUsers < 0, Msg("a-unknown"), Wiki.ActiveUsers.ToStringForUser)})
+
+            StatisticsList.SetItems(rows)
         End Sub
 
         Private Sub WikiName_LinkClicked() Handles WikiName.LinkClicked

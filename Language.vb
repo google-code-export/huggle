@@ -13,30 +13,30 @@ Namespace Huggle
         Private _Code As String
         Private Shared _MessageGroups As New Dictionary(Of String, String)
 
-        Friend Sub New(ByVal code As String)
+        Public Sub New(ByVal code As String)
             _Code = code
             _Name = code
         End Sub
 
-        Friend ReadOnly Property Code() As String
+        Public ReadOnly Property Code() As String
             Get
                 Return _Code
             End Get
         End Property
 
-        Friend Property IsIgnored() As Boolean
+        Public Property IsIgnored() As Boolean
 
-        Friend Property IsLocalized() As Boolean
+        Public Property IsLocalized() As Boolean
 
-        Friend Property Messages() As Dictionary(Of String, String)
+        Public Property Messages() As Dictionary(Of String, String)
 
-        Friend Property Name() As String
+        Public Property Name() As String
 
-        Friend Function GetConfig() As MessageConfig
+        Public Function GetConfig() As MessageConfig
             Return New MessageConfig(Me)
         End Function
 
-        Friend Sub Localize(ByVal control As Control)
+        Public Sub Localize(ByVal control As Control)
             Dim prefix As String = control.Name.ToLowerI
             If control.Name.EndsWithI("View") Then prefix = "view-" & control.Name.Remove("View").ToLowerI
             If control.Name.EndsWithI("Form") Then prefix = "form-" & control.Name.Remove("Form").ToLowerI
@@ -49,7 +49,8 @@ Namespace Huggle
                 Then control.Text = Msg(prefix & "-title")
 
             For Each child As Control In control.Controls
-                Dim typeName As String = child.GetType.Name.FromLast(".")
+                Dim typeName As String = child.GetType.Name
+                If typeName.Contains(".") Then typeName = typeName.FromLast(".")
 
                 If {"Label", "CheckBox", "RadioButton", "Button", "GroupBox"}.Contains(typeName) Then
 
@@ -78,10 +79,22 @@ Namespace Huggle
                     For Each toolStripItem As ToolStripItem In DirectCast(child, ToolStrip).Items
                         LocalizeToolStripItem(toolStripItem, prefix)
                     Next toolStripItem
+
+                ElseIf typeName = "EnhancedListView" Then
+                    LocalizeListView(DirectCast(child, EnhancedListView), prefix)
                 End If
 
                 Localize(child, prefix, tip)
             Next child
+        End Sub
+
+        Private Sub LocalizeListView(ByVal listView As EnhancedListView, ByVal prefix As String)
+            For Each column As ColumnHeader In listView.Columns
+                Dim columnName As String = column.Text.ToLowerI.Remove(" ")
+                If Messages.ContainsKey("view-misc-column-" & columnName) _
+                    Then column.Text = Msg("view-misc-column-" & columnName) _
+                    Else column.Text = Msg(prefix & "-column-" & column.Text.ToLowerI.Remove(" "))
+            Next column
         End Sub
 
         Private Sub LocalizeToolStripItem(ByVal item As ToolStripItem, ByVal prefix As String)
@@ -98,7 +111,7 @@ Namespace Huggle
         End Sub
 
         'Returns a message string in this language
-        Friend Function Message(ByVal name As String, ByVal ParamArray params As Object()) As String
+        Public Function Message(ByVal name As String, ByVal ParamArray params As Object()) As String
             If Messages.ContainsKey(name) Then
                 Return Messages(name).FormatForUser(params)
 
@@ -116,7 +129,7 @@ Namespace Huggle
             If _Name = _Code Then Return "(" & _Code & ")" Else Return _Name
         End Function
 
-        Friend Shared Property MessageGroups() As Dictionary(Of String, String)
+        Public Shared Property MessageGroups() As Dictionary(Of String, String)
             Get
                 Return _MessageGroups
             End Get
@@ -133,13 +146,13 @@ Namespace Huggle
         Private _Current As Language
         Private _Default As Language
 
-        Friend ReadOnly Property All() As IList(Of Language)
+        Public ReadOnly Property All() As IList(Of Language)
             Get
                 Return _All.Values.ToList.AsReadOnly
             End Get
         End Property
 
-        Friend Property Current() As Language
+        Public Property Current() As Language
             Get
                 Return _Current
             End Get
@@ -148,7 +161,7 @@ Namespace Huggle
             End Set
         End Property
 
-        Friend Property [Default]() As Language
+        Public Property [Default]() As Language
             Get
                 Return _Default
             End Get
@@ -157,7 +170,7 @@ Namespace Huggle
             End Set
         End Property
 
-        Default Friend ReadOnly Property Item(ByVal code As String) As Language
+        Default Public ReadOnly Property Item(ByVal code As String) As Language
             Get
                 If Not _All.ContainsKey(code) Then _All.Add(code, New Language(code))
                 Return _All(code)

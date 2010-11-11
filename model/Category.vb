@@ -8,33 +8,33 @@ Namespace Huggle
 
         Private ReadOnly _Page As Page
 
-        Friend Sub New(ByVal page As Page)
+        Public Sub New(ByVal page As Page)
             _Page = page
         End Sub
 
-        Friend Property Count() As Integer = -1
+        Public Property Count() As Integer = -1
 
-        Friend Property IsHidden() As Boolean
+        Public Property IsHidden() As Boolean
 
-        Friend Property Items() As List(Of Page)
+        Public Property Items() As List(Of Page)
 
-        Friend ReadOnly Property Name() As String
+        Public ReadOnly Property Name() As String
             Get
                 Return _Page.Name
             End Get
         End Property
 
-        Friend ReadOnly Property Page() As Page
+        Public ReadOnly Property Page() As Page
             Get
                 Return _Page
             End Get
         End Property
 
-        Friend Property SubcatCount() As Integer = -1
+        Public Property SubcatCount() As Integer = -1
 
-        Friend Property Subcats() As List(Of Category)
+        Public Property Subcats() As List(Of Category)
 
-        Friend ReadOnly Property Wiki() As Wiki
+        Public ReadOnly Property Wiki() As Wiki
             Get
                 Return _Page.Wiki
             End Get
@@ -51,29 +51,29 @@ Namespace Huggle
         Private Wiki As Wiki
         Private ReadOnly _All As New Dictionary(Of Page, Category)
 
-        Friend Sub New(ByVal wiki As Wiki)
+        Public Sub New(ByVal wiki As Wiki)
             Me.Wiki = wiki
         End Sub
 
-        Friend ReadOnly Property All() As Dictionary(Of Page, Category)
+        Public ReadOnly Property All() As Dictionary(Of Page, Category)
             Get
                 Return _All
             End Get
         End Property
 
-        Friend Function FromString(ByVal name As String) As Category
+        Public Function FromString(ByVal name As String) As Category
             name = Wiki.Pages.SanitizeTitle(name)
             If name Is Nothing Then Return Nothing
             Return Item(Wiki.Pages.FromNsAndName(Wiki.Spaces.Category, Wiki.Pages(name).Name))
         End Function
 
-        Default Friend ReadOnly Property Item(ByVal name As String) As Category
+        Default Public ReadOnly Property Item(ByVal name As String) As Category
             Get
                 Return Item(Wiki.Pages.FromNsAndName(Wiki.Spaces.Category, name))
             End Get
         End Property
 
-        Default Friend ReadOnly Property Item(ByVal page As Page) As Category
+        Default Public ReadOnly Property Item(ByVal page As Page) As Category
             Get
                 If page Is Nothing OrElse page.Space IsNot Wiki.Spaces.Category Then Return Nothing
                 If Not All.ContainsKey(page) Then All.Add(page, New Category(page))

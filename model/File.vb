@@ -16,13 +16,13 @@ Namespace Huggle
         Private _Uses As New List(Of Page)
         Private _Wiki As Wiki
 
-        Friend Sub New(ByVal wiki As Wiki, ByVal page As Page)
+        Public Sub New(ByVal wiki As Wiki, ByVal page As Page)
             _Exists = True
             _Page = page
             _Wiki = wiki
         End Sub
 
-        Friend Property Content() As Stream
+        Public Property Content() As Stream
             Get
                 Try
                     If IO.File.Exists(FilePath) Then Return New MemoryStream(IO.File.ReadAllBytes(FilePath))
@@ -41,21 +41,21 @@ Namespace Huggle
             End Set
         End Property
 
-        Friend ReadOnly Property ContentKnown() As Boolean
+        Public ReadOnly Property ContentKnown() As Boolean
             Get
                 Return IO.File.Exists(FilePath)
             End Get
         End Property
 
-        Friend Property DetailsKnown() As Boolean
+        Public Property DetailsKnown() As Boolean
 
-        Friend ReadOnly Property Duplicates() As List(Of File)
+        Public ReadOnly Property Duplicates() As List(Of File)
             Get
                 Return _Duplicates
             End Get
         End Property
 
-        Friend Property Exists() As Boolean
+        Public Property Exists() As Boolean
 
         Private ReadOnly Property FilePath() As String
             Get
@@ -63,36 +63,36 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend Property FirstRevision() As FileRevision
+        Public Property FirstRevision() As FileRevision
 
-        Friend ReadOnly Property GlobalUses() As List(Of Page)
+        Public ReadOnly Property GlobalUses() As List(Of Page)
             Get
                 Return _GlobalUses
             End Get
         End Property
 
-        Friend Property IsShared() As Boolean
-        Friend Property LastRevision() As FileRevision
+        Public Property IsShared() As Boolean
+        Public Property LastRevision() As FileRevision
 
-        Friend ReadOnly Property Name() As String
+        Public ReadOnly Property Name() As String
             Get
                 Return _Page.Name
             End Get
         End Property
 
-        Friend ReadOnly Property Page() As Page
+        Public ReadOnly Property Page() As Page
             Get
                 Return _Page
             End Get
         End Property
 
-        Friend ReadOnly Property Revisions() As List(Of FileRevision)
+        Public ReadOnly Property Revisions() As List(Of FileRevision)
             Get
                 Return _Revisions
             End Get
         End Property
 
-        Friend Property Thumb(ByVal size As Integer) As Stream
+        Public Property Thumb(ByVal size As Integer) As Stream
             Get
                 Try
                     If IO.File.Exists(ThumbPath(size)) Then Return New MemoryStream(IO.File.ReadAllBytes(ThumbPath(size)))
@@ -111,45 +111,45 @@ Namespace Huggle
             End Set
         End Property
 
-        Friend ReadOnly Property ThumbKnown(ByVal size As Integer) As Boolean
+        Public ReadOnly Property ThumbKnown(ByVal size As Integer) As Boolean
             Get
                 Return (IO.File.Exists(ThumbPath(size)))
             End Get
         End Property
 
-        Friend ReadOnly Property ThumbPath(ByVal size As Integer) As String
+        Public ReadOnly Property ThumbPath(ByVal size As Integer) As String
             Get
                 Return PathCombine(Config.BaseLocation, "media", "thumbs",
                     GetValidFileName(Wiki.Code & "-" & ThumbName(size)))
             End Get
         End Property
 
-        Friend ReadOnly Property ThumbName(ByVal size As Integer) As String
+        Public ReadOnly Property ThumbName(ByVal size As Integer) As String
             Get
                 Return CStr(size) & "px-" & Name & If(Type = "svg", ".png", "")
             End Get
         End Property
 
-        Friend ReadOnly Property Type() As String
+        Public ReadOnly Property Type() As String
             Get
                 If Not Name.Contains(".") Then Return Nothing
                 Return Name.FromLast(".").ToLowerI
             End Get
         End Property
 
-        Friend ReadOnly Property Uploader() As User
+        Public ReadOnly Property Uploader() As User
             Get
                 If LastRevision Is Nothing Then Return Nothing Else Return LastRevision.User
             End Get
         End Property
 
-        Friend ReadOnly Property Uses() As List(Of Page)
+        Public ReadOnly Property Uses() As List(Of Page)
             Get
                 Return _Uses
             End Get
         End Property
 
-        Friend ReadOnly Property Wiki() As Wiki
+        Public ReadOnly Property Wiki() As Wiki
             Get
                 Return _Wiki
             End Get
@@ -183,52 +183,52 @@ Namespace Huggle
         Private _Metadata As New Dictionary(Of String, String)
         Private _Time As Date
 
-        Friend Sub New(ByVal file As File, ByVal time As Date)
+        Public Sub New(ByVal file As File, ByVal time As Date)
             _File = file
             _Time = time
         End Sub
 
-        Friend Property Comment() As String
-        Friend Property Depth() As Integer
-        Friend Property Hash() As String
-        Friend Property Height() As Integer
+        Public Property Comment() As String
+        Public Property Depth() As Integer
+        Public Property Hash() As String
+        Public Property Height() As Integer
 
-        Friend ReadOnly Property IsRevert() As Boolean
+        Public ReadOnly Property IsRevert() As Boolean
             Get
                 Return _IsRevert
             End Get
         End Property
 
-        Friend ReadOnly Property Media() As File
+        Public ReadOnly Property Media() As File
             Get
                 Return _File
             End Get
         End Property
 
-        Friend ReadOnly Property Metadata() As Dictionary(Of String, String)
+        Public ReadOnly Property Metadata() As Dictionary(Of String, String)
             Get
                 Return _Metadata
             End Get
         End Property
 
-        Friend Property Size() As Integer
+        Public Property Size() As Integer
 
-        Friend ReadOnly Property Time() As Date
+        Public ReadOnly Property Time() As Date
             Get
                 Return _Time
             End Get
         End Property
 
-        Friend Property Type() As String
-        Friend Property Url() As Uri
-        Friend Property User() As User
-        Friend Property Width() As Integer
+        Public Property Type() As String
+        Public Property Url() As Uri
+        Public Property User() As User
+        Public Property Width() As Integer
 
         Public Overrides Function ToString() As String
             Return Media.Name & ", " & Time.ToLongDateString & " " & Time.ToLongTimeString
         End Function
 
-        Friend Sub Process()
+        Public Sub Process()
             If Comment = Media.Wiki.Message("reverted") Then
                 _IsRevert = True
             Else
@@ -248,31 +248,31 @@ Namespace Huggle
         Private Wiki As Wiki
         Private ReadOnly _All As New Dictionary(Of Page, File)
 
-        Friend Sub New(ByVal wiki As Wiki)
+        Public Sub New(ByVal wiki As Wiki)
             Me.Wiki = wiki
         End Sub
 
-        Friend ReadOnly Property All() As Dictionary(Of Page, File)
+        Public ReadOnly Property All() As Dictionary(Of Page, File)
             Get
                 Return _All
             End Get
         End Property
 
-        Friend Property Count() As Integer = -1
+        Public Property Count() As Integer = -1
 
-        Friend Function FromString(ByVal name As String) As File
+        Public Function FromString(ByVal name As String) As File
             name = Wiki.Pages.SanitizeTitle(name)
             If name Is Nothing Then Return Nothing
             Return Item(Wiki.Pages.FromNsAndName(Wiki.Spaces.File, name))
         End Function
 
-        Default Friend ReadOnly Property Item(ByVal name As String) As File
+        Default Public ReadOnly Property Item(ByVal name As String) As File
             Get
                 Return Item(Wiki.Pages.FromNsAndName(Wiki.Spaces.File, name))
             End Get
         End Property
 
-        Default Friend ReadOnly Property Item(ByVal page As Page) As File
+        Default Public ReadOnly Property Item(ByVal page As Page) As File
             Get
                 If page Is Nothing OrElse page.Space IsNot Wiki.Spaces.File Then Return Nothing
                 If Not All.ContainsKey(page) Then All.Add(page, New File(Wiki, page))

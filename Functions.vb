@@ -17,38 +17,38 @@ Namespace Huggle
 
     Friend Module Functions
 
-        Friend ReadOnly CRLF As String = Convert.ToChar(13) & Convert.ToChar(10)
-        Friend ReadOnly CR As Char = Convert.ToChar(13)
-        Friend ReadOnly LF As Char = Convert.ToChar(10)
-        Friend ReadOnly Tab As Char = Convert.ToChar(9)
+        Public ReadOnly CRLF As String = Convert.ToChar(13) & Convert.ToChar(10)
+        Public ReadOnly CR As Char = Convert.ToChar(13)
+        Public ReadOnly LF As Char = Convert.ToChar(10)
+        Public ReadOnly Tab As Char = Convert.ToChar(9)
 
-        Friend ReadOnly C1 As Char = Convert.ToChar(31)
-        Friend ReadOnly C2 As Char = Convert.ToChar(30)
+        Public ReadOnly C1 As Char = Convert.ToChar(31)
+        Public ReadOnly C2 As Char = Convert.ToChar(30)
 
-        Friend Const BlpIconHtml As String =
+        Public Const BlpIconHtml As String =
             "<img src='http://upload.wikimedia.org/wikipedia/commons/thumb/4/41/" &
             "Crystal_Clear_app_personal_gray.png/32px-Crystal_Clear_app_personal_gray.png' " &
             "alt='Biography of living person' width='32' height='32' border='0' />"
 
         'Can't use Date.MinValue for optional date parameters, have to do this instead
-        Friend Const DateMinValue As Date = #1/1/1900#
+        Public Const DateMinValue As Date = #1/1/1900#
 
         'Get a formatted message string localized to the user's language
-        Friend Function Msg(ByVal name As String, ByVal ParamArray params As Object()) As String
+        Public Function Msg(ByVal name As String, ByVal ParamArray params As Object()) As String
             If App.Languages.Current Is Nothing Then Return "[" & name & "] "
             If Not name.Contains("-") Then name = "a-" & name
             Return App.Languages.Current.Message(name, params)
         End Function
 
-        Friend Function MD5Hash(ByVal data As Byte()) As Byte()
+        Public Function MD5Hash(ByVal data As Byte()) As Byte()
             Using hasher As HashAlgorithm = MD5.Create
                 Return hasher.ComputeHash(data)
             End Using
         End Function
 
-        Friend Delegate Function Expression() As Boolean
+        Public Delegate Function Expression() As Boolean
 
-        Friend Function Compress(ByVal data As Byte()) As Byte()
+        Public Function Compress(ByVal data As Byte()) As Byte()
             Using output As New MemoryStream
                 Dim compressStream As New GZipStream(output, CompressionMode.Compress)
                 compressStream.Write(data, 0, data.Length)
@@ -56,7 +56,7 @@ Namespace Huggle
             End Using
         End Function
 
-        Friend Function Uncompress(ByVal data As Byte()) As Byte()
+        Public Function Uncompress(ByVal data As Byte()) As Byte()
             Try
                 Using input As New MemoryStream(data)
                     Dim decompressStream As New GZipStream(input, CompressionMode.Decompress)
@@ -79,7 +79,7 @@ Namespace Huggle
             End Try
         End Function
 
-        Friend Function PathCombine(ByVal ParamArray components As String()) As String
+        Public Function PathCombine(ByVal ParamArray components As String()) As String
             If components.Length = 0 Then Return ""
 
             Dim result As String = components(0)
@@ -91,13 +91,13 @@ Namespace Huggle
             Return result
         End Function
 
-        Friend ReadOnly Property DesignTime() As Boolean
+        Public ReadOnly Property DesignTime() As Boolean
             Get
                 Return System.ComponentModel.LicenseManager.UsageMode = System.ComponentModel.LicenseUsageMode.Designtime
             End Get
         End Property
 
-        Friend Sub ResizeDropDown(ByVal control As ComboBox)
+        Public Sub ResizeDropDown(ByVal control As ComboBox)
             'Adjust the width of a ComboBox drop-down to match the widest text it contains
             Dim width As Integer = control.Width
             Dim graphics As Graphics = control.CreateGraphics
@@ -109,14 +109,14 @@ Namespace Huggle
             control.DropDownWidth = width
         End Sub
 
-        Friend Function ImageToIcon(ByVal image As Image) As Drawing.Icon
+        Public Function ImageToIcon(ByVal image As Image) As Drawing.Icon
             'Have to pass a handle to achieve this
             Using bitmap As New Bitmap(image)
                 Return Icon.FromHandle(bitmap.GetHicon)
             End Using
         End Function
 
-        Friend Function MakeWebPage(ByVal html As String, Optional ByVal title As String = "") As String
+        Public Function MakeWebPage(ByVal html As String, Optional ByVal title As String = "") As String
             Return Nothing 'My.Resources.WebPage _
             '.Replace("$TITLE", HtmlEncode(Title)) _
             '.Replace("$USER", UrlEncode(Account.Current.User.Name)) _
@@ -124,18 +124,18 @@ Namespace Huggle
             '.Replace("$CONTENT", Html)
         End Function
 
-        Friend Function FullDateString(ByVal time As Date) As String
+        Public Function FullDateString(ByVal time As Date) As String
             Dim utc As Date = time.ToUniversalTime
             Return CStr(time.Year) & "-" & CStr(time.Month).PadLeft(2, "0"c) & "-" & CStr(time.Day).PadLeft(2, "0"c) &
                 " " & CStr(time.Hour).PadLeft(2, "0"c) & ":" & CStr(time.Minute).PadLeft(2, "0"c) & ":" &
                 CStr(time.Second).PadLeft(2, "0"c)
         End Function
 
-        Friend Function MakeWebError(ByVal text As String) As String
+        Public Function MakeWebError(ByVal text As String) As String
             Return "<div class='huggle-error'>" & text & "</div>"
         End Function
 
-        Friend Function MimeType(ByVal filename As String) As String
+        Public Function MimeType(ByVal filename As String) As String
             Select Case filename.FromLast(".")
                 Case "bmp" : Return "image/bmp"
                 Case "djvu" : Return "image/x.djvu"
@@ -154,16 +154,16 @@ Namespace Huggle
             Return "application/octet-stream"
         End Function
 
-        Friend Function CeilingToSigFigs(ByVal number As Double, ByVal digits As Integer) As Double
+        Public Function CeilingToSigFigs(ByVal number As Double, ByVal digits As Integer) As Double
             Dim scale As Double = Math.Pow(10, Math.Ceiling(Math.Log10(number)) - digits)
             Return scale * Math.Ceiling(number / scale)
         End Function
 
-        Friend Function Dictionary(ByVal ParamArray items() As Object) As Dictionary(Of String, String)
+        Public Function Dictionary(ByVal ParamArray items() As Object) As Dictionary(Of String, String)
             Return items.ToDictionary
         End Function
 
-        Friend Function FuzzyTime(ByVal time As TimeSpan) As String
+        Public Function FuzzyTime(ByVal time As TimeSpan) As String
             Dim parts As New List(Of String)
 
             If time.Days > 0 Then parts.Add(PluralMsg("time-day", time.Days))
@@ -175,7 +175,7 @@ Namespace Huggle
             Return parts.Join(" ")
         End Function
 
-        Friend ReadOnly Property Hash(ByVal user As User) As Byte()
+        Public ReadOnly Property Hash(ByVal user As User) As Byte()
             Get
                 'This is not cryptographically secure. It is not meant to be. It is
                 'meant to deter casual discovery of the user's password. It is of no
@@ -197,7 +197,7 @@ Namespace Huggle
             Return Msg(msgKey & If(value <> 1, "-s", ""), value)
         End Function
 
-        Friend Function GetValidFileName(ByVal str As String) As String
+        Public Function GetValidFileName(ByVal str As String) As String
             For Each item As Char In IO.Path.GetInvalidFileNameChars
                 str = str.Replace(item, "_")
             Next item
@@ -205,15 +205,15 @@ Namespace Huggle
             Return str
         End Function
 
-        Friend Sub OpenWebBrowser(ByVal url As Uri)
+        Public Sub OpenWebBrowser(ByVal url As Uri)
             Diagnostics.Process.Start(url.ToString)
         End Sub
 
-        Friend Function Scramble(ByVal source As String, ByVal data As String, ByVal key As Byte()) As Byte()
+        Public Function Scramble(ByVal source As String, ByVal data As String, ByVal key As Byte()) As Byte()
             Return ProtectedData.Protect(Encoding.UTF8.GetBytes(data), key, DataProtectionScope.LocalMachine)
         End Function
 
-        Friend Function Unscramble(ByVal source As String, ByRef data As Byte(), ByVal key As Byte()) As String
+        Public Function Unscramble(ByVal source As String, ByRef data As Byte(), ByVal key As Byte()) As String
             If data Is Nothing Then Return Nothing
 
             Try
@@ -225,7 +225,7 @@ Namespace Huggle
             End Try
         End Function
 
-        Friend Function WikiUrl(ByVal wiki As Wiki, ByVal title As String, ByVal ParamArray params As String()) As Uri
+        Public Function WikiUrl(ByVal wiki As Wiki, ByVal title As String, ByVal ParamArray params As String()) As Uri
 
             Dim paramString As String = ""
 
@@ -247,7 +247,7 @@ Namespace Huggle
 
         'Constructs a string of the form "foo", "foo and bar" or "foo, bar and baz"
         'in the specified language
-        Friend Function NaturalLanguageList(ByVal language As Language, ByVal ParamArray items() As Object) As String
+        Public Function NaturalLanguageList(ByVal language As Language, ByVal ParamArray items() As Object) As String
             Select Case items.Length
                 Case 0 : Return Nothing
                 Case 1 : Return items(0).ToString
@@ -263,11 +263,11 @@ Namespace Huggle
             End Select
         End Function
 
-        Friend Function ParameterList(ByVal items() As Object) As ParameterCollection
+        Public Function ParameterList(ByVal items() As Object) As ParameterCollection
             Return Nothing
         End Function
 
-        Friend Function StripHtml(ByVal text As String) As String
+        Public Function StripHtml(ByVal text As String) As String
             If text Is Nothing Then Return Nothing
 
             While text.Contains("<") AndAlso text.FromFirst("<").Contains(">")
@@ -277,7 +277,7 @@ Namespace Huggle
             Return text
         End Function
 
-        Friend Function PlainTextFromHtml(ByVal text As String) As String
+        Public Function PlainTextFromHtml(ByVal text As String) As String
             If text Is Nothing Then Return Nothing
 
             While text.Contains("<") AndAlso text.FromFirst("<").Contains(">")
@@ -291,18 +291,18 @@ Namespace Huggle
             Return text
         End Function
 
-        Friend Function LcFirst(ByVal str As String) As String
+        Public Function LcFirst(ByVal str As String) As String
             If str Is Nothing Then Return Nothing
             Return str.Substring(0, 1).ToLowerI & str.Substring(1)
         End Function
 
-        Friend Function UcFirst(ByVal str As String) As String
+        Public Function UcFirst(ByVal str As String) As String
             If str Is Nothing Then Return Nothing
             If str.Length = 1 Then Return str.ToUpperI
             Return str.Substring(0, 1).ToUpperI & str.Substring(1)
         End Function
 
-        Friend Function ValueListToRegex(ByVal list As List(Of String)) As Regex
+        Public Function ValueListToRegex(ByVal list As List(Of String)) As Regex
             If list Is Nothing Then Return Nothing
 
             Dim patterns As New List(Of String)
@@ -314,7 +314,7 @@ Namespace Huggle
             Return New Regex("(" & String.Join("|", patterns.ToArray) & ")", RegexOptions.Compiled)
         End Function
 
-        Friend Function GetHtmlAttributeFromName(ByVal html As String,
+        Public Function GetHtmlAttributeFromName(ByVal html As String,
             ByVal name As String, ByVal attribute As String) As String
 
             Dim pattern As New Regex("<[^ ]+ name=""" & Regex.Escape(name) & """[^>]+" &
@@ -325,7 +325,7 @@ Namespace Huggle
             Return Nothing
         End Function
 
-        Friend Function GetHtmlTextFromName(ByVal html As String, ByVal name As String) As String
+        Public Function GetHtmlTextFromName(ByVal html As String, ByVal name As String) As String
             Dim pattern As New Regex("<[^ ]+ name=""" & Regex.Escape(name) & """[^>]+>([^<]*)<",
                 RegexOptions.Compiled Or RegexOptions.IgnoreCase)
 
@@ -364,36 +364,36 @@ Namespace Huggle
             Return item.ToString
         End Function
 
-        Friend Enum CacheState As Integer
+        Public Enum CacheState As Integer
             : NotCached : Loading : Cached : NewPage
         End Enum
 
-        Friend Enum Filters As Integer
+        Public Enum Filters As Integer
             : Exclude : Require : None
         End Enum
 
-        Friend Enum MultiFilters As Integer
+        Public Enum MultiFilters As Integer
             : None : All : Any
         End Enum
 
-        Friend Function ComparePairs(ByVal x As Pair, ByVal y As Pair) As Integer
+        Public Function ComparePairs(ByVal x As Pair, ByVal y As Pair) As Integer
             If TypeOf x.First Is Integer AndAlso TypeOf y.First Is Integer Then Return CInt(y.First) - CInt(x.First)
             If TypeOf x.First Is String AndAlso TypeOf y.First Is String _
                 Then Return String.Compare(CStr(x.First), CStr(y.First), StringComparison.Ordinal)
             Return 0
         End Function
 
-        Friend Structure CustomRevert
+        Public Structure CustomRevert
 
-            Friend Summary As String
-            Friend Rev As Revision
-            Friend Target As Revision
+            Public Summary As String
+            Public Rev As Revision
+            Public Target As Revision
 
         End Structure
 
-        Friend Structure Pair
+        Public Structure Pair
 
-            Friend Sub New(ByVal first As Object, ByVal second As Object)
+            Public Sub New(ByVal first As Object, ByVal second As Object)
                 Me.First = first
                 Me.Second = second
             End Sub
@@ -403,37 +403,37 @@ Namespace Huggle
 
         End Structure
 
-        Friend Structure Selection
+        Public Structure Selection
 
             Private _Length As Integer
             Private _Start As Integer
 
-            Friend Shared ReadOnly Empty As New Selection(-1, 0)
+            Public Shared ReadOnly Empty As New Selection(-1, 0)
 
-            Friend Sub New(ByVal start As Integer, ByVal length As Integer)
+            Public Sub New(ByVal start As Integer, ByVal length As Integer)
                 _Start = start
                 _Length = length
             End Sub
 
-            Friend ReadOnly Property [End]() As Integer
+            Public ReadOnly Property [End]() As Integer
                 Get
                     Return _Start + _Length
                 End Get
             End Property
 
-            Friend ReadOnly Property IsEmpty() As Boolean
+            Public ReadOnly Property IsEmpty() As Boolean
                 Get
                     Return (Start = -1)
                 End Get
             End Property
 
-            Friend ReadOnly Property Start() As Integer
+            Public ReadOnly Property Start() As Integer
                 Get
                     Return _Start
                 End Get
             End Property
 
-            Friend ReadOnly Property Length() As Integer
+            Public ReadOnly Property Length() As Integer
                 Get
                     Return _Length
                 End Get
@@ -441,7 +441,7 @@ Namespace Huggle
 
         End Structure
 
-        Friend Function ColorFromHSL(ByVal H As Double, ByVal S As Double, ByVal L As Double) As Color
+        Public Function ColorFromHSL(ByVal H As Double, ByVal S As Double, ByVal L As Double) As Color
             Dim R, G, B As Double
 
             If L > 0 Then
@@ -489,18 +489,18 @@ Namespace Huggle
 
             Private _Lower, _Upper As Double
 
-            Friend Sub New(ByVal Lower As Double, ByVal Upper As Double)
+            Public Sub New(ByVal Lower As Double, ByVal Upper As Double)
                 _Lower = Lower
                 _Upper = Upper
             End Sub
 
-            Friend ReadOnly Property Lower() As Double
+            Public ReadOnly Property Lower() As Double
                 Get
                     Return _Lower
                 End Get
             End Property
 
-            Friend ReadOnly Property Upper() As Double
+            Public ReadOnly Property Upper() As Double
                 Get
                     Return _Upper
                 End Get
@@ -512,15 +512,15 @@ Namespace Huggle
 
         End Structure
 
-        Friend Enum ConflictAction As Integer
+        Public Enum ConflictAction As Integer
             : Ignore : Retry : Abort : Prompt
         End Enum
 
-        Friend Enum WatchAction As Integer
+        Public Enum WatchAction As Integer
             : NoChange : Watch : Unwatch : Preferences
         End Enum
 
-        Friend Function List(Of T)(ByVal ParamArray items() As T) As List(Of T)
+        Public Function List(Of T)(ByVal ParamArray items() As T) As List(Of T)
             Return New List(Of T)(items)
         End Function
 
@@ -529,11 +529,11 @@ Namespace Huggle
     <Diagnostics.DebuggerDisplay("{Format}"), Serializable()>
     Friend Class QueryException : Inherits HuggleException
 
-        Friend Sub New(ByVal message As String)
+        Public Sub New(ByVal message As String)
             MyBase.New(message)
         End Sub
 
-        Friend Sub New(ByVal message As String, ByVal innerException As QueryException)
+        Public Sub New(ByVal message As String, ByVal innerException As QueryException)
             MyBase.New(message, innerException)
         End Sub
 
@@ -541,7 +541,7 @@ Namespace Huggle
             Return Format
         End Function
 
-        Friend ReadOnly Property Format() As String
+        Public ReadOnly Property Format() As String
             Get
                 Dim result As String = Message
                 Dim ex As Exception = InnerException
@@ -556,7 +556,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend ReadOnly Property FormatMultiline() As String
+        Public ReadOnly Property FormatMultiline() As String
             Get
                 Dim result As String = Message
                 Dim ex As Exception = InnerException
@@ -574,7 +574,7 @@ Namespace Huggle
     End Class
 
     <Diagnostics.DebuggerDisplay("{ToString()}")> _
-    Friend Structure TS
+    Public Structure TS
 
         Private State As Integer
 
@@ -582,19 +582,19 @@ Namespace Huggle
         Private Shared ReadOnly _True As New TS With {.State = 2}
         Private Shared ReadOnly _Undefined As New TS With {.State = 0}
 
-        Friend Shared ReadOnly Property [False]() As TS
+        Public Shared ReadOnly Property [False]() As TS
             Get
                 Return _False
             End Get
         End Property
 
-        Friend Shared ReadOnly Property [True]() As TS
+        Public Shared ReadOnly Property [True]() As TS
             Get
                 Return _True
             End Get
         End Property
 
-        Friend Shared ReadOnly Property Undefined() As TS
+        Public Shared ReadOnly Property Undefined() As TS
             Get
                 Return _Undefined
             End Get
@@ -616,19 +616,19 @@ Namespace Huggle
             Return item.State = 2
         End Operator
 
-        Friend ReadOnly Property IsFalse() As Boolean
+        Public ReadOnly Property IsFalse() As Boolean
             Get
                 Return State = 1
             End Get
         End Property
 
-        Friend ReadOnly Property IsTrue() As Boolean
+        Public ReadOnly Property IsTrue() As Boolean
             Get
                 Return State = 2
             End Get
         End Property
 
-        Friend ReadOnly Property IsUndefined() As Boolean
+        Public ReadOnly Property IsUndefined() As Boolean
             Get
                 Return State = 0
             End Get

@@ -6,7 +6,7 @@ Namespace System.Windows.Forms
 
     Friend Class EnhancedFlowLayoutPanel : Inherits FlowLayoutPanel
 
-        Friend Sub New()
+        Public Sub New()
             MyBase.New()
 
             SetStyle(ControlStyles.UserPaint, True)

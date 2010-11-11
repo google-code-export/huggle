@@ -11,11 +11,11 @@ Namespace Huggle
         Private _IsLoaded As Boolean
         Private _Location As Page
 
-        Friend Sub New(ByVal location As Page)
+        Public Sub New(ByVal location As Page)
             _Location = location
         End Sub
 
-        Friend ReadOnly Property Entries As List(Of TitleListEntry)
+        Public ReadOnly Property Entries As List(Of TitleListEntry)
             Get
                 If Not IsLoaded Then Return Nothing
 
@@ -24,13 +24,13 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend ReadOnly Property IsLoaded As Boolean
+        Public ReadOnly Property IsLoaded As Boolean
             Get
                 Return (Location.Text IsNot Nothing)
             End Get
         End Property
 
-        Friend ReadOnly Property IsMatch _
+        Public ReadOnly Property IsMatch _
             (ByVal session As Session, ByVal title As String, ByVal action As TitleListAction) As Boolean
 
             Get
@@ -44,7 +44,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend ReadOnly Property Location As Page
+        Public ReadOnly Property Location As Page
             Get
                 Return _Location
             End Get
@@ -139,14 +139,14 @@ Namespace Huggle
         Private _Options As New List(Of TitleListOption)
         Private _Pattern As String
 
-        Friend Sub New(ByVal pattern As String)
+        Public Sub New(ByVal pattern As String)
             _Pattern = pattern
         End Sub
 
-        Friend Property Comment As String
-        Friend Property ErrorMessage As String
+        Public Property Comment As String
+        Public Property ErrorMessage As String
 
-        Friend ReadOnly Property IsMatch _
+        Public ReadOnly Property IsMatch _
             (ByVal session As Session, ByVal title As String, ByVal action As TitleListAction) As Boolean
 
             Get
@@ -186,13 +186,13 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend ReadOnly Property Options As List(Of TitleListOption)
+        Public ReadOnly Property Options As List(Of TitleListOption)
             Get
                 Return _Options
             End Get
         End Property
 
-        Friend ReadOnly Property Pattern As String
+        Public ReadOnly Property Pattern As String
             Get
                 Return _Pattern
             End Get
@@ -213,11 +213,11 @@ Namespace Huggle
 
     End Class
 
-    Friend Enum TitleListOption As Integer
+    Public Enum TitleListOption As Integer
         : AutoConfirmed : CaseSensitive : MoveOnly : NoEdit : NewAccountOnly : ReUpload
     End Enum
 
-    Friend Enum TitleListAction As Integer
+    Public Enum TitleListAction As Integer
         : Edit : Create : CreateAccount : Move : ReUpload : Upload
     End Enum
 

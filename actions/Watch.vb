@@ -5,13 +5,13 @@
         Private _Action As WatchAction
         Private _Page As Page
 
-        Friend Sub New(ByVal session As Session, ByVal page As Page, ByVal action As WatchAction)
+        Public Sub New(ByVal session As Session, ByVal page As Page, ByVal action As WatchAction)
             MyBase.New(session, Msg("watch-desc", page))
             _Action = action
             _Page = page.SubjectPage
         End Sub
 
-        Friend Property Action() As WatchAction
+        Public Property Action() As WatchAction
             Get
                 Return _Action
             End Get
@@ -20,13 +20,13 @@
             End Set
         End Property
 
-        Friend ReadOnly Property Page() As Page
+        Public ReadOnly Property Page() As Page
             Get
                 Return _Page
             End Get
         End Property
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
 
             If Action = WatchAction.Preferences Then _
                 If User.Preferences.WatchEdits Then Action = WatchAction.Watch _

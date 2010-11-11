@@ -27,31 +27,31 @@ Namespace Huggle.Wikitext
         Private _Threads As CommentCollection
         Private _Transclusions As TransclusionCollection
 
-        Friend Sub New(ByVal page As Page, Optional ByVal text As String = Nothing)
+        Public Sub New(ByVal page As Page, Optional ByVal text As String = Nothing)
             _Page = page
             _Text = If(text, If(page.Text, ""))
             _Wiki = page.Wiki
         End Sub
 
-        Friend Sub New(ByVal wiki As Wiki, ByVal text As String)
+        Public Sub New(ByVal wiki As Wiki, ByVal text As String)
             _Text = text
             _Wiki = wiki
         End Sub
 
-        Friend ReadOnly Property Bytes() As Integer
+        Public ReadOnly Property Bytes() As Integer
             Get
                 Return Encoding.UTF8.GetBytes(Text).GetLength(0)
             End Get
         End Property
 
-        Friend ReadOnly Property Categories() As CategoryLinkCollection
+        Public ReadOnly Property Categories() As CategoryLinkCollection
             Get
                 If _CategoryLinks Is Nothing Then _CategoryLinks = New CategoryLinkCollection(Me)
                 Return _CategoryLinks
             End Get
         End Property
 
-        Friend Property DefaultSortkey() As String
+        Public Property DefaultSortkey() As String
             Get
                 Dim Match As Match = Parsing.SortkeyPattern.Match(Text)
                 If Match.Success Then Return Match.Groups(1).Value Else Return ""
@@ -78,40 +78,40 @@ Namespace Huggle.Wikitext
             End Set
         End Property
 
-        Friend ReadOnly Property Files() As FileLinkCollection
+        Public ReadOnly Property Files() As FileLinkCollection
             Get
                 If _FileLinks Is Nothing Then _FileLinks = New FileLinkCollection(Me)
                 Return _FileLinks
             End Get
         End Property
 
-        Friend ReadOnly Property InterLangLinks() As InterLangLinkCollection
+        Public ReadOnly Property InterLangLinks() As InterLangLinkCollection
             Get
                 If _InterLangLinks Is Nothing Then _InterLangLinks = New InterLangLinkCollection(Me)
                 Return _InterLangLinks
             End Get
         End Property
 
-        Friend ReadOnly Property Length() As Integer
+        Public ReadOnly Property Length() As Integer
             Get
                 Return Text.Length
             End Get
         End Property
 
-        Friend ReadOnly Property Links() As LinkCollection
+        Public ReadOnly Property Links() As LinkCollection
             Get
                 If _Links Is Nothing Then _Links = New LinkCollection(Me)
                 Return _Links
             End Get
         End Property
 
-        Friend ReadOnly Property Page() As Page
+        Public ReadOnly Property Page() As Page
             Get
                 Return _Page
             End Get
         End Property
 
-        Friend ReadOnly Property References() As List(Of Reference)
+        Public ReadOnly Property References() As List(Of Reference)
             Get
                 Dim Result As New List(Of Reference)
 
@@ -119,21 +119,21 @@ Namespace Huggle.Wikitext
             End Get
         End Property
 
-        Friend ReadOnly Property Sections() As SectionCollection
+        Public ReadOnly Property Sections() As SectionCollection
             Get
                 If _Sections Is Nothing Then _Sections = New SectionCollection(Me)
                 Return _Sections
             End Get
         End Property
 
-        Friend ReadOnly Property Tables() As TableCollection
+        Public ReadOnly Property Tables() As TableCollection
             Get
                 If _Tables IsNot Nothing Then _Tables = New TableCollection(Me)
                 Return _Tables
             End Get
         End Property
 
-        Friend Property Text() As String
+        Public Property Text() As String
             Get
                 Return _Text
             End Get
@@ -146,21 +146,21 @@ Namespace Huggle.Wikitext
             End Set
         End Property
 
-        Friend ReadOnly Property Threads() As CommentCollection
+        Public ReadOnly Property Threads() As CommentCollection
             Get
                 If _Threads Is Nothing Then _Threads = New CommentCollection(Wiki)
                 Return _Threads
             End Get
         End Property
 
-        Friend ReadOnly Property Transclusions() As TransclusionCollection
+        Public ReadOnly Property Transclusions() As TransclusionCollection
             Get
                 If _Transclusions Is Nothing Then _Transclusions = New TransclusionCollection(Me)
                 Return _Transclusions
             End Get
         End Property
 
-        Friend ReadOnly Property Wiki() As Wiki
+        Public ReadOnly Property Wiki() As Wiki
             Get
                 Return _Wiki
             End Get
@@ -170,7 +170,7 @@ Namespace Huggle.Wikitext
             Return Text
         End Function
 
-        Friend ReadOnly Property ParseableText() As String
+        Public ReadOnly Property ParseableText() As String
             Get
                 If _ParseableText IsNot Nothing Then Return _ParseableText
 
@@ -188,7 +188,7 @@ Namespace Huggle.Wikitext
             End Get
         End Property
 
-        Friend Shared Function FromObject(ByVal data As Object) As Document
+        Public Shared Function FromObject(ByVal data As Object) As Document
 
             If TypeOf data Is Page Then
                 Dim Page As Page = DirectCast(data, Page)
@@ -255,11 +255,11 @@ Namespace Huggle.Wikitext
             Return New Document(App.Wikis.Default, data.ToString)
         End Function
 
-        Friend Function ExternalLink(ByVal url As Uri, ByVal display As String) As String
+        Public Function ExternalLink(ByVal url As Uri, ByVal display As String) As String
             Return "[" & url.ToString & If(display Is Nothing, "", " " & display) & "]"
         End Function
 
-        Friend Function InternalLink(ByVal page As Page, ByVal display As String,
+        Public Function InternalLink(ByVal page As Page, ByVal display As String,
             ByVal ParamArray params() As String) As String
 
             Dim result As String = "["
@@ -281,12 +281,12 @@ Namespace Huggle.Wikitext
             Return result
         End Function
 
-        Friend Function InterlanguageLink(ByVal page As Page) As String
+        Public Function InterlanguageLink(ByVal page As Page) As String
             If page.Wiki Is Wiki OrElse Wiki.InterwikiFor(page.Wiki) Is Nothing Then Return Nothing
             Return "[[" & Wiki.InterwikiFor(page.Wiki) & ":" & page.Title & "]]"
         End Function
 
-        Friend Function Link(ByVal page As Page, ByVal display As String) As String
+        Public Function Link(ByVal page As Page, ByVal display As String) As String
             Dim result As String = "[["
 
             If page.Wiki IsNot Wiki Then
@@ -304,7 +304,7 @@ Namespace Huggle.Wikitext
             Return result
         End Function
 
-        Friend Function UserLink(ByVal user As User) As String
+        Public Function UserLink(ByVal user As User) As String
             If user.IsAnonymous AndAlso Wiki.Config.UserLinkAnon IsNot Nothing _
                 Then Return Wiki.Config.UserLinkAnon.FormatI(user)
 

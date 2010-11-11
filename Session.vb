@@ -14,51 +14,51 @@ Namespace Huggle
         Private _RollbackTokens As New Dictionary(Of Revision, String)
         Private _User As User
 
-        Friend Sub New(ByVal user As User)
+        Public Sub New(ByVal user As User)
             _User = user
         End Sub
 
-        Friend Property Cookies() As New CookieContainer
+        Public Property Cookies() As New CookieContainer
 
-        Friend ReadOnly Property Description() As String
+        Public ReadOnly Property Description() As String
             Get
                 Return User.FullName & If(IsSecure, " (Secure)", "")
             End Get
         End Property
 
-        Friend Property EditToken() As String
+        Public Property EditToken() As String
 
-        Friend Property IsActive() As Boolean
+        Public Property IsActive() As Boolean
 
-        Friend Property IsAutoconfirmed As Boolean
+        Public Property IsAutoconfirmed As Boolean
 
-        Friend Property IsSecure() As Boolean
+        Public Property IsSecure() As Boolean
 
-        Friend ReadOnly Property RightsTokens() As Dictionary(Of User, String)
+        Public ReadOnly Property RightsTokens() As Dictionary(Of User, String)
             Get
                 Return _RightsTokens
             End Get
         End Property
 
-        Friend ReadOnly Property RollbackTokens() As Dictionary(Of Revision, String)
+        Public ReadOnly Property RollbackTokens() As Dictionary(Of Revision, String)
             Get
                 Return _RollbackTokens
             End Get
         End Property
 
-        Friend ReadOnly Property User() As User
+        Public ReadOnly Property User() As User
             Get
                 Return _User
             End Get
         End Property
 
-        Friend ReadOnly Property Wiki() As Wiki
+        Public ReadOnly Property Wiki() As Wiki
             Get
                 Return _User.Wiki
             End Get
         End Property
 
-        Friend Sub Discard()
+        Public Sub Discard()
             App.Sessions.Discard(Me)
         End Sub
 
@@ -68,13 +68,13 @@ Namespace Huggle
 
         Private _All As New Dictionary(Of User, Session)
 
-        Friend ReadOnly Property All() As IList(Of Session)
+        Public ReadOnly Property All() As IList(Of Session)
             Get
                 Return _All.Values.ToList.AsReadOnly
             End Get
         End Property
 
-        Friend Function Active() As IList(Of Session)
+        Public Function Active() As IList(Of Session)
             Dim result As New List(Of Session)
 
             For Each session As Session In All
@@ -84,7 +84,7 @@ Namespace Huggle
             Return result
         End Function
 
-        Friend Function ActiveForWiki(ByVal wiki As Wiki) As IList(Of Session)
+        Public Function ActiveForWiki(ByVal wiki As Wiki) As IList(Of Session)
             Dim result As New List(Of Session)
 
             For Each session As Session In All
@@ -94,7 +94,7 @@ Namespace Huggle
             Return result
         End Function
 
-        Friend Function GetUserWithRight(ByVal wiki As Wiki, ByVal right As String) As Session
+        Public Function GetUserWithRight(ByVal wiki As Wiki, ByVal right As String) As Session
             For Each session As Session In All
                 If session.User.Wiki Is wiki AndAlso session.User.HasRight(right) _
                     AndAlso Not session.User.IsAnonymous Then Return session
@@ -104,7 +104,7 @@ Namespace Huggle
             Return Nothing
         End Function
 
-        Default Friend ReadOnly Property Item(ByVal globalUser As GlobalUser) As Session
+        Default Public ReadOnly Property Item(ByVal globalUser As GlobalUser) As Session
             Get
                 For Each session As Session In All
                     If session.User.GlobalUser Is globalUser AndAlso session.IsActive Then Return session
@@ -114,14 +114,14 @@ Namespace Huggle
             End Get
         End Property
 
-        Default Friend ReadOnly Property Item(ByVal user As User) As Session
+        Default Public ReadOnly Property Item(ByVal user As User) As Session
             Get
                 If Not _All.ContainsKey(user) Then _All.Add(user, New Session(user))
                 Return _All(user)
             End Get
         End Property
 
-        Default Friend ReadOnly Property Item(ByVal wiki As Wiki) As Session
+        Default Public ReadOnly Property Item(ByVal wiki As Wiki) As Session
             Get
                 For Each session As Session In All
                     If session.User.Wiki Is wiki AndAlso session.IsActive _
@@ -132,7 +132,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Default Friend ReadOnly Property Item(ByVal family As Family) As Session
+        Default Public ReadOnly Property Item(ByVal family As Family) As Session
             Get
                 For Each session As Session In All
                     If session.User.Wiki.Family Is family AndAlso session.IsActive _
@@ -143,7 +143,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend Sub Discard(ByVal session As Session)
+        Public Sub Discard(ByVal session As Session)
             _All.Merge(session.User, New Session(session.User))
         End Sub
 

@@ -4,24 +4,28 @@ Namespace Huggle.UI
 
     Friend Class Viewer : Inherits UserControl
 
-        Friend Sub New()
+        Public Sub New()
         End Sub
 
-        Friend Sub New(ByVal session As Session)
+        Public Sub New(ByVal session As Session)
             Me.Session = session
             Dock = DockStyle.Fill
         End Sub
 
-        Friend Property Session As Session
+        Private Sub _Load() Handles Me.Load
+            If Not DesignMode Then App.Languages.Current.Localize(Me)
+        End Sub
 
-        Friend ReadOnly Property User As User
+        Public Property Session As Session
+
+        Public ReadOnly Property User As User
             Get
                 If Session Is Nothing Then Return Nothing
                 Return Session.User
             End Get
         End Property
 
-        Friend ReadOnly Property Wiki As Wiki
+        Public ReadOnly Property Wiki As Wiki
             Get
                 If Session Is Nothing Then Return Nothing
                 Return Session.Wiki

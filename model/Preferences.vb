@@ -10,93 +10,93 @@ Namespace Huggle
         Private _Other As New Dictionary(Of String, String)
         Private _User As User
 
-        Friend Property AlternateLinks As Boolean
-        Friend Property DateFormat As String
-        Friend Property DiffOnly As Boolean
-        Friend Property DisableCaching As Boolean
-        Friend Property EditOnDoubleClick As Boolean
-        Friend Property EditorColumns As Integer
-        Friend Property EditorFont As String
-        Friend Property EditorFullWidth As Boolean
-        Friend Property EditorRows As Integer
-        Friend Property EditWarning As Boolean
-        Friend Property EmailAddress As String
-        Friend Property EnhancedRc As Boolean
-        Friend Property ExternalEditor As Boolean
-        Friend Property ExternalDiff As Boolean
-        Friend Property ForceEditSummary As Boolean
-        Friend Property Gender As String
-        Friend Property HiddenCategories As Boolean
-        Friend Property ImageSize As Integer
-        Friend Property JumpLinks As Boolean
-        Friend Property Justify As Boolean
-        Friend Property Language As String
-        Friend Property LivePreview As Boolean
-        Friend Property MathOption As Integer
-        Friend Property MinorDefault As Boolean
-        Friend Property NewHidePatrolled As Boolean
-        Friend Property NumberHeadings As Boolean
-        Friend Property PreviewAtTop As Boolean
-        Friend Property PreviewFirstEdit As Boolean
-        Friend Property RawSignature As Boolean
-        Friend Property RcDays As Integer
-        Friend Property RcHideMinor As Boolean
-        Friend Property RcHidePatrolled As Boolean
-        Friend Property RcItems As Integer
-        Friend Property RollbackDiff As Boolean
-        Friend Property SearchContextChars As Integer
-        Friend Property SearchContextLines As Integer
-        Friend Property SearchNamespaces As New List(Of String)
-        Friend Property SearchResults As Integer
-        Friend Property SearchSuggestions As Boolean
-        Friend Property SectionEditLinks As Boolean
-        Friend Property SectionEditOnRightClick As Boolean
-        Friend Property Signature As String
-        Friend Property Skin As String
-        Friend Property StubThreshold As Integer
-        Friend Property ThumbnailSize As Integer
-        Friend Property TimeZone As String
-        Friend Property Toc As Boolean
-        Friend Property Toolbar As Boolean
-        Friend Property UnderlineLinks As Integer
-        Friend Property WatchCreations As Boolean
-        Friend Property WatchDeletions As Boolean
-        Friend Property WatchEdits As Boolean
-        Friend Property WatchMoves As Boolean
-        Friend Property WatchlistAge As Integer
-        Friend Property WatchlistHideAnonymous As Boolean
-        Friend Property WatchlistHideBots As Boolean
-        Friend Property WatchlistHideMinor As Boolean
-        Friend Property WatchlistHideOwn As Boolean
-        Friend Property WatchlistHidePatrolled As Boolean
-        Friend Property WatchlistHideUsers As Boolean
-        Friend Property WatchlistShowAllChanges As Boolean
-        Friend Property WatchlistToken As String
+        Public Property AlternateLinks As Boolean
+        Public Property DateFormat As String
+        Public Property DiffOnly As Boolean
+        Public Property DisableCaching As Boolean
+        Public Property EditOnDoubleClick As Boolean
+        Public Property EditorColumns As Integer
+        Public Property EditorFont As String
+        Public Property EditorFullWidth As Boolean
+        Public Property EditorRows As Integer
+        Public Property EditWarning As Boolean
+        Public Property EmailAddress As String
+        Public Property EnhancedRc As Boolean
+        Public Property ExternalEditor As Boolean
+        Public Property ExternalDiff As Boolean
+        Public Property ForceEditSummary As Boolean
+        Public Property Gender As String
+        Public Property HiddenCategories As Boolean
+        Public Property ImageSize As Integer
+        Public Property JumpLinks As Boolean
+        Public Property Justify As Boolean
+        Public Property Language As String
+        Public Property LivePreview As Boolean
+        Public Property MathOption As Integer
+        Public Property MinorDefault As Boolean
+        Public Property NewHidePatrolled As Boolean
+        Public Property NumberHeadings As Boolean
+        Public Property PreviewAtTop As Boolean
+        Public Property PreviewFirstEdit As Boolean
+        Public Property RawSignature As Boolean
+        Public Property RcDays As Integer
+        Public Property RcHideMinor As Boolean
+        Public Property RcHidePatrolled As Boolean
+        Public Property RcItems As Integer
+        Public Property RollbackDiff As Boolean
+        Public Property SearchContextChars As Integer
+        Public Property SearchContextLines As Integer
+        Public Property SearchNamespaces As New List(Of String)
+        Public Property SearchResults As Integer
+        Public Property SearchSuggestions As Boolean
+        Public Property SectionEditLinks As Boolean
+        Public Property SectionEditOnRightClick As Boolean
+        Public Property Signature As String
+        Public Property Skin As String
+        Public Property StubThreshold As Integer
+        Public Property ThumbnailSize As Integer
+        Public Property TimeZone As String
+        Public Property Toc As Boolean
+        Public Property Toolbar As Boolean
+        Public Property UnderlineLinks As Integer
+        Public Property WatchCreations As Boolean
+        Public Property WatchDeletions As Boolean
+        Public Property WatchEdits As Boolean
+        Public Property WatchMoves As Boolean
+        Public Property WatchlistAge As Integer
+        Public Property WatchlistHideAnonymous As Boolean
+        Public Property WatchlistHideBots As Boolean
+        Public Property WatchlistHideMinor As Boolean
+        Public Property WatchlistHideOwn As Boolean
+        Public Property WatchlistHidePatrolled As Boolean
+        Public Property WatchlistHideUsers As Boolean
+        Public Property WatchlistShowAllChanges As Boolean
+        Public Property WatchlistToken As String
 
-        Friend Sub New(ByVal user As User)
+        Public Sub New(ByVal user As User)
             _User = user
         End Sub
 
-        Friend ReadOnly Property Other() As Dictionary(Of String, String)
+        Public ReadOnly Property Other() As Dictionary(Of String, String)
             Get
                 Return _Other
             End Get
         End Property
 
-        Friend ReadOnly Property User() As User
+        Public ReadOnly Property User() As User
             Get
                 Return _User
             End Get
         End Property
 
-        Friend Function Clone() As Preferences
+        Public Function Clone() As Preferences
             Dim result As Preferences = CType(MemberwiseClone(), Preferences)
             result.SearchNamespaces = New List(Of String)(SearchNamespaces)
 
             Return result
         End Function
 
-        Friend Sub LoadFromMwFormat(ByVal prefs As Dictionary(Of String, String))
+        Public Sub LoadFromMwFormat(ByVal prefs As Dictionary(Of String, String))
             SearchNamespaces.Clear()
 
             For Each item As KeyValuePair(Of String, String) In prefs
@@ -177,7 +177,7 @@ Namespace Huggle
             Next item
         End Sub
 
-        Friend Function ToMwFormat() As Dictionary(Of String, String)
+        Public Function ToMwFormat() As Dictionary(Of String, String)
             Dim prefs As New Dictionary(Of String, String)
 
             prefs.Add("cols", CStr(EditorColumns))

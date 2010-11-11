@@ -9,11 +9,11 @@ Namespace Huggle.Actions
 
     Friend Class LoadUserConfig : Inherits Query
 
-        Friend Sub New(ByVal session As Session)
+        Public Sub New(ByVal session As Session)
             MyBase.New(session, Msg("userconfig-desc", session.User.FullName))
         End Sub
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             OnStarted()
             OnProgress(Msg("userconfig-progress", Session.User.FullName))
 
