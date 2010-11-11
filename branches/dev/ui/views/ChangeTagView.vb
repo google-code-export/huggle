@@ -1,10 +1,11 @@
-﻿Imports System.Windows.Forms
+﻿Imports System.Collections.Generic
+Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
     Friend Class ChangeTagView : Inherits Viewer
 
-        Friend Sub New(ByVal session As Session)
+        Public Sub New(ByVal session As Session)
             MyBase.New(session)
             InitializeComponent()
         End Sub
@@ -12,19 +13,18 @@ Namespace Huggle.UI
         Private Sub _Load() Handles Me.Load
             App.Languages.Current.Localize(Me)
 
-            List.BeginUpdate()
-            List.Items.Clear()
+            Dim rows As New List(Of String())
 
             For Each tag As ChangeTag In Wiki.ChangeTags.All
                 Dim displayName As String = If(Wiki.Config.ChangeTagIdentifier Is Nothing, _
                     tag.DisplayName, tag.DisplayName.Remove(Wiki.Config.ChangeTagIdentifier).Trim)
 
-                List.AddRow(WikiStripMarkup(displayName), WikiStripMarkup(tag.Description), CStr(tag.Hits))
+                rows.Add({WikiStripMarkup(displayName), WikiStripMarkup(tag.Description), tag.Hits.ToStringForUser})
             Next tag
 
-            List.SortMethods.Merge(2, SortMethod.Integer)
-            List.SortBy(0)
-            List.EndUpdate()
+            List.SortMethods(2) = SortMethod.Integer
+            List.SetItems(rows)
+
             Count.Text = Msg("a-count", List.Items.Count)
         End Sub
 

@@ -18,19 +18,19 @@ Namespace Huggle
         Private _Users As List(Of User)
         Private _Wikis As List(Of Wiki)
 
-        Friend Sub New(ByVal family As Family, ByVal name As String)
+        Public Sub New(ByVal family As Family, ByVal name As String)
             _Family = family
             _Name = name
         End Sub
 
-        Friend ReadOnly Property Blocks() As List(Of GlobalBlock)
+        Public ReadOnly Property Blocks() As List(Of GlobalBlock)
             Get
                 If _Blocks Is Nothing Then _Blocks = New List(Of GlobalBlock)
                 Return _Blocks
             End Get
         End Property
 
-        Friend ReadOnly Property Config() As GlobalUserConfig
+        Public ReadOnly Property Config() As GlobalUserConfig
             Get
                 If _Config Is Nothing Then
                     If IsDefault Then
@@ -44,80 +44,80 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend ReadOnly Property Cookies() As CookieCollection
+        Public ReadOnly Property Cookies() As CookieCollection
             Get
                 If _Cookies Is Nothing Then _Cookies = New CookieCollection
                 Return _Cookies
             End Get
         End Property
 
-        Friend Property Created() As Date
+        Public Property Created() As Date
 
-        Friend ReadOnly Property Family() As Family
+        Public ReadOnly Property Family() As Family
             Get
                 Return _Family
             End Get
         End Property
 
-        Friend ReadOnly Property FullName() As String
+        Public ReadOnly Property FullName() As String
             Get
                 Return Name & "@" & Family.Code
             End Get
         End Property
 
-        Friend Property GlobalGroups() As List(Of GlobalGroup)
+        Public Property GlobalGroups() As List(Of GlobalGroup)
 
-        Friend ReadOnly Property HasAccountOn(ByVal wiki As Wiki) As Boolean
+        Public ReadOnly Property HasAccountOn(ByVal wiki As Wiki) As Boolean
             Get
                 Return Wikis.Contains(wiki)
             End Get
         End Property
 
-        Friend ReadOnly Property Home() As Wiki
+        Public ReadOnly Property Home() As Wiki
             Get
                 If PrimaryUser Is Nothing Then Return Nothing Else Return PrimaryUser.Wiki
             End Get
         End Property
 
-        Friend Property Id() As Integer
+        Public Property Id() As Integer
 
-        Friend Property IsActive() As Boolean
+        Public Property IsActive() As Boolean
 
-        Friend ReadOnly Property IsDefault() As Boolean
+        Public ReadOnly Property IsDefault() As Boolean
             Get
                 Return (Name = "[default]")
             End Get
         End Property
 
-        Friend Property IsHidden() As Boolean
+        Public Property IsHidden() As Boolean
 
-        Friend Property IsLocked() As Boolean
+        Public Property IsLocked() As Boolean
 
-        Friend ReadOnly Property Name() As String
+        Public ReadOnly Property Name() As String
             Get
                 Return _Name
             End Get
         End Property
 
-        Friend Property PrimaryUser() As User
+        Public Property PrimaryUser() As User
 
-        Friend Property Rights() As List(Of String)
+        Public Property Rights() As List(Of String)
 
-        Friend ReadOnly Property UserOn(ByVal wiki As Wiki) As User
+        Public ReadOnly Property UserOn(ByVal wiki As Wiki) As User
             Get
                 If Wikis.Contains(wiki) Then Return wiki.Users(Name)
                 Return Nothing
             End Get
         End Property
 
-        Friend ReadOnly Property Users() As List(Of User)
+        Public ReadOnly Property Users() As List(Of User)
             Get
                 If _Users Is Nothing Then _Users = New List(Of User)
                 Return _Users
             End Get
         End Property
 
-        Friend ReadOnly Property Wikis() As List(Of Wiki)
+        Public ReadOnly Property Wikis() As List(Of Wiki)
             Get
                 If _Wikis Is Nothing Then _Wikis = New List(Of Wiki)
                 Return _Wikis
@@ -137,24 +137,24 @@ Namespace Huggle
         Private ReadOnly _All As New Dictionary(Of String, GlobalUser)
         Private ReadOnly _Default As GlobalUser
 
-        Friend Sub New(ByVal family As Family)
+        Public Sub New(ByVal family As Family)
             Me.Family = family
             _Default = New GlobalUser(family, "[default]")
         End Sub
 
-        Friend ReadOnly Property All() As IEnumerable(Of GlobalUser)
+        Public ReadOnly Property All() As IEnumerable(Of GlobalUser)
             Get
                 Return _All.Values
             End Get
         End Property
 
-        Friend ReadOnly Property [Default]() As GlobalUser
+        Public ReadOnly Property [Default]() As GlobalUser
             Get
                 Return _Default
             End Get
         End Property
 
-        Default Friend ReadOnly Property FromName(ByVal name As String) As GlobalUser
+        Default Public ReadOnly Property FromName(ByVal name As String) As GlobalUser
             Get
                 If Not _All.ContainsKey(name) Then _All.Add(name, New GlobalUser(Family, name))
                 Return _All(name)

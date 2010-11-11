@@ -102,7 +102,7 @@
         Private WithEvents Result As DataView
         Private WithEvents Run As System.Windows.Forms.Button
         Private WithEvents Progress As System.Windows.Forms.Label
-        Friend WithEvents Indicator As WaitControl
+        Public WithEvents Indicator As WaitControl
 
     End Class
 End Namespace

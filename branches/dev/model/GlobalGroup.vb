@@ -11,14 +11,14 @@ Namespace Huggle
         Private ReadOnly _Family As Family
         Private ReadOnly _Name As String
 
-        Friend Sub New(ByVal family As Family, ByVal name As String)
+        Public Sub New(ByVal family As Family, ByVal name As String)
             _Family = family
             _Name = name
         End Sub
 
-        Friend Property Applicability As GlobalGroupApplicability
+        Public Property Applicability As GlobalGroupApplicability
 
-        Friend Function AppliesToWiki(ByVal wiki As Wiki) As Boolean
+        Public Function AppliesToWiki(ByVal wiki As Wiki) As Boolean
             Select Case Applicability
                 Case GlobalGroupApplicability.All : Return True
                 Case GlobalGroupApplicability.Exclusive : Return Wikis.Contains(wiki)
@@ -28,7 +28,7 @@ Namespace Huggle
             Return False
         End Function
 
-        Friend ReadOnly Property DisplayName As String
+        Public ReadOnly Property DisplayName As String
             Get
                 If Family.CentralWiki.Message("group-" & Name) IsNot Nothing _
                     Then Return Family.CentralWiki.Message("group-" & Name)
@@ -37,21 +37,21 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend ReadOnly Property Family() As Family
+        Public ReadOnly Property Family() As Family
             Get
                 Return _Family
             End Get
         End Property
 
-        Friend ReadOnly Property Name() As String
+        Public ReadOnly Property Name() As String
             Get
                 Return _Name
             End Get
         End Property
 
-        Friend Property Rights() As List(Of String)
+        Public Property Rights() As List(Of String)
 
-        Friend Property Wikis As List(Of Wiki)
+        Public Property Wikis As List(Of Wiki)
 
         Public Overrides Function ToString() As String
             Return _Name
@@ -59,7 +59,7 @@ Namespace Huggle
 
     End Class
 
-    Friend Enum GlobalGroupApplicability As Integer
+    Public Enum GlobalGroupApplicability As Integer
         : All : Exclusive : Inclusive
     End Enum
 
@@ -69,24 +69,24 @@ Namespace Huggle
 
         Private Family As Family
 
-        Friend Sub New(ByVal family As Family)
+        Public Sub New(ByVal family As Family)
             Me.Family = family
         End Sub
 
-        Friend ReadOnly Property All() As IList(Of GlobalGroup)
+        Public ReadOnly Property All() As IList(Of GlobalGroup)
             Get
                 Return _All.Values.ToList.AsReadOnly
             End Get
         End Property
 
-        Default Friend ReadOnly Property Item(ByVal code As String) As GlobalGroup
+        Default Public ReadOnly Property Item(ByVal code As String) As GlobalGroup
             Get
                 If Not _All.ContainsKey(code) Then _All.Add(code, New GlobalGroup(Family, code))
                 Return _All(code)
             End Get
         End Property
 
-        Friend Sub Clear()
+        Public Sub Clear()
             _All.Clear()
         End Sub
 

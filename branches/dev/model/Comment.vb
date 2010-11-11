@@ -13,44 +13,44 @@ Namespace Huggle
         Private ReadOnly _Id As Integer
         Private ReadOnly _Wiki As Wiki
 
-        Friend Sub New(ByVal wiki As Wiki, ByVal id As Integer)
+        Public Sub New(ByVal wiki As Wiki, ByVal id As Integer)
             _Id = id
             _Wiki = wiki
         End Sub
 
-        Friend Property Author() As User
+        Public Property Author() As User
 
-        Friend Property ContentPageID() As Integer = -1
+        Public Property ContentPageID() As Integer = -1
 
-        Friend Property Created() As Date
+        Public Property Created() As Date
 
-        Friend ReadOnly Property HasSummary() As Boolean
+        Public ReadOnly Property HasSummary() As Boolean
             Get
                 Return (_SummaryPageID > 0)
             End Get
         End Property
 
-        Friend ReadOnly Property Id() As Integer
+        Public ReadOnly Property Id() As Integer
             Get
                 Return _Id
             End Get
         End Property
 
-        Friend Property Modified() As Date
+        Public Property Modified() As Date
 
-        Friend Property Page() As Page
+        Public Property Page() As Page
 
-        Friend Property Parent() As Comment
+        Public Property Parent() As Comment
 
-        Friend Property Prev() As Comment
+        Public Property Prev() As Comment
 
-        Friend Property SummaryPageID() As Integer = -1
+        Public Property SummaryPageID() As Integer = -1
 
-        Friend Property Title() As String
+        Public Property Title() As String
 
-        Friend Property Type() As Integer
+        Public Property Type() As Integer
 
-        Friend ReadOnly Property Wiki() As Wiki
+        Public ReadOnly Property Wiki() As Wiki
             Get
                 Return _Wiki
             End Get
@@ -63,17 +63,17 @@ Namespace Huggle
         Private Wiki As Wiki
         Private ReadOnly _All As New Dictionary(Of Integer, Comment)
 
-        Friend Sub New(ByVal wiki As Wiki)
+        Public Sub New(ByVal wiki As Wiki)
             Me.Wiki = wiki
         End Sub
 
-        Friend ReadOnly Property All() As Dictionary(Of Integer, Comment)
+        Public ReadOnly Property All() As Dictionary(Of Integer, Comment)
             Get
                 Return _All
             End Get
         End Property
 
-        Default Friend ReadOnly Property Item(ByVal id As Integer) As Comment
+        Default Public ReadOnly Property Item(ByVal id As Integer) As Comment
             Get
                 If Not All.ContainsKey(id) Then All.Add(id, New Comment(Wiki, id))
                 Return All(id)

@@ -11,7 +11,10 @@ Namespace Huggle
 
     Friend Module WikiFunctions
 
-        Friend Function ParseWikiUrl(ByVal uri As Uri) As Dictionary(Of String, String)
+        Private ReadOnly hiddenPattern As New Regex(
+            "<([a-z]+) [^/>]*?style *= *[""']display: *none[""'][^/>]*?/?>", RegexOptions.Compiled)
+
+        Public Function ParseWikiUrl(ByVal uri As Uri) As Dictionary(Of String, String)
             Dim params As New Dictionary(Of String, String)
             Dim url As String = uri.ToString
 
@@ -47,19 +50,16 @@ Namespace Huggle
             Return params
         End Function
 
-        Friend Function WikiStripMarkup(ByVal text As String) As String
+        Public Function WikiStripMarkup(ByVal text As String) As String
             If text Is Nothing Then Return Nothing
 
             'Remove CSS-hidden text
-            Dim hiddenPattern As New Regex( _
-                "<([a-z]+) [^/>]*?style *= *[""']display: *none[""'][^/>]*?/?>", RegexOptions.Compiled)
-
-            For Each item As Match In hiddenPattern.Matches(text)
-                If item.Value.EndsWithI("/>") Then
+            For Each match As Match In hiddenPattern.Matches(text)
+                If match.Value.EndsWithI("/>") Then
                     text = text.Remove(">")
                 Else
-                    Dim hiddenText As String = item.Value
-                    Dim remaining As String = text.FromFirst(item.Value)
+                    Dim hiddenText As String = match.Value
+                    Dim remaining As String = text.FromFirst(match.Value)
                     Dim nestingDepth As Integer = 1
                     Dim hpos As Integer = remaining.IndexOfPattern("[<>]")
 
@@ -77,7 +77,7 @@ Namespace Huggle
 
                     text = text.Remove(hiddenText)
                 End If
-            Next item
+            Next match
 
             'Strip wikilinks
             While text.Contains("[[") AndAlso text.IndexOfI("[[") < text.IndexOfI("]]")
@@ -105,7 +105,7 @@ Namespace Huggle
             Return text
         End Function
 
-        Friend Function WikiStripSummary(ByVal summary As String) As String
+        Public Function WikiStripSummary(ByVal summary As String) As String
             If summary Is Nothing Then Return Nothing
 
             While summary.IndexOfI("[[") > -1 AndAlso summary.IndexOfI("[[") < summary.IndexOfI("]]")
@@ -121,7 +121,7 @@ Namespace Huggle
             Return summary
         End Function
 
-        Friend Function WikiSummaryToHtml(ByVal text As String) As String
+        Public Function WikiSummaryToHtml(ByVal text As String) As String
             'Text = Regex.Replace(Text, "\[\[([^\]\|]+)\]\]", _
             '    "<a href='{0}$1' title='$1'>$1</a>".FormatWith(Wiki.Current.ShortPath))
             'Text = Regex.Replace(Text, "\[\[([^\]\|]+)\|([^\]\|]+)\]\]", _
@@ -129,7 +129,7 @@ Namespace Huggle
             Return text
         End Function
 
-        Friend Function WikiSummaryHtmlToWikitext(ByVal text As String) As String
+        Public Function WikiSummaryHtmlToWikitext(ByVal text As String) As String
             'Serves as a VERY basic "reverse" HTML-to-wikitext parser, mostly for screen-scraping purposes
             text = Regex.Replace(text, "<a href=""/[^""]+"" title=""([^""]+)""[^>]*>([^<]+)</a>", "[[${1}|${2}]]")
             text = text.Replace("</p><p>", CRLF)
@@ -138,13 +138,13 @@ Namespace Huggle
         End Function
 
         'Converts a timestamp from MediaWiki's internal format
-        Friend Function FromWikiTimestamp(ByVal ts As String) As Date
+        Public Function FromWikiTimestamp(ByVal ts As String) As Date
             Return New Date(CInt(ts.Substring(0, 4)), CInt(ts.Substring(4, 2)), CInt(ts.Substring(6, 2)),
                 CInt(ts.Substring(8, 2)), CInt(ts.Substring(10, 2)), CInt(ts.Substring(12, 2)), DateTimeKind.Utc)
         End Function
 
         'Returns a timestamp in MediaWiki's internal format
-        Friend Function WikiTimestamp(ByVal time As Date) As String
+        Public Function WikiTimestamp(ByVal time As Date) As String
             If time = Date.MaxValue Then Return "never"
             time = time.ToUniversalTime
 
@@ -153,13 +153,13 @@ Namespace Huggle
                 time.Second.ToStringI.PadLeft(2, "0"c)
         End Function
 
-        Friend Function WikiUrlEncode(ByVal text As String) As String
+        Public Function WikiUrlEncode(ByVal text As String) As String
             Return UrlEncode(text.Replace(" ", "_"))
         End Function
 
         'Determines whether a string corresponds to a MediaWiki
         'message and extracts the values of any parameters
-        Friend Function MessageMatch(ByVal message As String, ByVal text As String) As Match
+        Public Function MessageMatch(ByVal message As String, ByVal text As String) As Match
             Static noMatch As Match = Regex.Match("", ".", RegexOptions.Compiled)
 
             If message Is Nothing Then Return noMatch
@@ -174,7 +174,7 @@ Namespace Huggle
             Return Regex.Match(text, pattern)
         End Function
 
-        Friend Function FormatMwMessage(ByVal message As String, ByVal ParamArray Params() As Object) As String
+        Public Function FormatMwMessage(ByVal message As String, ByVal ParamArray Params() As Object) As String
             For i As Integer = 0 To Params.Length - 1
                 message = message.Replace("$" & CStr(i + 1), Params(i).ToString)
             Next i
@@ -182,7 +182,7 @@ Namespace Huggle
             Return message
         End Function
 
-        Friend Function MwMessagePattern(ByVal message As String, ByVal ParamArray paramPatterns() As String) As String
+        Public Function MwMessagePattern(ByVal message As String, ByVal ParamArray paramPatterns() As String) As String
             'Hacky matching of PLURAL: function because some messages use it
             Dim result As String = Regex.Replace(message, "\{\{PLURAL:(.*)\|(.*)\}\}", "($1\|$2)")
 
@@ -206,7 +206,7 @@ Namespace Huggle
             Return result
         End Function
 
-        Friend Function EscapeMwMessage(ByVal message As String) As String
+        Public Function EscapeMwMessage(ByVal message As String) As String
             Dim i As Integer = 1
 
             While message.Contains("$" & CStr(i))
@@ -224,17 +224,17 @@ Namespace Huggle
             Return message
         End Function
 
-        Friend Function EscapeWikitext(ByVal text As String) As String
+        Public Function EscapeWikitext(ByVal text As String) As String
             Return "<nowiki>" & text & "</nowiki>"
         End Function
 
-        Friend Function WikitextOrderedList(ByVal list As ArrayList) As Wikistring
+        Public Function WikitextOrderedList(ByVal list As ArrayList) As Wikistring
             Dim lines As New List(Of Wikistring)
             WikitextList(list, 1, lines, "#"c)
             Return New Wikistring(lines.Join(CRLF))
         End Function
 
-        Friend Function WikitextUnorderedList(ByVal list As ArrayList) As Wikistring
+        Public Function WikitextUnorderedList(ByVal list As ArrayList) As Wikistring
             Dim lines As New List(Of Wikistring)
             WikitextList(list, 1, lines, "*"c)
             Return New Wikistring(lines.Join(CRLF))
@@ -258,11 +258,11 @@ Namespace Huggle
 
         Private _Value As String
 
-        Friend Sub New(ByVal value As String)
+        Public Sub New(ByVal value As String)
             _Value = value
         End Sub
 
-        Friend ReadOnly Property Value() As String
+        Public ReadOnly Property Value() As String
             Get
                 Return _Value
             End Get
@@ -279,20 +279,20 @@ Namespace Huggle
         Private _Id As String
         Private _Image As Image
 
-        Friend Sub New(ByVal id As String, ByVal image As Image)
+        Public Sub New(ByVal id As String, ByVal image As Image)
             _Id = id
             _Image = image
         End Sub
 
-        Friend Property Answer As String
+        Public Property Answer As String
 
-        Friend ReadOnly Property Id As String
+        Public ReadOnly Property Id As String
             Get
                 Return _Id
             End Get
         End Property
 
-        Friend ReadOnly Property Image As Image
+        Public ReadOnly Property Image As Image
             Get
                 Return _Image
             End Get

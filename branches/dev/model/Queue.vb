@@ -24,14 +24,14 @@ Namespace Huggle
 
         Private Shared WithEvents Timer As New Windows.Forms.Timer
 
-        Friend Event ItemsChanged As SimpleEventHandler(Of Queue)
+        Public Event ItemsChanged As SimpleEventHandler(Of Queue)
 
         Shared Sub New()
             Timer.Interval = 10000
             Timer.Start()
         End Sub
 
-        Friend Sub New(ByVal wiki As Wiki, ByVal name As String)
+        Public Sub New(ByVal wiki As Wiki, ByVal name As String)
             _Enabled = True
             _Items = New SortedList(Of QueueItem)(AddressOf CompareByQuality)
             _MaximumSize = 5000
@@ -45,21 +45,21 @@ Namespace Huggle
             _Wiki = wiki
         End Sub
 
-        Friend Property DefaultMode() As QueueMode
+        Public Property DefaultMode() As QueueMode
 
-        Friend Property Enabled() As Boolean
+        Public Property Enabled() As Boolean
 
-        Friend Property EnableOnSelect() As Boolean
+        Public Property EnableOnSelect() As Boolean
 
-        Friend Property Filter() As String
+        Public Property Filter() As String
 
-        Friend ReadOnly Property Items() As SortedList(Of QueueItem)
+        Public ReadOnly Property Items() As SortedList(Of QueueItem)
             Get
                 Return _Items
             End Get
         End Property
 
-        Friend Property MaximumAge() As TimeSpan
+        Public Property MaximumAge() As TimeSpan
             Get
                 Return _MaximumAge
             End Get
@@ -69,11 +69,11 @@ Namespace Huggle
             End Set
         End Property
 
-        Friend Property MaximumSize() As Integer
+        Public Property MaximumSize() As Integer
 
-        Friend Property Mode() As QueueMode
+        Public Property Mode() As QueueMode
 
-        Friend Property Name() As String
+        Public Property Name() As String
             Get
                 Return _Name
             End Get
@@ -83,33 +83,33 @@ Namespace Huggle
             End Set
         End Property
 
-        Friend Property Preload() As Boolean
+        Public Property Preload() As Boolean
 
-        Friend Shared ReadOnly Property Preloads() As Integer
+        Public Shared ReadOnly Property Preloads() As Integer
             Get
                 Return 2
             End Get
         End Property
 
-        Friend Property QueryReAdd() As Boolean
+        Public Property QueryReAdd() As Boolean
 
-        Friend Property ReEvaluate() As Boolean
+        Public Property ReEvaluate() As Boolean
 
-        Friend ReadOnly Property Refreshing() As Boolean
+        Public ReadOnly Property Refreshing() As Boolean
             Get
                 Return _Refreshing
             End Get
         End Property
 
-        Friend Property RemoveContribs() As Boolean
+        Public Property RemoveContribs() As Boolean
 
-        Friend Property RemoveHistory() As Boolean
+        Public Property RemoveHistory() As Boolean
 
-        Friend Property RemoveViewed() As Boolean
+        Public Property RemoveViewed() As Boolean
 
-        Friend Property Selected() As Boolean
+        Public Property Selected() As Boolean
 
-        Friend Property SortOrder() As QueueSortOrder
+        Public Property SortOrder() As QueueSortOrder
             Get
                 Return _SortOrder
             End Get
@@ -123,7 +123,7 @@ Namespace Huggle
             End Set
         End Property
 
-        Friend Property Source() As IQueueSource
+        Public Property Source() As IQueueSource
             Get
                 Return _Source
             End Get
@@ -133,7 +133,7 @@ Namespace Huggle
             End Set
         End Property
 
-        Friend ReadOnly Property SourceType() As QueueSourceType
+        Public ReadOnly Property SourceType() As QueueSourceType
             Get
                 If TypeOf Source Is RcSource Then
                     Return QueueSourceType.Rc
@@ -147,13 +147,13 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend ReadOnly Property Wiki() As Wiki
+        Public ReadOnly Property Wiki() As Wiki
             Get
                 Return _Wiki
             End Get
         End Property
 
-        Friend Sub Clear()
+        Public Sub Clear()
             Items.Clear()
             If Source IsNot Nothing Then Source.Reset()
             CreateThread(AddressOf OnItemsChanged)
@@ -250,7 +250,7 @@ Namespace Huggle
             Return _Name
         End Function
 
-        Friend Sub View(ByVal item As QueueItem)
+        Public Sub View(ByVal item As QueueItem)
             If Items.Contains(item) Then
                 Viewed.Add(item)
 
@@ -304,17 +304,17 @@ Namespace Huggle
         Private ReadOnly _All As New Dictionary(Of String, Queue)
         Private _Default As Queue
 
-        Friend Sub New(ByVal wiki As Wiki)
+        Public Sub New(ByVal wiki As Wiki)
             Me.Wiki = wiki
         End Sub
 
-        Friend ReadOnly Property All() As IList(Of Queue)
+        Public ReadOnly Property All() As IList(Of Queue)
             Get
                 Return _All.Values.ToList.AsReadOnly
             End Get
         End Property
 
-        Friend Property [Default]() As Queue
+        Public Property [Default]() As Queue
             Get
                 Return _Default
             End Get
@@ -323,33 +323,33 @@ Namespace Huggle
             End Set
         End Property
 
-        Default Friend ReadOnly Property Item(ByVal name As String) As Queue
+        Default Public ReadOnly Property Item(ByVal name As String) As Queue
             Get
                 If Not _All.ContainsKey(name) Then _All.Add(name, New Queue(Wiki, name))
                 Return _All(name)
             End Get
         End Property
 
-        Friend Sub Rename(ByVal queue As Queue, ByVal newName As String)
+        Public Sub Rename(ByVal queue As Queue, ByVal newName As String)
             _All.Unmerge(queue.Name)
             _All.Merge(newName, queue)
         End Sub
 
     End Class
 
-    Friend Enum QueueFilterMatch As Integer
+    Public Enum QueueFilterMatch As Integer
         : Require : Exclude
     End Enum
 
-    Friend Enum QueueMode As Integer
+    Public Enum QueueMode As Integer
         : Diff : View : Edit
     End Enum
 
-    Friend Enum QueueSortOrder As Integer
+    Public Enum QueueSortOrder As Integer
         : Time : Quality
     End Enum
 
-    Friend Enum QueueSourceType As Integer
+    Public Enum QueueSourceType As Integer
         : Rc : Query : List
     End Enum
 

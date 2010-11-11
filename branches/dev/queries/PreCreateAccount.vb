@@ -8,17 +8,17 @@ Namespace Huggle.Actions
 
         Private _Confirmation As Confirmation
 
-        Friend Sub New(ByVal wiki As Wiki)
+        Public Sub New(ByVal wiki As Wiki)
             MyBase.New(App.Sessions(wiki.Users.Anonymous), Msg("createaccount-desc"))
         End Sub
 
-        Friend ReadOnly Property Confirmation As Confirmation
+        Public ReadOnly Property Confirmation As Confirmation
             Get
                 Return _Confirmation
             End Get
         End Property
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             OnProgress(Msg("createaccount-confirm", Wiki))
 
             'Load title blacklist
@@ -38,13 +38,14 @@ Namespace Huggle.Actions
                 'Image captcha, find the image and fetch it
                 Wiki.AccountConfirmation = True
 
-                Dim confirmId As String = req.Response.FromFirst("?title=Special:Captcha/image").FromFirst("=").ToFirst("""")
+                Dim confirmId As String = req.Response.FromFirst(
+                    "?title=Special:Captcha/image").FromFirst("=").ToFirst("""")
 
-                Dim imageQuery As New QueryString( _
-                    "title", "Special:Captcha/image", _
+                Dim imageQuery As New QueryString(
+                    "title", "Special:Captcha/image",
                     "wpCaptchaId", confirmId)
 
-                Dim imageReq As New FileRequest(Session, New Uri(Wiki.Url.ToString & "index.php?" & imageQuery.ToUrlString))
+                Dim imageReq As New FileRequest(New Uri(Wiki.Url.ToString & "index.php?" & imageQuery.ToUrlString))
 
                 imageReq.Start()
                 If imageReq.Result.IsError Then OnFail(imageReq.Result) : Return
@@ -52,11 +53,11 @@ Namespace Huggle.Actions
                 Dim confirmImage As Image
 
                 Try
-                    confirmImage = New Bitmap(imageReq.File)
+                    confirmImage = New Bitmap(imageReq.Response)
                 Catch ex As SystemException
                     OnFail(Msg("createaccount-brokenconfirm")) : Return
                 Finally
-                    imageReq.File.Close()
+                    imageReq.Response.Close()
                 End Try
 
                 _Confirmation = New Confirmation(confirmId, confirmImage)

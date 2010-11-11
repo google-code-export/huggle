@@ -8,7 +8,7 @@
 
 '        Private Target As User
 
-'        Friend Sub New(ByVal Account As User, ByVal User As User)
+'        Public Sub New(ByVal Account As User, ByVal User As User)
 '            MyBase.New(Account)
 '            Me.User = User
 '        End Sub

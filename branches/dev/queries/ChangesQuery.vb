@@ -6,12 +6,12 @@
 
         Private _Limit As Integer
 
-        Friend Sub New(ByVal session As Session)
+        Public Sub New(ByVal session As Session)
             MyBase.New(session, Msg("changes-desc"))
             Limit = User.ApiLimit
         End Sub
 
-        Friend Property Limit() As Integer
+        Public Property Limit() As Integer
             Get
                 Return _Limit
             End Get
@@ -20,7 +20,7 @@
             End Set
         End Property
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             OnProgress(Msg("changes-progress"))
             OnStarted()
 

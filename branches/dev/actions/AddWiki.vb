@@ -20,38 +20,38 @@ Namespace Huggle.Actions
         Private Shared ReadOnly newUrlRegex As New Regex _
             ("< *script[^>]*src *= *""([^""]*)/load.php", RegexOptions.Compiled Or RegexOptions.Singleline)
 
-        Friend Sub New(ByVal url As Uri)
+        Public Sub New(ByVal url As Uri)
             Me.New(url, Nothing, Nothing)
         End Sub
 
-        Friend Sub New(ByVal url As Uri, ByVal username As String, ByVal password As String)
+        Public Sub New(ByVal url As Uri, ByVal username As String, ByVal password As String)
             Me.Url = url
             Me.Username = username
             Me.Password = password
         End Sub
 
-        Friend ReadOnly Property User As User
+        Public ReadOnly Property User As User
             Get
                 Return _User
             End Get
         End Property
 
-        Friend Shadows ReadOnly Property Wiki As Wiki
+        Public Shadows ReadOnly Property Wiki As Wiki
             Get
                 Return _Wiki
             End Get
         End Property
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             OnProgress(Msg("addwiki-progress"))
 
-            Dim testReq As New FileRequest(Nothing, Url)
-            testReq.Start()
-            If testReq.IsFailed Then OnFail(Msg("addwiki-connection")) : Return
+            'Test connection to the wiki
+            Dim req As New TextRequest(Url)
+            req.Start()
+            If req.IsFailed Then OnFail(Msg("addwiki-connection")) : Return
 
-            Dim response As String = Encoding.UTF8.GetString(testReq.File.ToArray)
-            Dim oldMatch As Match = oldUrlRegex.Match(response)
-            Dim newMatch As Match = newUrlRegex.Match(response)
+            Dim oldMatch As Match = oldUrlRegex.Match(req.Response)
+            Dim newMatch As Match = newUrlRegex.Match(req.Response)
             Dim siteUrl As Uri
 
             If oldMatch.Success Then

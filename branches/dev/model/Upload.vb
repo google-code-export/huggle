@@ -8,7 +8,7 @@ Namespace Huggle
 
         Private _File As String
 
-        Friend Sub New(ByVal time As Date, ByVal action As String, ByVal user As User, _
+        Public Sub New(ByVal time As Date, ByVal action As String, ByVal user As User, _
             ByVal file As String, ByVal comment As String, ByVal id As Integer, ByVal rcid As Integer)
 
             MyBase.New(user.Wiki, Id, rcid)
@@ -20,13 +20,13 @@ Namespace Huggle
             _File = file
         End Sub
 
-        Friend ReadOnly Property File() As String
+        Public ReadOnly Property File() As String
             Get
                 Return _File
             End Get
         End Property
 
-        Friend Overrides ReadOnly Property Target() As String
+        Public Overrides ReadOnly Property Target() As String
             Get
                 Return _File
             End Get

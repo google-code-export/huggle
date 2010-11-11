@@ -11,9 +11,9 @@
 '        Private Filename As String
 '        Private Complete, Total As Integer
 
-'        Friend Event UpdateProgress As EventHandler(Of UpdateRequest, UpdateProgressEventArgs)
+'        Public Event UpdateProgress As EventHandler(Of UpdateRequest, UpdateProgressEventArgs)
 
-'        Friend Sub New(ByVal Account As User, ByVal Filename As String)
+'        Public Sub New(ByVal Account As User, ByVal Filename As String)
 '            MyBase.New(Account)
 '            Me.Filename = Filename
 '        End Sub
@@ -65,18 +65,18 @@
 
 '        Private _Complete, _Total As Integer
 
-'        Friend Sub New(ByVal Complete As Integer, ByVal Total As Integer)
+'        Public Sub New(ByVal Complete As Integer, ByVal Total As Integer)
 '            _Complete = Complete
 '            _Total = Total
 '        End Sub
 
-'        Friend ReadOnly Property Complete() As Integer
+'        Public ReadOnly Property Complete() As Integer
 '            Get
 '                Return _Complete
 '            End Get
 '        End Property
 
-'        Friend ReadOnly Property Total() As Integer
+'        Public ReadOnly Property Total() As Integer
 '            Get
 '                Return _Total
 '            End Get

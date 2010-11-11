@@ -8,7 +8,7 @@ Namespace Huggle.UI
         Private Requester As String
         Private User As User
 
-        Friend Sub New(ByVal user As User, ByVal requester As String)
+        Public Sub New(ByVal user As User, ByVal requester As String)
             InitializeComponent()
             Me.Requester = requester
             Me.User = user

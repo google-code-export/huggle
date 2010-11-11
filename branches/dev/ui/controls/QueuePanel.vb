@@ -6,7 +6,7 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Class QueuePanel
+    Friend Class QueuePanel
 
         Private Gfx As BufferedGraphics, CanRender As Boolean
         Private _Mode As QueueMode
@@ -14,12 +14,12 @@ Namespace Huggle.UI
 
         Private WithEvents _Queue As Queue
 
-        Friend Event ItemsChanged As SimpleEventHandler(Of Queue)
-        Friend Event ItemSelected As EventHandler(Of QueuePanelItemSelectedEventArgs)
-        Friend Event OptionsClicked As SimpleEventHandler(Of QueuePanel)
-        Friend Event SelectedQueueChanged As SimpleEventHandler(Of QueuePanel)
+        Public Event ItemsChanged As SimpleEventHandler(Of Queue)
+        Public Event ItemSelected As EventHandler(Of QueuePanelItemSelectedEventArgs)
+        Public Event OptionsClicked As SimpleEventHandler(Of QueuePanel)
+        Public Event SelectedQueueChanged As SimpleEventHandler(Of QueuePanel)
 
-        Friend Sub New(ByVal wiki As Wiki)
+        Public Sub New(ByVal wiki As Wiki)
             InitializeComponent()
             _Wiki = wiki
             Queues.Items.AddRange(wiki.Queues.All.ToArray)
@@ -30,7 +30,7 @@ Namespace Huggle.UI
             If App.Languages.Current IsNot Nothing Then App.Languages.Current.Localize(Me)
         End Sub
 
-        Friend Property Mode() As QueueMode
+        Public Property Mode() As QueueMode
             Get
                 Return _Mode
             End Get
@@ -39,7 +39,7 @@ Namespace Huggle.UI
             End Set
         End Property
 
-        Friend Property Queue() As Queue
+        Public Property Queue() As Queue
             Get
                 Return _Queue
             End Get
@@ -60,7 +60,7 @@ Namespace Huggle.UI
             End Set
         End Property
 
-        Friend ReadOnly Property Wiki() As Wiki
+        Public ReadOnly Property Wiki() As Wiki
             Get
                 Return _Wiki
             End Get
@@ -76,14 +76,14 @@ Namespace Huggle.UI
 
         Private Sub _MouseDown(ByVal s As Object, ByVal e As MouseEventArgs) Handles Me.MouseDown
             If Queue IsNot Nothing Then
-                Dim Index As Integer = (e.Y - 2 - Count.Bottom) \ 20 + ScrollBar.Value
+                Dim Index As Integer = (e.Y - 2 - Count.Bottom) \ 20 + Scrollbar.Value
 
                 If Index > -1 AndAlso Index < Queue.Items.Count _
                     Then RaiseEvent ItemSelected(Queue, New QueuePanelItemSelectedEventArgs(Queue, Queue.Items(Index)))
             End If
         End Sub
 
-        Private Sub _Paint() Handles Me.Paint, ScrollBar.Scroll
+        Private Sub _Paint() Handles Me.Paint, Scrollbar.Scroll
             If Queue Is Nothing Then Return
             If Gfx Is Nothing Then Gfx = BufferedGraphicsManager.Current.Allocate(CreateGraphics, DisplayRectangle)
             Dim X, Y As Integer
@@ -94,21 +94,18 @@ Namespace Huggle.UI
                 Else Count.Text = Msg("main-queue-count", CStr(Queue.Items.Count))
 
             For i As Integer = 0 To Length
-                If ScrollBar.Value + i > Queue.Items.Count - 1 Then
-                    ScrollBar.Value -= 1
+                If Scrollbar.Value + i > Queue.Items.Count - 1 Then
+                    Scrollbar.Value -= 1
                     Exit For
                 End If
 
-                Dim Item As QueueItem = Queue.Items(i + ScrollBar.Value)
+                Dim Item As QueueItem = Queue.Items(i + Scrollbar.Value)
 
-                X = ScrollBar.Left - 20
+                X = Scrollbar.Left - 20
                 Y = (i * 20) + Count.Bottom + 4
 
-                Gfx.Graphics.FillRectangle(Brushes.DarkGray, 2, Y - 1, ScrollBar.Left - 5, 18)
-
-                Using backgroundPen As New Pen(Item.LabelBackColor)
-                    Gfx.Graphics.FillRectangle(backgroundPen.Brush, 3, Y, ScrollBar.Left - 7, 16)
-                End Using
+                Gfx.Graphics.FillRectangle(Brushes.DarkGray, 2, Y - 1, Scrollbar.Left - 5, 18)
+                Gfx.Graphics.FillRectangle(New SolidBrush(Item.LabelBackColor), 3, Y, Scrollbar.Left - 7, 16)
 
                 Using labelFont As New Font(Font, Item.LabelStyle)
                     TextRenderer.DrawText(Gfx.Graphics, Item.Label, labelFont,
@@ -189,7 +186,7 @@ Namespace Huggle.UI
             UpdateItems()
         End Sub
 
-        Friend Sub Reset() Handles ResetButton.Click
+        Public Sub Reset() Handles ResetButton.Click
             If Queue IsNot Nothing Then Queue.Clear()
         End Sub
 
@@ -198,13 +195,13 @@ Namespace Huggle.UI
                 Dim QueueHeight As Integer = (Height \ 20) - 2
 
                 If QueueHeight < Queue.Items.Count Then
-                    ScrollBar.Visible = True
-                    ScrollBar.Maximum = Math.Max(0, Queue.Items.Count - 2)
-                    ScrollBar.SmallChange = 1
-                    ScrollBar.LargeChange = Math.Max(1, QueueHeight)
+                    Scrollbar.Visible = True
+                    Scrollbar.Maximum = Math.Max(0, Queue.Items.Count - 2)
+                    Scrollbar.SmallChange = 1
+                    Scrollbar.LargeChange = Math.Max(1, QueueHeight)
                 Else
-                    ScrollBar.Visible = False
-                    ScrollBar.Value = 0
+                    Scrollbar.Visible = False
+                    Scrollbar.Value = 0
                 End If
             End If
 
@@ -234,18 +231,18 @@ Namespace Huggle.UI
         Private _Item As QueueItem
         Private _Queue As Queue
 
-        Friend Sub New(ByVal queue As Queue, ByVal item As QueueItem)
+        Public Sub New(ByVal queue As Queue, ByVal item As QueueItem)
             _Item = item
             _Queue = queue
         End Sub
 
-        Friend ReadOnly Property Item() As QueueItem
+        Public ReadOnly Property Item() As QueueItem
             Get
                 Return _Item
             End Get
         End Property
 
-        Friend ReadOnly Property Queue As Queue
+        Public ReadOnly Property Queue As Queue
             Get
                 Return _Queue
             End Get

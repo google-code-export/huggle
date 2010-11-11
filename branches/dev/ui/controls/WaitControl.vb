@@ -7,7 +7,7 @@ Imports System.Windows.Forms
 
 Namespace Huggle.UI
 
-    Class WaitControl : Inherits Control
+    Friend Class WaitControl : Inherits Control
 
         Private _TextPosition As WaitTextPosition
 
@@ -24,18 +24,18 @@ Namespace Huggle.UI
         Private WithEvents AttachedProcess As Process
         Private Callback As SimpleEventHandler(Of Process)
 
-        Friend Sub New()
+        Public Sub New()
             TabStop = False
         End Sub
 
-        Friend ReadOnly Property IsRunning As Boolean
+        Public ReadOnly Property IsRunning As Boolean
             Get
                 Return (Timer.Enabled)
             End Get
         End Property
 
         <DefaultValue(WaitTextPosition.None)>
-        Friend Property TextPosition As WaitTextPosition
+        Public Property TextPosition As WaitTextPosition
             Get
                 Return _TextPosition
             End Get
@@ -50,9 +50,7 @@ Namespace Huggle.UI
             Timer.Interval = 80
 
             For i As Integer = 0 To Frames - 1
-                Using pen As New Pen(Color.FromArgb(Math.Max(80, 255 - CInt(255 * i / Frames)), 0, 0, 0))
-                    Brushes.Add(pen.Brush)
-                End Using
+                Brushes.Add(New SolidBrush(Color.FromArgb(Math.Max(80, 255 - CInt(255 * i / Frames)), 0, 0, 0)))
             Next i
         End Sub
 
@@ -82,7 +80,7 @@ Namespace Huggle.UI
                     Height = 16
 
                 Case WaitTextPosition.Horizontal
-                    Width = 80 + TextRenderer.MeasureText(Text, Font).Width
+                    Width = 24 + TextRenderer.MeasureText(Text, Font).Width
                     Height = 16
 
                 Case WaitTextPosition.Vertical
@@ -121,15 +119,15 @@ Namespace Huggle.UI
                 Dim ax As Single = x - 8 + CSng(AnimationSize * (1 + Math.Sin(r)))
                 Dim ay As Single = y - 8 + CSng(AnimationSize * (1 + Math.Cos(r)))
 
-                Gfx.Graphics.FillEllipse(Brushes((i + Frame) Mod Frames), ax, ay, 3.5, 3.5)
+                Gfx.Graphics.FillEllipse(Brushes((i + Frame) Mod Frames), ax, ay, 3.5F, 3.5F)
             Next i
         End Sub
 
-        Friend Sub Start()
+        Public Sub Start()
             Timer.Start()
         End Sub
 
-        Friend Sub [Stop]()
+        Public Sub [Stop]()
             Timer.Stop()
 
             If CanRender Then
@@ -138,7 +136,7 @@ Namespace Huggle.UI
             End If
         End Sub
 
-        Friend Sub WaitOn(ByVal process As Process, ByVal callback As SimpleEventHandler(Of Process))
+        Public Sub WaitOn(ByVal process As Process, ByVal callback As SimpleEventHandler(Of Process))
             If process.IsComplete Then
                 [Stop]()
                 callback(Me, New EventArgs(Of Process)(process))
@@ -155,7 +153,7 @@ Namespace Huggle.UI
             Callback(Me, New EventArgs(Of Process)(AttachedProcess))
         End Sub
 
-        Friend Enum WaitTextPosition As Integer
+        Public Enum WaitTextPosition As Integer
             : None : Horizontal : Vertical
         End Enum
 

@@ -18,7 +18,7 @@ Namespace Huggle
         Private _Sessions As SessionCollection
         Private _Wikis As WikiCollection
 
-        Friend Sub Run()
+        Public Sub Run()
             Windows.Forms.Application.EnableVisualStyles()
             Windows.Forms.Application.SetCompatibleTextRenderingDefault(False)
 
@@ -41,7 +41,7 @@ Namespace Huggle
             'Load configuration
             InternalConfig.Initialize()
             Config.Local.LoadLocal()
-            LoadMessages()
+            MessageConfig.Initialize()
             Config.Global.LoadLocal()
 
             'Show first-time preferences form
@@ -114,79 +114,79 @@ Namespace Huggle
             End While
         End Sub
 
-        Friend ReadOnly Property Families() As FamilyCollection
+        Public ReadOnly Property Families() As FamilyCollection
             Get
                 If _Families Is Nothing Then _Families = New FamilyCollection
                 Return _Families
             End Get
         End Property
 
-        Friend ReadOnly Property IsMono() As Boolean
+        Public ReadOnly Property IsMono() As Boolean
             Get
                 Return Type.GetType("Mono.Runtime", False) IsNot Nothing
             End Get
         End Property
 
-        Friend ReadOnly Property Languages() As LanguageCollection
+        Public ReadOnly Property Languages() As LanguageCollection
             Get
                 If _Languages Is Nothing Then _Languages = New LanguageCollection
                 Return _Languages
             End Get
         End Property
 
-        Friend ReadOnly Property Name As String
+        Public ReadOnly Property Name As String
             Get
                 Return Windows.Forms.Application.ProductName
             End Get
         End Property
 
-        Friend ReadOnly Property Randomness As Random
+        Public ReadOnly Property Randomness As Random
             Get
                 Return _Randomness
             End Get
         End Property
 
-        Friend ReadOnly Property Sessions() As SessionCollection
+        Public ReadOnly Property Sessions() As SessionCollection
             Get
                 If _Sessions Is Nothing Then _Sessions = New SessionCollection
                 Return _Sessions
             End Get
         End Property
 
-        Friend ReadOnly Property Version As Version
+        Public ReadOnly Property Version As Version
             Get
                 Return Reflection.Assembly.GetExecutingAssembly.GetName.Version
             End Get
         End Property
 
-        Friend ReadOnly Property VersionString As String
+        Public ReadOnly Property VersionString As String
             Get
                 Return Windows.Forms.Application.ProductVersion
             End Get
         End Property
 
-        Friend ReadOnly Property Wikis() As WikiCollection
+        Public ReadOnly Property Wikis() As WikiCollection
             Get
                 If _Wikis Is Nothing Then _Wikis = New WikiCollection
                 Return _Wikis
             End Get
         End Property
 
-        Friend Function ShowError(ByVal result As Result, Optional ByVal showRetry As Boolean = False) As DialogResult
+        Public Function ShowError(ByVal result As Result, Optional ByVal showRetry As Boolean = False) As DialogResult
 
             Using form As New ErrorForm(result.ErrorMessage, showRetry)
                 Return form.ShowDialog()
             End Using
         End Function
 
-        Friend Function ShowPrompt(
+        Public Function ShowPrompt(
             ByVal title As String, ByVal largeText As String, ByVal smallText As String,
             ByVal defaultButton As Integer, ByVal ParamArray buttons As String()) As Integer
 
             Return Prompt.Show(title, largeText, smallText, defaultButton, buttons)
         End Function
 
-        Friend Sub UserWaitForProcess(ByVal process As Process,
+        Public Sub UserWaitForProcess(ByVal process As Process,
             Optional ByVal errorMessage As String = Nothing, Optional ByVal retryable As Boolean = False)
 
             'Display cancellable progress dialog while executing an action on another thread
@@ -224,11 +224,11 @@ Namespace Huggle
             End While
         End Sub
 
-        Friend Sub WaitOn(ByVal process As Process)
+        Public Sub WaitOn(ByVal process As Process)
             WaitFor(Function() process.IsComplete)
         End Sub
 
-        Friend Sub DoParallel(ByVal processes As IEnumerable(Of Process))
+        Public Sub DoParallel(ByVal processes As IEnumerable(Of Process))
             For Each process As Process In processes
                 If Not process.IsRunning Then CreateThread(AddressOf process.Start)
             Next process
@@ -248,81 +248,54 @@ Namespace Huggle
             If Not IsMono AndAlso Config.Local.Proxy Is Nothing Then Config.Local.Proxy = HttpWebRequest.GetSystemWebProxy
         End Sub
 
-        Private Sub LoadMessages()
-            'Load default languages and messages
-            Dim en As Language = App.Languages("en")
-            en.IsLocalized = True
-            en.Name = "English"
-            en.GetConfig.Load(Resources.en)
-
-            App.Languages.Default = en
-            App.Languages.Current = en
-
-            'Load cached messages from config
-            Try
-                Dim languageLocation As String = PathCombine(Config.BaseLocation, "messages")
-
-                If Directory.Exists(languageLocation) Then
-                    For Each item As String In Directory.GetFiles(languageLocation)
-                        App.Languages(Path.GetFileNameWithoutExtension(item)).GetConfig.LoadLocal()
-                    Next item
-                End If
-
-            Catch ex As SystemException
-                Log.Write(Msg("language-loadfail"))
-            End Try
-
-            Log.Debug("Loaded messages [L]")
-        End Sub
-
     End Module
 
-    Friend NotInheritable Class Icons
+    Public NotInheritable Class Icons
 
         Private Sub New()
         End Sub
 
-        Friend Shared ReadOnly Anon As Image = Resources.blob_anon
-        Friend Shared ReadOnly AnonFilter As Image = Resources.blob_anon_filter
-        Friend Shared ReadOnly Blanked As Image = Resources.blob_blanked
-        Friend Shared ReadOnly Blocked As Image = Resources.blob_blocked
-        Friend Shared ReadOnly BlockNote As Image = Resources.blob_blocknote
-        Friend Shared ReadOnly Bot As Image = Resources.blob_bot
-        Friend Shared ReadOnly Filter As Image = Resources.blob_filter
-        Friend Shared ReadOnly Ignored As Image = Resources.blob_ignored
-        Friend Shared ReadOnly IgnoredAssisted As Image = Resources.blob_ignored_assisted
-        Friend Shared ReadOnly [Me] As Image = Resources.blob_me
-        Friend Shared ReadOnly Message As Image = Resources.blob_message
-        Friend Shared ReadOnly [New] As Image = Resources.blob_new
-        Friend Shared ReadOnly None As Image = Resources.blob_none
-        Friend Shared ReadOnly NoneAssisted As Image = Resources.blob_none_assisted
-        Friend Shared ReadOnly NoneFilter As Image = Resources.blob_none_filter
-        Friend Shared ReadOnly Redirect As Image = Resources.blob_redirect
-        Friend Shared ReadOnly Replaced As Image = Resources.blob_replaced
-        Friend Shared ReadOnly Report As Image = Resources.blob_report
-        Friend Shared ReadOnly Reported As Image = Resources.blob_reported
-        Friend Shared ReadOnly Revert As Image = Resources.blob_revert
-        Friend Shared ReadOnly Reverted As Image = Resources.blob_reverted
-        Friend Shared ReadOnly Tag As Image = Resources.blob_tag
-        Friend Shared ReadOnly Warned1 As Image = Resources.blob_warn_1
-        Friend Shared ReadOnly Warned2 As Image = Resources.blob_warn_2
-        Friend Shared ReadOnly Warned3 As Image = Resources.blob_warn_3
-        Friend Shared ReadOnly Warned4 As Image = Resources.blob_warn_4
-        Friend Shared ReadOnly Warning1 As Image = Resources.blob_warning_1
-        Friend Shared ReadOnly Warning2 As Image = Resources.blob_warning_2
-        Friend Shared ReadOnly Warning3 As Image = Resources.blob_warning_3
-        Friend Shared ReadOnly Warning4 As Image = Resources.blob_warning_4
+        Public Shared ReadOnly Anon As Image = Resources.blob_anon
+        Public Shared ReadOnly AnonFilter As Image = Resources.blob_anon_filter
+        Public Shared ReadOnly Blanked As Image = Resources.blob_blanked
+        Public Shared ReadOnly Blocked As Image = Resources.blob_blocked
+        Public Shared ReadOnly BlockNote As Image = Resources.blob_blocknote
+        Public Shared ReadOnly Bot As Image = Resources.blob_bot
+        Public Shared ReadOnly Filter As Image = Resources.blob_filter
+        Public Shared ReadOnly Ignored As Image = Resources.blob_ignored
+        Public Shared ReadOnly IgnoredAssisted As Image = Resources.blob_ignored_assisted
+        Public Shared ReadOnly [Me] As Image = Resources.blob_me
+        Public Shared ReadOnly Message As Image = Resources.blob_message
+        Public Shared ReadOnly [New] As Image = Resources.blob_new
+        Public Shared ReadOnly None As Image = Resources.blob_none
+        Public Shared ReadOnly NoneAssisted As Image = Resources.blob_none_assisted
+        Public Shared ReadOnly NoneFilter As Image = Resources.blob_none_filter
+        Public Shared ReadOnly Redirect As Image = Resources.blob_redirect
+        Public Shared ReadOnly Replaced As Image = Resources.blob_replaced
+        Public Shared ReadOnly Report As Image = Resources.blob_report
+        Public Shared ReadOnly Reported As Image = Resources.blob_reported
+        Public Shared ReadOnly Revert As Image = Resources.blob_revert
+        Public Shared ReadOnly Reverted As Image = Resources.blob_reverted
+        Public Shared ReadOnly Tag As Image = Resources.blob_tag
+        Public Shared ReadOnly Warned1 As Image = Resources.blob_warn_1
+        Public Shared ReadOnly Warned2 As Image = Resources.blob_warn_2
+        Public Shared ReadOnly Warned3 As Image = Resources.blob_warn_3
+        Public Shared ReadOnly Warned4 As Image = Resources.blob_warn_4
+        Public Shared ReadOnly Warning1 As Image = Resources.blob_warning_1
+        Public Shared ReadOnly Warning2 As Image = Resources.blob_warning_2
+        Public Shared ReadOnly Warning3 As Image = Resources.blob_warning_3
+        Public Shared ReadOnly Warning4 As Image = Resources.blob_warning_4
 
     End Class
 
     <Serializable()>
-    Public Class HuggleException : Inherits Exception
+    Friend Class HuggleException : Inherits Exception
 
-        Friend Sub New(ByVal message As String)
+        Public Sub New(ByVal message As String)
             MyBase.New(message)
         End Sub
 
-        Friend Sub New(ByVal message As String, ByVal innerException As Exception)
+        Public Sub New(ByVal message As String, ByVal innerException As Exception)
             MyBase.New(message, innerException)
         End Sub
 

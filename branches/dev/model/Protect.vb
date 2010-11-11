@@ -10,36 +10,36 @@ Namespace Huggle.Actions
         Private _Page As Page
         Private _Summary As String
 
-        Friend Sub New(ByVal session As Session, ByVal page As Page, ByVal summary As String)
+        Public Sub New(ByVal session As Session, ByVal page As Page, ByVal summary As String)
             MyBase.New(session, Msg("protect-desc", page))
 
             _Page = page
             _Summary = summary
         End Sub
 
-        Friend Property Cascade() As Boolean
+        Public Property Cascade() As Boolean
 
-        Friend ReadOnly Property Levels() As Dictionary(Of String, ProtectionPart)
+        Public ReadOnly Property Levels() As Dictionary(Of String, ProtectionPart)
             Get
                 Return _Levels
             End Get
         End Property
 
-        Friend ReadOnly Property Page() As Page
+        Public ReadOnly Property Page() As Page
             Get
                 Return _Page
             End Get
         End Property
 
-        Friend ReadOnly Property Summary() As String
+        Public ReadOnly Property Summary() As String
             Get
                 Return _Summary
             End Get
         End Property
 
-        Friend Property Watch() As WatchAction
+        Public Property Watch() As WatchAction
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             OnProgress(Msg("protect-progress", Page))
             OnStarted()
 

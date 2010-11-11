@@ -7,7 +7,7 @@
         Private _Destination As String
         Private _Source As String
 
-        Friend Sub New(ByVal time As Date, ByVal source As String, ByVal destination As String, _
+        Public Sub New(ByVal time As Date, ByVal source As String, ByVal destination As String, _
             ByVal user As User, ByVal comment As String, ByVal id As Integer, ByVal rcid As Integer)
 
             MyBase.New(user.Wiki, id, rcid)
@@ -20,19 +20,19 @@
             _Source = source
         End Sub
 
-        Friend ReadOnly Property Destination() As String
+        Public ReadOnly Property Destination() As String
             Get
                 Return _Destination
             End Get
         End Property
 
-        Friend ReadOnly Property Source() As String
+        Public ReadOnly Property Source() As String
             Get
                 Return _Source
             End Get
         End Property
 
-        Friend Overrides ReadOnly Property Target() As String
+        Public Overrides ReadOnly Property Target() As String
             Get
                 Return _Source
             End Get

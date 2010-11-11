@@ -6,25 +6,25 @@
         Private _Target As User
         Private _Watch As WatchAction
 
-        Friend Sub New(ByVal session As Session, ByVal target As User, ByVal summary As String)
+        Public Sub New(ByVal session As Session, ByVal target As User, ByVal summary As String)
             MyBase.New(session, Msg("unblock-desc", target))
             _Summary = summary
             _Target = target
         End Sub
 
-        Friend ReadOnly Property Summary() As String
+        Public ReadOnly Property Summary() As String
             Get
                 Return _Summary
             End Get
         End Property
 
-        Friend ReadOnly Property Target() As User
+        Public ReadOnly Property Target() As User
             Get
                 Return _Target
             End Get
         End Property
 
-        Friend Property Watch() As WatchAction
+        Public Property Watch() As WatchAction
             Get
                 Return _Watch
             End Get
@@ -33,7 +33,7 @@
             End Set
         End Property
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             OnProgress(Msg("unblock-progress", Target))
             OnStarted()
 

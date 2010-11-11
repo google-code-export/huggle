@@ -12,7 +12,7 @@ Namespace Huggle
         Private _Revision As Revision
         Private _Type As String
 
-        Friend Sub New(ByVal time As Date, ByVal revision As Revision, ByVal user As User, _
+        Public Sub New(ByVal time As Date, ByVal revision As Revision, ByVal user As User, _
             ByVal type As String, ByVal auto As Boolean, ByVal comment As String, ByVal id As Integer, ByVal rcid As Integer)
 
             MyBase.New(user.Wiki, Id, rcid)
@@ -34,31 +34,31 @@ Namespace Huggle
             End If
         End Sub
 
-        Friend ReadOnly Property Auto() As Boolean
+        Public ReadOnly Property Auto() As Boolean
             Get
                 Return _Auto
             End Get
         End Property
 
-        Friend ReadOnly Property Revision() As Revision
+        Public ReadOnly Property Revision() As Revision
             Get
                 Return _Revision
             End Get
         End Property
 
-        Friend ReadOnly Property Levels() As Dictionary(Of ReviewFlag, Integer)
+        Public ReadOnly Property Levels() As Dictionary(Of ReviewFlag, Integer)
             Get
                 Return _Levels
             End Get
         End Property
 
-        Friend ReadOnly Property Type() As String
+        Public ReadOnly Property Type() As String
             Get
                 Return _Type
             End Get
         End Property
 
-        Friend Overrides ReadOnly Property Target() As String
+        Public Overrides ReadOnly Property Target() As String
             Get
                 If Revision Is Nothing Then Return Nothing Else Return Revision.Page.Name
             End Get

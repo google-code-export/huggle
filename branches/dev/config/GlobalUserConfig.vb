@@ -13,11 +13,11 @@ Namespace Huggle
 
         Private GlobalUser As GlobalUser
 
-        Friend Property AutoUnifiedLogin As Boolean
-        Friend Property Extra As Boolean
-        Friend Property ExtraLoader As ExtraGlobaluserConfig
+        Public Property AutoUnifiedLogin As Boolean
+        Public Property Extra As Boolean
+        Public Property ExtraLoader As ExtraGlobaluserConfig
 
-        Friend Sub New(ByVal globalUser As GlobalUser)
+        Public Sub New(ByVal globalUser As GlobalUser)
             Me.GlobalUser = globalUser
         End Sub
 
@@ -81,7 +81,7 @@ Namespace Huggle
             Next item
         End Sub
 
-        Friend Overrides Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
+        Public Overrides Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
             Dim items As New Dictionary(Of String, Object)
 
             If target = ConfigTarget.Local Then
@@ -115,7 +115,7 @@ Namespace Huggle
             Return items
         End Function
 
-        Friend Function Copy(ByVal globalUser As GlobalUser) As GlobalUserConfig
+        Public Function Copy(ByVal globalUser As GlobalUser) As GlobalUserConfig
             Dim result As New GlobalUserConfig(globalUser)
             result.ReadConfig(Config.MakeConfig(WriteConfig(ConfigTarget.Local)))
             Return result

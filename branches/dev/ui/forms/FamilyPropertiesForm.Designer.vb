@@ -25,7 +25,7 @@
         <System.Diagnostics.DebuggerStepThrough()> _
         Private Sub InitializeComponent()
             Me.ViewContainer = New System.Windows.Forms.Panel()
-            Me.Views = New System.Windows.Forms.ListBox()
+            Me.Views = New System.Windows.Forms.EnhancedListBox()
             Me.SuspendLayout()
             '
             'ViewContainer

@@ -6,7 +6,7 @@
 
 '        Private Limit As Integer
 
-'        Friend Sub New(ByVal Account As User)
+'        Public Sub New(ByVal Account As User)
 '            MyBase.New(Account)
 '        End Sub
 

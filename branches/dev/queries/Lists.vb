@@ -134,12 +134,12 @@ Namespace Huggle.Actions
 
             Private Filename As String
 
-            Friend Sub New(ByVal session As Session, ByVal filename As String)
+            Public Sub New(ByVal session As Session, ByVal filename As String)
                 MyBase.New(session, "", "", "", Nothing, Msg("listdesc-file"))
                 Me.Filename = filename
             End Sub
 
-            Friend Overrides Sub Start()
+            Public Overrides Sub Start()
                 Dim data As String()
 
                 Try
@@ -160,7 +160,7 @@ Namespace Huggle.Actions
                 OnSuccess()
             End Sub
 
-            Friend Overrides Sub DoOne()
+            Public Overrides Sub DoOne()
                 Start()
             End Sub
 
@@ -264,12 +264,12 @@ Namespace Huggle.Actions
 
             Private Titles As List(Of String)
 
-            Friend Sub New(ByVal session As Session, ByVal titles As List(Of String))
+            Public Sub New(ByVal session As Session, ByVal titles As List(Of String))
                 MyBase.New(session, "", "", "", Nothing, Msg("listdesc-manual"))
                 Me.Titles = titles
             End Sub
 
-            Friend Overrides Sub Start()
+            Public Overrides Sub Start()
                 For Each title As String In Titles
                     title = Wiki.Pages.SanitizeTitle(title)
                     If title IsNot Nothing Then Items.Add(Wiki.Pages(title))
@@ -278,7 +278,7 @@ Namespace Huggle.Actions
                 OnSuccess()
             End Sub
 
-            Friend Overrides Sub DoOne()
+            Public Overrides Sub DoOne()
                 Start()
             End Sub
 

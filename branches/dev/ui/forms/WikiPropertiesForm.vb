@@ -24,7 +24,7 @@ Namespace Huggle.UI
         Private WithEvents UserGroupView As UserGroupView
         Private WithEvents UserRightView As UserRightView
 
-        Friend Sub New(ByVal session As Session)
+        Public Sub New(ByVal session As Session)
             InitializeComponent()
             Size = New Size(720, 480)
             Me.Session = session

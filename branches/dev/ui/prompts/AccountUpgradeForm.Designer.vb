@@ -116,12 +116,12 @@
             Me.PerformLayout()
 
         End Sub
-        Friend WithEvents Label1 As System.Windows.Forms.Label
-        Friend WithEvents Button1 As System.Windows.Forms.Button
-        Friend WithEvents Button2 As System.Windows.Forms.Button
-        Friend WithEvents UsernameLabel As System.Windows.Forms.Label
+        Public WithEvents Label1 As System.Windows.Forms.Label
+        Public WithEvents Button1 As System.Windows.Forms.Button
+        Public WithEvents Button2 As System.Windows.Forms.Button
+        Public WithEvents UsernameLabel As System.Windows.Forms.Label
         Private WithEvents PasswordLabel As System.Windows.Forms.Label
-        Friend WithEvents TextBox1 As System.Windows.Forms.TextBox
-        Friend WithEvents TextBox2 As System.Windows.Forms.TextBox
+        Public WithEvents TextBox1 As System.Windows.Forms.TextBox
+        Public WithEvents TextBox2 As System.Windows.Forms.TextBox
     End Class
 End Namespace

@@ -8,7 +8,7 @@ Namespace Huggle.UI
 
         Private Session As Session
 
-        Friend Sub New(ByVal session As Session)
+        Public Sub New(ByVal session As Session)
             InitializeComponent()
             Me.Session = session
         End Sub

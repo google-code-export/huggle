@@ -8,7 +8,7 @@ Imports System.Text.RegularExpressions
 
 Namespace Huggle
 
-    <Diagnostics.DebuggerDisplay("{Name}")> _
+    <Diagnostics.DebuggerDisplay("{Name}")>
     Friend Class User : Inherits QueueItem
 
         'Represents a user account or anonymous user
@@ -35,12 +35,12 @@ Namespace Huggle
         Private Shared ReadOnly AnonymousRegex As New Regex _
             ("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", RegexOptions.Compiled)
 
-        Friend Event Edited As SimpleEventHandler(Of Revision)
-        Friend Event Renamed(ByVal sender As Object, ByVal e As UserRenamedEventArgs)
-        Friend Event StateChanged As SimpleEventHandler(Of User)
-        Friend Event ContribsChanged As SimpleEventHandler(Of User)
+        Public Event Edited As SimpleEventHandler(Of Revision)
+        Public Event Renamed(ByVal sender As Object, ByVal e As UserRenamedEventArgs)
+        Public Event StateChanged As SimpleEventHandler(Of User)
+        Public Event ContribsChanged As SimpleEventHandler(Of User)
 
-        Friend Sub New(ByVal wiki As Wiki, ByVal name As String)
+        Public Sub New(ByVal wiki As Wiki, ByVal name As String)
             _DisplayName = name
             _Contributions = -1
             If name = "[anonymous]" Then _IsAnonymous = True
@@ -48,31 +48,31 @@ Namespace Huggle
             _Wiki = wiki
         End Sub
 
-        Friend ReadOnly Property Abuse() As List(Of Abuse)
+        Public ReadOnly Property Abuse() As List(Of Abuse)
             Get
                 If _Abuse Is Nothing Then _Abuse = New List(Of Abuse)
                 Return _Abuse
             End Get
         End Property
 
-        Friend Property AbuseKnown As Boolean
+        Public Property AbuseKnown As Boolean
 
-        Friend ReadOnly Property ApiLimit() As Integer
+        Public ReadOnly Property ApiLimit() As Integer
             Get
                 If HasRight("apihighlimits") Then Return 5000 Else Return 500
             End Get
         End Property
 
-        Friend ReadOnly Property Blocks() As List(Of Block)
+        Public ReadOnly Property Blocks() As List(Of Block)
             Get
                 If _Blocks Is Nothing Then _Blocks = New List(Of Block)
                 Return _Blocks
             End Get
         End Property
 
-        Friend Property BlocksKnown As Boolean
+        Public Property BlocksKnown As Boolean
 
-        Friend ReadOnly Property CanChangeUserRights As Boolean
+        Public ReadOnly Property CanChangeUserRights As Boolean
             Get
                 For Each group As UserGroupChange In GroupChanges.All
                     If group.CanAdd OrElse group.CanRemove Then Return True
@@ -82,7 +82,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend ReadOnly Property CanSelfChangeUserRights As Boolean
+        Public ReadOnly Property CanSelfChangeUserRights As Boolean
             Get
                 For Each group As UserGroupChange In GroupChanges.All
                     If group.CanAdd OrElse group.CanAddSelf _
@@ -93,7 +93,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend Property Config() As UserConfig
+        Public Property Config() As UserConfig
             Get
                 If _Config Is Nothing Then
                     If IsDefault Then
@@ -114,12 +114,12 @@ Namespace Huggle
             End Set
         End Property
 
-        Friend Property Created As Date
-        Friend Property DeletedEditsKnown As Boolean
-        Friend Property DisplayName As String
-        Friend Property Contributions As Integer
+        Public Property Created As Date
+        Public Property DeletedEditsKnown As Boolean
+        Public Property DisplayName As String
+        Public Property Contributions As Integer
 
-        Friend ReadOnly Property CurrentBlock() As Block
+        Public ReadOnly Property CurrentBlock() As Block
             Get
                 Dim result As Block = Nothing
 
@@ -131,7 +131,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend ReadOnly Property Edits() As List(Of Revision)
+        Public ReadOnly Property Edits() As List(Of Revision)
             Get
                 Dim result As New List(Of Revision)
                 Dim rev As Revision = _LastEdit
@@ -146,9 +146,9 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend Property ExtendedInfoKnown() As Boolean
+        Public Property ExtendedInfoKnown() As Boolean
 
-        Friend Property FirstEdit() As Revision
+        Public Property FirstEdit() As Revision
             Get
                 Return _FirstEdit
             End Get
@@ -158,41 +158,41 @@ Namespace Huggle
             End Set
         End Property
 
-        Friend ReadOnly Property FullName() As String
+        Public ReadOnly Property FullName() As String
             Get
-                Return Name & "@" & Wiki.Code
+                Return Name & "@" & Wiki.Name
             End Get
         End Property
 
-        Friend Property GlobalStatus() As String
-        Friend Property GlobalUser() As GlobalUser
+        Public Property GlobalStatus() As String
+        Public Property GlobalUser() As GlobalUser
 
-        Friend ReadOnly Property GroupChanges() As UserGroupChangeCollection
+        Public ReadOnly Property GroupChanges() As UserGroupChangeCollection
             Get
                 If _GroupChanges Is Nothing Then _GroupChanges = New UserGroupChangeCollection(Me)
                 Return _GroupChanges
             End Get
         End Property
 
-        Friend ReadOnly Property Groups As List(Of UserGroup)
+        Public ReadOnly Property Groups As List(Of UserGroup)
             Get
                 If _Groups Is Nothing Then _Groups = New List(Of UserGroup)
                 Return _Groups
             End Get
         End Property
 
-        Friend Property HasDeletedEdits() As Boolean
+        Public Property HasDeletedEdits() As Boolean
 
-        Friend ReadOnly Property HasRight(ByVal right As String) As Boolean
+        Public ReadOnly Property HasRight(ByVal right As String) As Boolean
             Get
                 Return Rights.Contains(right)
             End Get
         End Property
 
-        Friend Property Id() As Integer
-        Friend Property IgnoreCount() As Integer
+        Public Property Id() As Integer
+        Public Property IgnoreCount() As Integer
 
-        Friend ReadOnly Property IsAbusive() As Boolean
+        Public ReadOnly Property IsAbusive() As Boolean
             Get
                 If _Abuse Is Nothing Then Return False
 
@@ -205,14 +205,14 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend ReadOnly Property IsAnonymous() As Boolean
+        Public ReadOnly Property IsAnonymous() As Boolean
             Get
                 If Not Processed Then Process()
                 Return _IsAnonymous
             End Get
         End Property
 
-        Friend ReadOnly Property IsAutoconfirmed() As Boolean
+        Public ReadOnly Property IsAutoconfirmed() As Boolean
             Get
                 'Cannot be retrieved programmatically (see MediaWiki bug 16867)
                 'Thresholds supplied in config instead
@@ -223,28 +223,28 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend ReadOnly Property IsBlocked() As Boolean
+        Public ReadOnly Property IsBlocked() As Boolean
             Get
                 Return (CurrentBlock IsNot Nothing)
             End Get
         End Property
 
-        Friend ReadOnly Property IsBot() As Boolean
+        Public ReadOnly Property IsBot() As Boolean
             Get
                 Return _IsBot
             End Get
         End Property
 
-        Friend ReadOnly Property IsDefault() As Boolean
+        Public ReadOnly Property IsDefault() As Boolean
             Get
                 Return (Wiki.Users.Default Is Me)
             End Get
         End Property
 
-        Friend Property IsEmailable As Boolean
-        Friend Property IsHidden As Boolean
+        Public Property IsEmailable As Boolean
+        Public Property IsHidden As Boolean
 
-        Friend Property IsIgnored() As Boolean
+        Public Property IsIgnored() As Boolean
             Get
                 If Not Processed Then Process()
                 Return _IsIgnored
@@ -255,15 +255,15 @@ Namespace Huggle
             End Set
         End Property
 
-        Friend ReadOnly Property IsInGroup(ByVal group As UserGroup) As Boolean
+        Public ReadOnly Property IsInGroup(ByVal group As UserGroup) As Boolean
             Get
                 Return Groups.Contains(group)
             End Get
         End Property
 
-        Friend Property IsLoaded As Boolean
+        Public Property IsLoaded As Boolean
 
-        Friend ReadOnly Property IsPrivileged() As Boolean
+        Public ReadOnly Property IsPrivileged() As Boolean
             Get
                 For Each group As UserGroup In Groups
                     For Each right As String In InternalConfig.PrivilegedRights
@@ -275,7 +275,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend ReadOnly Property IsReported() As Boolean
+        Public ReadOnly Property IsReported() As Boolean
             Get
                 If _Sanctions Is Nothing Then Return False
 
@@ -287,18 +287,18 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend Property IsReverted As Boolean
-        Friend Property IsShared As Boolean
+        Public Property IsReverted As Boolean
+        Public Property IsShared As Boolean
 
-        Friend ReadOnly Property IsUnified() As Boolean
+        Public ReadOnly Property IsUnified() As Boolean
             Get
                 Return (GlobalUser IsNot Nothing)
             End Get
         End Property
 
-        Friend Property IsUsed As Boolean
+        Public Property IsUsed As Boolean
 
-        Friend ReadOnly Property IsWarned() As Boolean
+        Public ReadOnly Property IsWarned() As Boolean
             Get
                 If _Sanctions Is Nothing Then Return False
 
@@ -310,9 +310,9 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend Property LastEdit As Revision
+        Public Property LastEdit As Revision
 
-        Friend ReadOnly Property LastSanctionTime() As Date
+        Public ReadOnly Property LastSanctionTime() As Date
             Get
                 Dim result As Date = Date.MinValue
 
@@ -324,24 +324,24 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend ReadOnly Property Logs() As List(Of LogItem)
+        Public ReadOnly Property Logs() As List(Of LogItem)
             Get
                 If _Logs Is Nothing Then _Logs = New List(Of LogItem)
                 Return _Logs
             End Get
         End Property
 
-        Friend Property LogsKnown As Boolean
+        Public Property LogsKnown As Boolean
 
-        Friend ReadOnly Property Name() As String
+        Public ReadOnly Property Name() As String
             Get
                 Return _Name
             End Get
         End Property
 
-        Friend Property Password As Byte()
+        Public Property Password As Byte()
 
-        Friend Property Preferences() As Preferences
+        Public Property Preferences() As Preferences
             Get
                 If _Preferences Is Nothing Then _Preferences = New Preferences(Me)
                 Return _Preferences
@@ -351,7 +351,7 @@ Namespace Huggle
             End Set
         End Property
 
-        Friend ReadOnly Property Range() As String
+        Public ReadOnly Property Range() As String
             Get
                 'Return first two octets of IP address
                 If Not _IsAnonymous Then Return Nothing
@@ -359,17 +359,17 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend ReadOnly Property RateLimits() As List(Of RateLimit)
+        Public ReadOnly Property RateLimits() As List(Of RateLimit)
             Get
                 If _RateLimits Is Nothing Then _RateLimits = New List(Of RateLimit)
                 Return _RateLimits
             End Get
         End Property
 
-        Friend Property RegisteredTo As String
-        Friend Property Rights As New List(Of String)
+        Public Property RegisteredTo As String
+        Public Property Rights As New List(Of String)
 
-        Friend ReadOnly Property Sanction() As Sanction
+        Public ReadOnly Property Sanction() As Sanction
             Get
                 Dim max As Sanction = Nothing
 
@@ -382,52 +382,52 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend ReadOnly Property Sanctions() As List(Of Sanction)
+        Public ReadOnly Property Sanctions() As List(Of Sanction)
             Get
                 If _Sanctions Is Nothing Then _Sanctions = New List(Of Sanction)
                 Return _Sanctions
             End Get
         End Property
 
-        Friend Property SessionEdits As Integer
+        Public Property SessionEdits As Integer
 
-        Friend ReadOnly Property Talkpage() As Page
+        Public ReadOnly Property Talkpage() As Page
             Get
                 Return Wiki.Pages.FromNsAndName(Wiki.Spaces.UserTalk, Name)
             End Get
         End Property
 
-        Friend Property UnificationDate As Date
-        Friend Property UnificationMethod As String
+        Public Property UnificationDate As Date
+        Public Property UnificationMethod As String
 
-        Friend ReadOnly Property Userpage() As Page
+        Public ReadOnly Property Userpage() As Page
             Get
                 Return Wiki.Pages.FromNsAndName(Wiki.Spaces.User, Name)
             End Get
         End Property
 
-        Friend ReadOnly Property Watchlist() As List(Of String)
+        Public ReadOnly Property Watchlist() As List(Of String)
             Get
                 If _Watchlist Is Nothing Then _Watchlist = New List(Of String)
                 Return _Watchlist
             End Get
         End Property
 
-        Friend Overrides ReadOnly Property Wiki() As Wiki
+        Public Overrides ReadOnly Property Wiki() As Wiki
             Get
                 Return _Wiki
             End Get
         End Property
 
-        Friend Sub OnEdit(ByVal rev As Revision)
+        Public Sub OnEdit(ByVal rev As Revision)
             RaiseEvent Edited(Me, New EventArgs(Of Revision)(rev))
         End Sub
 
-        Friend Sub OnContribsChanged()
+        Public Sub OnContribsChanged()
             RaiseEvent ContribsChanged(Me, New EventArgs(Of User)(Me))
         End Sub
 
-        Friend Sub Process()
+        Public Sub Process()
             If Not Processed Then
                 If AnonymousRegex.IsMatch(Name) Then _IsAnonymous = True
                 _IsIgnored = Wiki.Users.Ignored.Contains(Me)
@@ -437,22 +437,22 @@ Namespace Huggle
             RefreshState()
         End Sub
 
-        Friend Sub ProcessNew()
+        Public Sub ProcessNew()
             Contributions = 0
         End Sub
 
-        Friend Sub RefreshState()
+        Public Sub RefreshState()
             RaiseEvent StateChanged(Me, New EventArgs(Of User)(Me))
         End Sub
 
-        Friend Sub Rename(ByVal newName As String)
+        Public Sub Rename(ByVal newName As String)
             Dim oldName As String = Name
             _Name = newName
             Wiki.Users.Rename(oldName, newName)
             RaiseEvent Renamed(Me, New UserRenamedEventArgs(Me, oldName))
         End Sub
 
-        Friend Function Can(ByVal featureName As String) As Boolean
+        Public Function Can(ByVal featureName As String) As Boolean
             If Not Feature.All.ContainsKey(featureName) Then Return False
             Return Feature.All(featureName).AvailableTo(Me)
         End Function
@@ -461,13 +461,13 @@ Namespace Huggle
             Return _DisplayName
         End Function
 
-        Friend Overrides ReadOnly Property FilterVars() As Dictionary(Of String, Object)
+        Public Overrides ReadOnly Property FilterVars() As Dictionary(Of String, Object)
             Get
                 Return Nothing
             End Get
         End Property
 
-        Friend Overrides ReadOnly Property Key() As Integer
+        Public Overrides ReadOnly Property Key() As Integer
             Get
                 Return 0
             End Get
@@ -480,18 +480,18 @@ Namespace Huggle
         Private _OldName As String
         Private _User As User
 
-        Friend Sub New(ByVal user As User, ByVal oldName As String)
+        Public Sub New(ByVal user As User, ByVal oldName As String)
             _OldName = oldName
             _User = user
         End Sub
 
-        Friend ReadOnly Property OldName() As String
+        Public ReadOnly Property OldName() As String
             Get
                 Return _OldName
             End Get
         End Property
 
-        Friend ReadOnly Property User As User
+        Public ReadOnly Property User As User
             Get
                 Return _User
             End Get
@@ -509,25 +509,25 @@ Namespace Huggle
 
         Private Wiki As Wiki
 
-        Friend Sub New(ByVal wiki As Wiki)
+        Public Sub New(ByVal wiki As Wiki)
             Me.Wiki = wiki
         End Sub
 
-        Friend ReadOnly Property All() As IList(Of User)
+        Public ReadOnly Property All() As IList(Of User)
             Get
                 Return _All.Values.ToList.AsReadOnly
             End Get
         End Property
 
-        Friend ReadOnly Property Anonymous() As User
+        Public ReadOnly Property Anonymous() As User
             Get
                 Return FromName(Nothing)
             End Get
         End Property
 
-        Friend Property Count() As Integer = -1
+        Public Property Count() As Integer = -1
 
-        Friend ReadOnly Property [Default]() As User
+        Public ReadOnly Property [Default]() As User
             Get
                 'Default user for config purposes
                 If _Default Is Nothing Then
@@ -539,7 +539,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Default Friend ReadOnly Property FromName(ByVal name As String) As User
+        Default Public ReadOnly Property FromName(ByVal name As String) As User
             Get
                 If name Is Nothing Then name = "[anonymous]"
                 If Not _All.ContainsKey(name) Then _All.Add(name, New User(Wiki, name))
@@ -547,7 +547,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend ReadOnly Property Hidden() As User
+        Public ReadOnly Property Hidden() As User
             Get
                 'Representats the author of actions for which the actual author is hidden
                 If _Hidden Is Nothing Then
@@ -559,25 +559,25 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend ReadOnly Property Ignored() As List(Of User)
+        Public ReadOnly Property Ignored() As List(Of User)
             Get
                 Return _Ignored
             End Get
         End Property
 
-        Friend ReadOnly Property NewUsers() As List(Of User)
+        Public ReadOnly Property NewUsers() As List(Of User)
             Get
                 Return _NewUsers
             End Get
         End Property
 
-        Friend Function FromString(ByVal name As String) As User
+        Public Function FromString(ByVal name As String) As User
             name = SanitizeName(name)
             If name Is Nothing Then Return Nothing
             Return FromName(name)
         End Function
 
-        Friend Sub Rename(ByVal oldName As String, ByVal newName As String)
+        Public Sub Rename(ByVal oldName As String, ByVal newName As String)
             If _All.ContainsKey(oldName) Then
                 Dim user As User = _All(oldName)
                 _All.Remove(oldName)
@@ -585,7 +585,7 @@ Namespace Huggle
             End If
         End Sub
 
-        Friend Shared Function SanitizeName(ByVal name As String) As String
+        Public Shared Function SanitizeName(ByVal name As String) As String
             If String.IsNullOrEmpty(name) Then Return Nothing
 
             'Remove navigation fragment

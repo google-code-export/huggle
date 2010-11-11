@@ -11,35 +11,35 @@ Namespace Huggle.Wikitext
         Private _Rows As New List(Of TableRow)
         Private _Selection As Selection
 
-        Friend Sub New()
+        Public Sub New()
         End Sub
 
-        Friend Sub New(ByVal wikitext As String, ByVal selection As String)
+        Public Sub New(ByVal wikitext As String, ByVal selection As String)
         End Sub
 
-        Friend Property Caption() As String
+        Public Property Caption() As String
 
-        Friend ReadOnly Property Columns() As List(Of TableColumn)
+        Public ReadOnly Property Columns() As List(Of TableColumn)
             Get
                 Return _Columns
             End Get
         End Property
 
-        Friend ReadOnly Property Rows() As List(Of TableRow)
+        Public ReadOnly Property Rows() As List(Of TableRow)
             Get
                 Return _Rows
             End Get
         End Property
 
-        Friend ReadOnly Property Selection() As Selection
+        Public ReadOnly Property Selection() As Selection
             Get
                 Return _Selection
             End Get
         End Property
 
-        Friend Property Style() As String
+        Public Property Style() As String
 
-        Friend Function ToHtml() As String
+        Public Function ToHtml() As String
             Dim result As New StringBuilder
 
 
@@ -81,7 +81,7 @@ Namespace Huggle.Wikitext
             Return result.ToString
         End Function
 
-        Friend Function ToWikitext() As String
+        Public Function ToWikitext() As String
             Dim result As New StringBuilder
 
             result.Append("{|")
@@ -108,7 +108,7 @@ Namespace Huggle.Wikitext
             Return ToWikitext()
         End Function
 
-        Friend Shared Function FromScriptTable(ByVal source As ScriptTable) As Table
+        Public Shared Function FromScriptTable(ByVal source As ScriptTable) As Table
             Dim result As New Table
             result.Style = "class=""wikitable"""
 
@@ -139,19 +139,19 @@ Namespace Huggle.Wikitext
 
         Private _Cells As New List(Of TableCell)
 
-        Friend Sub New(Optional ByVal style As String = Nothing)
+        Public Sub New(Optional ByVal style As String = Nothing)
             _Style = style
         End Sub
 
-        Friend ReadOnly Property Cells() As List(Of TableCell)
+        Public ReadOnly Property Cells() As List(Of TableCell)
             Get
                 Return _Cells
             End Get
         End Property
 
-        Friend Property IsHeader() As Boolean
+        Public Property IsHeader() As Boolean
 
-        Friend Property Style() As String
+        Public Property Style() As String
 
     End Class
 
@@ -160,36 +160,36 @@ Namespace Huggle.Wikitext
         Private _Cells As List(Of TableCell)
         Private _IsHeader As Boolean
 
-        Friend Sub New(Optional ByVal style As String = Nothing)
+        Public Sub New(Optional ByVal style As String = Nothing)
             _Style = style
         End Sub
 
-        Friend ReadOnly Property Cells() As List(Of TableCell)
+        Public ReadOnly Property Cells() As List(Of TableCell)
             Get
                 Return _Cells
             End Get
         End Property
 
-        Friend ReadOnly Property IsHeader() As Boolean
+        Public ReadOnly Property IsHeader() As Boolean
             Get
                 Return _IsHeader
             End Get
         End Property
 
-        Friend Property Style() As String
+        Public Property Style() As String
 
     End Class
 
     Friend Class TableCell
 
-        Friend Sub New(ByVal content As String, Optional ByVal style As String = Nothing)
+        Public Sub New(ByVal content As String, Optional ByVal style As String = Nothing)
             _Content = content
             _Style = style
         End Sub
 
-        Friend Property Content() As String
+        Public Property Content() As String
 
-        Friend Property Style() As String
+        Public Property Style() As String
 
     End Class
 
@@ -198,7 +198,7 @@ Namespace Huggle.Wikitext
         Private Document As Document
         Private Tables As List(Of Table)
 
-        Friend Sub New(ByVal document As Document)
+        Public Sub New(ByVal document As Document)
             Me.Document = document
 
             Dim matches As MatchCollection = Parsing.SectionPattern.Matches(document.Text)
@@ -206,29 +206,29 @@ Namespace Huggle.Wikitext
 
         End Sub
 
-        Friend ReadOnly Property All() As IList(Of Table)
+        Public ReadOnly Property All() As IList(Of Table)
             Get
                 Return Tables.AsReadOnly
             End Get
         End Property
 
-        Friend ReadOnly Property Count() As Integer
+        Public ReadOnly Property Count() As Integer
             Get
                 Return All.Count
             End Get
         End Property
 
-        Default Friend ReadOnly Property Item(ByVal index As Integer) As Table
+        Default Public ReadOnly Property Item(ByVal index As Integer) As Table
             Get
                 If All.Count > index Then Return All(index) Else Return Nothing
             End Get
         End Property
 
-        Friend Sub Append(ByVal title As String, ByVal text As String, Optional ByVal level As Integer = 1)
+        Public Sub Append(ByVal title As String, ByVal text As String, Optional ByVal level As Integer = 1)
             Insert(title, text, -1, level)
         End Sub
 
-        Friend Sub Insert(ByVal title As String, ByVal text As String,
+        Public Sub Insert(ByVal title As String, ByVal text As String,
             ByVal index As Integer, Optional ByVal level As Integer = 1)
 
             Dim headerMarkup As String = (New StringBuilder).Append("=", 0, level + 1).ToString
@@ -241,7 +241,7 @@ Namespace Huggle.Wikitext
             End If
         End Sub
 
-        Friend Sub Remove(ByVal index As Integer)
+        Public Sub Remove(ByVal index As Integer)
             Document.Text = Document.Text.Remove(All(index).Selection)
         End Sub
 

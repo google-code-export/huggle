@@ -113,10 +113,10 @@
 
         End Sub
         Private WithEvents Request As System.Windows.Forms.Label
-        Friend WithEvents Cancel As System.Windows.Forms.Button
-        Friend WithEvents RememberPassword As System.Windows.Forms.CheckBox
+        Public WithEvents Cancel As System.Windows.Forms.Button
+        Public WithEvents RememberPassword As System.Windows.Forms.CheckBox
         Private WithEvents OK As System.Windows.Forms.Button
-        Friend WithEvents Password As System.Windows.Forms.TextBox
+        Public WithEvents Password As System.Windows.Forms.TextBox
         Private WithEvents PasswordLabel As System.Windows.Forms.Label
     End Class
 End Namespace

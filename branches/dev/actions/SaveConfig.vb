@@ -5,13 +5,13 @@
         Private Config As WikiConfig
         Private Protect As Boolean
 
-        Friend Sub New(ByVal session As Session, ByVal config As WikiConfig, ByVal protect As Boolean)
+        Public Sub New(ByVal session As Session, ByVal config As WikiConfig, ByVal protect As Boolean)
             MyBase.New(session, Msg("saveconfig-desc"))
             Me.Config = config
             Me.Protect = protect
         End Sub
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             If User.HasRight("protect") Then
                 If Protect AndAlso Not User.Wiki.Config.ConfigPage.IsProtected Then
                     'Need to protect the page

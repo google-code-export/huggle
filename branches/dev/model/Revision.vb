@@ -37,20 +37,20 @@ Namespace Huggle
 
         Private Shared WithEvents Timer As New Windows.Forms.Timer
 
-        Friend Shared Null As New Revision(Nothing, -1)
+        Public Shared Null As New Revision(Nothing, -1)
 
-        Friend Event StateChanged As SimpleEventHandler(Of Revision)
+        Public Event StateChanged As SimpleEventHandler(Of Revision)
 
-        Friend Shared Event [New] As SimpleEventHandler(Of Revision)
-        Friend Shared Event Processed As SimpleEventHandler(Of Revision)
-        Friend Shared Event Sighted As SimpleEventHandler(Of Revision)
+        Public Shared Event [New] As SimpleEventHandler(Of Revision)
+        Public Shared Event Processed As SimpleEventHandler(Of Revision)
+        Public Shared Event Sighted As SimpleEventHandler(Of Revision)
 
         Shared Sub New()
             Timer.Interval = TrimInterval
             Timer.Start()
         End Sub
 
-        Friend Sub New(ByVal wiki As Wiki, ByVal id As Integer)
+        Public Sub New(ByVal wiki As Wiki, ByVal id As Integer)
             Random = App.Randomness.Next
             _Wiki = wiki
             _Id = id
@@ -59,9 +59,9 @@ Namespace Huggle
             _Bytes = Integer.MinValue
         End Sub
 
-        Friend Property Abuse() As Abuse
+        Public Property Abuse() As Abuse
 
-        Friend Property ApproxTime() As Date
+        Public Property ApproxTime() As Date
             Get
                 If Time > Date.MinValue Then Return Time Else Return _ApproxTime
             End Get
@@ -70,9 +70,9 @@ Namespace Huggle
             End Set
         End Property
 
-        Friend Property Bytes() As Integer
+        Public Property Bytes() As Integer
 
-        Friend ReadOnly Property CanRollback() As Boolean
+        Public ReadOnly Property CanRollback() As Boolean
             Get
                 If Page.LastRev Is Nothing Then Return False
 
@@ -88,13 +88,13 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend ReadOnly Property CanUserRevert() As Boolean
+        Public ReadOnly Property CanUserRevert() As Boolean
             Get
                 Return (Prev IsNot Nothing AndAlso Prev.User Is User)
             End Get
         End Property
 
-        Friend Property Change() As Integer
+        Public Property Change() As Integer
             Get
                 If Not IsProcessed Then Process()
                 Return _Change
@@ -104,15 +104,15 @@ Namespace Huggle
             End Set
         End Property
 
-        Friend Property DetailsKnown() As Boolean
+        Public Property DetailsKnown() As Boolean
 
-        Friend Property Exists() As TS
+        Public Property Exists() As TS
 
-        Friend Property Html() As String
+        Public Property Html() As String
 
-        Friend Property HtmlCacheState() As CacheState
+        Public Property HtmlCacheState() As CacheState
 
-        Friend Overrides ReadOnly Property Icon() As Image
+        Public Overrides ReadOnly Property Icon() As Image
             Get
                 If IsBlank Then Return Icons.Blanked
                 If IsReplace Then Return Icons.Replaced
@@ -147,13 +147,13 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend ReadOnly Property Id() As Integer
+        Public ReadOnly Property Id() As Integer
             Get
                 Return _Id
             End Get
         End Property
 
-        Friend ReadOnly Property InHistory() As Boolean
+        Public ReadOnly Property InHistory() As Boolean
             Get
                 If Page Is Nothing Then Return False
 
@@ -168,28 +168,28 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend ReadOnly Property IsAbusive() As Boolean
+        Public ReadOnly Property IsAbusive() As Boolean
             Get
                 If Abuse Is Nothing Then Return False
                 Return Wiki.Config.AbuseFilters.Contains(Abuse.Id)
             End Get
         End Property
 
-        Friend ReadOnly Property IsAssisted() As Boolean
+        Public ReadOnly Property IsAssisted() As Boolean
             Get
                 Return (Tool IsNot Nothing)
             End Get
         End Property
 
-        Friend ReadOnly Property IsBlank() As Boolean
+        Public ReadOnly Property IsBlank() As Boolean
             Get
                 Return (Bytes = 0)
             End Get
         End Property
 
-        Friend Property IsBot() As Boolean
+        Public Property IsBot() As Boolean
 
-        Friend Property IsCreation() As Boolean
+        Public Property IsCreation() As Boolean
             Get
                 Return (_Prev Is Null)
             End Get
@@ -198,37 +198,37 @@ Namespace Huggle
             End Set
         End Property
 
-        Friend Property IsDeleted() As Boolean
+        Public Property IsDeleted() As Boolean
 
-        Friend ReadOnly Property IsHidden() As Boolean
+        Public ReadOnly Property IsHidden() As Boolean
             Get
                 Return (SummaryHidden OrElse UserHidden OrElse TextHidden)
             End Get
         End Property
 
-        Friend Property IsMinor() As Boolean
+        Public Property IsMinor() As Boolean
 
-        Friend ReadOnly Property IsOwnUserspace() As Boolean
+        Public ReadOnly Property IsOwnUserspace() As Boolean
             Get
                 Return (_Page.Owner Is _User)
             End Get
         End Property
 
-        Friend Property IsReplace() As Boolean
+        Public Property IsReplace() As Boolean
 
-        Friend Property IsReport() As Boolean
+        Public Property IsReport() As Boolean
 
-        Friend Property IsRevert() As Boolean
+        Public Property IsRevert() As Boolean
 
-        Friend ReadOnly Property IsReverted() As Boolean
+        Public ReadOnly Property IsReverted() As Boolean
             Get
                 Return (RevertedBy IsNot Nothing)
             End Get
         End Property
 
-        Friend Property IsReviewable() As Boolean
+        Public Property IsReviewable() As Boolean
 
-        Friend Property IsReviewed() As Boolean
+        Public Property IsReviewed() As Boolean
             Get
                 Return _IsReviewed
             End Get
@@ -238,53 +238,53 @@ Namespace Huggle
             End Set
         End Property
 
-        Friend Property IsRedirect() As Boolean
+        Public Property IsRedirect() As Boolean
 
-        Friend Property IsSanction() As Boolean
+        Public Property IsSanction() As Boolean
 
-        Friend ReadOnly Property IsSanctioned() As Boolean
+        Public ReadOnly Property IsSanctioned() As Boolean
             Get
                 Return (WarnedForBy IsNot Nothing)
             End Get
         End Property
 
-        Friend ReadOnly Property IsSection() As Boolean
+        Public ReadOnly Property IsSection() As Boolean
             Get
                 Return (Section IsNot Nothing)
             End Get
         End Property
 
-        Friend Property IsTag() As Boolean
+        Public Property IsTag() As Boolean
 
-        Friend ReadOnly Property IsTop() As Boolean
+        Public ReadOnly Property IsTop() As Boolean
             Get
                 Return (Page IsNot Nothing AndAlso Page.LastRev Is Me)
             End Get
         End Property
 
-        Friend ReadOnly Property IsWarnedFor() As Boolean
+        Public ReadOnly Property IsWarnedFor() As Boolean
             Get
                 Return (WarnedForBy IsNot Nothing)
             End Get
         End Property
 
-        Friend Overrides ReadOnly Property Key() As Integer
+        Public Overrides ReadOnly Property Key() As Integer
             Get
                 Return _Id
             End Get
         End Property
 
-        Friend ReadOnly Property Length() As Integer
+        Public ReadOnly Property Length() As Integer
             Get
                 If Text Is Nothing Then Return -1 Else Return Text.Length
             End Get
         End Property
 
-        Friend Property [Next]() As Revision
+        Public Property [Next]() As Revision
 
-        Friend Property NextByUser() As Revision
+        Public Property NextByUser() As Revision
 
-        Friend Property Page() As Page
+        Public Property Page() As Page
             Get
                 Return _Page
             End Get
@@ -293,25 +293,25 @@ Namespace Huggle
             End Set
         End Property
 
-        Friend Property Prev() As Revision
+        Public Property Prev() As Revision
 
-        Friend Property PrevByUser() As Revision
+        Public Property PrevByUser() As Revision
 
-        Friend Overrides ReadOnly Property Label() As String
+        Public Overrides ReadOnly Property Label() As String
             Get
                 If Page Is Nothing Then Return String.Empty Else Return Page.Name
             End Get
         End Property
 
-        Friend Property Rcid() As Integer
+        Public Property Rcid() As Integer
 
-        Friend Property RevertedBy() As Revision
+        Public Property RevertedBy() As Revision
 
-        Friend Property RevertOf() As List(Of Revision)
+        Public Property RevertOf() As List(Of Revision)
 
-        Friend Property RevertTo() As Revision
+        Public Property RevertTo() As Revision
 
-        Friend Property Review() As Review
+        Public Property Review() As Review
             Get
                 Return _Review
             End Get
@@ -321,17 +321,17 @@ Namespace Huggle
             End Set
         End Property
 
-        Friend ReadOnly Property Reviewer() As User
+        Public ReadOnly Property Reviewer() As User
             Get
                 If Review IsNot Nothing Then Return Review.User Else Return Nothing
             End Get
         End Property
 
-        Friend Property Sanction() As Sanction
+        Public Property Sanction() As Sanction
 
-        Friend Property WarnedForBy() As Revision
+        Public Property WarnedForBy() As Revision
 
-        Friend ReadOnly Property Section() As String
+        Public ReadOnly Property Section() As String
             Get
                 If _Summary Is Nothing Then Return Nothing
                 If _Summary.StartsWithI("/* ") AndAlso Summary.Contains(" */") _
@@ -339,19 +339,19 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend Property StartTime() As Date
+        Public Property StartTime() As Date
 
-        Friend Property Summary() As String
+        Public Property Summary() As String
 
-        Friend Property SummaryHidden() As Boolean
+        Public Property SummaryHidden() As Boolean
 
-        Friend ReadOnly Property Tags() As List(Of ChangeTag)
+        Public ReadOnly Property Tags() As List(Of ChangeTag)
             Get
                 Return _Tags
             End Get
         End Property
 
-        Friend Property Text() As String
+        Public Property Text() As String
             Get
                 Return _Text
             End Get
@@ -362,15 +362,15 @@ Namespace Huggle
             End Set
         End Property
 
-        Friend Property TextCacheState() As CacheState
+        Public Property TextCacheState() As CacheState
 
-        Friend Property TextHidden() As Boolean
+        Public Property TextHidden() As Boolean
 
-        Friend Property Time() As Date
+        Public Property Time() As Date
 
-        Friend Property Tool() As Tool
+        Public Property Tool() As Tool
 
-        Friend Property User() As User
+        Public Property User() As User
             Get
                 Return _User
             End Get
@@ -379,7 +379,7 @@ Namespace Huggle
             End Set
         End Property
 
-        Friend Property UserHidden() As Boolean
+        Public Property UserHidden() As Boolean
             Get
                 Return _UserHidden
             End Get
@@ -389,7 +389,7 @@ Namespace Huggle
             End Set
         End Property
 
-        Friend ReadOnly Property UserRevertTarget() As Revision
+        Public ReadOnly Property UserRevertTarget() As Revision
             Get
                 Dim Result As Revision = Me
 
@@ -401,7 +401,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend Overrides ReadOnly Property Wiki() As Wiki
+        Public Overrides ReadOnly Property Wiki() As Wiki
             Get
                 Return _Wiki
             End Get
@@ -411,7 +411,7 @@ Namespace Huggle
             RaiseEvent StateChanged(Me, New EventArgs(Of Revision)(Me))
         End Sub
 
-        Friend Sub Process()
+        Public Sub Process()
             'Automatic summaries
             If Summary IsNot Nothing Then
                 If Summary = Wiki.Message("autosumm-blank") Then _Bytes = 0
@@ -535,7 +535,7 @@ Namespace Huggle
             RaiseEvent Processed(Me, New EventArgs(Of Revision)(Me))
         End Sub
 
-        Friend Sub ProcessRevert()
+        Public Sub ProcessRevert()
             Dim plainSummary As String = WikiStripSummary(Summary)
 
             For Each pattern As Regex In Wiki.Config.RevertPatterns
@@ -617,7 +617,7 @@ Namespace Huggle
             Next pattern
         End Sub
 
-        Friend Sub ProcessNew()
+        Public Sub ProcessNew()
             If User Is Nothing OrElse Page Is Nothing Then Return
 
             Page.Exists = True
@@ -672,7 +672,7 @@ Namespace Huggle
             RaiseEvent [New](Me, New EventArgs(Of Revision)(Me))
         End Sub
 
-        Friend Sub ProcessHtml()
+        Public Sub ProcessHtml()
             If Html Is Nothing Then Return
 
             'Rcid
@@ -777,11 +777,11 @@ Namespace Huggle
             Return Id.ToStringI
         End Function
 
-        Friend Shared Function CompareByPageName(ByVal x As Revision, ByVal y As Revision) As Integer
+        Public Shared Function CompareByPageName(ByVal x As Revision, ByVal y As Revision) As Integer
             Return String.Compare(x._Page.Name, y._Page.Name, StringComparison.Ordinal)
         End Function
 
-        Friend Shared Function CompareByQuality(ByVal x As Revision, ByVal y As Revision) As Integer
+        Public Shared Function CompareByQuality(ByVal x As Revision, ByVal y As Revision) As Integer
 
             If x Is Nothing Then Return 1
             If y Is Nothing Then Return -1
@@ -835,31 +835,31 @@ Namespace Huggle
             Return String.Compare(x.Page.Name, y.Page.Name, StringComparison.Ordinal)
         End Function
 
-        Friend Shared Function CompareByTime(ByVal x As Revision, ByVal y As Revision) As Integer
+        Public Shared Function CompareByTime(ByVal x As Revision, ByVal y As Revision) As Integer
             Return Date.Compare(y._Time, x._Time)
         End Function
 
-        Friend Shared Function CompareByTimeReverse(ByVal x As Revision, ByVal y As Revision) As Integer
+        Public Shared Function CompareByTimeReverse(ByVal x As Revision, ByVal y As Revision) As Integer
             Return Date.Compare(x._Time, y._Time)
         End Function
 
-        Friend Shared Function IsKnown(ByVal rev As Revision) As Boolean
+        Public Shared Function IsKnown(ByVal rev As Revision) As Boolean
             Return (rev IsNot Nothing AndAlso rev IsNot Revision.Null)
         End Function
 
-        Friend Overrides ReadOnly Property LabelBackColor() As Color
+        Public Overrides ReadOnly Property LabelBackColor() As Color
             Get
                 Return Page.LabelBackColor
             End Get
         End Property
 
-        Friend Overrides ReadOnly Property LabelStyle() As FontStyle
+        Public Overrides ReadOnly Property LabelStyle() As FontStyle
             Get
                 If Page.IsPriority OrElse Page.IsPriorityTalk Then Return FontStyle.Bold Else Return FontStyle.Regular
             End Get
         End Property
 
-        Friend Overrides ReadOnly Property FilterVars() As Dictionary(Of String, Object)
+        Public Overrides ReadOnly Property FilterVars() As Dictionary(Of String, Object)
             Get
                 Return New Object() {
                     "type", "edit",
@@ -879,19 +879,19 @@ Namespace Huggle
         Private Wiki As Wiki
         Private ReadOnly _All As New Dictionary(Of Integer, Revision)
 
-        Friend Sub New(ByVal wiki As Wiki)
+        Public Sub New(ByVal wiki As Wiki)
             Me.Wiki = wiki
         End Sub
 
-        Friend ReadOnly Property All() As Dictionary(Of Integer, Revision)
+        Public ReadOnly Property All() As Dictionary(Of Integer, Revision)
             Get
                 Return _All
             End Get
         End Property
 
-        Friend Property Count() As Integer = -1
+        Public Property Count() As Integer = -1
 
-        Default Friend ReadOnly Property Item(ByVal id As Integer) As Revision
+        Default Public ReadOnly Property Item(ByVal id As Integer) As Revision
             Get
                 If Not All.ContainsKey(id) Then All.Add(id, New Revision(Wiki, id))
                 Return All(id)

@@ -16,7 +16,7 @@ Namespace Huggle.UI
         Private User As User
         Private Wiki As Wiki
 
-        Friend ReadOnly Property Session As Session
+        Public ReadOnly Property Session As Session
             Get
                 Return _Session
             End Get

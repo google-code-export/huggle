@@ -15,28 +15,28 @@ Namespace Huggle
         Private _GlobalUsers As GlobalUserCollection
         Private _Wikis As FamilyWikiCollection
 
-        Friend Sub New(ByVal code As String)
+        Public Sub New(ByVal code As String)
             _Code = code
             _Name = code
         End Sub
 
-        Friend Property ActiveGlobalUser() As GlobalUser
+        Public Property ActiveGlobalUser() As GlobalUser
 
-        Friend ReadOnly Property Blocks() As Dictionary(Of Integer, GlobalBlock)
+        Public ReadOnly Property Blocks() As Dictionary(Of Integer, GlobalBlock)
             Get
                 Return _Blocks
             End Get
         End Property
 
-        Friend Property CentralWiki() As Wiki
+        Public Property CentralWiki() As Wiki
 
-        Friend ReadOnly Property Code() As String
+        Public ReadOnly Property Code() As String
             Get
                 Return _Code
             End Get
         End Property
 
-        Friend ReadOnly Property Config() As FamilyConfig
+        Public ReadOnly Property Config() As FamilyConfig
             Get
                 If _Config Is Nothing Then _Config = New FamilyConfig(Me)
 
@@ -44,36 +44,36 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend Property Feed() As Feed
+        Public Property Feed() As Feed
 
-        Friend Property FileWiki() As Wiki
+        Public Property FileWiki() As Wiki
 
-        Friend ReadOnly Property GlobalGroups() As GlobalGroupCollection
+        Public ReadOnly Property GlobalGroups() As GlobalGroupCollection
             Get
                 If _GlobalGroups Is Nothing Then _GlobalGroups = New GlobalGroupCollection(Me)
                 Return _GlobalGroups
             End Get
         End Property
 
-        Friend ReadOnly Property GlobalSpamLists As SpamListCollection
+        Public ReadOnly Property GlobalSpamLists As SpamListCollection
             Get
                 If _GlobalSpamLists Is Nothing Then _GlobalSpamLists = New SpamListCollection(CentralWiki)
                 Return _GlobalSpamLists
             End Get
         End Property
 
-        Friend Property GlobalTitleBlacklist As TitleList
+        Public Property GlobalTitleBlacklist As TitleList
 
-        Friend ReadOnly Property GlobalUsers() As GlobalUserCollection
+        Public ReadOnly Property GlobalUsers() As GlobalUserCollection
             Get
                 If _GlobalUsers Is Nothing Then _GlobalUsers = New GlobalUserCollection(Me)
                 Return _GlobalUsers
             End Get
         End Property
 
-        Friend Property Name() As String
+        Public Property Name() As String
 
-        Friend ReadOnly Property Wikis() As FamilyWikiCollection
+        Public ReadOnly Property Wikis() As FamilyWikiCollection
             Get
 
                 If _Wikis Is Nothing Then _Wikis = New FamilyWikiCollection(Me)
@@ -92,24 +92,24 @@ Namespace Huggle
         Private ReadOnly _All As New Dictionary(Of String, Family)
         Private ReadOnly _Wikimedia As Family
 
-        Friend Sub New()
+        Public Sub New()
             _Wikimedia = Item("wikimedia")
         End Sub
 
-        Friend ReadOnly Property All() As IList(Of Family)
+        Public ReadOnly Property All() As IList(Of Family)
             Get
                 Return _All.Values.ToList.AsReadOnly
             End Get
         End Property
 
-        Default Friend ReadOnly Property Item(ByVal code As String) As Family
+        Default Public ReadOnly Property Item(ByVal code As String) As Family
             Get
                 If Not _All.ContainsKey(code) Then _All.Add(code, New Family(code))
                 Return _All(code)
             End Get
         End Property
 
-        Friend ReadOnly Property Wikimedia As Family
+        Public ReadOnly Property Wikimedia As Family
             Get
                 Return _Wikimedia
             End Get
@@ -122,14 +122,14 @@ Namespace Huggle
         Private _Default As Wiki
         Private Family As Family
 
-        Friend Sub New(ByVal family As Family)
-            _Default = App.Wikis(family.Code & "-default")
+        Public Sub New(ByVal family As Family)
+            _Default = New Wiki(family.Code & "-default")
             _Default.Family = family
             _Default.IsDefault = True
             Me.Family = family
         End Sub
 
-        Friend ReadOnly Property All() As IList(Of Wiki)
+        Public ReadOnly Property All() As IList(Of Wiki)
             Get
                 Dim result As New List(Of Wiki)
 
@@ -141,14 +141,14 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend ReadOnly Property Contains(ByVal code As String) As Boolean
+        Public ReadOnly Property Contains(ByVal code As String) As Boolean
             Get
                 If Not App.Wikis.Contains(code) Then Return False
                 Return (App.Wikis(code).Family Is Family)
             End Get
         End Property
 
-        Friend ReadOnly Property [Default]() As Wiki
+        Public ReadOnly Property [Default]() As Wiki
             Get
                 Return _Default
             End Get

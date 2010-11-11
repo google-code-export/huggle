@@ -10,7 +10,7 @@ Namespace Huggle
 
     Friend Module Data
 
-        Friend Function AsString(ByVal item As Object) As String
+        Public Function AsString(ByVal item As Object) As String
             If item Is Nothing Then Return "null"
 
             If TypeOf item Is Token Then
@@ -53,13 +53,13 @@ Namespace Huggle
             Return item.ToString
         End Function
 
-        Friend Function AsChart(ByVal item As Object) As Image
+        Public Function AsChart(ByVal item As Object) As Image
             If item Is Nothing Then Return Nothing
 
             Return Nothing
         End Function
 
-        Friend Function AsHtml(ByVal item As Object) As Html
+        Public Function AsHtml(ByVal item As Object) As Html
             If item Is Nothing Then Return New Html("")
 
             If TypeOf item Is Html Then
@@ -94,13 +94,13 @@ Namespace Huggle
             Return New Html(HtmlEncode(Data.AsString(item)))
         End Function
 
-        Friend Function AsImage(ByVal item As Object) As Image
+        Public Function AsImage(ByVal item As Object) As Image
             If item Is Nothing Then Return Nothing
 
             Return Nothing
         End Function
 
-        Friend Function AsList(ByVal item As Object) As List(Of String)
+        Public Function AsList(ByVal item As Object) As List(Of String)
             If item Is Nothing Then Return Nothing
 
             If TypeOf item Is ArrayList Then
@@ -119,7 +119,7 @@ Namespace Huggle
             Return Nothing
         End Function
 
-        Friend Function AsSubitem(ByVal item As Object) As String
+        Public Function AsSubitem(ByVal item As Object) As String
             If item Is Nothing Then Return "null"
 
             If TypeOf item Is Image Then
@@ -132,7 +132,7 @@ Namespace Huggle
             Return Data.AsString(item)
         End Function
 
-        Friend Function AsTable(ByVal item As Object) As ScriptTable
+        Public Function AsTable(ByVal item As Object) As ScriptTable
             If item Is Nothing Then Return Nothing
 
             If TypeOf item Is ScriptTable Then
@@ -145,7 +145,7 @@ Namespace Huggle
             Return Nothing
         End Function
 
-        Friend Function AsWikitext(ByVal item As Object) As Wikistring
+        Public Function AsWikitext(ByVal item As Object) As Wikistring
             If item Is Nothing Then Return New Wikistring("")
 
             If TypeOf item Is Wikistring Then
@@ -178,11 +178,11 @@ Namespace Huggle
 
         Private _Value As String
 
-        Friend Sub New(ByVal value As String)
+        Public Sub New(ByVal value As String)
             _Value = value
         End Sub
 
-        Friend ReadOnly Property Value() As String
+        Public ReadOnly Property Value() As String
             Get
                 Return _Value
             End Get

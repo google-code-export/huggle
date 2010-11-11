@@ -16,18 +16,18 @@ Namespace Huggle.Actions
         Private Shared ReadOnly KnownErrors As String() =
             {"emptypass", "illegal", "noname", "notexists", "throttled", "wrongpass", "wrongtoken"}
 
-        Friend Sub New(ByVal session As Session, ByVal requester As String)
+        Public Sub New(ByVal session As Session, ByVal requester As String)
             MyBase.New(session, Msg("login-desc"))
             Anonymous = session.User.IsAnonymous
             Me.Requester = requester
         End Sub
 
-        Friend Sub New(ByVal wiki As Wiki, ByVal requester As String)
+        Public Sub New(ByVal wiki As Wiki, ByVal requester As String)
             MyBase.New(App.Sessions(wiki.Users.Anonymous), Msg("login-desc"))
             Me.Requester = requester
         End Sub
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             If Session.IsActive Then OnSuccess() : Return
 
             'Let global config finish preloading. If it wasn't preloading, load it.

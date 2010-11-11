@@ -17,7 +17,7 @@
     <OptionExplicit>On</OptionExplicit>
     <OptionCompare>Binary</OptionCompare>
     <OptionStrict>On</OptionStrict>
-    <OptionInfer>On</OptionInfer>
+    <OptionInfer>Off</OptionInfer>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>resources\HuggleIcon.ico</ApplicationIcon>
     <IsWebBootstrapper>false</IsWebBootstrapper>
@@ -98,9 +98,11 @@
     <DefineTrace>true</DefineTrace>
     <DocumentationFile>
     </DocumentationFile>
+    <NoWarn>
+    </NoWarn>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>huggle.snk</AssemblyOriginatorKeyFile>
@@ -142,6 +144,8 @@
     <Compile Include="model\SpamList.vb" />
     <Compile Include="model\Preferences.vb" />
     <Compile Include="model\TitleBlacklist.vb" />
+    <Compile Include="net\TextRequest.vb" />
+    <Compile Include="net\WikiRequest.vb" />
     <Compile Include="queries\ApiModuleQuery.vb" />
     <Compile Include="queries\Query.vb" />
     <Compile Include="queries\ExtraGlobaluserConfig.vb" />
@@ -176,6 +180,18 @@
     <Compile Include="config\MessageConfig.vb" />
     <Compile Include="net\FileRequest.vb" />
     <Compile Include="Data.vb" />
+    <Compile Include="ui\controls\EnhancedListBox.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ui\forms\ContainerForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\prompts\CustomFilterForm.Designer.vb">
+      <DependentUpon>CustomFilterForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\prompts\CustomFilterForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="ui\views\AbuseFilterDetailView.Designer.vb">
       <DependentUpon>AbuseFilterDetailView.vb</DependentUpon>
     </Compile>
@@ -399,6 +415,18 @@
       <DependentUpon>AbuseFilterView.vb</DependentUpon>
     </Compile>
     <Compile Include="ui\views\AbuseFilterView.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ui\views\VisualRevisionView.Designer.vb">
+      <DependentUpon>VisualRevisionView.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\views\VisualRevisionView.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ui\views\RevisionView.Designer.vb">
+      <DependentUpon>RevisionView.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\views\RevisionView.vb">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ui\views\GlobalGroupView.Designer.vb">
@@ -648,6 +676,9 @@
     <Compile Include="wikitext\Transclusion.vb" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ui\prompts\CustomFilterForm.resx">
+      <DependentUpon>CustomFilterForm.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ui\views\AbuseFilterDetailView.resx">
       <DependentUpon>AbuseFilterDetailView.vb</DependentUpon>
     </EmbeddedResource>
@@ -729,6 +760,12 @@
     <EmbeddedResource Include="ui\views\AbuseFilterView.resx">
       <DependentUpon>AbuseFilterView.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ui\views\VisualRevisionView.resx">
+      <DependentUpon>VisualRevisionView.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\views\RevisionView.resx">
+      <DependentUpon>RevisionView.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ui\views\GlobalGroupView.resx">
       <DependentUpon>GlobalGroupView.vb</DependentUpon>
     </EmbeddedResource>
@@ -776,6 +813,7 @@
     <CodeAnalysisDictionary Include="analysis\CustomDictionary.xml" />
     <Content Include="en.txt" />
     <Content Include="resources\languages.txt" />
+    <None Include="analysis\Huggle.psess" />
     <None Include="app.manifest" />
     <None Include="Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>

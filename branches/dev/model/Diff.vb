@@ -19,23 +19,23 @@ Namespace Huggle
         Private WithEvents _Older As Revision
         Private WithEvents _Newer As Revision
 
-        Friend Shared Event [New] As SimpleEventHandler(Of Diff)
-        Friend Event StateChanged As SimpleEventHandler(Of Diff)
+        Public Shared Event [New] As SimpleEventHandler(Of Diff)
+        Public Event StateChanged As SimpleEventHandler(Of Diff)
 
-        Friend Sub New(ByVal key As String, ByVal wiki As Wiki)
+        Public Sub New(ByVal key As String, ByVal wiki As Wiki)
             _Key = key
             _Wiki = wiki
         End Sub
 
-        Friend ReadOnly Property AddedText() As String
+        Public ReadOnly Property AddedText() As String
             Get
                 Return _AddedText
             End Get
         End Property
 
-        Friend Property CachedAt As Date
+        Public Property CachedAt As Date
 
-        Friend Property CacheState() As CacheState
+        Public Property CacheState() As CacheState
             Get
                 Return _CacheState
             End Get
@@ -46,7 +46,7 @@ Namespace Huggle
             End Set
         End Property
 
-        Friend ReadOnly Property Change() As Integer
+        Public ReadOnly Property Change() As Integer
             Get
                 If _Older Is Nothing OrElse _Newer Is Nothing Then Return Integer.MinValue
                 If _Older.Bytes = Integer.MinValue OrElse _Newer.Bytes = Integer.MinValue Then Return Integer.MinValue
@@ -54,9 +54,9 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend Property Exists() As Boolean
+        Public Property Exists() As Boolean
 
-        Friend Property Html() As String
+        Public Property Html() As String
             Get
                 Return _Html
             End Get
@@ -136,46 +136,46 @@ Namespace Huggle
             End Set
         End Property
 
-        Friend ReadOnly Property Key() As String
+        Public ReadOnly Property Key() As String
             Get
                 Return _Key
             End Get
         End Property
 
-        Friend ReadOnly Property Newer() As Revision
+        Public ReadOnly Property Newer() As Revision
             Get
                 Return _Newer
             End Get
         End Property
 
-        Friend ReadOnly Property NewId() As String
+        Public ReadOnly Property NewId() As String
             Get
                 If _Newer IsNot Nothing Then Return CStr(_Newer.Id)
                 Return "cur"
             End Get
         End Property
 
-        Friend ReadOnly Property Older() As Revision
+        Public ReadOnly Property Older() As Revision
             Get
                 Return _Older
             End Get
         End Property
 
-        Friend ReadOnly Property OldId() As String
+        Public ReadOnly Property OldId() As String
             Get
                 If _Older IsNot Nothing Then Return CStr(_Older.Id)
                 Return "prev"
             End Get
         End Property
 
-        Friend ReadOnly Property Page() As Page
+        Public ReadOnly Property Page() As Page
             Get
                 If Newer IsNot Nothing Then Return Newer.Page
                 Return Wiki.Pages(_Key.FromLast("|"))
             End Get
         End Property
 
-        Friend ReadOnly Property Wiki() As Wiki
+        Public ReadOnly Property Wiki() As Wiki
             Get
                 Return _Wiki
             End Get
@@ -200,7 +200,7 @@ Namespace Huggle
         Private ReadOnly CacheTime As New TimeSpan(0, 10, 0)
         Private WithEvents CacheTimer As Windows.Forms.Timer
 
-        Friend Sub New(ByVal wiki As Wiki)
+        Public Sub New(ByVal wiki As Wiki)
             Me.Wiki = wiki
 
             CacheTimer = New Windows.Forms.Timer
@@ -208,22 +208,22 @@ Namespace Huggle
             CacheTimer.Start()
         End Sub
 
-        Friend ReadOnly Property All() As IList(Of Diff)
+        Public ReadOnly Property All() As IList(Of Diff)
             Get
                 Return _All.Values.ToList.AsReadOnly
             End Get
         End Property
 
-        Friend Sub Rekey(ByVal diff As Diff, ByVal newKey As String)
+        Public Sub Rekey(ByVal diff As Diff, ByVal newKey As String)
             _All.Unmerge(diff.Key)
             _All.Merge(newKey, diff)
         End Sub
 
-        Friend Sub Remove(ByVal diff As Diff)
+        Public Sub Remove(ByVal diff As Diff)
             _All.Unmerge(diff.Key)
         End Sub
 
-        Default Friend ReadOnly Property Item(ByVal first As Revision, ByVal second As Revision) As Diff
+        Default Public ReadOnly Property Item(ByVal first As Revision, ByVal second As Revision) As Diff
             Get
                 Dim key As String = CStr(Math.Max(first.Id, second.Id) & "|" & Math.Min(first.Id, second.Id))
 
@@ -233,7 +233,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Default Friend ReadOnly Property Item(ByVal newer As Revision) As Diff
+        Default Public ReadOnly Property Item(ByVal newer As Revision) As Diff
             Get
                 If newer.Prev IsNot Nothing Then Return Item(newer.Prev, newer)
                 If Not _All.ContainsKey(CStr(newer.Id) & "|prev") _
@@ -242,7 +242,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Default Friend ReadOnly Property Item(ByVal page As Page) As Diff
+        Default Public ReadOnly Property Item(ByVal page As Page) As Diff
             Get
                 If page.LastRev IsNot Nothing Then Return Item(page.LastRev)
                 If Not _All.ContainsKey("cur|prev|" & page.Title) _

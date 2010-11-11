@@ -59,11 +59,14 @@ view-extension-title:            Extensions
 view-extension-version:          Version: {0}
 view-extension-author:           Author: {0}
 view-extension-authors:          Authors: {0}
-view-extension-typeparserhook:   Parser hook
-view-extension-typeother:        Other
-view-extension-typespecialpage:  Special page
-view-extension-typemedia:        Media handler
-view-extension-all:              (All types)
+view-extension-type:             Type:
+view-extension-type-all:         (All types)
+view-extension-type-parserhook:   Parser hook
+view-extension-type-other:        Other
+view-extension-type-specialpage:  Special page
+view-extension-type-media:        Media handler
+view-extension-column-type:      Type
+view-extension-column-version:   Version
 
 view-wikigeneral-title:          General
 view-wikigeneral-language:       Content language: {0}
@@ -92,7 +95,9 @@ view-usergroup-rights:           This group has the following rights:
 view-userright-title:            User rights
 view-userright-nobody:           (nobody)
 
-view-changetag-title:            Change tags 
+view-changetag-title:            Change tags
+view-changetag-column-description:Description
+
 view-gadget-title:               Gadgets
 view-moderation-title:           Moderation
 
@@ -100,24 +105,43 @@ view-general-nodescription:      (no description)
 
 view-abusefilter-title:          Abuse filters
 view-abusefilter-actions:        Actions: {0}
-view-abusefilter-disabled:       disabled
-view-abusefilter-deleted:        deleted
-view-abusefilter-enabled:        enabled
+view-abusefilter-disabled:       Disabled
+view-abusefilter-deleted:        Deleted
+view-abusefilter-enabled:        Enabled
 view-abusefilter-general:        General
 view-abusefilter-modified:       Last modified by {0} at {1}
 view-abusefilter-notes:          Notes
 view-abusefilter-pattern:        Pattern
-view-abusefilter-private:        private
+view-abusefilter-private:        Private
 view-abusefilter-progress:       Loading filter details
-view-abusefilter-public:         public
+view-abusefilter-public:         Public
 view-abusefilter-ratelimit:      Rate limit: {0}
 view-abusefilter-restricted:     Some details of this filter are hidden, and you do not have permission to view them
 view-abusefilter-status:         Status: {0}
 view-abusefilter-tags:           Tags
 view-abusefilter-tagdetail:      Tags applied by this filter:
+view-abusefilter-unknowntags:    Unable to display tags for this filter
+view-abusefilter-notags:         This filter does not apply any tags
+view-abusefilter-statusall:      (Any status)
+view-abusefilter-visibilityall:  (Any visibility)
+view-abusefilter-action-all:      (All actions)
+view-abusefilter-action-tag:      Tag
+view-abusefilter-action-warn:     Warn
+view-abusefilter-action-disallow: Disallow
+view-abusefilter-action-throttle: Rate limit
+view-abusefilter-action-blockautopromote:Unconfirm
+view-abusefilter-action-degroup:  Ungroup
+view-abusefilter-action-block:    Block
+view-abusefilter-action-rangeblock:Rangeblock
+view-abusefilter-column-id:       ID
+view-abusefilter-column-status:   Status
+view-abusefilter-column-actions:  Actions
 
-view-misc-ratelimit:             {0} actions of type '{1}' within {2}
-view-misc-ratelimitaction:       {0} actions within {1}
+view-misc-column-count:          Count
+view-misc-column-name:           Name
+view-misc-count:                 {0} items
+view-misc-ratelimit:             {0} actions within {1}
+view-misc-ratelimitaction:       {0} actions of type '{1}' within {2}
 view-misc-ratelimitgrouped:      {0} actions within {1} grouped by {2}
 
 wikiadd-explanation:             Use this form to add a wiki to the wiki list.\nWikis must be running MediaWiki 1.15 or later with the API enabled.

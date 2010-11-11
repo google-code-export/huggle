@@ -1,4 +1,5 @@
-﻿Imports System.Collections.Generic
+﻿Imports System
+Imports System.Collections.Generic
 Imports System.Windows.Forms
 
 Namespace Huggle.UI
@@ -10,19 +11,19 @@ Namespace Huggle.UI
 
         Private _IsAvailable As Boolean
 
-        Friend Sub New()
+        Public Sub New()
 
         End Sub
 
-        Friend Overridable Function GetKey() As String
+        Public Overridable Function GetKey() As String
             Return Nothing
         End Function
 
-        Friend Overridable Function GetState() As Dictionary(Of String, Object)
+        Public Overridable Function GetState() As Dictionary(Of String, Object)
             Return Nothing
         End Function
 
-        Friend Overridable Sub RestoreState()
+        Public Overridable Sub RestoreState()
 
         End Sub
 
@@ -32,12 +33,42 @@ Namespace Huggle.UI
             End Get
         End Property
 
-        Private Sub _HandleCreated() Handles Me.HandleCreated
+        Protected Overrides Sub OnHandleCreated(ByVal e As EventArgs)
             _IsAvailable = True
+            MyBase.OnHandleCreated(e)
         End Sub
 
-        Private Sub _HandleDestroyed() Handles Me.HandleDestroyed
+        Protected Overrides Sub OnHandleDestroyed(ByVal e As EventArgs)
             _IsAvailable = False
+            MyBase.OnHandleDestroyed(e)
+        End Sub
+
+        Protected Overrides Sub OnResizeBegin(ByVal e As EventArgs)
+            DoResizeBegin(Me)
+            MyBase.OnResizeBegin(e)
+        End Sub
+
+        Protected Overrides Sub OnResizeEnd(ByVal e As EventArgs)
+            DoResizeEnd(Me)
+            MyBase.OnResizeEnd(e)
+        End Sub
+
+        Private Sub DoResizeBegin(ByVal control As Control)
+            Dim listView As EnhancedListView = TryCast(control, EnhancedListView)
+            If listView IsNot Nothing Then listView.BeginResize()
+
+            For Each child As Control In control.Controls
+                DoResizeBegin(child)
+            Next child
+        End Sub
+
+        Private Sub DoResizeEnd(ByVal control As Control)
+            Dim listView As EnhancedListView = TryCast(control, EnhancedListView)
+            If listView IsNot Nothing Then listView.EndResize()
+
+            For Each child As Control In control.Controls
+                DoResizeEnd(child)
+            Next child
         End Sub
 
     End Class

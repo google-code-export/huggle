@@ -93,7 +93,7 @@ Namespace Huggle.UI
             Close()
         End Sub
 
-        Friend Overloads Shared Function Show(
+        Public Overloads Shared Function Show(
             ByVal title As String, ByVal largeText As String, ByVal smallText As String,
             ByVal defaultButton As Integer, ByVal ParamArray buttons As String()) As Integer
 

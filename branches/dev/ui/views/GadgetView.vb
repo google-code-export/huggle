@@ -1,10 +1,11 @@
-﻿Imports System.Web.HttpUtility
+﻿Imports System.Collections.Generic
+Imports System.Web.HttpUtility
 
 Namespace Huggle.UI
 
     Friend Class GadgetView : Inherits Viewer
 
-        Friend Sub New(ByVal session As Session)
+        Public Sub New(ByVal session As Session)
             MyBase.New(session)
             InitializeComponent()
         End Sub
@@ -14,24 +15,22 @@ Namespace Huggle.UI
         Private Sub _Load() Handles Me.Load
             App.Languages.Current.Localize(Me)
 
-            List.BeginUpdate()
-            List.Items.Clear()
+            Dim rows As New List(Of String())
 
             For Each gadget As Gadget In Wiki.Gadgets.All
-                List.AddRow(gadget.Name, If(gadget.TypeDesc, gadget.Type), _
-                    WikiStripSummary(HtmlDecode(gadget.Description)))
+                rows.Add({gadget.Name, If(gadget.TypeDesc, gadget.Type),
+                    WikiStripSummary(HtmlDecode(gadget.Description))})
             Next gadget
 
-            List.EndUpdate()
-            List.SortBy(0)
+            List.SetItems(rows)
             Count.Text = Msg("a-count", List.Items.Count)
         End Sub
 
         Private Sub List_SelectedIndexChanged() Handles List.SelectedIndexChanged
-            If List.SelectedItems.Count = 0 Then
+            If Not List.HasSelectedItem Then
                 Current = Nothing
             Else
-                Current = Wiki.Gadgets.FromName(List.SelectedItems(0).Text)
+                Current = Wiki.Gadgets.FromName(List.SelectedValue)
 
                 GadgetName.Text = Current.Name
                 GadgetType.Text = Msg("wikiprop-gadget-type", If(Current.TypeDesc, Current.Type))

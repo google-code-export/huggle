@@ -12,7 +12,7 @@ Namespace Huggle.UI
             Value = ""
         End Sub
 
-        Friend Property Value() As Object
+        Public Property Value() As Object
             Get
                 Return _value
             End Get
@@ -32,7 +32,7 @@ Namespace Huggle.UI
             End Set
         End Property
 
-        Friend Sub UnsetAll()
+        Public Sub UnsetAll()
             For Each item As ToolStripItem In ToolBar.Items
                 If TypeOf item Is ToolStripButton Then DirectCast(item, ToolStripButton).Checked = False
             Next item

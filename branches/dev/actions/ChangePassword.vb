@@ -7,12 +7,12 @@ Namespace Huggle.Actions
 
         Private NewPassword As Byte()
 
-        Friend Sub New(ByVal session As Session, ByVal newPassword As Byte())
+        Public Sub New(ByVal session As Session, ByVal newPassword As Byte())
             MyBase.New(session, Msg("changepassword-desc"))
             Me.NewPassword = newPassword
         End Sub
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             If User.IsAnonymous Then OnFail(Msg("changepassword-anon")) : Return
             OnStarted()
             OnProgress(Msg("changepassword-progress", User.FullName))

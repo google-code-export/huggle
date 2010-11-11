@@ -9,7 +9,7 @@ Namespace Huggle
 
     'Represents a read or write request made to MediaWiki's API (api.php)
 
-    Friend Class ApiRequest : Inherits Request
+    Friend Class ApiRequest : Inherits WikiRequest
 
         Private _Continues As New Dictionary(Of String, Object)
         Private _Items As New List(Of QueueItem)
@@ -17,98 +17,85 @@ Namespace Huggle
         Private _LoginResponse As LoginResponse
         Private _LoginToken As String
         Private _Query As QueryString
-        Private _Response As XmlDocument
+        Private _ResponseXml As XmlDocument
         Private _Strings As New List(Of String)
         Private _Warnings As New List(Of String)
 
         Private Const MaxRequests As Integer = 100
 
-        Friend Sub New(ByVal session As Session, ByVal description As String, ByVal query As QueryString)
+        Public Sub New(ByVal session As Session, ByVal description As String, ByVal query As QueryString)
             MyBase.New(session)
             _Limit = session.User.ApiLimit
             _Query = query
 
-            MyBase.Description = description
             Processing = True
         End Sub
 
-        Friend ReadOnly Property Continues() As Dictionary(Of String, Object)
+        Public ReadOnly Property Continues() As Dictionary(Of String, Object)
             Get
                 Return _Continues
             End Get
         End Property
 
-        Friend Property Filename() As String
+        Public Property Filename() As String
 
-        Friend Property IsAtEnd() As Boolean
+        Public Property IsAtEnd() As Boolean
 
-        Friend Property IsSimple() As Boolean
+        Public Property IsSimple() As Boolean
 
-        Friend ReadOnly Property Items() As List(Of QueueItem)
+        Public ReadOnly Property Items() As List(Of QueueItem)
             Get
                 Return _Items
             End Get
         End Property
 
-        Friend Property Limit() As Integer
+        Public Property Limit() As Integer
 
-        Friend ReadOnly Property LoginResponse() As LoginResponse
+        Public ReadOnly Property LoginResponse() As LoginResponse
             Get
                 Return _LoginResponse
             End Get
         End Property
 
-        Friend Shared ReadOnly Property MaxSlowLength() As Integer
+        Public Shared ReadOnly Property MaxSlowLength() As Integer
             Get
                 Return 50
             End Get
         End Property
 
-        Friend ReadOnly Property NewItems() As List(Of QueueItem)
+        Public ReadOnly Property NewItems() As List(Of QueueItem)
             Get
                 Return _NewItems
             End Get
         End Property
 
-        Friend Property Processing() As Boolean
+        Public Property Processing() As Boolean
 
-        Friend ReadOnly Property Query() As QueryString
+        Public ReadOnly Property Query() As QueryString
             Get
                 Return _Query
             End Get
         End Property
 
-        Friend Shadows ReadOnly Property Response() As XmlDocument
+        Public Shadows ReadOnly Property ResponseXml() As XmlDocument
             Get
-                Return _Response
+                Return _ResponseXml
             End Get
         End Property
 
-        Friend ReadOnly Property Strings() As List(Of String)
+        Public ReadOnly Property Strings() As List(Of String)
             Get
                 Return _Strings
             End Get
         End Property
 
-        Friend ReadOnly Property User() As User
-            Get
-                Return Session.User
-            End Get
-        End Property
-
-        Friend ReadOnly Property Warnings() As List(Of String)
+        Public ReadOnly Property Warnings() As List(Of String)
             Get
                 Return _Warnings
             End Get
         End Property
 
-        Friend ReadOnly Property Wiki() As Wiki
-            Get
-                Return Session.User.Wiki
-            End Get
-        End Property
-
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             Url = If(Session.IsSecure, Wiki.SecureUrl, Wiki.Url)
             If Url Is Nothing Then OnFail(Msg("error-wikibadurl", Wiki)) : Return
             Url = New Uri(Url.ToString & "api.php")
@@ -134,54 +121,34 @@ Namespace Huggle
             Log.Debug("API request: {0}".FormatI(logString))
 
             MyBase.Start()
-
-            If IsCancelled Then OnFail(Msg("error-cancelled")) : Return
-
-            If Result.IsError Then
-                'When the URL is at fault, make it clear which wiki the URL is for
-                Select Case Result.Code
-                    Case "badurl" : Result = New Result(Msg("error-wikibadurl", Wiki))
-                    Case "httperror" : Result.Append(Msg("error-wikinotfound", Wiki, Wiki.Url))
-                End Select
-
-                OnFail(Result) : Return
-            End If
-
-            Dim responseText As String = Encoding.UTF8.GetString(MyBase.Response.ToArray)
-            MyBase.Response.Close()
+            If Result.IsError Then OnFail(Result) : Return
 
             'Check for disabled API
-            If responseText.StartsWithI("MediaWiki API is not enabled") Then OnFail(Msg("error-apidisabled")) : Return
+            If Response.StartsWithI("MediaWiki API is not enabled") Then OnFail(Msg("error-apidisabled")) : Return
 
             'Check for PHP source code output
-            If responseText.StartsWithI("<?php") Then OnFail(Msg("error-serverconfig", Wiki)) : Return
-
-            'Check for MediaWiki/Wikimedia error message
-            Dim errorCheck As Result = CheckForWikiError(responseText)
-            If errorCheck.IsError Then OnFail(errorCheck) : Return
+            If Response.StartsWithI("<?php") Then OnFail(Msg("error-serverconfig", Wiki)) : Return
 
             'Validate XML
-            _Response = New XmlDocument
+            _ResponseXml = New XmlDocument
 
             Try
-                Response.LoadXml(responseText)
+                ResponseXml.LoadXml(Response)
 
             Catch ex As XmlException
                 'Interpret parse error messages
-                If responseText.Contains("<b>Parse error</b>") _
-                    Then OnFail(Msg("error-internal", "Parse error")) : Return
-
+                If Response.Contains("<b>Parse error</b>") Then OnFail(Msg("error-internal", "Parse error")) : Return
                 OnFail(Msg("error-invalidxml")) : Return
             End Try
 
             Continues.Clear()
-            ProcessApi(Response.DocumentElement)
+            ProcessApi(ResponseXml.DocumentElement)
             IsAtEnd = (Continues.Count = 0)
 
             If Not IsFailed Then OnSuccess()
         End Sub
 
-        Friend Sub DoMultiple()
+        Public Sub DoMultiple()
             Dim remainingRequests As Integer = MaxRequests
             Continues.Clear()
             Items.Clear()
@@ -201,16 +168,24 @@ Namespace Huggle
 
     End Class
 
-    <Diagnostics.DebuggerDisplay("{Result}")> _
+    <Diagnostics.DebuggerDisplay("{Result}")>
     Friend Class LoginResponse
 
-        Friend Sub New()
-            Result = "error"
+        Private ReadOnly _Result As String
+
+        Public Sub New(ByVal result As String)
+            _Result = result
         End Sub
 
-        Friend Property Result() As String
-        Friend Property Token() As String
-        Friend Property Wait() As TimeSpan
+        Public ReadOnly Property Result() As String
+            Get
+                Return _Result
+            End Get
+        End Property
+
+        Public Property Token() As String
+
+        Public Property Wait() As TimeSpan
 
         Public Overrides Function ToString() As String
             Return Result

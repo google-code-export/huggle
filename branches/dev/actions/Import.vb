@@ -7,23 +7,23 @@ Namespace Huggle.Actions
 
         Private WithEvents Login As Login
 
-        Friend Sub New()
+        Public Sub New()
 
         End Sub
 
-        Friend Property Attribution() As Boolean
+        Public Property Attribution() As Boolean
 
-        Friend Property DestPage() As Page
+        Public Property DestPage() As Page
 
-        Friend Property DestWiki() As Wiki
+        Public Property DestWiki() As Wiki
 
-        Friend Property History() As Boolean
+        Public Property History() As Boolean
 
-        Friend Property SourcePage() As Page
+        Public Property SourcePage() As Page
 
-        Friend Property SourceWiki() As Wiki
+        Public Property SourceWiki() As Wiki
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             If SourcePage Is Nothing OrElse DestPage Is Nothing Then
                 If Not Interactive Then OnFail(Msg("import-notspecified")) : Return
 

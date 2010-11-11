@@ -48,6 +48,6 @@
             Me.ResumeLayout(False)
 
         End Sub
-        Friend WithEvents Query As System.Windows.Forms.RichTextBox
+        Public WithEvents Query As System.Windows.Forms.RichTextBox
     End Class
 End Namespace

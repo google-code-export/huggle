@@ -9,7 +9,7 @@ Namespace Huggle.Actions
         Private _Summary As String
         Private _Watch As WatchAction
 
-        Friend Sub New(ByVal session As Session, ByVal file As MemoryStream, ByVal name As String, ByVal summary As String)
+        Public Sub New(ByVal session As Session, ByVal file As MemoryStream, ByVal name As String, ByVal summary As String)
             MyBase.New(session, Msg("upload-desc", name))
 
             _File = file
@@ -17,25 +17,25 @@ Namespace Huggle.Actions
             _Summary = summary
         End Sub
 
-        Friend ReadOnly Property File() As MemoryStream
+        Public ReadOnly Property File() As MemoryStream
             Get
                 Return _File
             End Get
         End Property
 
-        Friend ReadOnly Property Name() As String
+        Public ReadOnly Property Name() As String
             Get
                 Return _Name
             End Get
         End Property
 
-        Friend ReadOnly Property Summary() As String
+        Public ReadOnly Property Summary() As String
             Get
                 Return _Summary
             End Get
         End Property
 
-        Friend Property Watch() As WatchAction
+        Public Property Watch() As WatchAction
             Get
                 Return _Watch
             End Get
@@ -44,7 +44,7 @@ Namespace Huggle.Actions
             End Set
         End Property
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             OnProgress(Msg("upload-progress", Name))
             OnStarted()
 

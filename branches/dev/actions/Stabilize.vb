@@ -9,12 +9,12 @@
         Private _Summary As String
         Private _Watch As Boolean
 
-        Friend Sub New(ByVal session As Session, ByVal page As Page)
+        Public Sub New(ByVal session As Session, ByVal page As Page)
             MyBase.New(session, Msg("stabilize-desc", page))
             _Page = page
         End Sub
 
-        Friend Property AutoReview() As Boolean
+        Public Property AutoReview() As Boolean
             Get
                 Return _AutoReview
             End Get
@@ -23,7 +23,7 @@
             End Set
         End Property
 
-        Friend Property Page() As Page
+        Public Property Page() As Page
             Get
                 Return _Page
             End Get
@@ -32,7 +32,7 @@
             End Set
         End Property
 
-        Friend Property RestrictAutoReview() As Boolean
+        Public Property RestrictAutoReview() As Boolean
             Get
                 Return _RestrictAutoReview
             End Get
@@ -41,7 +41,7 @@
             End Set
         End Property
 
-        Friend Property StableFlag() As StableFlag
+        Public Property StableFlag() As StableFlag
             Get
                 Return _StableFlag
             End Get
@@ -50,7 +50,7 @@
             End Set
         End Property
 
-        Friend Property Summary() As String
+        Public Property Summary() As String
             Get
                 Return _Summary
             End Get
@@ -59,7 +59,7 @@
             End Set
         End Property
 
-        Friend Property Watch() As Boolean
+        Public Property Watch() As Boolean
             Get
                 Return _Watch
             End Get
@@ -68,7 +68,7 @@
             End Set
         End Property
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             OnProgress(Msg("stabilize-progress", Page.Title))
             OnStarted()
 
@@ -105,7 +105,7 @@
 
     End Class
 
-    Friend Enum StableFlag As Integer
+    Public Enum StableFlag As Integer
         : Latest : LatestStable : LatestQuality : LatestPristine
     End Enum
 

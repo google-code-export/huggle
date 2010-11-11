@@ -178,7 +178,7 @@
         Private WithEvents Add As System.Windows.Forms.ToolStripButton
         Private WithEvents Options As System.Windows.Forms.ToolStripButton
         Private WithEvents ResetButton As System.Windows.Forms.ToolStripButton
-        Friend WithEvents Enable As System.Windows.Forms.ToolStripButton
+        Public WithEvents Enable As System.Windows.Forms.ToolStripButton
 
     End Class
 End Namespace

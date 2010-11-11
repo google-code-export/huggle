@@ -6,7 +6,7 @@
 
         Private _Target As GlobalUser
 
-        Friend Sub New(ByVal wiki As Wiki, ByVal comment As String, ByVal id As Integer, ByVal rcid As Integer,
+        Public Sub New(ByVal wiki As Wiki, ByVal comment As String, ByVal id As Integer, ByVal rcid As Integer,
             ByVal target As GlobalUser, ByVal time As Date, ByVal user As User)
 
             MyBase.New(wiki, id, rcid)
@@ -18,7 +18,7 @@
             _Target = target
         End Sub
 
-        Friend Overrides ReadOnly Property Target As String
+        Public Overrides ReadOnly Property Target As String
             Get
                 Return _Target.Name
             End Get

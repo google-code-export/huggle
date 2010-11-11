@@ -9,7 +9,7 @@ Namespace Huggle.UI
         Private Session As Session
         Private User As User
 
-        Friend Sub New(ByVal session As Session, ByVal user As User)
+        Public Sub New(ByVal session As Session, ByVal user As User)
             InitializeComponent()
 
             If session Is Nothing Then Throw New ArgumentNullException("session")

@@ -10,25 +10,25 @@ Namespace Huggle.UI
 
         Private Session As Session
 
-        Friend Sub New(ByVal session As Session, ByVal revision As Revision)
+        Public Sub New(ByVal session As Session, ByVal revision As Revision)
             InitializeComponent()
             Me.Session = session
             _Revision = revision
         End Sub
 
-        Friend ReadOnly Property Comment() As String
+        Public ReadOnly Property Comment() As String
             Get
                 Return CommentField.Text
             End Get
         End Property
 
-        Friend ReadOnly Property Levels() As Dictionary(Of ReviewFlag, Integer)
+        Public ReadOnly Property Levels() As Dictionary(Of ReviewFlag, Integer)
             Get
                 Return _Levels
             End Get
         End Property
 
-        Friend ReadOnly Property Revision() As Revision
+        Public ReadOnly Property Revision() As Revision
             Get
                 Return _Revision
             End Get

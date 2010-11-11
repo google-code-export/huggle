@@ -9,73 +9,71 @@ Namespace Huggle.Actions
 
         Private State As ProcessState
 
-        Friend MustOverride Sub Start()
+        Public MustOverride Sub Start()
 
-        Friend Event Complete As SimpleEventHandler(Of Process)
-        Friend Event Fail As SimpleEventHandler(Of Process)
-        Friend Event Progress As SimpleEventHandler(Of Process)
-        Friend Event Started As SimpleEventHandler(Of Process)
-        Friend Event Success As SimpleEventHandler(Of Process)
+        Public Event Complete As SimpleEventHandler(Of Process)
+        Public Event Fail As SimpleEventHandler(Of Process)
+        Public Event Progress As SimpleEventHandler(Of Process)
+        Public Event Started As SimpleEventHandler(Of Process)
+        Public Event Success As SimpleEventHandler(Of Process)
 
         Protected Sub New()
             _Result = Result.Success
         End Sub
 
-        Friend Property Description() As String
+        Public Property Interactive() As Boolean
 
-        Friend Property Interactive() As Boolean
-
-        Friend ReadOnly Property IsCancelled() As Boolean
+        Public ReadOnly Property IsCancelled() As Boolean
             Get
                 Return (State = ProcessState.Cancelled)
             End Get
         End Property
 
-        Friend ReadOnly Property IsComplete() As Boolean
+        Public ReadOnly Property IsComplete() As Boolean
             Get
                 Return (State = ProcessState.Cancelled OrElse State = ProcessState.Errored _
                     OrElse State = ProcessState.Success)
             End Get
         End Property
 
-        Friend ReadOnly Property IsErrored() As Boolean
+        Public ReadOnly Property IsErrored() As Boolean
             Get
                 Return (State = ProcessState.Errored)
             End Get
         End Property
 
-        Friend ReadOnly Property IsFailed() As Boolean
+        Public ReadOnly Property IsFailed() As Boolean
             Get
                 Return (State = ProcessState.Cancelled OrElse State = ProcessState.Errored)
             End Get
         End Property
 
-        Friend ReadOnly Property IsRunning() As Boolean
+        Public ReadOnly Property IsRunning() As Boolean
             Get
                 Return (State = ProcessState.Running)
             End Get
         End Property
 
-        Friend ReadOnly Property IsSuccess() As Boolean
+        Public ReadOnly Property IsSuccess() As Boolean
             Get
                 Return (State = ProcessState.Success)
             End Get
         End Property
 
-        Friend ReadOnly Property Message() As String
+        Public ReadOnly Property Message() As String
             Get
                 Return _Message
             End Get
         End Property
 
-        Friend Property Result() As Result
+        Public Property Result() As Result
 
-        Friend Sub Cancel()
+        Public Sub Cancel()
             OnFail(Msg("error-cancelled"))
             State = ProcessState.Cancelled
         End Sub
 
-        Friend Sub Reset()
+        Public Sub Reset()
             OnProgress(Nothing)
             State = ProcessState.None
         End Sub
@@ -170,12 +168,12 @@ Namespace Huggle.Actions
 
         Private Method As Action
 
-        Friend Sub New(ByVal message As String, ByVal method As Action)
+        Public Sub New(ByVal message As String, ByVal method As Action)
             OnProgress(message)
             Me.Method = method
         End Sub
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             Method.Invoke()
             OnSuccess()
         End Sub

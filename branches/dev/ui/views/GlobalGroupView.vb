@@ -9,7 +9,7 @@ Namespace Huggle.UI
 
         Private Family As Family
 
-        Friend Sub New(ByVal session As Session)
+        Public Sub New(ByVal session As Session)
             MyBase.New(session)
             Family = session.Wiki.Family
             InitializeComponent()
@@ -20,15 +20,13 @@ Namespace Huggle.UI
         End Sub
 
         Private Sub Display()
-            GroupList.BeginUpdate()
-            GroupList.Items.Clear()
+            Dim rows As New List(Of String())
 
             For Each group As GlobalGroup In Family.GlobalGroups.All
-                GroupList.AddRow(group.DisplayName)
+                rows.Add({group.DisplayName})
             Next group
 
-            GroupList.SortBy(0)
-            GroupList.EndUpdate()
+            GroupList.SetItems(rows)
 
             Count.Text = Msg("a-count", GroupList.Items.Count)
         End Sub
@@ -40,17 +38,15 @@ Namespace Huggle.UI
             Dim selectedGroup As GlobalGroup = Family.GlobalGroups(GroupList.Items(GroupList.SelectedIndices(0)).Text)
             GroupName.Text = selectedGroup.DisplayName
 
-            RightsList.BeginUpdate()
-            RightsList.Items.Clear()
+            Dim rightRows As New List(Of String())
 
             If selectedGroup.Rights IsNot Nothing Then
                 For Each right As String In selectedGroup.Rights
-                    RightsList.AddRow(right)
+                    rightRows.Add({right})
                 Next right
             End If
 
-            RightsList.SortBy(0)
-            RightsList.EndUpdate()
+            RightsList.SetItems(rightRows)
             RightsCount.Text = Msg("a-count", RightsList.Items.Count)
 
             If selectedGroup.Applicability = GlobalGroupApplicability.All Then
@@ -64,17 +60,15 @@ Namespace Huggle.UI
                     Then Applicability.Text = Msg("view-globalgroup-excludes") _
                     Else Applicability.Text = Msg("view-globalgroup-includes")
 
-                WikiList.BeginUpdate()
-                WikiList.Items.Clear()
+                Dim wikiRows As New List(Of String())
 
                 If selectedGroup.Wikis IsNot Nothing Then
                     For Each wiki As Wiki In selectedGroup.Wikis
-                        WikiList.AddRow(wiki.Name)
+                        wikiRows.Add({wiki.Name})
                     Next wiki
                 End If
 
-                WikiList.SortBy(0)
-                WikiList.EndUpdate()
+                WikiList.SetItems(wikiRows)
                 WikiCount.Text = Msg("a-count", WikiList.Items.Count)
             End If
         End Sub

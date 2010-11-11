@@ -17,18 +17,18 @@ Namespace Huggle.UI
 
         Private WithEvents CheckTimer As New Timer With {.Interval = 800}
 
-        Friend Sub New(ByVal session As Session)
+        Public Sub New(ByVal session As Session)
             InitializeComponent()
             _Session = session
         End Sub
 
-        Friend ReadOnly Property NewUser() As User
+        Public ReadOnly Property NewUser() As User
             Get
                 Return _NewUser
             End Get
         End Property
 
-        Friend ReadOnly Property Session() As Session
+        Public ReadOnly Property Session() As Session
             Get
                 Return _Session
             End Get

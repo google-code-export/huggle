@@ -8,7 +8,7 @@ Namespace Huggle.UI
 
         Private _Confirmation As Confirmation
 
-        Friend Sub New(ByVal confirmation As Confirmation)
+        Public Sub New(ByVal confirmation As Confirmation)
             InitializeComponent()
             _Confirmation = confirmation
         End Sub
@@ -33,7 +33,7 @@ Namespace Huggle.UI
 
         End Sub
 
-        Friend ReadOnly Property Confirmation As Confirmation
+        Public ReadOnly Property Confirmation As Confirmation
             Get
                 Return _Confirmation
             End Get

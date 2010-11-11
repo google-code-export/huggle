@@ -6,7 +6,7 @@ Namespace System.Windows.Forms
 
     Friend Class EnhancedComboBox : Inherits ComboBox
 
-        Friend Sub ResizeDropDown()
+        Public Sub ResizeDropDown()
             Dim newWidth As Integer = DropDownWidth
             Dim graphics As Graphics = CreateGraphics()
 

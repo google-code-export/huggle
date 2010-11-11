@@ -12,7 +12,7 @@
 '        Private Target As User
 '        Private Type As String
 
-'        Friend Sub New(ByVal session As Session, ByVal user As User, ByVal type As String)
+'        Public Sub New(ByVal session As Session, ByVal user As User, ByVal type As String)
 '            MyBase.New(session, Msg("vandalreport-desc"))
 '            Me.Target = user
 '            Me.Type = type
@@ -24,7 +24,7 @@
 '            End Get
 '        End Property
 
-'        Friend Overrides Sub Start()
+'        Public Overrides Sub Start()
 '            CreateThread(AddressOf GetDetails, AddressOf GetConfirmation)
 '        End Sub
 

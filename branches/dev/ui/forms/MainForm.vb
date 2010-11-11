@@ -10,7 +10,7 @@ Namespace Huggle.UI
 
         Private Session As Session
 
-        Friend Sub New(ByVal session As Session)
+        Public Sub New(ByVal session As Session)
             InitializeComponent()
             Me.Session = session
             Dim queryPanel As New QueryPanel(session)
@@ -102,11 +102,11 @@ Namespace Huggle.UI
             req.Start()
         End Sub
 
-        Friend Overrides Function GetKey() As String
+        Public Overrides Function GetKey() As String
             Return "main"
         End Function
 
-        Friend Overrides Function GetState() As Dictionary(Of String, Object)
+        Public Overrides Function GetState() As Dictionary(Of String, Object)
             Dim result As New Dictionary(Of String, Object)
 
             result.Add("location", Location.ToString)
@@ -116,6 +116,11 @@ Namespace Huggle.UI
             Return result
         End Function
 
+        Private Sub RevisionsToolStripMenuItem_Click() Handles WikiRevisions.Click
+            Dim form As New ContainerForm(New RevisionView(Session))
+            form.Show()
+        End Sub
+        
     End Class
 
 End Namespace

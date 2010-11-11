@@ -25,9 +25,9 @@ Namespace Huggle
 
         Friend Class RcSource : Implements IQueueSource
 
-            Friend Event Action As SimpleEventHandler(Of QueueItem) Implements IQueueSource.Action
-            Friend Event Resetting As EventHandler Implements IQueueSource.Resetting
-            Friend Event Update As EventHandler Implements IQueueSource.Update
+            Public Event Action As SimpleEventHandler(Of QueueItem) Implements IQueueSource.Action
+            Public Event Resetting As EventHandler Implements IQueueSource.Resetting
+            Public Event Update As EventHandler Implements IQueueSource.Update
 
             Private Const RequestInterval As Integer = 5000
             Private Const InitialBlockSize As Integer = 500
@@ -43,7 +43,7 @@ Namespace Huggle
             Private _Enabled As Boolean
             Private WithEvents _Wiki As Wiki
 
-            Friend Sub New(ByVal wiki As Wiki)
+            Public Sub New(ByVal wiki As Wiki)
                 _Enabled = True
                 _Wiki = wiki
                 AbuseInfoTimer.Interval = RequestInterval
@@ -51,7 +51,7 @@ Namespace Huggle
                 FirstQuery = True
             End Sub
 
-            Friend Property Enabled() As Boolean Implements IQueueSource.Enabled
+            Public Property Enabled() As Boolean Implements IQueueSource.Enabled
                 Get
                     Return _Enabled
                 End Get
@@ -77,7 +77,7 @@ Namespace Huggle
                 End Get
             End Property
 
-            Friend Property Wiki() As Wiki
+            Public Property Wiki() As Wiki
                 Get
                     Return _Wiki
                 End Get
@@ -122,31 +122,31 @@ Namespace Huggle
                 RcTimer.Start()
             End Sub
 
-            Friend Sub ForceUpdate() Implements IQueueSource.ForceUpdate
+            Public Sub ForceUpdate() Implements IQueueSource.ForceUpdate
                 AbuseLogTimer_Tick()
                 RcTimer_Tick()
             End Sub
 
-            Friend Sub Reset() Implements IQueueSource.Reset
+            Public Sub Reset() Implements IQueueSource.Reset
             End Sub
 
         End Class
 
         Friend Class ListSource : Implements IQueueSource
 
-            Friend Event Action As SimpleEventHandler(Of QueueItem) Implements IQueueSource.Action
-            Friend Event Resetting As EventHandler Implements IQueueSource.Resetting
-            Friend Event Update As EventHandler Implements IQueueSource.Update
+            Public Event Action As SimpleEventHandler(Of QueueItem) Implements IQueueSource.Action
+            Public Event Resetting As EventHandler Implements IQueueSource.Resetting
+            Public Event Update As EventHandler Implements IQueueSource.Update
 
             Private _Enabled As Boolean
             Private PendingItems As New List(Of QueueItem)
             Private WithEvents InfoRequest As PageInfoQuery
 
-            Friend Sub New(ByVal list As List(Of QueueItem))
+            Public Sub New(ByVal list As List(Of QueueItem))
                 _List = list
             End Sub
 
-            Friend Property Enabled() As Boolean Implements IQueueSource.Enabled
+            Public Property Enabled() As Boolean Implements IQueueSource.Enabled
                 Get
                     Return _Enabled
                 End Get
@@ -155,7 +155,7 @@ Namespace Huggle
                 End Set
             End Property
 
-            Friend Property List() As List(Of QueueItem)
+            Public Property List() As List(Of QueueItem)
 
             Private Sub InfoRequest_Done() Handles InfoRequest.Complete
                 For Each page As Page In PendingItems
@@ -173,10 +173,10 @@ Namespace Huggle
                 End If
             End Sub
 
-            Friend Sub ForceUpdate() Implements IQueueSource.ForceUpdate
+            Public Sub ForceUpdate() Implements IQueueSource.ForceUpdate
             End Sub
 
-            Friend Sub Reset() Implements IQueueSource.Reset
+            Public Sub Reset() Implements IQueueSource.Reset
                 PendingItems = New List(Of QueueItem)(_List)
                 InfoRequest_Done()
             End Sub
@@ -185,28 +185,28 @@ Namespace Huggle
 
         Friend Class QuerySource : Implements IQueueSource
 
-            Friend Event Action As SimpleEventHandler(Of QueueItem) Implements IQueueSource.Action
-            Friend Event Resetting As EventHandler Implements IQueueSource.Resetting
-            Friend Event Update As EventHandler Implements IQueueSource.Update
+            Public Event Action As SimpleEventHandler(Of QueueItem) Implements IQueueSource.Action
+            Public Event Resetting As EventHandler Implements IQueueSource.Resetting
+            Public Event Update As EventHandler Implements IQueueSource.Update
 
             Private _Query As String
 
-            Friend Sub New(ByVal query As String)
+            Public Sub New(ByVal query As String)
                 _Query = query
             End Sub
 
-            Friend Property Enabled() As Boolean Implements IQueueSource.Enabled
+            Public Property Enabled() As Boolean Implements IQueueSource.Enabled
 
-            Friend ReadOnly Property Query() As String
+            Public ReadOnly Property Query() As String
                 Get
                     Return _Query
                 End Get
             End Property
 
-            Friend Sub ForceUpdate() Implements IQueueSource.ForceUpdate
+            Public Sub ForceUpdate() Implements IQueueSource.ForceUpdate
             End Sub
 
-            Friend Sub Reset() Implements IQueueSource.Reset
+            Public Sub Reset() Implements IQueueSource.Reset
             End Sub
 
         End Class

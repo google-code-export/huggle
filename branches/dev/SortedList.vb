@@ -11,11 +11,11 @@ Namespace System.Collections.Generic
 
         Private _Comparer As Comparison(Of T)
 
-        Friend Sub New(ByVal comparer As Comparison(Of T))
+        Public Sub New(ByVal comparer As Comparison(Of T))
             _Comparer = comparer
         End Sub
 
-        Friend Overloads Sub Add(ByVal item As T)
+        Public Overloads Sub Add(ByVal item As T)
             If Not Contains(item) Then
 
                 'Binary insertion sort
@@ -30,11 +30,11 @@ Namespace System.Collections.Generic
             End If
         End Sub
 
-        Friend Overloads Sub Sort()
+        Public Overloads Sub Sort()
             MyBase.Sort(_Comparer)
         End Sub
 
-        Friend Property Comparer() As Comparison(Of T)
+        Public Property Comparer() As Comparison(Of T)
             Get
                 Return _Comparer
             End Get

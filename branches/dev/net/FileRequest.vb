@@ -10,19 +10,18 @@ Namespace Huggle
 
     Class FileRequest : Inherits Request
 
-        Friend Sub New(ByVal session As Session, ByVal url As Uri)
-            MyBase.New(session)
+        Public Sub New(ByVal url As Uri)
             Me.Url = url
         End Sub
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             MyBase.Start()
             If Result.IsError Then OnFail(Result) Else OnSuccess()
         End Sub
 
-        Friend ReadOnly Property File() As MemoryStream
+        Public Shadows ReadOnly Property Response() As MemoryStream
             Get
-                Return Response
+                Return MyBase.Response
             End Get
         End Property
 

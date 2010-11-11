@@ -6,7 +6,7 @@ Namespace Huggle.UI
 
         Private Session As Session
 
-        Friend Sub New(ByVal session As Session)
+        Public Sub New(ByVal session As Session)
             InitializeComponent()
             If session Is Nothing Then Throw New ArgumentNullException("session")
             Me.Session = session
@@ -16,7 +16,7 @@ Namespace Huggle.UI
             Next user
         End Sub
 
-        Friend ReadOnly Property Result() As User
+        Public ReadOnly Property Result() As User
             Get
                 If UseDefault.Checked Then Return Nothing
                 Return CType(Source.SelectedItem, User)

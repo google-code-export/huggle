@@ -11,9 +11,9 @@ Namespace Huggle
 
         Private Family As Family
 
-        Friend Property Logo As String
+        Public Property Logo As String
 
-        Friend Sub New(ByVal family As Family)
+        Public Sub New(ByVal family As Family)
             Me.Family = family
         End Sub
 
@@ -87,7 +87,7 @@ Namespace Huggle
             Next item
         End Sub
 
-        Friend Overrides Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
+        Public Overrides Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
             Dim items As New Dictionary(Of String, Object)
 
             If Family.CentralWiki IsNot Nothing Then items.Add("central-wiki", Family.CentralWiki.Code)
@@ -144,7 +144,7 @@ Namespace Huggle
             Return items
         End Function
 
-        Friend Function Copy(ByVal family As Family) As FamilyConfig
+        Public Function Copy(ByVal family As Family) As FamilyConfig
             Dim result As New FamilyConfig(family)
             result.Load(Config.MakeConfig(WriteConfig(ConfigTarget.Local)))
             Return result

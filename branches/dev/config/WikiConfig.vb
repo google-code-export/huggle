@@ -5,6 +5,8 @@ Imports System.IO
 Imports System.Text
 Imports System.Text.RegularExpressions
 
+Imports KVP = System.Collections.Generic.KeyValuePair(Of String, String)
+
 Namespace Huggle
 
     Friend Class WikiConfig : Inherits Config
@@ -13,103 +15,104 @@ Namespace Huggle
 
         Private Wiki As Wiki
 
-        Friend Sub New(ByVal wiki As Wiki)
+        Public Sub New(ByVal wiki As Wiki)
             Me.Wiki = wiki
         End Sub
 
-        Friend Property AbuseFilters As New List(Of Integer)
-        Friend Property ApiEnabled As Boolean
-        Friend Property ApiErrorCount As Integer
-        Friend Property Autoconfirm As Boolean
-        Friend Property AutoconfirmTime As TimeSpan
-        Friend Property AutoconfirmEdits As Integer
-        Friend Property BlockSummary As String
-        Friend Property BlockTime As String
-        Friend Property BlockTimeAnon As String
-        Friend Property BlpTalkTag As String
-        Friend Property ChangeTagIdentifier As String
-        Friend Property CustomSpamBlacklists As New List(Of Page)
-        Friend Property Database As String
-        Friend Property DatabaseVersion As String
-        Friend Property DefaultSkin As String
-        Friend Property EngineRevision As Integer
-        Friend Property EngineVersion As String
-        Friend Property EstablishedUsers As Page
-        Friend Property FirstLetterCaseSensitive As Boolean
-        Friend Property GadgetIdentifierPattern As Regex = New Regex("''([^']+)(?::''|'':)\ ")
-        Friend Property Logo As String = "Wiki.png"
-        Friend Property MessageSummary As String
-        Friend Property Minor As New List(Of String)
-        Friend Property QuickReview As Boolean
-        Friend Property QuickReviewComment As String
-        Friend Property QuickReviewLevels As Dictionary(Of ReviewFlag, Integer)
-        Friend Property PageSizeTransition As Integer
-        Friend Property ParamNorm As Dictionary(Of String, List(Of String))
-        Friend Property PlatformName As String
-        Friend Property PlatformVersion As String
-        Friend Property PriorityQuery As String
-        Friend Property PriorityCacheTime As TimeSpan
-        Friend Property [ReadOnly] As Boolean
-        Friend Property ReadOnlyReason As String
-        Friend Property ReportDiffs As Boolean
-        Friend Property ReportPages As New List(Of Page)
-        Friend Property ReportPatterns As New List(Of Regex)
-        Friend Property ReportUserPage As Page
-        Friend Property RevertAlwaysBlank As List(Of Integer) = List(3)
-        Friend Property RevertBlankTalk As Boolean
-        Friend Property RevertPatterns As New List(Of Regex)
-        Friend Property RevertSummaryBlank As String
-        Friend Property RevertSummaryMultipleRevs As String = "{0} revisions"
-        Friend Property RevertSummaryMultipleUsers As String = "{0} users"
-        Friend Property RevertSummaryLastVersion As String = "last version"
-        Friend Property RevertSummaryPreviousVersion As String = "a previous version"
-        Friend Property RevertSummaryRollback As String
-        Friend Property RevertSummaryUndo As String
-        Friend Property RevertSummaryUnknownRevs As String = "revisions"
-        Friend Property RevertSummary As String = "Revert {0} by {1} to {2}"
-        Friend Property ReviewComments As Boolean
-        Friend Property ReviewFlags As New Dictionary(Of String, ReviewFlag)
-        Friend Property SanctionLevels As Integer
-        Friend Property SanctionPatterns As New Dictionary(Of Regex, SanctionType)
-        Friend Property ServerTimeOffset As TimeSpan
-        Friend Property SharedTemplates As List(Of Page)
-        Friend Property SummaryTag As String
-        Friend Property TagPatterns As List(Of Regex)
-        Friend Property UnavailableFeatures As New List(Of String)
-        Friend Property UndoActionSummary As String
-        Friend Property UseFallback As Boolean
-        Friend Property UserLink As String
-        Friend Property UserLinkAnon As String
-        Friend Property VandalReportDiffs As Integer
-        Friend Property VandalReportFormat As String
-        Friend Property VandalReportPage As Page
-        Friend Property VandalReportReason As String
-        Friend Property VandalReportSingleNote As String
-        Friend Property VandalReportSummary As String
-        Friend Property WarningAge As TimeSpan
-        Friend Property WarningAutoIncrement As Boolean
-        Friend Property WarningDefaultType As String
-        Friend Property WarningLevels As Integer
-        Friend Property WarningMessages As New Dictionary(Of SanctionType, String)
-        Friend Property WarningMonthHeadings As Boolean
-        Friend Property WarningSummaries As New Dictionary(Of Integer, String)
+        Public Property AbuseFilterActions As List(Of String)
+        Public Property AbuseFilters As New List(Of Integer)
+        Public Property ApiEnabled As Boolean
+        Public Property ApiErrorCount As Integer
+        Public Property Autoconfirm As Boolean
+        Public Property AutoconfirmTime As TimeSpan
+        Public Property AutoconfirmEdits As Integer
+        Public Property BlockSummary As String
+        Public Property BlockTime As String
+        Public Property BlockTimeAnon As String
+        Public Property BlpTalkTag As String
+        Public Property ChangeTagIdentifier As String
+        Public Property CustomSpamBlacklists As New List(Of Page)
+        Public Property Database As String
+        Public Property DatabaseVersion As String
+        Public Property DefaultSkin As String
+        Public Property EngineRevision As Integer
+        Public Property EngineVersion As String
+        Public Property EstablishedUsers As Page
+        Public Property FirstLetterCaseSensitive As Boolean
+        Public Property GadgetIdentifierPattern As Regex = New Regex("''([^']+)(?::''|'':)\ ")
+        Public Property Logo As String = "Wiki.png"
+        Public Property MessageSummary As String
+        Public Property Minor As New List(Of String)
+        Public Property QuickReview As Boolean
+        Public Property QuickReviewComment As String
+        Public Property QuickReviewLevels As Dictionary(Of ReviewFlag, Integer)
+        Public Property PageSizeTransition As Integer
+        Public Property ParamNorm As Dictionary(Of String, List(Of String))
+        Public Property PlatformName As String
+        Public Property PlatformVersion As String
+        Public Property PriorityQuery As String
+        Public Property PriorityCacheTime As TimeSpan
+        Public Property [ReadOnly] As Boolean
+        Public Property ReadOnlyReason As String
+        Public Property ReportDiffs As Boolean
+        Public Property ReportPages As New List(Of Page)
+        Public Property ReportPatterns As New List(Of Regex)
+        Public Property ReportUserPage As Page
+        Public Property RevertAlwaysBlank As List(Of Integer) = List(3)
+        Public Property RevertBlankTalk As Boolean
+        Public Property RevertPatterns As New List(Of Regex)
+        Public Property RevertSummaryBlank As String
+        Public Property RevertSummaryMultipleRevs As String = "{0} revisions"
+        Public Property RevertSummaryMultipleUsers As String = "{0} users"
+        Public Property RevertSummaryLastVersion As String = "last version"
+        Public Property RevertSummaryPreviousVersion As String = "a previous version"
+        Public Property RevertSummaryRollback As String
+        Public Property RevertSummaryUndo As String
+        Public Property RevertSummaryUnknownRevs As String = "revisions"
+        Public Property RevertSummary As String = "Revert {0} by {1} to {2}"
+        Public Property ReviewComments As Boolean
+        Public Property ReviewFlags As New Dictionary(Of String, ReviewFlag)
+        Public Property SanctionLevels As Integer
+        Public Property SanctionPatterns As New Dictionary(Of Regex, SanctionType)
+        Public Property ServerTimeOffset As TimeSpan
+        Public Property SharedTemplates As List(Of Page)
+        Public Property SummaryTag As String
+        Public Property TagPatterns As List(Of Regex)
+        Public Property UnavailableFeatures As New List(Of String)
+        Public Property UndoActionSummary As String
+        Public Property UseFallback As Boolean
+        Public Property UserLink As String
+        Public Property UserLinkAnon As String
+        Public Property VandalReportDiffs As Integer
+        Public Property VandalReportFormat As String
+        Public Property VandalReportPage As Page
+        Public Property VandalReportReason As String
+        Public Property VandalReportSingleNote As String
+        Public Property VandalReportSummary As String
+        Public Property WarningAge As TimeSpan
+        Public Property WarningAutoIncrement As Boolean
+        Public Property WarningDefaultType As String
+        Public Property WarningLevels As Integer
+        Public Property WarningMessages As New Dictionary(Of SanctionType, String)
+        Public Property WarningMonthHeadings As Boolean
+        Public Property WarningSummaries As New Dictionary(Of Integer, String)
 
-        Friend ReadOnly Property ConfigPage() As Page
+        Public ReadOnly Property ConfigPage() As Page
             Get
                 Return Wiki.Pages.FromString(Config.Global.WikiConfigPageTitle)
             End Get
         End Property
 
-        Friend ReadOnly Property ExtraLoader() As ExtraWikiConfig
+        Public ReadOnly Property ExtraLoader() As ExtraWikiConfig
             Get
                 If _ExtraLoader Is Nothing Then _ExtraLoader = New ExtraWikiConfig(Wiki)
                 Return _ExtraLoader
             End Get
         End Property
 
-        Friend Property ExtraConfigLoaded() As Boolean
+        Public Property ExtraConfigLoaded() As Boolean
 
-        Friend ReadOnly Property IsMinor(ByVal action As String) As Boolean
+        Public ReadOnly Property IsMinor(ByVal action As String) As Boolean
             Get
                 Return Minor.Contains(action)
             End Get
@@ -121,7 +124,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Friend ReadOnly Property PriorityNeedsUpdate As Boolean
+        Public ReadOnly Property PriorityNeedsUpdate As Boolean
             Get
                 Return False
             End Get
@@ -131,7 +134,7 @@ Namespace Huggle
             Return Path.Combine("wiki", "priority-" & GetValidFileName(Wiki.Code))
         End Function
 
-        Friend Overrides Sub Load(ByVal text As String)
+        Public Overrides Sub Load(ByVal text As String)
             MyBase.Load(text)
             If Wiki.IsDefault OrElse text Is Nothing Then Return
 
@@ -165,233 +168,254 @@ Namespace Huggle
             SetFeedPatterns()
         End Sub
 
-        Friend Overrides Sub SaveLocal()
+        Public Overrides Sub SaveLocal()
             MyBase.SaveLocal()
             If Wiki.Pages.Priority IsNot Nothing Then Config.SaveFile(PriorityListLocation, Wiki.Pages.Priority.Join(LF))
         End Sub
 
-        Friend Sub SaveWiki()
+        Public Sub SaveWiki()
 
         End Sub
 
         Protected Overrides Sub ReadConfig(ByVal text As String)
-            Dim source As String = "wiki:" & Wiki.Code
-
-            For Each mainProp As KeyValuePair(Of String, String) In Config.ParseConfig(source, Nothing, text)
-                Dim key As String = mainProp.Key, value As String = mainProp.Value
+            For Each mainProp As KVP In ParseConfig("wiki:" & Wiki.Code, Nothing, text)
+                Dim key As String = mainProp.Key
+                Dim value As String = mainProp.Value
 
                 Try
-                    Select Case key
-                        Case "abuse-filters"
-                            Dim items As Dictionary(Of String, String) = Config.ParseConfig(source, key, value)
-
-                            For Each item As KeyValuePair(Of String, String) In Config.ParseConfig(source, key, value)
-                                Dim filter As AbuseFilter = Wiki.AbuseFilters(CInt(item.Key))
-                                filter.IsEnabled = False
-
-                                For Each prop As KeyValuePair(Of String, String) In Config.ParseConfig(source, key & ":" & item.Key, item.Value)
-                                    Select Case prop.Key
-                                        Case "actions" : filter.Actions = List(prop.Value.Split(",")).Trim
-                                        Case "deleted" : filter.IsDeleted = prop.Value.ToBoolean
-                                        Case "description" : filter.Description = prop.Value
-                                        Case "enabled" : filter.IsEnabled = prop.Value.ToBoolean
-                                        Case "hits" : filter.TotalHits = CInt(prop.Value)
-                                        Case "last-modified" : filter.LastModified = prop.Value.ToDate
-                                        Case "last-modified-by" : filter.LastModifiedBy = Wiki.Users.FromString(prop.Value)
-                                        Case "notes" : filter.Notes = prop.Value
-                                        Case "pattern" : filter.Pattern = prop.Value
-                                        Case "private" : filter.IsPrivate = prop.Value.ToBoolean
-                                    End Select
-                                Next prop
-                            Next item
-
-                        Case "change-tag-identifier"
-                            ChangeTagIdentifier = value
-
-                        Case "change-tags"
-                            For Each item As KeyValuePair(Of String, String) In Config.ParseConfig(source, key, value)
-                                Dim count As Integer
-                                Dim desc As String = Nothing
-                                Dim displayName As String = Nothing
-                                Dim name As String = Nothing
-
-                                For Each prop As KeyValuePair(Of String, String) In Config.ParseConfig(source, key & ":" & item.Key, item.Value)
-                                    Select Case prop.Key
-                                        Case "count" : count = CInt(prop.Value)
-                                        Case "description" : desc = prop.Value
-                                        Case "display-name" : displayName = prop.Value
-                                        Case "name" : name = prop.Value
-                                    End Select
-                                Next prop
-
-                                If Not String.IsNullOrEmpty(name) Then
-                                    Dim changeTag As ChangeTag = Wiki.ChangeTags(name)
-                                    changeTag.Description = desc
-                                    changeTag.DisplayName = If(displayName, changeTag.Name)
-                                    changeTag.Hits = count
-                                End If
-                            Next item
-
-                        Case "database" : Database = value
-                        Case "database-version" : DatabaseVersion = value
-                        Case "default-queue" : Wiki.Queues.Default = Wiki.Queues(value)
-                        Case "default-skin" : DefaultSkin = value
-                        Case "default-user-config" : Wiki.Users.Default.Config.Load(value)
-                        Case "engine" : Wiki.Engine = value
-                        Case "engine-revision" : EngineRevision = CInt(value)
-                        Case "engine-version" : EngineVersion = value
-                        Case "established-users" : EstablishedUsers = Wiki.Pages.FromString(value)
-
-                        Case "extensions"
-                            Wiki.Extensions.Clear()
-
-                            For Each item As KeyValuePair(Of String, String) In Config.ParseConfig(source, key, value)
-                                Dim extension As Extension = Wiki.Extensions(item.Key)
-
-                                For Each prop As KeyValuePair(Of String, String) In Config.ParseConfig(source, key & ":" & item.Key, item.Value)
-                                    Select Case prop.Key
-                                        Case "author" : extension.Author = prop.Value
-                                        Case "description" : extension.Description = prop.Value
-                                        Case "type" : extension.Type = prop.Value
-                                        Case "url" : extension.Url = New Uri(prop.Value)
-                                        Case "version" : extension.Version = prop.Value
-                                    End Select
-                                Next prop
-                            Next item
-
-                        Case "extra-config-loaded" : ExtraConfigLoaded = value.ToBoolean
-                        Case "first-letter-case-sensitive" : FirstLetterCaseSensitive = value.ToBoolean
-                        Case "gadget-identifier-pattern" : GadgetIdentifierPattern = New Regex(Config.UnescapeWs(value))
-
-                        Case "gadgets"
-                            Wiki.Gadgets.Clear()
-
-                            For Each item As KeyValuePair(Of String, String) In Config.ParseConfig(source, key, value)
-                                Dim gadget As Gadget = Wiki.Gadgets(item.Key)
-
-                                For Each prop As KeyValuePair(Of String, String) In Config.ParseConfig(source, key & ":" & item.Key, item.Value)
-                                    Select Case prop.Key
-                                        Case "description" : gadget.Description = prop.Value
-                                        Case "name" : gadget.Name = prop.Value
-                                        Case "type" : gadget.Type = prop.Value
-                                        Case "type-desc" : gadget.TypeDesc = prop.Value
-                                    End Select
-                                Next prop
-                            Next item
-
-                        Case "groups"
-                            For Each item As KeyValuePair(Of String, String) In Config.ParseConfig(source, key, value)
-                                For Each prop As KeyValuePair(Of String, String) In Config.ParseConfig(source, key & ":" & item.Key, item.Value)
-                                    Dim group As UserGroup = Wiki.UserGroups(item.Key)
-
-                                    Select Case prop.Key
-                                        Case "count" : group.Count = CInt(prop.Value)
-                                        Case "implicit" : group.IsImplicit = prop.Value.ToBoolean
-                                        Case "rights" : group.Rights.AddRange(prop.Value.ToList(","))
-                                    End Select
-                                Next prop
-                            Next item
-
-                        Case "language" : Wiki.Language = App.Languages(value)
-                        Case "platform" : PlatformName = value
-                        Case "platform-version" : PlatformVersion = value
-                        Case "license" : Wiki.License = value
-                        Case "license-url" : Wiki.LicenseUrl = New Uri(value)
-                        Case "logo" : Logo = value
-                        Case "main-page" : Wiki.MainPage = Wiki.Pages.FromString(value)
-
-                        Case "messages"
-                            For Each message As KeyValuePair(Of String, String) In Config.ParseConfig(source, key, value)
-                                Wiki.Messages.Merge(message.Key, message.Value)
-                            Next message
-
-                        Case "namespaces"
-                            For Each item As KeyValuePair(Of String, String) In Config.ParseConfig(source, key, value)
-                                Dim space As Space = Wiki.Spaces(CInt(item.Key))
-
-                                For Each prop As KeyValuePair(Of String, String) In Config.ParseConfig(source, key & ":" & item.Key, item.Value)
-                                    Select Case prop.Key
-                                        Case "name" : space.Name = prop.Value
-                                        Case "content" : space.IsContent = prop.Value.ToBoolean
-                                        Case "edit-restricted" : space.IsEditRestricted = prop.Value.ToBoolean
-                                        Case "move-restricted" : space.IsMoveRestricted = prop.Value.ToBoolean
-                                        Case "movable" : space.IsMovable = prop.Value.ToBoolean
-                                        Case "special" : space.IsSpecial = prop.Value.ToBoolean
-                                        Case "subpages" : space.HasSubpages = prop.Value.ToBoolean
-                                    End Select
-                                Next prop
-                            Next item
-
-                        Case "page-size-transition" : PageSizeTransition = CInt(value)
-                        Case "preferences" : Wiki.Preferences = value.ToList.Trim
-                        Case "priority-cache-time" : PriorityCacheTime = New TimeSpan(0, CInt(value), 0)
-                        Case "priority-query" : PriorityQuery = value
-
-                        Case "review-flags"
-                            For Each item As KeyValuePair(Of String, String) In Config.ParseConfig(source, key, value)
-                                Dim flag As ReviewFlag = Wiki.ReviewFlags(item.Key)
-
-                                For Each prop As KeyValuePair(Of String, String) In Config.ParseConfig(source, key & ":" & item.Key, item.Value)
-                                    Select Case prop.Key
-                                        Case "default-level" : flag.DefaultLevel = CInt(prop.Value)
-                                        Case "display-name" : flag.DisplayName = prop.Value
-                                        Case "levels" : flag.Levels = CInt(prop.Value)
-                                        Case "pristine-level" : flag.PristineLevel = CInt(prop.Value)
-                                        Case "quality-level" : flag.QualityLevel = CInt(prop.Value)
-                                    End Select
-                                Next prop
-                            Next item
-
-                        Case "queues"
-                            For Each item As KeyValuePair(Of String, String) In Config.ParseConfig(source, key, value)
-                                Dim queue As Queue = Wiki.Queues(item.Key)
-
-                                For Each prop As KeyValuePair(Of String, String) In Config.ParseConfig(source, key & ":" & item.Key, item.Value)
-                                    Select Case prop.Key
-                                        Case "enabled" : queue.Enabled = prop.Value.ToBoolean
-                                        Case "filter" : queue.Filter = prop.Value
-                                        Case "list" : If queue.SourceType = QueueSourceType.List Then queue.Source = New ListSource(Nothing)
-                                        Case "query" : If queue.SourceType = QueueSourceType.Query Then queue.Source = New QuerySource(prop.Value)
-                                        Case "query-re-add" : queue.QueryReAdd = prop.Value.ToBoolean
-                                        Case "re-evaluate" : queue.ReEvaluate = prop.Value.ToBoolean
-                                        Case "remove-contribs" : queue.RemoveContribs = prop.Value.ToBoolean
-                                        Case "remove-history" : queue.RemoveHistory = prop.Value.ToBoolean
-                                        Case "remove-viewed" : queue.RemoveViewed = prop.Value.ToBoolean
-                                        Case "source"
-                                            Select Case prop.Value
-                                                Case "rc" : queue.Source = Wiki.Rc
-                                                Case "query" : queue.Source = New QuerySource(Nothing)
-                                                Case "list" : queue.Source = New ListSource(Nothing)
-                                            End Select
-                                    End Select
-                                Next prop
-                            Next item
-
-                        Case "server-time-offset" : ServerTimeOffset = New TimeSpan(CLng(CDbl(value) * 10000000))
-
-                        Case "skins"
-                            For Each item As KeyValuePair(Of String, String) In Config.ParseConfig(source, key, value)
-
-                            Next item
-
-                        Case "spam-list" : ReadSpamLists(Wiki.SpamLists, source, value)
-
-                        Case "activeusers" : Wiki.ActiveUsers = CInt(value)
-                        Case "contentpages" : Wiki.ContentPages = CInt(value)
-                        Case "files" : Wiki.Files.Count = CInt(value)
-                        Case "pages" : Wiki.Pages.Count = CInt(value)
-                        Case "revisions" : Wiki.Revisions.Count = CInt(value)
-                        Case "updated" : Updated = value.ToDate
-                        Case "users" : Wiki.Users.Count = CInt(value)
-                    End Select
+                    ReadConfigItem(key, value, "wiki:" & Wiki.Code)
 
                 Catch ex As SystemException
-                    Log.Write(Result.FromException(ex).Wrap(Msg("error-configvalue", key, source)).LogMessage)
+                    Log.Write(Result.FromException(ex).Wrap(
+                        Msg("error-configvalue", key, "wiki:" & Wiki.Code)).LogMessage)
                 End Try
             Next mainProp
         End Sub
 
-        Friend Overrides Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
+        Private Sub ReadConfigItem(ByVal key As String, ByVal value As String, ByVal source As String)
+            Select Case key
+                Case "abuse-filter-actions" : AbuseFilterActions = value.ToList.Trim
+
+                Case "abuse-filters"
+                    For Each item As KVP In ParseConfig(source, key, value)
+                        Dim filter As AbuseFilter = Wiki.AbuseFilters(CInt(item.Key))
+                        filter.IsEnabled = False
+
+                        For Each prop As KVP In ParseConfig(source, key & ":" & item.Key, item.Value)
+                            Select Case prop.Key
+                                Case "actions" : filter.Actions = prop.Value.ToList.Trim
+                                Case "deleted" : filter.IsDeleted = prop.Value.ToBoolean
+                                Case "description" : filter.Description = prop.Value
+                                Case "enabled" : filter.IsEnabled = prop.Value.ToBoolean
+                                Case "hits" : filter.TotalHits = CInt(prop.Value)
+                                Case "last-modified" : filter.LastModified = prop.Value.ToDate
+                                Case "last-modified-by" : filter.LastModifiedBy = Wiki.Users.FromString(prop.Value)
+                                Case "notes" : filter.Notes = prop.Value
+                                Case "pattern" : filter.Pattern = prop.Value
+                                Case "private" : filter.IsPrivate = prop.Value.ToBoolean
+
+                                Case "rate-limit"
+                                    If prop.Value = "none" Then
+                                        filter.RateLimit = RateLimit.None
+                                    Else
+                                        Dim rateProps As Dictionary(Of String, String) =
+                                        ParseConfig(source, key & ":" & item.Key, prop.Value)
+
+                                        filter.RateLimit = New RateLimit(Nothing, Nothing, Nothing,
+                                            CInt(rateProps("count")), New TimeSpan(0, 0, CInt(rateProps("time"))))
+
+                                        If rateProps.ContainsKey("groups") _
+                                            Then filter.RateLimit.Groups = rateProps("groups").ToList.Trim
+                                    End If
+
+                                Case "tags" : filter.Tags = prop.Value.ToList.Trim
+                            End Select
+                        Next prop
+                    Next item
+
+                Case "change-tag-identifier" : ChangeTagIdentifier = value
+
+                Case "change-tags"
+                    For Each item As KVP In ParseConfig(source, key, value)
+                        Dim count As Integer
+                        Dim desc As String = Nothing
+                        Dim displayName As String = Nothing
+                        Dim name As String = Nothing
+
+                        For Each prop As KVP In ParseConfig(source, key & ":" & item.Key, item.Value)
+                            Select Case prop.Key
+                                Case "count" : count = CInt(prop.Value)
+                                Case "description" : desc = prop.Value
+                                Case "display-name" : displayName = prop.Value
+                                Case "name" : name = prop.Value
+                            End Select
+                        Next prop
+
+                        If Not String.IsNullOrEmpty(name) Then
+                            Dim changeTag As ChangeTag = Wiki.ChangeTags(name)
+                            changeTag.Description = desc
+                            changeTag.DisplayName = If(displayName, changeTag.Name)
+                            changeTag.Hits = count
+                        End If
+                    Next item
+
+                Case "database" : Database = value
+                Case "database-version" : DatabaseVersion = value
+                Case "default-queue" : Wiki.Queues.Default = Wiki.Queues(value)
+                Case "default-skin" : DefaultSkin = value
+                Case "default-user-config" : Wiki.Users.Default.Config.Load(value)
+                Case "engine" : Wiki.Engine = value
+                Case "engine-revision" : EngineRevision = CInt(value)
+                Case "engine-version" : EngineVersion = value
+                Case "established-users" : EstablishedUsers = Wiki.Pages.FromString(value)
+
+                Case "extensions"
+                    Wiki.Extensions.Clear()
+
+                    For Each item As KVP In ParseConfig(source, key, value)
+                        Dim extension As Extension = Wiki.Extensions(item.Key)
+
+                        For Each prop As KVP In ParseConfig(source, key & ":" & item.Key, item.Value)
+                            Select Case prop.Key
+                                Case "author" : extension.Author = prop.Value
+                                Case "description" : extension.Description = prop.Value
+                                Case "type" : extension.Type = prop.Value
+                                Case "url" : extension.Url = New Uri(prop.Value)
+                                Case "version" : extension.Version = prop.Value
+                            End Select
+                        Next prop
+                    Next item
+
+                Case "extra-config-loaded" : ExtraConfigLoaded = value.ToBoolean
+                Case "first-letter-case-sensitive" : FirstLetterCaseSensitive = value.ToBoolean
+                Case "gadget-identifier-pattern" : GadgetIdentifierPattern = New Regex(Config.UnescapeWs(value))
+
+                Case "gadgets"
+                    Wiki.Gadgets.Clear()
+
+                    For Each item As KVP In ParseConfig(source, key, value)
+                        Dim gadget As Gadget = Wiki.Gadgets(item.Key)
+
+                        For Each prop As KVP In ParseConfig(source, key & ":" & item.Key, item.Value)
+                            Select Case prop.Key
+                                Case "description" : gadget.Description = prop.Value
+                                Case "name" : gadget.Name = prop.Value
+                                Case "type" : gadget.Type = prop.Value
+                                Case "type-desc" : gadget.TypeDesc = prop.Value
+                            End Select
+                        Next prop
+                    Next item
+
+                Case "groups"
+                    For Each item As KVP In ParseConfig(source, key, value)
+                        For Each prop As KVP In ParseConfig(source, key & ":" & item.Key, item.Value)
+                            Dim group As UserGroup = Wiki.UserGroups(item.Key)
+
+                            Select Case prop.Key
+                                Case "count" : group.Count = CInt(prop.Value)
+                                Case "implicit" : group.IsImplicit = prop.Value.ToBoolean
+                                Case "rights" : group.Rights.AddRange(prop.Value.ToList(","))
+                            End Select
+                        Next prop
+                    Next item
+
+                Case "language" : Wiki.Language = App.Languages(value)
+                Case "platform" : PlatformName = value
+                Case "platform-version" : PlatformVersion = value
+                Case "license" : Wiki.License = value
+                Case "license-url" : Wiki.LicenseUrl = New Uri(value)
+                Case "logo" : Logo = value
+                Case "main-page" : Wiki.MainPage = Wiki.Pages.FromString(value)
+
+                Case "messages"
+                    For Each message As KVP In ParseConfig(source, key, value)
+                        Wiki.Messages.Merge(message.Key, message.Value)
+                    Next message
+
+                Case "namespaces"
+                    For Each item As KVP In ParseConfig(source, key, value)
+                        Dim space As Space = Wiki.Spaces(CInt(item.Key))
+
+                        For Each prop As KVP In ParseConfig(source, key & ":" & item.Key, item.Value)
+                            Select Case prop.Key
+                                Case "name" : space.Name = prop.Value
+                                Case "content" : space.IsContent = prop.Value.ToBoolean
+                                Case "edit-restricted" : space.IsEditRestricted = prop.Value.ToBoolean
+                                Case "move-restricted" : space.IsMoveRestricted = prop.Value.ToBoolean
+                                Case "movable" : space.IsMovable = prop.Value.ToBoolean
+                                Case "special" : space.IsSpecial = prop.Value.ToBoolean
+                                Case "subpages" : space.HasSubpages = prop.Value.ToBoolean
+                            End Select
+                        Next prop
+                    Next item
+
+                Case "page-size-transition" : PageSizeTransition = CInt(value)
+                Case "preferences" : Wiki.Preferences = value.ToList.Trim
+                Case "priority-cache-time" : PriorityCacheTime = New TimeSpan(0, CInt(value), 0)
+                Case "priority-query" : PriorityQuery = value
+
+                Case "review-flags"
+                    For Each item As KVP In ParseConfig(source, key, value)
+                        Dim flag As ReviewFlag = Wiki.ReviewFlags(item.Key)
+
+                        For Each prop As KVP In ParseConfig(source, key & ":" & item.Key, item.Value)
+                            Select Case prop.Key
+                                Case "default-level" : flag.DefaultLevel = CInt(prop.Value)
+                                Case "display-name" : flag.DisplayName = prop.Value
+                                Case "levels" : flag.Levels = CInt(prop.Value)
+                                Case "pristine-level" : flag.PristineLevel = CInt(prop.Value)
+                                Case "quality-level" : flag.QualityLevel = CInt(prop.Value)
+                            End Select
+                        Next prop
+                    Next item
+
+                Case "queues"
+                    For Each item As KVP In ParseConfig(source, key, value)
+                        Dim queue As Queue = Wiki.Queues(item.Key)
+
+                        For Each prop As KVP In ParseConfig(source, key & ":" & item.Key, item.Value)
+                            Select Case prop.Key
+                                Case "enabled" : queue.Enabled = prop.Value.ToBoolean
+                                Case "filter" : queue.Filter = prop.Value
+                                Case "list" : If queue.SourceType = QueueSourceType.List _
+                                    Then queue.Source = New ListSource(Nothing)
+                                Case "query" : If queue.SourceType = QueueSourceType.Query _
+                                    Then queue.Source = New QuerySource(prop.Value)
+                                Case "query-re-add" : queue.QueryReAdd = prop.Value.ToBoolean
+                                Case "re-evaluate" : queue.ReEvaluate = prop.Value.ToBoolean
+                                Case "remove-contribs" : queue.RemoveContribs = prop.Value.ToBoolean
+                                Case "remove-history" : queue.RemoveHistory = prop.Value.ToBoolean
+                                Case "remove-viewed" : queue.RemoveViewed = prop.Value.ToBoolean
+                                Case "source"
+                                    Select Case prop.Value
+                                        Case "rc" : queue.Source = Wiki.Rc
+                                        Case "query" : queue.Source = New QuerySource(Nothing)
+                                        Case "list" : queue.Source = New ListSource(Nothing)
+                                    End Select
+                            End Select
+                        Next prop
+                    Next item
+
+                Case "server-time-offset" : ServerTimeOffset = New TimeSpan(CLng(CDbl(value) * 10000000))
+
+                Case "skins"
+                    For Each item As KVP In ParseConfig(source, key, value)
+                        Wiki.Skins(item.Key) = New WikiSkin(Wiki, item.Key, item.Value)
+                    Next item
+
+                Case "spam-list" : ReadSpamLists(Wiki.SpamLists, source, value)
+
+                Case "activeusers" : Wiki.ActiveUsers = CInt(value)
+                Case "contentpages" : Wiki.ContentPages = CInt(value)
+                Case "files" : Wiki.Files.Count = CInt(value)
+                Case "pages" : Wiki.Pages.Count = CInt(value)
+                Case "revisions" : Wiki.Revisions.Count = CInt(value)
+                Case "updated" : Updated = value.ToDate
+                Case "users" : Wiki.Users.Count = CInt(value)
+            End Select
+        End Sub
+
+        Public Overrides Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
             Dim items As New Dictionary(Of String, Object)
 
             items.Add("default-queue", Wiki.Queues.Default)
@@ -437,28 +461,40 @@ Namespace Huggle
 
             'Abuse filters
             If Wiki.AbuseFilters.All.Count > 0 Then
-                Dim abuseFilters As New Dictionary(Of String, Object)
+                Dim filters As New Dictionary(Of String, Object)
 
-                For Each abuseFilter As AbuseFilter In Wiki.AbuseFilters.All
+                For Each filter As AbuseFilter In Wiki.AbuseFilters.All
                     Dim item As New Dictionary(Of String, Object)
 
-                    If abuseFilter.Actions.Count > 0 Then item.Add("actions", abuseFilter.Actions.Join(", "))
-                    If abuseFilter.Description IsNot Nothing Then item.Add("description", abuseFilter.Description)
-                    If abuseFilter.IsDeleted Then item.Add("deleted", True)
-                    If abuseFilter.IsEnabled Then item.Add("enabled", True)
-                    If abuseFilter.IsPrivate Then item.Add("private", True)
-                    If abuseFilter.LastModified > Date.MinValue Then item.Add("last-modified", abuseFilter.LastModified)
-                    If abuseFilter.LastModifiedBy IsNot Nothing Then item.Add("last-modified-by", abuseFilter.LastModifiedBy)
+                    If filter.Actions.Count > 0 Then item.Add("actions", filter.Actions.Join(", "))
+                    If filter.Description IsNot Nothing Then item.Add("description", filter.Description)
+                    If filter.IsDeleted Then item.Add("deleted", True)
+                    If filter.IsEnabled Then item.Add("enabled", True)
+                    If filter.IsPrivate Then item.Add("private", True)
+                    If filter.LastModified > Date.MinValue Then item.Add("last-modified", filter.LastModified)
+                    If filter.LastModifiedBy IsNot Nothing Then item.Add("last-modified-by", filter.LastModifiedBy)
 
-                    If abuseFilter.IsEnabled AndAlso abuseFilter.Pattern IsNot Nothing _
-                        Then item.Add("pattern", abuseFilter.Pattern)
+                    If filter.IsEnabled AndAlso filter.Pattern IsNot Nothing _
+                        Then item.Add("pattern", filter.Pattern)
 
-                    If abuseFilter.TotalHits > -1 Then item.Add("hits", abuseFilter.TotalHits)
+                    If filter.TotalHits > -1 Then item.Add("hits", filter.TotalHits)
 
-                    abuseFilters.Add(CStr(abuseFilter.Id).PadLeft(4, "0"c), item)
-                Next abuseFilter
+                    If filter.RateLimit Is RateLimit.None Then
+                        item.Add("rate-limit", "none")
 
-                items.Add("abuse-filters", abuseFilters)
+                    ElseIf filter.RateLimit IsNot Nothing Then
+                        Dim rateLimitItems As New Dictionary(Of String, Object)
+                        rateLimitItems.Add("count", filter.RateLimit.Count)
+                        rateLimitItems.Add("time", CInt(filter.RateLimit.Time.TotalSeconds))
+
+                        If filter.RateLimit.Groups IsNot Nothing _
+                            Then rateLimitItems.Add("groups", filter.RateLimit.Groups.Join(", "))
+                    End If
+
+                    filters.Add(filter.Id.ToStringI.PadLeft(4, "0"c), item)
+                Next filter
+
+                items.Add("abuse-filters", filters)
             End If
 
             'Change tags
@@ -605,6 +641,7 @@ Namespace Huggle
             'Miscellaneous
             Dim def As WikiConfig = App.Wikis.Default.Config
 
+            If AbuseFilterActions IsNot Nothing Then items.Add("abuse-filter-actions", AbuseFilterActions.Join(", "))
             If Database <> def.Database Then items.Add("database", Database)
             If DatabaseVersion <> def.DatabaseVersion Then items.Add("database-version", DatabaseVersion)
             items.Add("default-user-config", Wiki.Users.Default.Config.WriteConfig(ConfigTarget.Local))
@@ -640,7 +677,7 @@ Namespace Huggle
             Return items
         End Function
 
-        Friend Function Copy(ByVal wiki As Wiki) As WikiConfig
+        Public Function Copy(ByVal wiki As Wiki) As WikiConfig
             Dim result As New WikiConfig(wiki)
             result.ReadConfig(Config.MakeConfig(WriteConfig(ConfigTarget.Local)))
             Return result

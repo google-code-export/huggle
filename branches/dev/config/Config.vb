@@ -23,25 +23,25 @@ Namespace Huggle
 
         Protected MustOverride ReadOnly Property Location() As String
         Protected MustOverride Sub ReadConfig(ByVal text As String)
-        Friend MustOverride Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
+        Public MustOverride Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
 
-        Friend Property Updated As Date
+        Public Property Updated As Date
 
-        Friend Shared ReadOnly Property [Global] As GlobalConfig
+        Public Shared ReadOnly Property [Global] As GlobalConfig
             Get
                 If _Global Is Nothing Then _Global = New GlobalConfig
                 Return _Global
             End Get
         End Property
 
-        Friend Shared ReadOnly Property Local As LocalConfig
+        Public Shared ReadOnly Property Local As LocalConfig
             Get
                 If _Local Is Nothing Then _Local = New LocalConfig
                 Return _Local
             End Get
         End Property
 
-        Friend Shared ReadOnly Property BaseLocation() As String
+        Public Shared ReadOnly Property BaseLocation() As String
             Get
                 _BaseLocation = DetermineBaseLocation()
                 Return _BaseLocation
@@ -58,13 +58,13 @@ Namespace Huggle
             Return str
         End Function
 
-        Friend ReadOnly Property IsCurrent() As Boolean
+        Public ReadOnly Property IsCurrent() As Boolean
             Get
                 Return Updated.Add(UpdateInterval) > Date.UtcNow
             End Get
         End Property
 
-        Friend ReadOnly Property IsLoaded As Boolean
+        Public ReadOnly Property IsLoaded As Boolean
             Get
                 Return _IsLoaded
             End Get
@@ -218,7 +218,7 @@ Namespace Huggle
             Throw New ConfigException("No suitable location for configuration data")
         End Function
 
-        Friend Sub LoadCloud()
+        Public Sub LoadCloud()
             Dim cloudQuery As New CloudQuery(Config.GetValidCloudKey(Location))
             cloudQuery.Start()
 
@@ -234,12 +234,12 @@ Namespace Huggle
             End If
         End Sub
 
-        Friend Overridable Sub LoadLocal()
+        Public Overridable Sub LoadLocal()
             If Not LocalMissing Then Load(LoadFile(Location))
             If Not IsLoaded Then LocalMissing = True
         End Sub
 
-        Friend Overridable Sub Load(ByVal text As String)
+        Public Overridable Sub Load(ByVal text As String)
             If text Is Nothing Then Return
 
             ReadConfig(text)
@@ -267,7 +267,7 @@ Namespace Huggle
             Return Nothing
         End Function
 
-        Friend Sub SaveCloud()
+        Public Sub SaveCloud()
             Dim cloudQuery As New CloudStore(Config.GetValidCloudKey(Location), Save(ConfigTarget.Cloud))
             cloudQuery.Start()
 
@@ -278,7 +278,7 @@ Namespace Huggle
             End If
         End Sub
 
-        Friend Overridable Sub SaveLocal()
+        Public Overridable Sub SaveLocal()
             Config.SaveFile(Location, Save(ConfigTarget.Local))
             LocalMissing = False
         End Sub
@@ -307,17 +307,17 @@ Namespace Huggle
     <Serializable()>
     Friend Class ConfigException : Inherits HuggleException
 
-        Friend Sub New(ByVal message As String)
+        Public Sub New(ByVal message As String)
             MyBase.New(message)
         End Sub
 
-        Friend Sub New(ByVal message As String, ByVal innerException As Exception)
+        Public Sub New(ByVal message As String, ByVal innerException As Exception)
             MyBase.New(message, innerException)
         End Sub
 
     End Class
 
-    Friend Enum ConfigTarget As Integer
+    Public Enum ConfigTarget As Integer
         : Local : Cloud : Wiki
     End Enum
 

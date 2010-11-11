@@ -13,20 +13,20 @@ Namespace Huggle.Actions
         Private _Rev As Revision
         Private _Type As SanctionType
 
-        Friend Sub New(ByVal session As Session, ByVal rev As Revision, ByVal type As SanctionType)
+        Public Sub New(ByVal session As Session, ByVal rev As Revision, ByVal type As SanctionType)
             MyBase.New(session, Msg("warn-desc"))
 
             _Rev = rev
             _Type = type
         End Sub
 
-        Friend ReadOnly Property Rev() As Revision
+        Public ReadOnly Property Rev() As Revision
             Get
                 Return _Rev
             End Get
         End Property
 
-        Friend Property Type() As SanctionType
+        Public Property Type() As SanctionType
             Get
                 Return _Type
             End Get
@@ -35,7 +35,7 @@ Namespace Huggle.Actions
             End Set
         End Property
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             'Check user's status
             If Rev.User.IsBlocked Then OnFail(Msg("warn-alreadyblocked")) : Return
 

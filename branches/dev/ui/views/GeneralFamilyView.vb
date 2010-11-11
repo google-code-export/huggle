@@ -9,7 +9,7 @@ Namespace Huggle.UI
 
         Private Family As Family
 
-        Friend Sub New(ByVal session As Session)
+        Public Sub New(ByVal session As Session)
             MyBase.New(session)
             Family = session.Wiki.Family
             InitializeComponent()
@@ -50,16 +50,13 @@ Namespace Huggle.UI
             globalExts.Sort()
             Extensions.Text = Msg("familyprop-extensions", globalExts.Join(", "))
 
-            WikiList.BeginUpdate()
-            WikiList.Items.Clear()
+            Dim rows As New List(Of String())
 
             For Each wiki As Wiki In Family.Wikis.All
-                WikiList.AddRow(wiki.Name)
+                rows.Add({wiki.Name})
             Next wiki
 
-            WikiList.EndUpdate()
-            WikiList.SortBy(0)
-
+            WikiList.SetItems(rows)
         End Sub
 
         Private Sub FamilyName_LinkClicked() Handles FamilyName.LinkClicked

@@ -8,7 +8,7 @@ Namespace Huggle
 
         Private ReadOnly _Page As Page
 
-        Friend Sub New(ByVal time As Date, ByVal action As String, _
+        Public Sub New(ByVal time As Date, ByVal action As String, _
             ByVal page As Page, ByVal user As User, ByVal comment As String, ByVal id As Integer, ByVal rcid As Integer)
 
             MyBase.New(user.Wiki, id, rcid)
@@ -23,19 +23,19 @@ Namespace Huggle
             _Page.HasDeletedEdits = True
         End Sub
 
-        Friend Overrides ReadOnly Property Icon() As Drawing.Image
+        Public Overrides ReadOnly Property Icon() As Drawing.Image
             Get
                 Return Resources.blob_log_delete
             End Get
         End Property
 
-        Friend ReadOnly Property Page() As Page
+        Public ReadOnly Property Page() As Page
             Get
                 Return _Page
             End Get
         End Property
 
-        Friend Overrides ReadOnly Property Target() As String
+        Public Overrides ReadOnly Property Target() As String
             Get
                 Return _Page.Name
             End Get

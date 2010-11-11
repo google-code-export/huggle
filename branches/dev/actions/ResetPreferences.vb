@@ -4,11 +4,11 @@ Namespace Huggle.Actions
 
     Friend Class ResetPreferences : Inherits Query
 
-        Friend Sub New(ByVal session As Session)
+        Public Sub New(ByVal session As Session)
             MyBase.New(session, Msg("query-resetprefs-desc", session.User.FullName))
         End Sub
 
-        Friend Overrides Sub Start()
+        Public Overrides Sub Start()
             If User.IsAnonymous Then OnFail(Msg("query-resetprefs-anon")) : Return
             OnStarted()
             OnProgress(Msg("query-resetprefs-progress"))
