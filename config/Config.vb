@@ -113,7 +113,7 @@ Namespace Huggle
             Return value
         End Function
 
-        Private Shared Function Unescape(ByVal value As String) As String
+        Protected Shared Function Unescape(ByVal value As String) As String
             value = value.Replace("\#", "#").Replace("\n", LF).Replace("\\", "\")
             Return value
         End Function

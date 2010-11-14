@@ -1,4 +1,8 @@
-﻿query-resetprefs-anon:           Cannot reset preferences for anonymous user
+﻿log-block/block:                 {0}: {1} blocked by {2} for {3}
+log-abusefilter:                 Filter {0}
+log-indefinite:                  indefinite
+
+query-resetprefs-anon:           Cannot reset preferences for anonymous user
 query-resetprefs-desc:           Reset preferences for {0}
 query-resetprefs-progress:       Resetting preferences
 
@@ -109,7 +113,7 @@ view-abusefilter-disabled:       Disabled
 view-abusefilter-deleted:        Deleted
 view-abusefilter-enabled:        Enabled
 view-abusefilter-general:        General
-view-abusefilter-modified:       Last modified by {0} at {1}
+view-abusefilter-modified:       Last modified by {0} at {1} ({2})
 view-abusefilter-notes:          Notes
 view-abusefilter-pattern:        Pattern
 view-abusefilter-private:        Private
@@ -140,9 +144,9 @@ view-abusefilter-column-actions:  Actions
 view-misc-column-count:          Count
 view-misc-column-name:           Name
 view-misc-count:                 {0} items
-view-misc-ratelimit:             {0} actions within {1}
-view-misc-ratelimitaction:       {0} actions of type '{1}' within {2}
-view-misc-ratelimitgrouped:      {0} actions within {1} grouped by {2}
+view-misc-ratelimit:             {0} actions in {1}
+view-misc-ratelimitaction:       {0} actions of type '{1}' in {2}
+view-misc-ratelimitgrouped:      {0} actions in {1} grouped by {2}
 
 wikiadd-explanation:             Use this form to add a wiki to the wiki list.\nWikis must be running MediaWiki 1.15 or later with the API enabled.
 
@@ -155,12 +159,21 @@ changepassword-error:            The old password was incorrect, or there was an
 
 time-day:                        {0} day
 time-day-s:                      {0} days
-time-minute:                     {0} minute
-time-minute-s:                   {0} minutes
 time-hour:                       {0} hour
 time-hour-s:                     {0} hours
+time-minute:                     {0} minute
+time-minute-s:                   {0} minutes
+time-month:                      {0} month
+time-month-s:                    {0} months
+time-year:                       {0} year
+time-year-s:                     {0} years
 time-second:                     {0} second
 time-second-s:                   {0} seconds
+time-shortday:                   {0} d
+time-shorthour:                  {0} hr
+time-shortminute:                {0} min
+time-shortsec:                   {0} sec
+time-past:                       {0} ago
 
 globaluserconfig-progress:		 Loading configuration for {0}
 globaluserconfig-desc:			 Update configuration for {0}

@@ -5,11 +5,11 @@ Namespace System.Windows.Forms
 
     Friend Class EnhancedListView : Inherits System.Windows.Forms.ListView
 
+        Private ColumnHeaders As List(Of ColumnHeader)
         Private LastManualSortOrder As Boolean = True
+        Private Rows As List(Of String())
         Private SortColumn As Integer
         Private SortOrder As Boolean
-
-        Private Rows As List(Of String())
         Private VirtualListViewItems As List(Of ListViewItem)
 
         Private _LinkColumn As Boolean
@@ -35,10 +35,10 @@ Namespace System.Windows.Forms
         End Property
 
         <DefaultValue(-1)>
-        Public Property FlexibleColumn() As Integer
+        Public Property FlexibleColumn() As Integer = -1
 
         <Browsable(False)>
-        Public ReadOnly Property HasSelectedItem As Boolean
+        Public ReadOnly Property HasSelectedItems As Boolean
             Get
                 Return (SelectedIndices.Count > 0)
             End Get
@@ -106,10 +106,7 @@ Namespace System.Windows.Forms
 
         Public Sub AddItem(ByVal row As String())
             Rows.Add(row)
-            VirtualListViewItems.Add(
-            VirtualItems.Sort(New ListViewItemComparer(SortColumn, SortOrder, GetComparerFor(SortColumn)))
-            VirtualListSize += 1
-            Refresh()
+            UpdateVirtualList()
         End Sub
 
         Public Overloads Function Contains(ByVal value As String) As Boolean
@@ -128,44 +125,33 @@ Namespace System.Windows.Forms
 
         Public Sub SetItems(ByVal rows As List(Of String()))
             Me.Rows = rows
-            UpdateVirtualListViewItems()
-        End Sub
-
-        Protected Overrides Sub OnMouseClick(ByVal e As MouseEventArgs)
-            If e.Button = MouseButtons.Right Then
-
-            Else
-                MyBase.OnMouseClick(e)
-            End If
+            UpdateVirtualList()
         End Sub
 
         Private Sub ColumnMenuItemClicked(ByVal sender As Object, ByVal e As EventArgs)
-            Dim index As Integer = CInt(CType(sender, MenuItem).Tag)
+            Dim index As Integer = CInt(CType(sender, MenuItem).Name)
 
-            If ColumnVisibility.ContainsKey(index) Then ColumnVisibility(index) = Not ColumnVisibility(index) _
-                Else ColumnVisibility(index) = False
+            ColumnVisibility(index) = Not ColumnVisibility(index)
+            ContextMenu.MenuItems(index).Checked = ColumnVisibility(index)
+
+            UpdateVirtualList()
         End Sub
 
         Protected Overrides Sub OnColumnClick(ByVal e As ColumnClickEventArgs)
             If SortOnColumnClick Then
-                Dim order As Boolean
-
                 If SortColumn = e.Column Then
                     LastManualSortOrder = Not LastManualSortOrder
-                    order = LastManualSortOrder
+                    SortOrder = LastManualSortOrder
+                Else
+                    SortOrder = False
+                    LastManualSortOrder = False
                 End If
 
-                SortBy(e.Column, order)
+                SortColumn = e.Column
+                UpdateVirtualList()
             End If
 
             MyBase.OnColumnClick(e)
-        End Sub
-
-        Protected Overrides Sub OnRetrieveVirtualItem(ByVal e As RetrieveVirtualItemEventArgs)
-            If Rows Is Nothing Then Return
-            If e.ItemIndex < 0 OrElse e.ItemIndex >= Rows.Count Then Return
-            e.Item = VirtualListViewItems(e.ItemIndex)
-            If e.Item Is Nothing Then Return
         End Sub
 
         Protected Overrides Sub OnResize(ByVal e As EventArgs)
@@ -184,13 +170,10 @@ Namespace System.Windows.Forms
             MyBase.OnResize(e)
         End Sub
 
-        Private Sub SortBy(ByVal column As Integer, Optional ByVal descending As Boolean = False,
-            Optional ByVal comparison As Comparison(Of String) = Nothing)
-
-            If comparison Is Nothing Then comparison = GetComparerFor(column)
-            VirtualListViewItems.Sort(New ListViewItemComparer(column, descending, comparison))
-
-            Refresh()
+        Protected Overrides Sub OnRetrieveVirtualItem(ByVal e As RetrieveVirtualItemEventArgs)
+            If VirtualListViewItems IsNot Nothing AndAlso e.ItemIndex >= 0 _
+                AndAlso e.ItemIndex < VirtualListViewItems.Count Then e.Item = VirtualListViewItems(e.ItemIndex)
+            If e.Item Is Nothing Then Throw New Exception("EnhancedListView list not populated.")
         End Sub
 
         Private Function GetComparerFor(ByVal column As Integer) As Comparison(Of String)
@@ -209,56 +192,83 @@ Namespace System.Windows.Forms
                                Return 1
                            End Function
 
-                Case SortMethod.Date : Return Function(x As String, y As String) Date.Compare(CDate(x), CDate(y))
+                Case SortMethod.Date
+
+                    Return _
+                        Function(x As String, y As String)
+                            Try
+                                Return Date.Compare(CDate(x), CDate(y))
+                            Catch ex As InvalidCastException
+                                Return 0
+                            End Try
+                        End Function
+
                 Case SortMethod.String : Return AddressOf String.Compare
                 Case Else : Return Nothing
             End Select
         End Function
 
-        Private Sub Initialize()
-            Dim columnMenu As New ContextMenu
-
-            For i As Integer = 0 To Columns.Count - 1
-                Dim item As New MenuItem(Columns(i).Text) With {.Name = i.ToString}
-                AddHandler item.Click, AddressOf ColumnMenuItemClicked
-                columnMenu.MenuItems.Add(item)
-                ColumnVisibility(i) = True
-            Next i
-
-            ContextMenu = columnMenu
-        End Sub
-
         Private Function MakeListViewItem(ByVal row As String()) As ListViewItem
-            If Not HideColumns Then Return New ListViewItem(row)
+            If Not HideColumns Then Return New ListViewItem(row) With {.UseItemStyleForSubItems = False}
 
-            Dim result As New ListViewItem
+            Dim items As New List(Of String)
 
-            For i As Integer = 0 To Columns.Count - 1
-                If ColumnVisibility.ContainsKey(i) Then _
-                    If result.Text Is Nothing Then result.Text = row(i) Else result.SubItems.Add(row(i))
+            For i As Integer = 0 To ColumnHeaders.Count - 1
+                If Not ColumnVisibility(i) Then Continue For
+
+                'Framework bug
+                If row(i) IsNot Nothing AndAlso row(i).Length = 260 Then row(i) &= " "
+
+                items.Add(row(i))
             Next i
 
-            Return result
+            Return New ListViewItem(items.ToArray) With {.UseItemStyleForSubItems = False}
         End Function
 
-        Private Sub UpdateVirtualListViewItems()
-            Dim newItems As New List(Of ListViewItem)
+        Private Sub UpdateVirtualList()
+            If VirtualListViewItems Is Nothing Then
+                'Save column headers
+                ColumnHeaders = New List(Of ColumnHeader)
 
-            For Each row As String() In Rows
-                'Framework bug
-                For i As Integer = 0 To row.Length - 1
-                    If row(i).Length = 260 Then row(i) &= " "
+                For i As Integer = 0 To Columns.Count - 1
+                    ColumnHeaders.Add(Columns(i))
+                    If Not ColumnVisibility.ContainsKey(i) Then ColumnVisibility(i) = True
                 Next i
 
-                newItems.Add(New ListViewItem(row) With {.UseItemStyleForSubItems = False})
-            Next row
+                If HideColumns Then
+                    ContextMenu = New ContextMenu
 
-            newItems.Sort(New ListViewItemComparer(SortColumn, SortOrder, GetComparerFor(SortColumn)))
+                    For i As Integer = 0 To Columns.Count - 1
+                        Dim item As New MenuItem(Columns(i).Text) With {.Name = i.ToString}
+                        item.Checked = ColumnVisibility(i)
+                        AddHandler item.Click, AddressOf ColumnMenuItemClicked
+                        ContextMenu.MenuItems.Add(item)
+                    Next i
+                End If
+            End If
+
+            SuspendLayout()
+            Columns.Clear()
+
+            Rows.Sort(New RowComparer(SortColumn, SortOrder, GetComparerFor(SortColumn)))
+
+            Dim newItems As New List(Of ListViewItem)
+
+            For i As Integer = 0 To Rows.Count - 1
+                newItems.Add(MakeListViewItem(Rows(i)))
+            Next i
+
+            For i As Integer = 0 To ColumnHeaders.Count - 1
+                If ColumnVisibility(i) Then Columns.Add(ColumnHeaders(i))
+            Next i
+
+            VirtualListViewItems = newItems
             VirtualListSize = Rows.Count
-            Refresh()
+            If SelectedIndices.Count > 0 Then VirtualListViewItems(SelectedIndices(0)).EnsureVisible()
+            ResumeLayout()
         End Sub
 
-        Private Class ListViewItemComparer : Inherits Comparer(Of ListViewItem)
+        Private Class RowComparer : Inherits Comparer(Of String())
 
             Private Column As Integer
             Private Comparison As Comparison(Of String)
@@ -270,12 +280,12 @@ Namespace System.Windows.Forms
                 Me.Order = order
             End Sub
 
-            Public Overloads Overrides Function Compare(ByVal x As ListViewItem, ByVal y As ListViewItem) As Integer
+            Public Overloads Overrides Function Compare(ByVal x As String(), ByVal y As String()) As Integer
                 If x Is Nothing Then Return -1
                 If y Is Nothing Then Return 1
 
-                Dim xValue As String = If(x.SubItems.Count > Column, x.SubItems(Column).Text, "")
-                Dim yValue As String = If(y.SubItems.Count > Column, y.SubItems(Column).Text, "")
+                Dim xValue As String = If(x.Length > Column, x(Column), "")
+                Dim yValue As String = If(y.Length > Column, y(Column), "")
 
                 If Order Then Return Comparison(yValue, xValue) Else Return Comparison(xValue, yValue)
             End Function

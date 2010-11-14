@@ -8,6 +8,7 @@ Namespace Huggle
     Partial Friend Class ApiRequest
 
         Private LastRev As Revision
+        Private LastLogItem As LogItem
 
         Private Sub ProcessApi(ByVal rootNode As XmlNode)
             Try
@@ -264,30 +265,24 @@ Namespace Huggle
                         For Each bk As XmlNode In node.ChildNodes
                             AssertApi(bk.Name, "bk")
 
-                            Dim block As New Block(
-                                Action:="block",
-                                anonOnly:=bk.HasAttribute("anononly"),
-                                autoBlock:=bk.HasAttribute("autoblock"),
-                                automatic:=bk.HasAttribute("automatic"),
-                                blockCreation:=bk.HasAttribute("nocreate"),
-                                blockEmail:=bk.HasAttribute("emailblocked"),
-                                blockTalk:=Not (bk.HasAttribute("allowusertalk")),
-                                Comment:=bk.Attribute("reason"),
-                                duration:=Nothing,
-                                expires:=If(bk.Attribute("expiry") = "infinity",
-                                    Date.MaxValue, CDate(bk.Attribute("expiry"))),
-                                id:=CInt(bk.Attribute("id")),
-                                rcid:=0,
-                                target:=bk.Attribute("user"),
-                                time:=CDate(bk.Attribute("timestamp")),
-                                User:=Wiki.Users(bk.Attribute("by")))
+                            If bk.HasAttribute("id") Then
+                                Dim id As Integer = CInt(bk.Attribute("id"))
 
-                            If Not bk.Attribute("user").Contains("/") Then
-                                Dim user As User = Wiki.Users(bk.Attribute("user"))
-                                user.Blocks.Merge(block)
+                                Dim block As Block = TryCast(Wiki.Logs.FromID(id), Block)
+                                If block Is Nothing Then block = New Block(id, Wiki)
+
+                                block.IsAccountCreationBlocked = bk.HasAttribute("nocreate")
+                                block.IsAnonymousOnly = bk.HasAttribute("anononly")
+                                block.IsAutoblockEnabled = bk.HasAttribute("autoblock")
+                                block.IsAutomatic = bk.HasAttribute("automatic")
+                                block.IsEmailBlocked = bk.HasAttribute("emailblocked")
+                                block.IsTalkBlocked = Not (bk.HasAttribute("allowusertalk"))
+
+                                block.Expires = If(bk.Attribute("expiry") = "infinity",
+                                    Date.MaxValue, bk.Attribute("expiry").ToDate)
+
+                                Items.Add(block)
                             End If
-
-                            Items.Add(block)
                         Next bk
 
                     Case "categorymembers"
@@ -363,19 +358,26 @@ Namespace Huggle
                         For Each block As XmlNode In node.ChildNodes
                             AssertApi(block.Name, "block")
 
-                            Dim globalBlock As New GlobalBlock( _
-                                Action:="block", _
-                                anonOnly:=block.Attribute("anononly").ToBoolean, _
-                                expires:=CDate(block.Attribute("expires")), _
-                                Family:=Wiki.Family, _
-                                id:=CInt(block.Attribute("id")), _
-                                rcid:=0, _
-                                Comment:=block.Attribute("reason"), _
-                                target:=block.Attribute("address"), _
-                                time:=CDate(block.Attribute("timestamp")), _
-                                User:=App.Wikis(block.Attribute("bywiki")).Users(block.Attribute("by")))
+                            If block.HasAttribute("id") AndAlso block.HasAttribute("bywiki") _
+                                AndAlso block.HasAttribute("address") Then
 
-                            Items.Add(globalBlock)
+                                Dim sourceWiki As Wiki = App.Wikis.FromCode(block.Attribute("bywiki"))
+
+                                If sourceWiki IsNot Nothing Then
+                                    Dim id As Integer = CInt(block.Attribute("id"))
+                                    Dim target As String = block.Attribute("address")
+                                    Dim globalBlock As GlobalBlock = TryCast(Wiki.Logs.FromID(id), GlobalBlock)
+                                    If globalBlock Is Nothing Then globalBlock = New GlobalBlock(id, target, Wiki)
+
+                                    globalBlock.IsAnonymousOnly = block.HasAttribute("anononly")
+                                    globalBlock.Comment = block.Attribute("reason")
+                                    globalBlock.Expires = block.Attribute("expires").ToDate
+                                    globalBlock.Time = block.Attribute("timestamp").ToDate
+                                    globalBlock.User = sourceWiki.Users.FromName(block.Attribute("by"))
+
+                                    Items.Add(globalBlock)
+                                End If
+                            End If
                         Next block
 
                     Case "globaluserinfo" : ProcessGlobalUserInfo(node)
@@ -600,6 +602,8 @@ Namespace Huggle
                 filter.Notes = node.Attribute("comments")
                 filter.Pattern = node.Attribute("pattern")
                 filter.TotalHits = CInt(node.Attribute("hits"))
+
+                If Not filter.Actions.Contains("throttle") Then filter.RateLimit = RateLimit.None
             Next node
         End Sub
 
@@ -607,19 +611,18 @@ Namespace Huggle
             For Each node As XmlNode In logNode.ChildNodes
                 AssertApi(node.Name, "item")
 
-                If Wiki.Logs.All.ContainsKey(CInt(node.Attribute("id"))) Then Continue For
+                Dim abuse As Abuse = Wiki.Abuse.FromID(CInt(node.Attribute("id")))
 
-                Dim abuse As New Abuse(
-                    Id:=CInt(node.Attribute("id")),
-                    Filter:=Wiki.AbuseFilters(CInt(node.Attribute("filter_id"))),
-                    Page:=Wiki.Pages(CInt(node.Attribute("ns")), node.Attribute("title")),
-                    rcid:=0,
-                    Result:=node.Attribute("result"),
-                    Time:=node.Attribute("timestamp").ToDate,
-                    User:=Wiki.Users(node.Attribute("user")),
-                    UserAction:=node.Attribute("action"))
+                abuse.Action = "abusefilter/abuse"
+                If node.HasAttribute("filter_id") Then abuse.Filter =
+                    Wiki.AbuseFilters.FromID(CInt(node.Attribute("filter_id")))
+                abuse.IsHidden = node.HasAttribute("hidden")
+                If node.HasAttribute("title") Then abuse.Page =
+                    Wiki.Pages.FromNsAndTitle(CInt(node.Attribute("ns")), node.Attribute("title"))
+                If node.HasAttribute("action") Then abuse.UserAction = node.Attribute("action")
 
-                If node.HasAttribute("filter") Then abuse.Filter.Description = node.Attribute("filter")
+                If node.HasAttribute("filter") AndAlso abuse.Filter IsNot Nothing _
+                    Then abuse.Filter.Description = node.Attribute("filter")
 
                 NewItems.Add(abuse)
             Next node
@@ -727,7 +730,6 @@ Namespace Huggle
 
         Private Sub ProcessLogItem(ByVal node As XmlNode)
             Dim action As String = Nothing, type As String = Nothing
-            Dim newItem As LogItem = Nothing
 
             'API is inconsistent here
             If node.HasAttribute("action") Then action = node.Attribute("action")
@@ -737,265 +739,226 @@ Namespace Huggle
             If node.HasAttribute("logtype") Then type = node.Attribute("logtype")
 
             Dim id As Integer = CInt(node.Attribute("logid"))
-            Dim rcid As Integer = If(node.HasAttribute("rcid"), CInt(node.Attribute("rcid")), 0)
             Dim isNew As Boolean = Not Wiki.Logs.All.ContainsKey(id)
+            Dim fullAction As String = type & "/" & action
+            Dim logItem As LogItem = Nothing
 
-            Select Case type & "/" & action
-                'Account blocking
-                Case "block/block", "block/reblock"
-                    Dim detail As XmlNode = node.FirstChild
+            Select Case fullAction
 
-                    newItem = New Block(
-                        action:=action,
-                        anonOnly:=node.FirstChild.Attribute("flags").Contains("anononly"),
-                        autoBlock:=Not node.FirstChild.Attribute("flags").Contains("noautoblock"),
-                        automatic:=MessageMatch(Wiki.Message("autoblocker"), node.Attribute("comment")).Success,
-                        blockCreation:=node.FirstChild.Attribute("flags").Contains("nocreate"),
-                        blockEmail:=node.FirstChild.Attribute("flags").Contains("noemail"),
-                        blockTalk:=node.FirstChild.Attribute("flags").Contains("notalk"),
-                        Comment:=node.Attribute("comment"),
-                        duration:=node.FirstChild.Attribute("duration"),
-                        expires:=node.FirstChild.Attribute("expiry").ToDate,
-                        id:=id,
-                        rcid:=rcid,
-                        target:=Wiki.Pages(CInt(node.Attribute("ns")), node.Attribute("title")).Owner.Name,
-                        time:=node.Attribute("timestamp").ToDate,
-                        User:=Wiki.Users(node.Attribute("user")))
+                Case "abusefilter/modify"
+                    'Abuse filter modification
+                    Dim abuseRev As AbuseFilterRevision = Wiki.AbuseFilterRevisions.FromLogID(id)
+                    logItem = abuseRev
 
-                    'Account unblocking
-                Case "block/unblock"
-                    newItem = New Block(
-                        action:=action,
-                        anonOnly:=False,
-                        autoBlock:=False,
-                        automatic:=False,
-                        blockCreation:=False,
-                        blockEmail:=False,
-                        blockTalk:=False,
-                        Comment:=node.Attribute("comment"),
-                        duration:=Nothing,
-                        expires:=Date.MinValue,
-                        id:=id,
-                        rcid:=rcid,
-                        Target:=Wiki.Pages(CInt(node.Attribute("ns")), node.Attribute("title")).Owner.Name,
-                        Time:=node.Attribute("timestamp").ToDate,
-                        User:=Wiki.Users(node.Attribute("user")))
+                    If node.FirstChild IsNot Nothing Then
+                        abuseRev.AbuseFilterRevId = CInt(node.FirstChild.InnerText)
+                        abuseRev.Filter = Wiki.AbuseFilters(CInt(node.FirstChild.NextSibling.InnerText))
 
+                        If Not abuseRev.Filter.Revisions.Contains(abuseRev) Then
+                            If abuseRev.Filter.LastRevision Is Nothing Then abuseRev.Filter.LastRevision = abuseRev
+
+                            Dim lastAbfRev As AbuseFilterRevision = TryCast(LastLogItem, AbuseFilterRevision)
+
+                            If lastAbfRev IsNot Nothing Then
+                                lastAbfRev.Prev = abuseRev
+                                abuseRev.Next = lastAbfRev
+                            End If
+
+                            abuseRev.Filter.Revisions.Merge(abuseRev)
+                        End If
+                    End If
+
+                Case "block/block",
+                     "block/reblock",
+                     "block/unblock"
+                    'Account blocking
+                    Dim block As New Block(id, Wiki)
+                    logItem = block
+
+                    If node.HasAttribute("comment") _
+                        Then block.IsAutomatic = MwMessageIsMatch(Wiki, "autoblocker", node.Attribute("comment"))
+
+                    If node.FirstChild IsNot Nothing Then
+                        block.Duration = node.FirstChild.Attribute("duration")
+                        block.Expires = node.FirstChild.Attribute("expiry").ToDate
+                        block.IsAccountCreationBlocked = node.FirstChild.Attribute("flags").Contains("nocreate")
+                        block.IsAnonymousOnly = node.FirstChild.Attribute("flags").Contains("anononly")
+                        block.IsAutoblockEnabled = Not node.FirstChild.Attribute("flags").Contains("noautoblock")
+                        block.IsEmailBlocked = node.FirstChild.Attribute("flags").Contains("noemail")
+                        block.IsTalkBlocked = node.FirstChild.Attribute("flags").Contains("notalk")
+                    End If
+
+
+                Case "delete/delete",
+                     "delete/restore"
                     'Page deletion
-                Case "delete/delete", "delete/restore"
-                    newItem = New Deletion(
-                        action:=action,
-                        Comment:=node.Attribute("comment"),
-                        id:=id,
-                        rcid:=rcid,
-                        Page:=Wiki.Pages(CInt(node.Attribute("ns")), node.Attribute("title")),
-                        Time:=node.Attribute("timestamp").ToDate,
-                        User:=Wiki.Users(node.Attribute("user")))
+                    logItem = New Deletion(id, Wiki)
 
-                    'Log item hiding
+
                 Case "delete/event"
-                    newItem = New VisibilityChange(
-                        id:=id,
-                        item:=Nothing,
-                        rcid:=rcid,
-                        User:=Wiki.Users(node.Attribute("user")))
+                    'Log item hiding
+                    Dim visibilityChange As New LogVisibilityChange(id, Wiki)
+                    logItem = visibilityChange
 
-                    'Revision hiding
+                    If node.FirstChild IsNot Nothing Then
+                        visibilityChange.LogItemID = CInt(node.FirstChild.InnerText)
+
+                        Dim n As XmlNode = node.FirstChild.NextSibling
+                        If n Is Nothing Then Exit Select
+                        visibilityChange.PrevState = New VisibilityState(CInt(n.InnerText.FromFirst("ofield")))
+
+                        n = n.NextSibling
+                        If n Is Nothing Then Exit Select
+                        visibilityChange.State = New VisibilityState(CInt(n.InnerText.FromFirst("nfield")))
+                    End If
+
+
                 Case "delete/revision"
-                    newItem = New VisibilityChange(
-                        id:=id,
-                        item:=Nothing,
-                        rcid:=rcid,
-                        User:=Wiki.Users(node.Attribute("user")))
+                    'Revision hiding
+                    Dim visibilityChange As New RevisionVisibilityChange(id, Wiki)
+                    logItem = visibilityChange
 
-                    'Page importing
-                Case "import/upload", "import/interwiki"
+                    If node.FirstChild IsNot Nothing Then
+                        Dim n As XmlNode = node.FirstChild.NextSibling
+                        If n Is Nothing Then Exit Select
 
-                    'Page history merging
-                Case "merge/merge"
-                    '...not used on Wikimedia?
+                        Dim revisions As New List(Of Revision)
 
+                        For Each revID As String In n.InnerText.Split(",").Trim
+                            revisions.Merge(Wiki.Revisions(CInt(id)))
+                        Next revID
+
+                        visibilityChange.Revisions = revisions
+
+                        n = n.NextSibling
+                        If n Is Nothing Then Exit Select
+                        visibilityChange.PrevState = New VisibilityState(CInt(n.InnerText.FromFirst("ofield")))
+
+                        n = n.NextSibling
+                        If n Is Nothing Then Exit Select
+                        visibilityChange.State = New VisibilityState(CInt(n.InnerText.FromFirst("nfield")))
+                    End If
+
+
+                Case "move/move",
+                     "move/move_redir"
                     'Page moving
-                Case "move/move", "move/move_redir"
-                    newItem = New Move(
-                        Comment:=node.Attribute("comment"),
-                        Source:=node.Attribute("title"),
-                        Destination:=node.FirstChild.Attribute("new_title"),
-                        id:=id,
-                        rcid:=rcid,
-                        Time:=node.Attribute("timestamp").ToDate,
-                        User:=Wiki.Users(node.Attribute("user")))
+                    Dim move As New Move(id, Wiki)
+                    logItem = move
 
+                    move.DestinationTitle = node.FirstChild.Attribute("new_title")
+                    move.SourceTitle = node.Attribute("title")
+
+
+                Case "protect/modify",
+                     "protect/protect",
+                     "protect/unprotect"
                     'Page protection
-                Case "protect/protect", "protect/modify"
-                    Dim level As String = If(node.FirstChild IsNot Nothing,
-                        node.FirstChild.FirstChild.Value, node.Attribute("comment").FromFirst("[", True))
+                    Dim protection As New Protection(id, Wiki)
+                    logItem = protection
 
-                    newItem = New Protection(
-                        action:=action,
-                        Cascade:=(level IsNot Nothing AndAlso level.EndsWithI("[cascading]")),
-                        Comment:=node.Attribute("comment"),
-                        Hidden:=node.HasAttribute("actionhidden"),
-                        id:=id,
-                        rcid:=rcid,
-                        Levels:=If(level, "[edit:sysop; move:sysop] (indefinite)"),
-                        Page:=If(node.HasAttribute("title"), Wiki.Pages(CInt(node.Attribute("ns")),
-                            node.Attribute("title")), Nothing),
-                        Time:=node.Attribute("timestamp").ToDate,
-                        User:=Wiki.Users(node.Attribute("user")))
+                    'Determine protection level
+                    Dim level As String = "[edit:sysop; move:sysop] (indefinite)"
+                    If node.HasAttribute("comment") AndAlso node.Attribute("comment").Contains("[") _
+                        Then level = node.Attribute("comment").FromFirst("[")
+                    If node.FirstChild IsNot Nothing AndAlso node.FirstChild.FirstChild IsNot Nothing _
+                        Then level = node.FirstChild.FirstChild.Value
 
-                    'Page unprotection
-                Case "protect/unprotect"
-                    newItem = New Protection(
-                        action:=action,
-                        Cascade:=False,
-                        Comment:=node.Attribute("comment"),
-                        Hidden:=node.HasAttribute("actionhidden"),
-                        id:=id,
-                        rcid:=rcid,
-                        Levels:=Nothing,
-                        Page:=If(node.HasAttribute("title"), Wiki.Pages(CInt(node.Attribute("ns")),
-                            node.Attribute("title")), Nothing),
-                        Time:=node.Attribute("timestamp").ToDate,
-                        User:=Wiki.Users(node.Attribute("user")))
+                    If fullAction <> "protect/unprotect" Then
+                        protection.Create = ProtectionPart.FromComment(level, "create")
+                        protection.Edit = ProtectionPart.FromComment(level, "edit")
+                        protection.Move = ProtectionPart.FromComment(level, "move")
+                        protection.IsCascading = (level IsNot Nothing AndAlso level.Contains("[cascading]"))
+                    End If
 
-                    'Protection settings moved following a page move
+
                 Case "protect/move_prot"
+                    'Protection settings moved following a page move
                     'Since we handle page moves simply by changing the page object's title field,
                     'the protection settings don't need moving anywhere
 
+
+                Case "newusers/create",
+                     "newusers/create2",
+                     "newusers/autocreate"
                     'Account creation
-                Case "newusers/create", "newusers/create2"
-                    newItem = New UserCreation(
-                        Auto:=False,
-                        id:=id,
-                        rcid:=rcid,
-                        Time:=node.Attribute("timestamp").ToDate,
-                        User:=Wiki.Users(node.Attribute("user")))
+                    Dim userCreation As New UserCreation(id, Wiki)
+                    logItem = userCreation
 
-                    Wiki.Users.NewUsers.Add(Wiki.Users(node.Attribute("title")))
+                    If node.FirstChild IsNot Nothing Then userCreation.UserID = CInt(node.FirstChild.InnerText)
 
-                    'Account renaming
+
                 Case "renameuser/renameuser"
-                    newItem = New UserRename(
-                        Comment:=node.Attribute("comment"),
-                        id:=id,
-                        rcid:=rcid,
-                        Source:=node.Attribute("title"),
-                        Destination:=node.FirstChild.Value,
-                        Time:=node.Attribute("timestamp").ToDate,
-                        User:=Wiki.Users(node.Attribute("user")))
+                    'Account renaming
+                    Dim userRename As New UserRename(id, Wiki)
+                    logItem = userRename
 
-                    'Account group changes
+                    If node.FirstChild IsNot Nothing Then userRename.TargetUser =
+                        Wiki.Users.FromName(node.FirstChild.InnerText)
+
+
                 Case "rights/rights"
-                    newItem = New RightsChange(
-                        Comment:=node.Attribute("comment"),
-                        id:=id,
-                        rcid:=rcid,
-                        Rights:=node.FirstChild.Attribute("new").ToList.Trim,
-                        TargetUser:=Wiki.Pages(node.Attribute("title")).Owner,
-                        Time:=node.Attribute("timestamp").ToDate,
-                        User:=Wiki.Users(node.Attribute("user")))
+                    'Account group changes
+                    Dim rightsChange As New RightsChange(id, Wiki)
+                    logItem = rightsChange
 
-                    'Revision or page patrolling
+                    If node.FirstChild IsNot Nothing Then
+                        rightsChange.PrevRights = node.FirstChild.Attribute("old").ToList.Trim
+                        rightsChange.Rights = node.FirstChild.Attribute("new").ToList.Trim
+                    End If
+
                 Case "patrol/patrol"
-                    Dim rev As Revision = Wiki.Revisions(CInt(node.FirstChild.Attribute("cur")))
+                    'Revision or page patrolling
+                    Dim review As New Review(id, Wiki)
+                    logItem = review
 
-                    If CInt(node.FirstChild.Attribute("prev")) = 0 Then rev.Prev = Revision.Null _
-                        Else rev.Prev = Wiki.Revisions(CInt(node.FirstChild.Attribute("prev")))
+                    If node.FirstChild IsNot Nothing Then
+                        Dim rev As Revision = Wiki.Revisions.FromID(CInt(node.FirstChild.Attribute("cur")))
+                        Dim oldID As Integer = CInt(node.FirstChild.Attribute("prev"))
+                        If oldID = 0 Then rev.Prev = Revision.Null Else rev.Prev = Wiki.Revisions.FromID(oldID)
 
-                    newItem = New Review(
-                        Auto:=(CInt(node.FirstChild.Attribute("auto")) = 1),
-                        Comment:=node.Attribute("comment"),
-                        id:=id,
-                        rcid:=rcid,
-                        Revision:=rev,
-                        Time:=node.Attribute("timestamp").ToDate,
-                        type:=If(rev.Prev Is Revision.Null, "newpage-patrol", "patrol"),
-                        User:=Wiki.Users(node.Attribute("user")))
+                        review.IsAutomatic = (node.FirstChild.Attribute("auto") = "1")
+                        review.Revision = rev
+                        review.Type = If(rev.Prev Is Revision.Null, "newpage-patrol", "patrol")
+                    End If
 
-                    'Flagged revisions configuration
-                Case "stable/config"
-
-                    'Censorship
-                Case "suppress/block",
-                     "suppress/delete",
-                     "suppress/event",
-                     "suppress/file",
-                     "suppress/reblock",
-                     "suppress/revision"
-                    'Not accessible to most of us, so don't expect anything to be done with it here
-
-                    'File upload
                 Case "upload/revert",
                      "upload/overwrite",
                      "upload/upload"
+                    'File upload
+                    Dim upload As New Upload(id, Wiki)
+                    logItem = upload
 
-                    newItem = New Upload(
-                        action:=action,
-                        Comment:=node.Attribute("comment"),
-                        File:=node.Attribute("title"),
-                        id:=id,
-                        rcid:=rcid,
-                        Time:=node.Attribute("timestamp").ToDate,
-                        User:=Wiki.Users(node.Attribute("user")))
 
-                    'Global blocking
                 Case "gblblock/gblock2",
                      "gblblock/gunblock",
                      "gblblock/modify"
+                    'Global blocking
+                    Dim globalBlock As New GlobalBlock(id, Wiki.Pages(node.Attribute("title")).Name, Wiki)
+                    logItem = globalBlock
 
-                    Dim logAction As String
-                    Dim params As String = If(node.FirstChild.FirstChild IsNot Nothing, node.FirstChild.FirstChild.Value, Nothing)
+                    If node.FirstChild IsNot Nothing Then
+                        Dim params As String = node.FirstChild.InnerText
 
-                    Select Case action
-                        Case "gblock2" : logAction = "block"
-                        Case "gunblock" : logAction = "unblock"
-                        Case "modify" : logAction = "modify"
-                        Case Else : logAction = action
-                    End Select
+                        globalBlock.IsAnonymousOnly = (params.Contains("anonymous only"))
+                        globalBlock.Expires = params.FromFirst("expires ").ToDate
+                    End If
 
-                    newItem = New GlobalBlock(
-                        action:=logAction,
-                        anonOnly:=If(params Is Nothing, False, params.Contains("anonymous only")),
-                        expires:=If(params Is Nothing, Date.MinValue, params.FromFirst("expires ").ToDate),
-                        Family:=Wiki.Family,
-                        id:=id,
-                        rcid:=CInt(node.Attribute("rcid")),
-                        Comment:=node.Attribute("comment"),
-                        target:=Wiki.Pages(node.Attribute("title")).Name,
-                        time:=node.Attribute("timestamp").ToDate,
-                        User:=Wiki.Users(node.Attribute("user")))
 
-                    'Global blocking whitelist
-                Case "gblblock/dwhitelist",
-                     "gblblock/whitelist"
-                    'ignore
-
-                    'Global group rights change
-                Case "gblrights/groupperms",
-                     "gblrights/groupprms2",
-                     "gblrights/groupprms3",
-                     "gblrights/usergroups",
-                     "gblrights/setchange",
-                     "gblrights/setrename",
-                     "gblrights/setnewtype",
-                     "gblrights/newset"
-                    'ignore
-
-                    'Global account status change
                 Case "globalauth/setstatus"
+                    'Global account status change
 
-                    Dim globalUserLock As New GlobalUserStatusChange(
-                        Wiki:=Wiki,
-                        Comment:=node.Attribute("comment"),
-                        id:=id,
-                        rcid:=rcid,
-                        target:=Wiki.Family.GlobalUsers(Wiki.Pages(node.Attribute("title")).Name),
-                        time:=node.Attribute("timestamp").ToDate,
-                        User:=Wiki.Users(node.Attribute("user")))
+                    Dim globalUserStatusChange As New GlobalUserStatusChange(id,
+                        Wiki.Family.GlobalUsers.FromName(Wiki.Pages(CInt(node.Attribute("ns")),
+                        node.Attribute("title")).Name), Wiki)
+                    logItem = globalUserStatusChange
 
-                    'Flagged revisions reviewing
+                    If node.FirstChild IsNot Nothing Then
+                        globalUserStatusChange.IsAccountHidden = node.FirstChild.InnerText.Contains("hidden")
+                        globalUserStatusChange.IsAccountLocked = node.FirstChild.InnerText.Contains("locked")
+                    End If
+                        
+
                 Case "review/approve",
                      "review/approve-a",
                      "review/approve-ia",
@@ -1003,27 +966,44 @@ Namespace Huggle
                      "review/approve2-i",
                      "review/unapprove",
                      "review/unapprove2"
+                    'Flagged revisions reviewing
 
-                    Dim rev As Revision = Wiki.Revisions(CInt(node.FirstChild.FirstChild.Value))
+                    Dim review As New Review(id, Wiki)
 
-                    If CInt(node.FirstChild.NextSibling.FirstChild.Value) = 0 Then rev.Prev = Revision.Null _
-                        Else rev.Prev = Wiki.Revisions(CInt(node.FirstChild.NextSibling.FirstChild.Value))
+                    review.IsAutomatic = {"approve-a", "approve-ia"}.Contains(action)
 
-                    rev.Page.Id = CInt(node.Attribute("pageid"))
+                    If node.FirstChild IsNot Nothing Then
+                        Dim rev As Revision = Wiki.Revisions.FromID(CInt(node.FirstChild.InnerText))
 
-                    newItem = New Review(
-                        Auto:=(action.EndsWithI("a")),
-                        Comment:=node.Attribute("comment"),
-                        Revision:=rev,
-                        id:=id,
-                        rcid:=rcid,
-                        Time:=node.Attribute("timestamp").ToDate,
-                        type:="flaggedrevs-" & action,
-                        User:=Wiki.Users(node.Attribute("user")))
+                        If node.HasAttribute("ns") AndAlso node.HasAttribute("title") Then
+                            rev.Page = Wiki.Pages(CInt(node.Attribute("ns")), node.Attribute("title"))
+                            If node.HasAttribute("pageid") Then rev.Page.Id = CInt(node.Attribute("pageid"))
+                        End If
 
+                        Dim oldID As Integer = CInt(node.FirstChild.NextSibling.InnerText)
+                        If oldID = 0 Then rev.Prev = Revision.Null Else rev.Prev = Wiki.Revisions.FromID(oldID)
+                    End If
+
+
+                Case Else
                     'Something unknown
-                Case Else : Log.Debug(Msg("error-apiunrecognized", "loginfo", type & "/" & action))
+                    logItem = New UnknownLogItem(id, Wiki)
             End Select
+
+            If logItem IsNot Nothing Then
+                logItem.Action = fullAction
+
+                If node.HasAttribute("ns") AndAlso node.HasAttribute("title") Then
+                    logItem.Page = Wiki.Pages(CInt(node.Attribute("ns")), node.Attribute("title"))
+                    If node.HasAttribute("pageid") Then logItem.Page.Id = CInt(node.Attribute("pageid"))
+                End If
+
+                If node.HasAttribute("actionhidden") Then logItem.ActionHidden = True
+                If node.HasAttribute("comment") Then logItem.Comment = node.Attribute("comment")
+                If node.HasAttribute("rcid") Then logItem.Rcid = CInt(node.Attribute("rcid"))
+                If node.HasAttribute("timestamp") Then logItem.Time = CDate(node.Attribute("timestamp"))
+                If node.HasAttribute("user") Then logItem.User = Wiki.Users(node.Attribute("user"))
+            End If
 
             If Wiki.Logs.All.ContainsKey(id) Then
                 Items.Add(Wiki.Logs(id))

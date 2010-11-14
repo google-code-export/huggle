@@ -3,7 +3,7 @@ Imports System.Collections.Generic
 
 Namespace Huggle
 
-    <Diagnostics.DebuggerDisplay("{Name}")> _
+    <Diagnostics.DebuggerDisplay("{Name}")>
     Friend Class ChangeTag
 
         'Represents a MediaWiki change tag; currently these are only created by abuse filters

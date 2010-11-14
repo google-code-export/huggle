@@ -6,37 +6,17 @@ Namespace Huggle
 
         'Represents a user rights change
 
-        Private _Rights As List(Of String)
-        Private _TargetUser As User
-
-        Public Sub New(ByVal time As Date, ByVal user As User, ByVal targetUser As User, _
-            ByVal comment As String, ByVal rights As List(Of String), ByVal id As Integer, ByVal rcid As Integer)
-
-            MyBase.New(user.Wiki, id, rcid)
-            Me.Action = "rights"
-            Me.Comment = comment
-            Me.Time = time
-            Me.User = user
-
-            _Rights = rights
-            _TargetUser = user
+        Public Sub New(ByVal id As Integer, ByVal wiki As Wiki)
+            MyBase.New(id, wiki)
         End Sub
 
-        Public ReadOnly Property Rights() As List(Of String)
-            Get
-                Return _Rights
-            End Get
-        End Property
+        Public Property PrevRights As List(Of String)
 
-        Public ReadOnly Property TargetUser() As User
-            Get
-                Return _TargetUser
-            End Get
-        End Property
+        Public Property Rights() As List(Of String)
 
         Public Overrides ReadOnly Property Target() As String
             Get
-                Return _TargetUser.Name
+                Return TargetUser.Name
             End Get
         End Property
 

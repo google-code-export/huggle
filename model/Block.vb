@@ -1,4 +1,5 @@
 ﻿Imports System
+Imports System.Drawing
 Imports System.Text.RegularExpressions
 
 Namespace Huggle
@@ -7,75 +8,49 @@ Namespace Huggle
 
     Friend Class Block : Inherits LogItem
 
-        Private _AnonOnly As Boolean
-        Private _AutoBlock As Boolean
-        Private _BlockCreation As Boolean
-        Private _BlockEmail As Boolean
-        Private _BlockTalk As Boolean
         Private _Duration As String
-        Private _Expires As Date
-        Private _IsAutomatic As Boolean
         Private _IsRangeblock As Boolean
-        Private _Target As String
-        Private _TargetUser As User
+        Private _TargetRange As String
 
-        Private Shared ReadOnly RangeRegex As New Regex _
-            ("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/\d{2}", RegexOptions.Compiled)
-
-        Public Sub New(ByVal time As Date, ByVal target As String, _
-            ByVal user As User, ByVal action As String, ByVal comment As String, ByVal id As Integer, _
-            ByVal rcid As Integer, ByVal automatic As Boolean, ByVal anonOnly As Boolean, _
-            ByVal autoBlock As Boolean, ByVal blockCreation As Boolean, ByVal blockEmail As Boolean, _
-            ByVal blockTalk As Boolean, ByVal duration As String, ByVal expires As Date)
-
-            MyBase.New(user.Wiki, id, rcid)
-            Me.Action = action
-            Me.Comment = comment
-            Me.Time = time
-            Me.User = user
-
-            _AnonOnly = anonOnly
-            _AutoBlock = autoBlock
-            _BlockCreation = blockCreation
-            _BlockEmail = blockEmail
-            _BlockTalk = blockTalk
-            _Duration = Duration
-            _Expires = Expires
-            _Target = target
-
-            _IsAutomatic = automatic
-
-            If RangeRegex.IsMatch(target) Then
-                _IsRangeblock = True
-            Else
-                _TargetUser = Wiki.Users(target)
-                _TargetUser.Blocks.Add(Me)
-            End If
+        Public Sub New(ByVal id As Integer, ByVal wiki As Wiki)
+            MyBase.New(id, wiki)
         End Sub
 
-        Public ReadOnly Property Duration() As String
+        Public Overrides ReadOnly Property Description As String
             Get
-                Return _Duration
+                Return Msg("log-" & Action, Id, Target, User.Name, Duration)
             End Get
         End Property
 
-        Public ReadOnly Property Expires() As Date
+        Public Property Duration() As String
             Get
-                Return _Expires
+                If _Duration IsNot Nothing Then Return _Duration
+                If Expires = Date.MaxValue Then Return Msg("block-indefinite")
+                If Time = Date.MinValue OrElse Expires = Date.MinValue Then Return Nothing
+                Return FullFuzzyAge(Time, Expires)
             End Get
+            Set(ByVal value As String)
+                _Duration = value
+            End Set
         End Property
 
-        Public Overrides ReadOnly Property Icon() As Drawing.Image
+        Public Property Expires() As Date
+
+        Public Property IsAccountCreationBlocked As Boolean
+
+        Public Property IsAnonymousOnly As Boolean
+
+        Public Property IsAutoblockEnabled As Boolean
+
+        Public Property IsAutomatic As Boolean
+
+        Public Overrides ReadOnly Property Icon() As Image
             Get
                 Return Resources.blob_log_block
             End Get
         End Property
 
-        Public ReadOnly Property IsAutomatic() As Boolean
-            Get
-                Return _IsAutomatic
-            End Get
-        End Property
+        Public Property IsEmailBlocked As Boolean
 
         Public ReadOnly Property IsRangeblock() As Boolean
             Get
@@ -83,17 +58,29 @@ Namespace Huggle
             End Get
         End Property
 
+        Public Property IsTalkBlocked As Boolean
+
         Public Overrides ReadOnly Property Target() As String
             Get
-                Return _Target
+                If IsRangeblock Then Return TargetRange Else Return TargetUser.Name
             End Get
         End Property
 
-        Public ReadOnly Property TargetUser() As User
+        Public ReadOnly Property TargetRange As String
             Get
-                Return _TargetUser
+                Return _TargetRange
             End Get
         End Property
+
+        Protected Overrides Sub OnSetPage()
+            If RangePattern.IsMatch(Page.Title) Then
+                _IsRangeblock = True
+                _TargetRange = Target
+            Else
+                TargetUser = Page.Owner
+                If TargetUser IsNot Nothing Then TargetUser.Blocks.Add(Me)
+            End If
+        End Sub
 
     End Class
 

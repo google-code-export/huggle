@@ -204,17 +204,17 @@ Namespace Huggle
                         For Each prop As KVP In ParseConfig(source, key & ":" & item.Key, item.Value)
                             Select Case prop.Key
                                 Case "actions" : filter.Actions = prop.Value.ToList.Trim
+                                Case "author" : filter.LastModifiedBy = Wiki.Users.FromString(prop.Value)
                                 Case "deleted" : filter.IsDeleted = prop.Value.ToBoolean
-                                Case "description" : filter.Description = prop.Value
+                                Case "desc" : filter.Description = Unescape(prop.Value)
                                 Case "enabled" : filter.IsEnabled = prop.Value.ToBoolean
                                 Case "hits" : filter.TotalHits = CInt(prop.Value)
-                                Case "last-modified" : filter.LastModified = prop.Value.ToDate
-                                Case "last-modified-by" : filter.LastModifiedBy = Wiki.Users.FromString(prop.Value)
-                                Case "notes" : filter.Notes = prop.Value
-                                Case "pattern" : filter.Pattern = prop.Value
+                                Case "modified" : filter.LastModified = prop.Value.ToDate
+                                Case "notes" : filter.Notes = Unescape(prop.Value)
+                                Case "pattern" : filter.Pattern = Unescape(prop.Value)
                                 Case "private" : filter.IsPrivate = prop.Value.ToBoolean
 
-                                Case "rate-limit"
+                                Case "rate"
                                     If prop.Value = "none" Then
                                         filter.RateLimit = RateLimit.None
                                     Else
@@ -231,6 +231,8 @@ Namespace Huggle
                                 Case "tags" : filter.Tags = prop.Value.ToList.Trim
                             End Select
                         Next prop
+
+                        If Not filter.Actions.Contains("throttle") Then filter.RateLimit = RateLimit.None
                     Next item
 
                 Case "change-tag-identifier" : ChangeTagIdentifier = value
@@ -467,28 +469,30 @@ Namespace Huggle
                     Dim item As New Dictionary(Of String, Object)
 
                     If filter.Actions.Count > 0 Then item.Add("actions", filter.Actions.Join(", "))
-                    If filter.Description IsNot Nothing Then item.Add("description", filter.Description)
+                    If filter.LastModifiedBy IsNot Nothing Then item.Add("author", filter.LastModifiedBy)
+                    If filter.Description IsNot Nothing Then item.Add("desc", filter.Description)
                     If filter.IsDeleted Then item.Add("deleted", True)
                     If filter.IsEnabled Then item.Add("enabled", True)
-                    If filter.IsPrivate Then item.Add("private", True)
-                    If filter.LastModified > Date.MinValue Then item.Add("last-modified", filter.LastModified)
-                    If filter.LastModifiedBy IsNot Nothing Then item.Add("last-modified-by", filter.LastModifiedBy)
-
-                    If filter.IsEnabled AndAlso filter.Pattern IsNot Nothing _
-                        Then item.Add("pattern", filter.Pattern)
-
                     If filter.TotalHits > -1 Then item.Add("hits", filter.TotalHits)
+                    If filter.LastModified > Date.MinValue Then item.Add("modified", filter.LastModified)
+                    'If target <> ConfigTarget.Cloud AndAlso filter.Notes IsNot Nothing Then item.Add("notes", filter.Notes)
+                    If filter.IsPrivate Then item.Add("private", True)
 
-                    If filter.RateLimit Is RateLimit.None Then
-                        item.Add("rate-limit", "none")
+                    If (target <> ConfigTarget.Cloud OrElse filter.IsEnabled) _
+                        AndAlso filter.Pattern IsNot Nothing Then item.Add("pattern", filter.Pattern)
 
-                    ElseIf filter.RateLimit IsNot Nothing Then
-                        Dim rateLimitItems As New Dictionary(Of String, Object)
-                        rateLimitItems.Add("count", filter.RateLimit.Count)
-                        rateLimitItems.Add("time", CInt(filter.RateLimit.Time.TotalSeconds))
+                    If filter.Actions.Contains("throttle") Then
+                        If filter.RateLimit Is RateLimit.None Then
+                            item.Add("rate", "none")
 
-                        If filter.RateLimit.Groups IsNot Nothing _
-                            Then rateLimitItems.Add("groups", filter.RateLimit.Groups.Join(", "))
+                        ElseIf filter.RateLimit IsNot Nothing Then
+                            Dim rateLimitItems As New Dictionary(Of String, Object)
+                            rateLimitItems.Add("count", filter.RateLimit.Count)
+                            rateLimitItems.Add("time", CInt(filter.RateLimit.Time.TotalSeconds))
+
+                            If filter.RateLimit.Groups IsNot Nothing _
+                                Then rateLimitItems.Add("groups", filter.RateLimit.Groups.Join(", "))
+                        End If
                     End If
 
                     filters.Add(filter.Id.ToStringI.PadLeft(4, "0"c), item)

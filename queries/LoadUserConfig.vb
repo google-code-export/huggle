@@ -87,7 +87,7 @@ Namespace Huggle.Actions
                 If Wiki.Extensions.All.Count = 0 OrElse Wiki.Extensions.Contains(Extension.AbuseFilter) Then
                     lists.Add("abusefilters")
                     query.Add("abflimit", "max")
-                    query.Add("abfprop", "id|description|actions|hits|lasteditor|lastedittime|status|private")
+                    query.Add("abfprop", "id|description|pattern|actions|hits|comments|lasteditor|lastedittime|status|private")
                 End If
             End If
 

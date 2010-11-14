@@ -11,20 +11,19 @@ Namespace Huggle
 
         Private _Regarding As Revision
         Private _Type As SanctionType
-        Private _TargetUser As User
 
-        Public Sub New(ByVal time As Date, ByVal user As User, ByVal issuer As User, _
+        Public Sub New(ByVal time As Date, ByVal targetUser As User, ByVal user As User,
             ByVal type As SanctionType, ByVal regarding As Revision)
 
-            MyBase.New(user.Wiki, 0, 0)
+            MyBase.New(0, targetUser.Wiki)
             Me.Action = "sanction"
             Me.Comment = type.Name
+            Me.TargetUser = targetUser
             Me.Time = time
-            Me.User = issuer
+            Me.User = user
 
-            _Regarding = Regarding
+            _Regarding = regarding
             _Type = type
-            _TargetUser = user
         End Sub
 
         Public Overrides ReadOnly Property Icon() As Image
@@ -76,13 +75,7 @@ Namespace Huggle
 
         Public Overrides ReadOnly Property Target() As String
             Get
-                Return _TargetUser.Name
-            End Get
-        End Property
-
-        Public ReadOnly Property TargetUser() As User
-            Get
-                Return _TargetUser
+                Return TargetUser.Name
             End Get
         End Property
 
@@ -94,7 +87,7 @@ Namespace Huggle
 
     End Class
 
-    Public Structure SanctionType
+    Friend Structure SanctionType
 
         Private _Level As Integer
         Private _Name As String

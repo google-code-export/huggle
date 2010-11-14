@@ -26,7 +26,7 @@ Namespace Huggle.UI
         End Sub
 
         Private Sub LogList_SelectedIndexChanged() Handles LogList.SelectedIndexChanged
-            LogList.ContextMenuStrip = If(LogList.SelectedItems.Count = 0, Nothing, LogMenu)
+            LogList.ContextMenuStrip = If(LogList.HasSelectedItems, Nothing, LogMenu)
         End Sub
 
         Private Sub Log_UpdateAction(ByVal sender As Object, ByVal e As EventArgs(Of Process))
@@ -54,7 +54,7 @@ Namespace Huggle.UI
         End Sub
 
         Private Sub LogCopy_Click() Handles LogCopy.Click
-            If LogList.SelectedItems.Count > 0 Then Clipboard.SetText(LogList.SelectedItems(0).SubItems(1).Text)
+            If LogList.HasSelectedItems Then Clipboard.SetText(LogList.SelectedItem.SubItems(1).Text)
         End Sub
 
     End Class

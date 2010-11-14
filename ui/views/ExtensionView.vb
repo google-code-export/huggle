@@ -31,7 +31,7 @@ Namespace Huggle.UI
         End Sub
 
         Private Sub List_SelectedIndexChanged() Handles List.SelectedIndexChanged
-            If List.SelectedItems.Count = 0 Then
+            If List.HasSelectedItems Then
                 Current = Nothing
             Else
                 Image.Visible = True

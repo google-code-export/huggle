@@ -4,39 +4,25 @@
 
         'Represents a page move
 
-        Private _Destination As String
-        Private _Source As String
-
-        Public Sub New(ByVal time As Date, ByVal source As String, ByVal destination As String, _
-            ByVal user As User, ByVal comment As String, ByVal id As Integer, ByVal rcid As Integer)
-
-            MyBase.New(user.Wiki, id, rcid)
-            Me.Action = "move"
-            Me.Comment = Comment
-            Me.Time = time
-            Me.User = user
-
-            _Destination = destination
-            _Source = source
+        Public Sub New(ByVal id As Integer, ByVal wiki As Wiki)
+            MyBase.New(id, wiki)
         End Sub
 
-        Public ReadOnly Property Destination() As String
-            Get
-                Return _Destination
-            End Get
-        End Property
+        Public Property DestinationTitle() As String
 
-        Public ReadOnly Property Source() As String
-            Get
-                Return _Source
-            End Get
-        End Property
+        Public Property IsOverRedirect As Boolean
+        Public Property LeaveRedirect As Boolean = True
+
+        Public Property SourceTitle() As String
 
         Public Overrides ReadOnly Property Target() As String
             Get
-                Return _Source
+                Return Page.Title
             End Get
         End Property
+
+        Protected Overrides Sub OnSetPage()
+        End Sub
 
     End Class
 

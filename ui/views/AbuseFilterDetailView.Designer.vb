@@ -34,13 +34,17 @@
             Me.Description = New System.Windows.Forms.LinkLabel()
             Me.TagsPanel = New System.Windows.Forms.Panel()
             Me.TagsList = New System.Windows.Forms.EnhancedListView()
+            Me.TagColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.TagDetail = New System.Windows.Forms.Label()
             Me.ViewPanel = New System.Windows.Forms.Panel()
+            Me.HistoryList = New System.Windows.Forms.EnhancedListView()
+            Me.TimeColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+            Me.UserColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.Pattern = New System.Windows.Forms.TextBox()
             Me.Splitter = New System.Windows.Forms.SplitContainer()
             Me.PrivateFilter = New System.Windows.Forms.Label()
             Me.Wait = New Huggle.UI.WaitControl()
-            Me.TagColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+            Me.IDColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.DescriptionPanel.SuspendLayout()
             Me.TagsPanel.SuspendLayout()
             Me.ViewPanel.SuspendLayout()
@@ -190,6 +194,11 @@
             Me.TagsList.View = System.Windows.Forms.View.Details
             Me.TagsList.VirtualMode = True
             '
+            'TagColumn
+            '
+            Me.TagColumn.Text = "Tag"
+            Me.TagColumn.Width = 263
+            '
             'TagDetail
             '
             Me.TagDetail.AutoSize = True
@@ -201,6 +210,7 @@
             '
             'ViewPanel
             '
+            Me.ViewPanel.Controls.Add(Me.HistoryList)
             Me.ViewPanel.Controls.Add(Me.Pattern)
             Me.ViewPanel.Controls.Add(Me.DescriptionPanel)
             Me.ViewPanel.Controls.Add(Me.TagsPanel)
@@ -208,8 +218,39 @@
             Me.ViewPanel.Dock = System.Windows.Forms.DockStyle.Fill
             Me.ViewPanel.Location = New System.Drawing.Point(0, 0)
             Me.ViewPanel.Name = "ViewPanel"
-            Me.ViewPanel.Size = New System.Drawing.Size(409, 368)
+            Me.ViewPanel.Size = New System.Drawing.Size(409, 477)
             Me.ViewPanel.TabIndex = 0
+            '
+            'HistoryList
+            '
+            Me.HistoryList.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+                        Or System.Windows.Forms.AnchorStyles.Left) _
+                        Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Me.HistoryList.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.IDColumn, Me.TimeColumn, Me.UserColumn})
+            Me.HistoryList.FlexibleColumn = 2
+            Me.HistoryList.FullRowSelect = True
+            Me.HistoryList.GridLines = True
+            Me.HistoryList.HideColumns = False
+            Me.HistoryList.HideSelection = False
+            Me.HistoryList.Location = New System.Drawing.Point(3, 349)
+            Me.HistoryList.Name = "HistoryList"
+            Me.HistoryList.SelectedValue = Nothing
+            Me.HistoryList.ShowGroups = False
+            Me.HistoryList.Size = New System.Drawing.Size(294, 93)
+            Me.HistoryList.TabIndex = 1
+            Me.HistoryList.UseCompatibleStateImageBehavior = False
+            Me.HistoryList.View = System.Windows.Forms.View.Details
+            Me.HistoryList.VirtualMode = True
+            '
+            'TimeColumn
+            '
+            Me.TimeColumn.Text = "Time"
+            Me.TimeColumn.Width = 76
+            '
+            'UserColumn
+            '
+            Me.UserColumn.Text = "Author"
+            Me.UserColumn.Width = 146
             '
             'Pattern
             '
@@ -245,8 +286,8 @@
             Me.Splitter.Panel2.Controls.Add(Me.PrivateFilter)
             Me.Splitter.Panel2.Controls.Add(Me.Wait)
             Me.Splitter.Panel2MinSize = 20
-            Me.Splitter.Size = New System.Drawing.Size(409, 397)
-            Me.Splitter.SplitterDistance = 368
+            Me.Splitter.Size = New System.Drawing.Size(409, 506)
+            Me.Splitter.SplitterDistance = 477
             Me.Splitter.TabIndex = 2
             '
             'PrivateFilter
@@ -271,9 +312,10 @@
             Me.Wait.TabStop = False
             Me.Wait.TextPosition = Huggle.UI.WaitControl.WaitTextPosition.Horizontal
             '
-            'TagColumn
+            'IDColumn
             '
-            Me.TagColumn.Text = "Tag"
+            Me.IDColumn.Text = "ID"
+            Me.IDColumn.Width = 44
             '
             'AbuseFilterDetailView
             '
@@ -283,7 +325,7 @@
             Me.Controls.Add(Me.Splitter)
             Me.Controls.Add(Me.Views)
             Me.Name = "AbuseFilterDetailView"
-            Me.Size = New System.Drawing.Size(496, 418)
+            Me.Size = New System.Drawing.Size(496, 527)
             Me.DescriptionPanel.ResumeLayout(False)
             Me.DescriptionPanel.PerformLayout()
             Me.TagsPanel.ResumeLayout(False)
@@ -317,6 +359,10 @@
         Public WithEvents TagsList As System.Windows.Forms.EnhancedListView
         Private WithEvents TagColumn As System.Windows.Forms.ColumnHeader
         Private WithEvents Views As System.Windows.Forms.EnhancedListBox
+        Public WithEvents HistoryList As System.Windows.Forms.EnhancedListView
+        Private WithEvents TimeColumn As System.Windows.Forms.ColumnHeader
+        Private WithEvents UserColumn As System.Windows.Forms.ColumnHeader
+        Private WithEvents IDColumn As System.Windows.Forms.ColumnHeader
 
     End Class
 End Namespace

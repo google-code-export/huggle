@@ -14,10 +14,10 @@
             OnProgress(Msg("abusefilters-progress"))
             OnStarted()
 
-            Dim query As New QueryString( _
-                "action", "query", _
-                "list", "abusefilters", _
-                "abflimit", "max", _
+            Dim query As New QueryString(
+                "action", "query",
+                "list", "abusefilters",
+                "abflimit", "max",
                 "abfprop", "id|description|pattern|actions|hits|lasteditor|lastedittime|status|private")
 
             Dim req As New ApiRequest(Session, Description, query)

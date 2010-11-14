@@ -649,26 +649,33 @@ Namespace Huggle
 
         Default Public ReadOnly Property Item(ByVal title As String) As Page
             Get
-                If title Is Nothing Then Throw New ArgumentNullException("title")
-                If Not All.ContainsKey(title) Then Return Item(Wiki.Spaces.FromTitle(title), title)
-                Return All(title)
+                Return FromTitle(title)
             End Get
         End Property
 
         Default Public ReadOnly Property Item(ByVal space As Integer, ByVal title As String) As Page
             Get
-                If Not All.ContainsKey(title) Then Return Item(Wiki.Spaces(space), title)
-                Return All(title)
+                Return FromNsAndTitle(space, title)
             End Get
         End Property
 
         Default Public ReadOnly Property Item(ByVal space As Space, ByVal title As String) As Page
             Get
-                If title Is Nothing Then Throw New ArgumentException("Page title cannot be null", "title")
-                If Not All.ContainsKey(title) Then All.Add(title, New Page(Wiki, title, space))
-                Return All(title)
+                Return FromNsAndTitle(space, title)
             End Get
         End Property
+
+        Public Function FromNsAndTitle(ByVal space As Integer, ByVal title As String) As Page
+            If title Is Nothing Then Throw New ArgumentNullException("title")
+            If Not All.ContainsKey(title) Then Return FromNsAndTitle(Wiki.Spaces(space), title)
+            Return All(title)
+        End Function
+
+        Public Function FromNsAndTitle(ByVal space As Space, ByVal title As String) As Page
+            If title Is Nothing Then Throw New ArgumentNullException("title")
+            If Not All.ContainsKey(title) Then All.Add(title, New Page(Wiki, title, space))
+            Return All(title)
+        End Function
 
         Public Function FromNsAndName(ByVal space As Integer, ByVal name As String) As Page
             Return Item(Wiki.Spaces(space), Wiki.Spaces(space).Name & ":" & name)
@@ -690,6 +697,12 @@ Namespace Huggle
             If title Is Nothing Then Return Nothing
 
             Return Item(title)
+        End Function
+
+        Public Function FromTitle(ByVal title As String) As Page
+            If title Is Nothing Then Throw New ArgumentNullException("title")
+            If Not All.ContainsKey(title) Then Return FromNsAndTitle(Wiki.Spaces.FromTitle(title), title)
+            Return All(title)
         End Function
 
         Public Function SanitizeTitle(ByVal title As String) As String
