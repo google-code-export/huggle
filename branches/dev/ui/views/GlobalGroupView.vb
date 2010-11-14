@@ -32,8 +32,8 @@ Namespace Huggle.UI
         End Sub
 
         Private Sub GroupList_SelectedIndexChanged() Handles GroupList.SelectedIndexChanged
-            SubSplitter.Visible = (GroupList.SelectedItems.Count > 0)
-            If GroupList.SelectedItems.Count = 0 Then Return
+            SubSplitter.Visible = (GroupList.HasSelectedItems)
+            If GroupList.HasSelectedItems Then Return
 
             Dim selectedGroup As GlobalGroup = Family.GlobalGroups(GroupList.Items(GroupList.SelectedIndices(0)).Text)
             GroupName.Text = selectedGroup.DisplayName

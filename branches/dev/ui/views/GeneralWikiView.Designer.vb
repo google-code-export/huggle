@@ -59,7 +59,7 @@
             '
             'WikiLogo
             '
-            Me.WikiLogo.Image = Resources.mediawiki_wiki
+            Me.WikiLogo.Image = Global.Resources.mediawiki_wiki
             Me.WikiLogo.Location = New System.Drawing.Point(3, 3)
             Me.WikiLogo.Name = "WikiLogo"
             Me.WikiLogo.Size = New System.Drawing.Size(128, 128)
@@ -76,14 +76,18 @@
             Me.StatisticsList.FullRowSelect = True
             Me.StatisticsList.GridLines = True
             Me.StatisticsList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None
+            Me.StatisticsList.HideColumns = False
+            Me.StatisticsList.HideSelection = False
             Me.StatisticsList.Location = New System.Drawing.Point(3, 227)
             Me.StatisticsList.Name = "StatisticsList"
+            Me.StatisticsList.SelectedValue = Nothing
             Me.StatisticsList.ShowGroups = False
             Me.StatisticsList.Size = New System.Drawing.Size(443, 154)
             Me.StatisticsList.SortOnColumnClick = True
             Me.StatisticsList.TabIndex = 3
             Me.StatisticsList.UseCompatibleStateImageBehavior = False
             Me.StatisticsList.View = System.Windows.Forms.View.Details
+            Me.StatisticsList.VirtualMode = True
             '
             'PropertyColumn
             '
@@ -93,7 +97,7 @@
             'ValueColumn
             '
             Me.ValueColumn.Text = "Value"
-            Me.ValueColumn.Width = 210
+            Me.ValueColumn.Width = 205
             '
             'AccountProps
             '

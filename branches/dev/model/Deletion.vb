@@ -6,21 +6,8 @@ Namespace Huggle
 
     Friend Class Deletion : Inherits LogItem
 
-        Private ReadOnly _Page As Page
-
-        Public Sub New(ByVal time As Date, ByVal action As String, _
-            ByVal page As Page, ByVal user As User, ByVal comment As String, ByVal id As Integer, ByVal rcid As Integer)
-
-            MyBase.New(user.Wiki, id, rcid)
-            Me.Action = action
-            Me.Comment = comment
-            Me.Time = time
-            Me.User = user
-
-            _Page = page
-            _Page.Exists = False
-            _Page.DeletedEditsKnown = False
-            _Page.HasDeletedEdits = True
+        Public Sub New(ByVal id As Integer, ByVal wiki As Wiki)
+            MyBase.New(id, wiki)
         End Sub
 
         Public Overrides ReadOnly Property Icon() As Drawing.Image
@@ -29,17 +16,23 @@ Namespace Huggle
             End Get
         End Property
 
-        Public ReadOnly Property Page() As Page
+        Public Overrides ReadOnly Property Target() As String
             Get
-                Return _Page
+                Return Page.Name
             End Get
         End Property
 
-        Public Overrides ReadOnly Property Target() As String
-            Get
-                Return _Page.Name
-            End Get
-        End Property
+        Protected Overrides Sub OnSetPage()
+            Select Case Action
+                Case "delete/delete"
+                    Page.Exists = False
+                    Page.DeletedEditsKnown = False
+                    Page.HasDeletedEdits = True
+
+                Case "delete/restore"
+                    Page.Exists = True
+            End Select
+        End Sub
 
     End Class
 

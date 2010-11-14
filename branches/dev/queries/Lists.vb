@@ -14,7 +14,7 @@ Namespace Huggle.Actions
                     New QueryString("apnamespace", space.Number), Msg("listdesc-allpages", space.Name))
             End Sub
 
-            Protected Overrides Sub SetOption(ByVal name As String, ByVal value As String)
+            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
                 Select Case name
                     Case "redirects" : If CBool(value) Then Query.Add("apfilterredir", "redirects") _
                         Else Query.Add("apfilterredir", "nonredirects")
@@ -35,7 +35,7 @@ Namespace Huggle.Actions
                     New QueryString("blfilterredir", "nonredirects", "bltitle", page), Msg("listdesc-backlinks", page.Title))
             End Sub
 
-            Protected Overrides Sub SetOption(ByVal name As String, ByVal value As String)
+            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
                 Select Case name
                     Case "redirects" : If CBool(value) Then Query.Add("blfilterredir", "redirects") _
                         Else Query.Add("blfilterredir", "nonredirects")
@@ -53,7 +53,7 @@ Namespace Huggle.Actions
                     New QueryString("cmtitle", category.Page.Title), Msg("listdesc-category", category.Name))
             End Sub
 
-            Protected Overrides Sub SetOption(ByVal name As String, ByVal value As String)
+            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
                 Select Case name
                     Case "from"
                         Query.Remove("cmfrom")
@@ -78,7 +78,7 @@ Namespace Huggle.Actions
                 ExpectDuplicates = True
             End Sub
 
-            Protected Overrides Sub SetOption(ByVal name As String, ByVal value As String)
+            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
                 Select Case name
                     Case "minor"
                         If Boolean.TryParse(value, Nothing) Then _
@@ -119,7 +119,7 @@ Namespace Huggle.Actions
                     New QueryString("euquery", link), Msg("listdesc-externallinkusage", link))
             End Sub
 
-            Protected Overrides Sub SetOption(ByVal name As String, ByVal value As String)
+            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
                 Select Case name
                     Case "protocol"
                         If value IsNot Nothing Then Query.Add("euprotocol", value)
@@ -185,7 +185,7 @@ Namespace Huggle.Actions
                 MyBase.New(session, "prop", "globalusage", "gu", Nothing, Msg("listdesc-globalmediausage", media.Name))
             End Sub
 
-            Protected Overrides Sub SetOption(ByVal name As String, ByVal value As String)
+            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
                 Select Case name
                     Case "filterlocal" : Query.Add("gufilterlocal", CBool(value))
                 End Select
@@ -203,7 +203,7 @@ Namespace Huggle.Actions
                     Msg("listdesc-history", page.Title))
             End Sub
 
-            Protected Overrides Sub SetOption(ByVal name As String, ByVal value As String)
+            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
                 Select Case name
                     Case "direction" : Query.Add("rvdir", value)
                     Case "excludeuser" : Query.Add("rvexcludeuser", value)
@@ -230,7 +230,7 @@ Namespace Huggle.Actions
                 MyBase.New(session, "list", "logevents", "le", Nothing, Msg("listdesc-logs"))
             End Sub
 
-            Protected Overrides Sub SetOption(ByVal name As String, ByVal value As String)
+            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
                 Select Case name
                     Case "logtype"
                         If value IsNot Nothing Then
@@ -304,7 +304,7 @@ Namespace Huggle.Actions
                     New QueryString("iutitle", media), Msg("listdesc-mediausage", media.Name))
             End Sub
 
-            Protected Overrides Sub SetOption(ByVal name As String, ByVal value As String)
+            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
                 Select Case name
                     Case "redirects" : If value.ToBoolean Then Query.Add("iufilterredir", "redirects") _
                         Else Query.Add("iuifilterredir", "nonredirects")
@@ -331,7 +331,7 @@ Namespace Huggle.Actions
                     Msg("listdesc-protectedpages", space))
             End Sub
 
-            Protected Overrides Sub SetOption(ByVal name As String, ByVal value As String)
+            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
                 Select Case name
                     Case "cascade" : If CBool(value) Then Query.Add("apprfiltercascade", "cascading") _
                         Else Query.Add("apprfiltercascade", "noncascading")
@@ -351,7 +351,7 @@ Namespace Huggle.Actions
                     New QueryString("ptprop", "timestamp|user|comment|expiry|level"), Msg("listdesc-protectedtitles"))
             End Sub
 
-            Protected Overrides Sub SetOption(ByVal name As String, ByVal value As String)
+            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
                 Select Case name
                     Case "level" : Query.Add("ptlevel", value)
                 End Select
@@ -367,7 +367,7 @@ Namespace Huggle.Actions
                 MyBase.New(session, "list", "random", "rn", Nothing, Msg("listdesc-random"))
             End Sub
 
-            Protected Overrides Sub SetOption(ByVal name As String, ByVal value As String)
+            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
                 Select Case name
                     Case "redirects" : If CBool(value) Then Query.Add("rnredirect", "redirects")
                 End Select
@@ -395,7 +395,7 @@ Namespace Huggle.Actions
                     "srinfo", "totalhits|suggestion", "srprop", "size|wordcount|timestamp|snippet"), Msg("listdesc-search"))
             End Sub
 
-            Protected Overrides Sub SetOption(ByVal name As String, ByVal value As String)
+            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
                 Select Case name
                     Case "redirects" : If CBool(value) Then Query.Add("srredirects", "")
                     Case "searchtype" : Query.Add("srwhat", value)
@@ -433,7 +433,7 @@ Namespace Huggle.Actions
                     New QueryString("eititle", page), Msg("listdesc-transclusions"))
             End Sub
 
-            Protected Overrides Sub SetOption(ByVal name As String, ByVal value As String)
+            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
                 Select Case name
                     Case "redirects" : If CBool(value) Then Query.Add("eifilterredir", "redirects") _
                         Else Query.Add("eifilterredir", "nonredirects")
@@ -461,7 +461,7 @@ Namespace Huggle.Actions
                     "augroup", group), Msg("listdesc-usergroup", group))
             End Sub
 
-            Protected Overrides Sub SetOption(ByVal name As String, ByVal value As String)
+            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
                 Select Case name
                     Case "edits" : Query.Add("auwitheditsonly", "")
                 End Select
@@ -477,7 +477,7 @@ Namespace Huggle.Actions
                 MyBase.New(session, "list", "allusers", "au", Nothing, Msg("listdesc-allusers"))
             End Sub
 
-            Protected Overrides Sub SetOption(ByVal name As String, ByVal value As String)
+            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
                 Select Case name
                     Case "edits" : Query.Add("auwitheditsonly", "")
                 End Select

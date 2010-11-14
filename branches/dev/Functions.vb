@@ -33,6 +33,9 @@ Namespace Huggle
         'Can't use Date.MinValue for optional date parameters, have to do this instead
         Public Const DateMinValue As Date = #1/1/1900#
 
+        Public ReadOnly RangePattern As New Regex(
+            "\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/\d{2}", RegexOptions.Compiled)
+
         'Get a formatted message string localized to the user's language
         Public Function Msg(ByVal name As String, ByVal ParamArray params As Object()) As String
             If App.Languages.Current Is Nothing Then Return "[" & name & "] "
@@ -163,6 +166,71 @@ Namespace Huggle
             Return items.ToDictionary
         End Function
 
+        Public Function FuzzyAge(ByVal time As Date, ByVal now As Date) As String
+            Dim parts As New List(Of String)
+
+            Dim years As Integer = 0
+
+            While time.AddYears(1) < now
+                years += 1
+                time = time.AddYears(1)
+            End While
+
+            Dim months As Integer = 0
+
+            While time.AddMonths(1) < now
+                months += 1
+                time = time.AddYears(1)
+            End While
+
+            Dim span As TimeSpan = now - time
+
+            If years > 0 Then parts.Add(PluralMsg("time-year", years))
+            If months > 0 AndAlso years < 2 Then parts.Add(PluralMsg("time-month", months))
+            If years > 0 Then Return parts.Join(" ")
+
+            If span.Days > 0 AndAlso months < 2 Then parts.Add(PluralMsg("time-day", span.Days))
+            If months > 0 Then Return parts.Join(" ")
+
+            If span.Hours > 0 AndAlso span.Days < 2 Then parts.Add(PluralMsg("time-hour", span.Hours))
+            If span.Days > 0 Then Return parts.Join(" ")
+
+            If span.Minutes > 0 AndAlso span.Hours < 2 Then parts.Add(PluralMsg("time-minute", span.Minutes))
+            If span.Hours > 0 Then Return parts.Join(" ")
+
+            If span.Seconds > 0 AndAlso span.Minutes < 2 AndAlso span.Hours = 0 Then parts.Add(PluralMsg("time-second", span.Seconds))
+            Return parts.Join(" ")
+        End Function
+
+        Public Function FullFuzzyAge(ByVal time As Date, ByVal now As Date) As String
+            Dim parts As New List(Of String)
+
+            Dim years As Integer = 0
+
+            While time.AddYears(1) < now
+                years += 1
+                time = time.AddYears(1)
+            End While
+
+            Dim months As Integer = 0
+
+            While time.AddMonths(1) < now
+                months += 1
+                time = time.AddYears(1)
+            End While
+
+            Dim span As TimeSpan = now - time
+
+            If years > 0 Then parts.Add(PluralMsg("time-year", years))
+            If months > 0 Then parts.Add(PluralMsg("time-month", months))
+            If span.Days > 0 Then parts.Add(PluralMsg("time-day", span.Days))
+            If span.Hours > 0 Then parts.Add(PluralMsg("time-hour", span.Hours))
+            If span.Minutes > 0 Then parts.Add(PluralMsg("time-minute", span.Minutes))
+            If span.Seconds > 0 Then parts.Add(PluralMsg("time-second", span.Seconds))
+
+            Return parts.Join(" ")
+        End Function
+
         Public Function FuzzyTime(ByVal time As TimeSpan) As String
             Dim parts As New List(Of String)
 
@@ -171,6 +239,18 @@ Namespace Huggle
             If time.Minutes > 0 Then parts.Add(PluralMsg("time-minute", time.Minutes))
             Dim seconds As Double = time.Seconds + (time.Milliseconds / 1000)
             If seconds > 0 Then parts.Add(PluralMsg("time-second", time.Seconds))
+
+            Return parts.Join(" ")
+        End Function
+
+        Public Function FuzzyTimeShort(ByVal time As TimeSpan) As String
+            Dim parts As New List(Of String)
+
+            If time.Days > 0 Then parts.Add(PluralMsg("time-shortday", time.Days))
+            If time.Hours > 0 Then parts.Add(PluralMsg("time-shorthour", time.Hours))
+            If time.Minutes > 0 Then parts.Add(PluralMsg("time-shortminute", time.Minutes))
+            Dim seconds As Double = time.Seconds + (time.Milliseconds / 1000)
+            If seconds > 0 Then parts.Add(PluralMsg("time-shortsecond", time.Seconds))
 
             Return parts.Join(" ")
         End Function

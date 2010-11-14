@@ -223,23 +223,26 @@ Namespace Huggle.Actions
             RaiseEvent ListProgress(Me, New ListProgressEventArgs(Me, message, partialResult))
         End Sub
 
+        Public Shadows Sub SetOption(ByVal name As String, ByVal value As String)
+            Select Case name
+                Case "cache" : UseCache = value.ToBoolean
+                Case "from" : From = value
+                Case "limit" : Limit = CInt(value)
+                Case "simple" : Simple = value.ToBoolean
+                Case "stop" : StopAt = value
+                Case "type" : OutputType = value.ToLowerI
+            End Select
+
+            CustomOption(name, value)
+        End Sub
+
         Public Sub SetOptions(ByVal options As Dictionary(Of String, String))
-
             For Each item As KeyValuePair(Of String, String) In options
-                Select Case item.Key
-                    Case "cache" : UseCache = item.Value.ToBoolean
-                    Case "from" : From = item.Value
-                    Case "limit" : Limit = CInt(item.Value)
-                    Case "simple" : Simple = item.Value.ToBoolean
-                    Case "stop" : StopAt = item.Value
-                    Case "type" : OutputType = item.Value.ToLowerI
-                End Select
-
                 SetOption(item.Key, item.Value)
             Next item
         End Sub
 
-        Protected Overridable Sub SetOption(ByVal name As String, ByVal value As String)
+        Protected Overridable Sub CustomOption(ByVal name As String, ByVal value As String)
         End Sub
 
         Public Overrides Function ToString() As String

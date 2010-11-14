@@ -128,6 +128,7 @@ Namespace Huggle
                     If App.Languages.Current IsNot Nothing AndAlso _
                         App.Languages.Current.Messages.ContainsKey("error-exception") _
                         Then message = Msg("error-exception") Else message = "An unexpected error occured."
+                    If Not String.IsNullOrEmpty(ex.Message) Then message &= CRLF & ex.Message
                 End If
 
                 If ex.StackTrace IsNot Nothing Then
@@ -157,8 +158,8 @@ Namespace Huggle
                 Dim type As Type = frame.GetMethod.ReflectedType
                 Dim method As String = frame.GetMethod.Name
 
-                'Ignore framework methods
-                If method.Contains("$__") OrElse type.FullName.StartsWithI("System") Then Continue For
+                'Ignore helper methods
+                If method.Contains("$__") Then Continue For
 
                 Dim msg As String = " - {0}.{1}".FormatI(type.Name, method.Replace(".ctor", "New"))
                 If frame.GetFileLineNumber > 0 Then msg &= ":" & CStr(frame.GetFileLineNumber)

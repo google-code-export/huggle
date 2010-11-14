@@ -17,6 +17,7 @@ Namespace Huggle.UI
             Views.Items.Clear()
             Views.Items.Add(Msg("view-abusefilter-general"))
             Views.Items.Add(Msg("view-abusefilter-tags"))
+            Views.Items.Add(Msg("view-abusefilter-history"))
             Views.EndUpdate()
         End Sub
 
@@ -27,8 +28,9 @@ Namespace Huggle.UI
             Set(ByVal value As AbuseFilter)
                 _Filter = value
 
-                If Filter IsNot Nothing AndAlso Not (Filter.IsPrivate AndAlso Filter.Pattern Is Nothing) _
-                    AndAlso Filter.RateLimit Is Nothing Then GetDetails()
+                If Filter IsNot Nothing AndAlso (Filter.Description Is Nothing OrElse Filter.LastRevision Is Nothing _
+                    OrElse Filter.Pattern Is Nothing OrElse Filter.RateLimit Is Nothing) Then GetDetails()
+
                 UpdateDisplay()
             End Set
         End Property
@@ -56,6 +58,7 @@ Namespace Huggle.UI
                     Case Msg("view-abusefilter-notes") : Notes.Visible = True
                     Case Msg("view-abusefilter-pattern") : Pattern.Visible = True
                     Case Msg("view-abusefilter-tags") : TagsPanel.Visible = True
+                    Case Msg("view-abusefilter-history") : HistoryList.Visible = True
                 End Select
             End If
 
@@ -63,13 +66,19 @@ Namespace Huggle.UI
         End Sub
 
         Private Sub GetDetails()
-            Dim privilegedSession As Session = App.Sessions.GetUserWithRight(Session.Wiki, "abusefilter-private")
-            If privilegedSession Is Nothing Then privilegedSession = Session
+            Dim querySession As Session = Session
+
+            If Filter.IsPrivate AndAlso Not Session.User.HasRight("abusefilter-private") Then
+                'Use another account with right if possible
+                Dim privateSession As Session = App.Sessions.GetUserWithRight(Session.Wiki, "abusefilter-private")
+                If privateSession Is Nothing AndAlso Filter.IsPrivate Then Return
+                If privateSession IsNot Nothing Then querySession = privateSession
+            End If
 
             PrivateFilter.Visible = False
             Wait.Visible = True
             Wait.Text = Msg("view-abusefilter-progress")
-            Wait.WaitOn(New AbuseFilterDetailQuery(privilegedSession, Filter), AddressOf GotDetails)
+            Wait.WaitOn(New AbuseFilterDetailQuery(querySession, Filter), AddressOf GotDetails)
         End Sub
 
         Private Sub GotDetails(ByVal sender As Object, ByVal e As EventArgs(Of Process))
@@ -105,7 +114,7 @@ Namespace Huggle.UI
                 If Not Views.Items.Contains(Msg("view-abusefilter-notes")) _
                     Then Views.Items.Add(Msg("view-abusefilter-notes"))
             End If
-            
+
             If Views.SelectedIndex = -1 Then Views.SelectedIndex = 0
             Views.EndUpdate()
 
@@ -115,13 +124,15 @@ Namespace Huggle.UI
                 If(Filter.Actions.Count = 0, Msg("a-none"), Filter.Actions.Join(", ")))
             Description.Text = Filter.Description
             Modified.Text = Msg("view-abusefilter-modified",
-                Filter.LastModifiedBy.Name, FullDateString(Filter.LastModified))
+                Filter.LastModifiedBy.Name, FullDateString(Filter.LastModified), Msg("time-ago",
+                FuzzyAge(Filter.LastModified, Date.UtcNow)))
+
             Notes.Text = If(Filter.Notes Is Nothing, Nothing, Filter.Notes.TrimEnd(CR, LF))
             Pattern.Text = If(Filter.Pattern Is Nothing, Nothing, Filter.Pattern.TrimEnd(CR, LF))
 
             RateLimit.Visible = (Filter.RateLimit IsNot Nothing)
             If RateLimit.Visible Then RateLimit.Text = Msg("view-abusefilter-ratelimit",
-                If(Filter.RateLimit Is Huggle.RateLimit.None, Msg("a-none"), Filter.RateLimit.Description))
+                If(Filter.RateLimit Is Huggle.RateLimit.None, Msg("a-none"), Filter.RateLimit.Format(AddressOf FuzzyTime)))
 
             Dim rows As New List(Of String())
 
@@ -145,6 +156,20 @@ Namespace Huggle.UI
                 TagsList.Visible = True
                 TagDetail.Text = Msg("view-abusefilter-tagdetail")
             End If
+
+            Dim historyRows As New List(Of String())
+
+            If Filter.LastRevision IsNot Nothing Then
+                Dim rev As AbuseFilterRevision = Filter.LastRevision
+
+                While rev IsNot Nothing
+                    historyRows.Add({rev.Id.ToStringI, FullDateString(rev.Time), rev.User.Name})
+                    rev = rev.Prev
+                End While
+            End If
+
+            HistoryList.SortMethods(0) = SortMethod.Date
+            HistoryList.SetItems(historyRows)
 
             Status.Text = Msg("view-abusefilter-status", AbuseFilterView.GetFilterStatus(Filter))
         End Sub

@@ -46,11 +46,21 @@ Namespace Huggle
 
         Public Property LastModifiedBy() As User
 
+        Public Property LastRevision As AbuseFilterRevision
+
         Public Property Notes() As String
+
+        Public ReadOnly Property Page As Page
+            Get
+                Return Wiki.Pages.FromNsAndName(Wiki.Spaces.Special, "AbuseFilter/" & Id.ToStringI)
+            End Get
+        End Property
 
         Public Property Pattern() As String
 
         Public Property RateLimit As RateLimit
+
+        Public Property Revisions As List(Of AbuseFilterRevision)
 
         Public Property Tags() As List(Of String)
 
@@ -73,6 +83,7 @@ Namespace Huggle
     Friend Class AbuseFilterCollection
 
         Private Wiki As Wiki
+
         Private ReadOnly _All As New Dictionary(Of Integer, AbuseFilter)
 
         Public Sub New(ByVal wiki As Wiki)
@@ -85,7 +96,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Default Public ReadOnly Property Item(ByVal id As Integer) As AbuseFilter
+        Default Public ReadOnly Property FromID(ByVal id As Integer) As AbuseFilter
             Get
                 If Not _All.ContainsKey(id) Then _All.Add(id, New AbuseFilter(Wiki, id))
                 Return _All(id)

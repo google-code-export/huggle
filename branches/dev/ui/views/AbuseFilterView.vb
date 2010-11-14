@@ -67,17 +67,27 @@ Namespace Huggle.UI
                 Dim actions As IList(Of String) =
                     filter.Actions.Map(Function(action As String) Msg("view-abusefilter-action-" & action).ToLowerI)
 
+                Dim rateLimitDesc As String =
+                    If(filter.RateLimit Is Nothing, "", filter.RateLimit.Format(AddressOf FuzzyTimeShort))
+
                 If MatchesFilter(filter) Then rows.Add({
                     filter.Id.ToStringForUser,
                     filter.Description,
+                    filter.LastModified.ToLongDateString,
+                    filter.LastModifiedBy.Name,
                     GetFilterStatus(filter),
                     actions.Join(", "),
-                    filter.TotalHits.ToStringForUser
+                    filter.TotalHits.ToStringForUser,
+                    rateLimitDesc
                 })
             Next filter
 
+            FilterList.ColumnVisibility(2) = False
+            FilterList.ColumnVisibility(3) = False
+            FilterList.ColumnVisibility(7) = False
             FilterList.SortMethods(0) = SortMethod.Integer
-            FilterList.SortMethods(4) = SortMethod.Integer
+            FilterList.SortMethods(2) = SortMethod.Date
+            FilterList.SortMethods(6) = SortMethod.Integer
             FilterList.SetItems(rows)
 
             FilterCount.Text = Msg("a-count", rows.Count)

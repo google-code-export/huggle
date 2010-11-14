@@ -6,29 +6,19 @@ Namespace Huggle
 
     Friend Class Upload : Inherits LogItem
 
-        Private _File As String
-
-        Public Sub New(ByVal time As Date, ByVal action As String, ByVal user As User, _
-            ByVal file As String, ByVal comment As String, ByVal id As Integer, ByVal rcid As Integer)
-
-            MyBase.New(user.Wiki, Id, rcid)
-            Me.Action = action
-            Me.Comment = Comment
-            Me.Time = time
-            Me.User = user
-
-            _File = file
+        Public Sub New(ByVal id As Integer, ByVal wiki As Wiki)
+            MyBase.New(id, wiki)
         End Sub
 
-        Public ReadOnly Property File() As String
+        Public ReadOnly Property File() As File
             Get
-                Return _File
+                Return Wiki.Files.Item(Page)
             End Get
         End Property
 
         Public Overrides ReadOnly Property Target() As String
             Get
-                Return _File
+                Return File.Name
             End Get
         End Property
 

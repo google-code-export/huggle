@@ -268,17 +268,21 @@ Namespace Huggle
 
         Default Public ReadOnly Property Item(ByVal name As String) As File
             Get
-                Return Item(Wiki.Pages.FromNsAndName(Wiki.Spaces.File, name))
+                Return FromPage(Wiki.Pages.FromNsAndName(Wiki.Spaces.File, name))
             End Get
         End Property
 
         Default Public ReadOnly Property Item(ByVal page As Page) As File
             Get
-                If page Is Nothing OrElse page.Space IsNot Wiki.Spaces.File Then Return Nothing
-                If Not All.ContainsKey(page) Then All.Add(page, New File(Wiki, page))
-                Return All(page)
+                Return FromPage(page)
             End Get
         End Property
+
+        Public Function FromPage(ByVal page As Page) As File
+            If page Is Nothing OrElse page.Space IsNot Wiki.Spaces.File Then Return Nothing
+            If Not All.ContainsKey(page) Then All.Add(page, New File(Wiki, page))
+            Return All(page)
+        End Function
 
     End Class
 

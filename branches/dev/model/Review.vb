@@ -7,56 +7,17 @@ Namespace Huggle
 
     Friend Class Review : Inherits LogItem
 
-        Private _Auto As Boolean
-        Private _Levels As Dictionary(Of ReviewFlag, Integer)
-        Private _Revision As Revision
-        Private _Type As String
-
-        Public Sub New(ByVal time As Date, ByVal revision As Revision, ByVal user As User, _
-            ByVal type As String, ByVal auto As Boolean, ByVal comment As String, ByVal id As Integer, ByVal rcid As Integer)
-
-            MyBase.New(user.Wiki, Id, rcid)
-            Me.Action = "review"
-            Me.Comment = Comment
-            Me.Time = time
-            Me.User = user
-
-            _Auto = Auto
-            _Revision = revision
-            _Levels = GetLevels(HtmlDecode(Comment))
-            _Type = type
-
-            If Comment IsNot Nothing AndAlso Comment.Contains("[") Then Comment = Comment.ToFirst("[").Trim
-
-            If revision IsNot Nothing Then
-                _Revision.Review = Me
-                _Revision.IsReviewed = True
-            End If
+        Public Sub New(ByVal id As Integer, ByVal wiki As Wiki)
+            MyBase.New(id, wiki)
         End Sub
 
-        Public ReadOnly Property Auto() As Boolean
-            Get
-                Return _Auto
-            End Get
-        End Property
+        Public Property IsAutomatic() As Boolean
 
-        Public ReadOnly Property Revision() As Revision
-            Get
-                Return _Revision
-            End Get
-        End Property
+        Public Property Revision() As Revision
 
-        Public ReadOnly Property Levels() As Dictionary(Of ReviewFlag, Integer)
-            Get
-                Return _Levels
-            End Get
-        End Property
+        Public Property Levels() As Dictionary(Of ReviewFlag, Integer)
 
-        Public ReadOnly Property Type() As String
-            Get
-                Return _Type
-            End Get
-        End Property
+        Public Property Type() As String
 
         Public Overrides ReadOnly Property Target() As String
             Get
@@ -70,7 +31,8 @@ Namespace Huggle
 
             If str.Contains("[") AndAlso str.Contains("]") Then
                 For Each item As String In str.FromLast("[").ToLast("]").Split(",")
-                    If item.Contains(":") Then result.Merge(Wiki.Config.ReviewFlags(item.ToFirst(":").Trim), CInt(item.FromFirst(":").Trim))
+                    If item.Contains(":") Then result.Merge(
+                        Wiki.Config.ReviewFlags(item.ToFirst(":").Trim), CInt(item.FromFirst(":").Trim))
                 Next item
             End If
 

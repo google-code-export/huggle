@@ -174,6 +174,12 @@ Namespace Huggle
             Return Regex.Match(text, pattern)
         End Function
 
+        Public Function MwMessageIsMatch(ByVal wiki As Wiki,
+            ByVal messageName As String, ByVal text As String) As Boolean
+
+            Return MessageMatch(wiki.Message(messageName), text).Success
+        End Function
+
         Public Function FormatMwMessage(ByVal message As String, ByVal ParamArray Params() As Object) As String
             For i As Integer = 0 To Params.Length - 1
                 message = message.Replace("$" & CStr(i + 1), Params(i).ToString)

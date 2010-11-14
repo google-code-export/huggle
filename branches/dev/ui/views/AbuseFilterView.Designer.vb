@@ -29,9 +29,12 @@
             Me.FilterList = New System.Windows.Forms.EnhancedListView()
             Me.IdColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.NameColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+            Me.ModifiedColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+            Me.AuthorColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.StatusColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.ActionsColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.CountColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
+            Me.RateColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.SelLayout = New System.Windows.Forms.FlowLayoutPanel()
             Me.VisibilitySel = New System.Windows.Forms.ComboBox()
             Me.StatusSel = New System.Windows.Forms.ComboBox()
@@ -65,7 +68,7 @@
             'Splitter.Panel2
             '
             Me.Splitter.Panel2.Controls.Add(Me.FilterDetailView)
-            Me.Splitter.Size = New System.Drawing.Size(562, 432)
+            Me.Splitter.Size = New System.Drawing.Size(898, 432)
             Me.Splitter.SplitterDistance = 270
             Me.Splitter.TabIndex = 8
             '
@@ -84,7 +87,7 @@
             Me.CreateFilter.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
             Me.CreateFilter.LinkBehavior = System.Windows.Forms.LinkBehavior.HoverUnderline
             Me.CreateFilter.LinkColor = System.Drawing.SystemColors.HotTrack
-            Me.CreateFilter.Location = New System.Drawing.Point(451, 6)
+            Me.CreateFilter.Location = New System.Drawing.Point(787, 6)
             Me.CreateFilter.Name = "CreateFilter"
             Me.CreateFilter.Size = New System.Drawing.Size(108, 13)
             Me.CreateFilter.TabIndex = 11
@@ -98,8 +101,7 @@
             Me.FilterList.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
                         Or System.Windows.Forms.AnchorStyles.Left) _
                         Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-            Me.FilterList.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.IdColumn, Me.NameColumn, Me.StatusColumn, Me.ActionsColumn, Me.CountColumn})
-            Me.FilterList.FlexibleColumn = 1
+            Me.FilterList.Columns.AddRange(New System.Windows.Forms.ColumnHeader() {Me.IdColumn, Me.NameColumn, Me.ModifiedColumn, Me.AuthorColumn, Me.StatusColumn, Me.ActionsColumn, Me.CountColumn, Me.RateColumn})
             Me.FilterList.FullRowSelect = True
             Me.FilterList.GridLines = True
             Me.FilterList.HideSelection = False
@@ -107,7 +109,7 @@
             Me.FilterList.Name = "FilterList"
             Me.FilterList.SelectedValue = Nothing
             Me.FilterList.ShowGroups = False
-            Me.FilterList.Size = New System.Drawing.Size(556, 215)
+            Me.FilterList.Size = New System.Drawing.Size(892, 215)
             Me.FilterList.SortOnColumnClick = True
             Me.FilterList.TabIndex = 1
             Me.FilterList.UseCompatibleStateImageBehavior = False
@@ -117,12 +119,22 @@
             'IdColumn
             '
             Me.IdColumn.Text = "ID"
-            Me.IdColumn.Width = 40
+            Me.IdColumn.Width = 45
             '
             'NameColumn
             '
             Me.NameColumn.Text = "Name"
-            Me.NameColumn.Width = 238
+            Me.NameColumn.Width = 211
+            '
+            'ModifiedColumn
+            '
+            Me.ModifiedColumn.Text = "Modified"
+            Me.ModifiedColumn.Width = 112
+            '
+            'AuthorColumn
+            '
+            Me.AuthorColumn.Text = "Last modified by"
+            Me.AuthorColumn.Width = 103
             '
             'StatusColumn
             '
@@ -138,7 +150,12 @@
             '
             Me.CountColumn.Text = "Count"
             Me.CountColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
-            Me.CountColumn.Width = 50
+            Me.CountColumn.Width = 64
+            '
+            'RateColumn
+            '
+            Me.RateColumn.Text = "Rate limit"
+            Me.RateColumn.Width = 108
             '
             'SelLayout
             '
@@ -181,7 +198,7 @@
             'FilterCount
             '
             Me.FilterCount.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-            Me.FilterCount.Location = New System.Drawing.Point(493, 31)
+            Me.FilterCount.Location = New System.Drawing.Point(829, 31)
             Me.FilterCount.Name = "FilterCount"
             Me.FilterCount.Size = New System.Drawing.Size(66, 13)
             Me.FilterCount.TabIndex = 12
@@ -195,14 +212,14 @@
             Me.FilterDetailView.Location = New System.Drawing.Point(0, 0)
             Me.FilterDetailView.Name = "FilterDetailView"
             Me.FilterDetailView.Session = Nothing
-            Me.FilterDetailView.Size = New System.Drawing.Size(562, 158)
+            Me.FilterDetailView.Size = New System.Drawing.Size(898, 158)
             Me.FilterDetailView.TabIndex = 0
             '
             'AbuseFilterView
             '
             Me.Controls.Add(Me.Splitter)
             Me.Name = "AbuseFilterView"
-            Me.Size = New System.Drawing.Size(562, 432)
+            Me.Size = New System.Drawing.Size(898, 432)
             Me.Splitter.Panel1.ResumeLayout(False)
             Me.Splitter.Panel1.PerformLayout()
             Me.Splitter.Panel2.ResumeLayout(False)
@@ -231,6 +248,9 @@
         Private WithEvents CreateFilter As System.Windows.Forms.LinkLabel
         Private WithEvents Title As System.Windows.Forms.Label
         Public WithEvents FilterDetailView As Huggle.UI.AbuseFilterDetailView
+        Private WithEvents RateColumn As System.Windows.Forms.ColumnHeader
+        Private WithEvents ModifiedColumn As System.Windows.Forms.ColumnHeader
+        Private WithEvents AuthorColumn As System.Windows.Forms.ColumnHeader
 
     End Class
 End Namespace

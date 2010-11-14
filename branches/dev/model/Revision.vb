@@ -891,7 +891,7 @@ Namespace Huggle
 
         Public Property Count() As Integer = -1
 
-        Default Public ReadOnly Property Item(ByVal id As Integer) As Revision
+        Default Public ReadOnly Property FromID(ByVal id As Integer) As Revision
             Get
                 If Not All.ContainsKey(id) Then All.Add(id, New Revision(Wiki, id))
                 Return All(id)

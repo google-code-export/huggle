@@ -6,24 +6,11 @@ Namespace Huggle
 
     Friend Class UserCreation : Inherits LogItem
 
-        Private _Auto As Boolean
-
-        Public Sub New(ByVal auto As Boolean, ByVal time As Date, ByVal user As User, _
-            ByVal id As Integer, ByVal rcid As Integer)
-
-            MyBase.New(user.Wiki, id, rcid)
-            Me.Action = "create"
-            Me.Time = time
-            Me.User = user
-
-            _Auto = auto
+        Public Sub New(ByVal id As Integer, ByVal wiki As Wiki)
+            MyBase.New(id, wiki)
         End Sub
 
-        Public ReadOnly Property Auto() As Boolean
-            Get
-                Return _Auto
-            End Get
-        End Property
+        Public Property IsAutomatic() As Boolean
 
         Public Overrides ReadOnly Property Icon() As Drawing.Image
             Get
@@ -33,9 +20,15 @@ Namespace Huggle
 
         Public Overrides ReadOnly Property Target() As String
             Get
-                Return User.Name
+                Return TargetUser.Name
             End Get
         End Property
+
+        Public Property UserID As Integer
+
+        Protected Overrides Sub OnSetTargetUser()
+            TargetUser.Id = UserID
+        End Sub
 
     End Class
 

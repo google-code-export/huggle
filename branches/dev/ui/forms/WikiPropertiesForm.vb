@@ -69,7 +69,7 @@ Namespace Huggle.UI
                     Views.Items.Add(Msg("view-changetag-title"))
                 End If
 
-            Catch ex As SystemException
+            Catch ex As Exception
                 App.ShowError(Result.FromException(ex))
                 Close()
             End Try

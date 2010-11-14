@@ -11,6 +11,8 @@ Namespace Huggle
 
         'Represents a MediaWiki wiki
 
+        Private _Abuse As AbuseCollection
+        Private _AbuseFilterRevisions As AbuseFilterRevisionCollection
         Private _AbuseFilters As AbuseFilterCollection
         Private _ApiModules As ApiModuleCollection
         Private _Categories As CategoryCollection
@@ -50,6 +52,20 @@ Namespace Huggle
             _Engine = "MediaWiki"
             _Name = code
         End Sub
+
+        Public ReadOnly Property Abuse As AbuseCollection
+            Get
+                If _Abuse Is Nothing Then _Abuse = New AbuseCollection(Me)
+                Return _Abuse
+            End Get
+        End Property
+
+        Public ReadOnly Property AbuseFilterRevisions() As AbuseFilterRevisionCollection
+            Get
+                If _AbuseFilterRevisions Is Nothing Then _AbuseFilterRevisions = New AbuseFilterRevisionCollection(Me)
+                Return _AbuseFilterRevisions
+            End Get
+        End Property
 
         Public ReadOnly Property AbuseFilters() As AbuseFilterCollection
             Get
@@ -443,6 +459,13 @@ Namespace Huggle
                 Return _All(code)
             End Get
         End Property
+
+        Public Function FromCode(ByVal code As String) As Wiki
+            If _All.ContainsKey(code) Then Return _All(code)
+            'Wikimedia configuration oddity
+            If _All.ContainsKey(code & "wiki") Then Return _All(code & "wiki")
+            Return Nothing
+        End Function
 
         Public Sub Remove(ByVal wiki As Wiki)
             _All.Unmerge(wiki.Code)

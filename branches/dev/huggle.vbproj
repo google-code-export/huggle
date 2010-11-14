@@ -136,11 +136,12 @@
     <Compile Include="actions\ResetPreferences.vb" />
     <Compile Include="actions\Unblock.vb" />
     <Compile Include="config\ConfigRead.vb" />
+    <Compile Include="model\AbuseFilterRevision.vb" />
     <Compile Include="model\RateLimit.vb" />
+    <Compile Include="model\UnknownLogItem.vb" />
     <Compile Include="net\Cloud.vb" />
     <Compile Include="Main.vb" />
     <Compile Include="model\ApiModule.vb" />
-    <Compile Include="model\GlobalUserStatusChange.vb" />
     <Compile Include="model\SpamList.vb" />
     <Compile Include="model\Preferences.vb" />
     <Compile Include="model\TitleBlacklist.vb" />
@@ -595,7 +596,7 @@
     <Compile Include="queries\PatrolQuery.vb">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="model\Protect.vb">
+    <Compile Include="queries\Protect.vb">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="actions\Purge.vb">

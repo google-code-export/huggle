@@ -27,7 +27,7 @@ Namespace Huggle.UI
         End Sub
 
         Private Sub List_SelectedIndexChanged() Handles List.SelectedIndexChanged
-            If Not List.HasSelectedItem Then
+            If Not List.HasSelectedItems Then
                 Current = Nothing
             Else
                 Current = Wiki.Gadgets.FromName(List.SelectedValue)
