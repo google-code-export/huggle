@@ -7,13 +7,14 @@ Namespace Huggle.UI
         Private Session As Session
 
         Public Sub New(ByVal session As Session)
-            InitializeComponent()
-            If session Is Nothing Then Throw New ArgumentNullException("session")
+            ThrowNull(session, "session")
             Me.Session = session
 
-            For Each user As User In session.Wiki.Users.All
-                If user IsNot session.User AndAlso user.IsUsed Then Source.Items.Add(user)
+            For Each user As User In session.Wiki.Users.Used
+                If user IsNot session.User Then Source.Items.Add(user)
             Next user
+
+            InitializeComponent()
         End Sub
 
         Public ReadOnly Property Result() As User

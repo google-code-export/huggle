@@ -31,13 +31,13 @@ Namespace Huggle.UI
         End Sub
 
         Private Sub List_SelectedIndexChanged() Handles List.SelectedIndexChanged
-            If List.HasSelectedItems Then
+            If Not List.HasSelectedItems Then
                 Current = Nothing
             Else
                 Image.Visible = True
                 Properties.Visible = True
 
-                Current = Wiki.Extensions(List.SelectedItems(0).Text)
+                Current = Wiki.Extensions(List.SelectedItem.Text)
                 ExtensionName.Text = Current.Name
                 Description.Text = If(Current.Description Is Nothing, _
                     Msg("view-general-nodescription"), WikiStripSummary(HtmlDecode(Current.Description)))

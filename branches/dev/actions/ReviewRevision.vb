@@ -2,9 +2,9 @@
 Imports System.Collections.Generic
 Imports System.Windows.Forms
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
-    Friend Class Review : Inherits Query
+    Friend Class ReviewRevision : Inherits Query
 
         Private _Rev As Revision
 
@@ -48,7 +48,7 @@ Namespace Huggle.Actions
                 OnProgress(Msg("review-progress", Rev.Page))
 
                 'Get token
-                If Session.EditToken Is Nothing Then
+                If Not Session.HasTokens Then
                     Dim tokenQuery As New TokenQuery(Session)
                     tokenQuery.Start()
                     If tokenQuery.IsErrored Then OnFail(tokenQuery.Result) : Return
@@ -59,7 +59,7 @@ Namespace Huggle.Actions
                     "action", "review",
                     "revid", Rev,
                     "comment", Summary,
-                    "token", Session.EditToken)
+                    "token", Session.Tokens("review"))
 
                 For Each level As KeyValuePair(Of ReviewFlag, Integer) In Levels
                     query.Add("flag_" & level.Key.Name, level.Value)
@@ -78,12 +78,12 @@ Namespace Huggle.Actions
                 Return
 
             ElseIf User.Can("patrolnew") Then
-                Dim req As New PatrolQuery(Session, Rev.Page)
+                Dim req As New Patrol(Session, Rev.Page)
                 req.Watch = Watch
                 req.Start()
 
             ElseIf User.Can("patrol") Then
-                Dim req As New PatrolQuery(Session, Rev)
+                Dim req As New Patrol(Session, Rev)
                 req.Watch = Watch
                 req.Start()
 

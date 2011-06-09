@@ -74,6 +74,12 @@ Namespace Huggle
 
         Public Property Rcid() As Integer
 
+        Public Overridable ReadOnly Property Status As String
+            Get
+                Return ""
+            End Get
+        End Property
+
         Public MustOverride ReadOnly Property Target() As String
 
         Public Property TargetUser As User

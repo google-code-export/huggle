@@ -1,4 +1,4 @@
-﻿Imports Huggle.Actions
+﻿Imports Huggle.Queries
 Imports Huggle.Scripting
 Imports System
 Imports System.Collections.Generic
@@ -337,19 +337,19 @@ Namespace Huggle
 
     End Class
 
-    Public Enum QueueFilterMatch As Integer
+    Friend Enum QueueFilterMatch As Integer
         : Require : Exclude
     End Enum
 
-    Public Enum QueueMode As Integer
+    Friend Enum QueueMode As Integer
         : Diff : View : Edit
     End Enum
 
-    Public Enum QueueSortOrder As Integer
+    Friend Enum QueueSortOrder As Integer
         : Time : Quality
     End Enum
 
-    Public Enum QueueSourceType As Integer
+    Friend Enum QueueSourceType As Integer
         : Rc : Query : List
     End Enum
 

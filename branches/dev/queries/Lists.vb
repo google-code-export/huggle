@@ -3,499 +3,523 @@ Imports System.Collections.Generic
 Imports System.IO
 Imports System.Web.HttpUtility
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries.Lists
 
-    Namespace Lists
+    Friend Class AllPagesQuery : Inherits ListQuery
 
-        Friend Class AllPagesQuery : Inherits ListQuery
+        Sub New(ByVal session As Session, ByVal space As Space)
+            MyBase.New(session, "list", "allpages", "ap",
+                New QueryString("apnamespace", space.Number), Msg("listdesc-allpages", space.Name))
+        End Sub
 
-            Sub New(ByVal session As Session, ByVal space As Space)
-                MyBase.New(session, "list", "allpages", "ap", _
-                    New QueryString("apnamespace", space.Number), Msg("listdesc-allpages", space.Name))
-            End Sub
+        Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
+            Select Case name
+                Case "redirects" : If CBool(value) Then Query.Add("apfilterredir", "redirects") _
+                    Else Query.Add("apfilterredir", "nonredirects")
 
-            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
-                Select Case name
-                    Case "redirects" : If CBool(value) Then Query.Add("apfilterredir", "redirects") _
-                        Else Query.Add("apfilterredir", "nonredirects")
+                Case "langlinks" : If CBool(value) Then Query.Add("apfilterlanglinks", "withlanglinks") _
+                    Else Query.Add("apfilterlanglinks", "withoutlanglinks")
+            End Select
+        End Sub
 
-                    Case "langlinks" : If CBool(value) Then Query.Add("apfilterlanglinks", "withlanglinks") _
-                        Else Query.Add("apfilterlanglinks", "withoutlanglinks")
-                End Select
-            End Sub
+    End Class
 
-        End Class
 
-        Friend Class BacklinksQuery : Inherits ListQuery
+    Friend Class BacklinksQuery : Inherits ListQuery
 
-            'Get pages that link to another page
+        'Get pages that link to another page
 
-            Sub New(ByVal session As Session, ByVal page As Page)
-                MyBase.New(session, "list", "backlinks", "bl", _
-                    New QueryString("blfilterredir", "nonredirects", "bltitle", page), Msg("listdesc-backlinks", page.Title))
-            End Sub
+        Sub New(ByVal session As Session, ByVal page As Page)
+            MyBase.New(session, "list", "backlinks", "bl",
+                New QueryString("blfilterredir", "nonredirects", "bltitle", page), Msg("listdesc-backlinks", page.Title))
+        End Sub
 
-            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
-                Select Case name
-                    Case "redirects" : If CBool(value) Then Query.Add("blfilterredir", "redirects") _
-                        Else Query.Add("blfilterredir", "nonredirects")
-                End Select
-            End Sub
+        Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
+            Select Case name
+                Case "redirects" : If CBool(value) Then Query.Add("blfilterredir", "redirects") _
+                    Else Query.Add("blfilterredir", "nonredirects")
+            End Select
+        End Sub
 
-        End Class
+    End Class
 
-        Friend Class CategoryQuery : Inherits ListQuery
 
-            'Get the contents of a category
+    Friend Class CategoryQuery : Inherits ListQuery
 
-            Sub New(ByVal session As Session, ByVal category As Category)
-                MyBase.New(session, "list", "categorymembers", "cm", _
-                    New QueryString("cmtitle", category.Page.Title), Msg("listdesc-category", category.Name))
-            End Sub
+        'Get the contents of a category
 
-            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
-                Select Case name
-                    Case "from"
-                        Query.Remove("cmfrom")
-                        Query.Add("cmstartsortkey", value)
-                    Case "namespace"
-                        Query.Add("cmnamespace", value)
-                    Case "start"
-                        Query.Add("cmcontinue", value & "|")
-                End Select
-            End Sub
+        Sub New(ByVal session As Session, ByVal category As Category)
+            MyBase.New(session, "list", "categorymembers", "cm",
+                New QueryString("cmtitle", category.Page.Title), Msg("listdesc-category", category.Name))
+        End Sub
 
-        End Class
+        Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
+            Select Case name
+                Case "from"
+                    Query.Remove("cmfrom")
+                    Query.Add("cmstartsortkey", value)
+                Case "namespace"
+                    Query.Add("cmnamespace", value)
+                Case "start"
+                    Query.Add("cmcontinue", value & "|")
+            End Select
+        End Sub
 
-        Friend Class ContribsQuery : Inherits ListQuery
+    End Class
 
-            'Get user's contributions
 
-            Sub New(ByVal session As Session, ByVal target As User)
-                MyBase.New(session, "revisions", "usercontribs", "uc", _
-                    New QueryString("ucuser", target), Msg("listdesc-contribs", target.Name))
+    Friend Class ContribsQuery : Inherits ListQuery
 
-                ExpectDuplicates = True
-            End Sub
+        'Get user's contributions
 
-            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
-                Select Case name
-                    Case "minor"
-                        If Boolean.TryParse(value, Nothing) Then _
-                            If CBool(value) Then Query.Add("ucshow", "minor") Else Query.Add("ucshow", "!minor")
-                End Select
-            End Sub
+        Sub New(ByVal session As Session, ByVal target As User)
+            MyBase.New(session, "revisions", "usercontribs", "uc",
+                New QueryString("ucuser", target), Msg("listdesc-contribs", target.Name))
 
-        End Class
+            ExpectDuplicates = True
+        End Sub
 
-        Friend Class DeletedContribsQuery : Inherits ListQuery
+        Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
+            Select Case name
+                Case "minor"
+                    If Boolean.TryParse(value, Nothing) Then _
+                        If CBool(value) Then Query.Add("ucshow", "minor") Else Query.Add("ucshow", "!minor")
+            End Select
+        End Sub
 
-            'Get a user's deleted contributions
+    End Class
 
-            Sub New(ByVal session As Session, ByVal target As User)
-                MyBase.New(session, "revisions", "deletedrevs", "dr", _
-                    New QueryString("druser", target), Msg("listdesc-deletedcontribs", target.Name))
-            End Sub
 
-        End Class
+    Friend Class DeletedContribsQuery : Inherits ListQuery
 
-        Friend Class DeletedHistoryQuery : Inherits ListQuery
+        'Get a user's deleted contributions
 
-            'Get deleted history for page
+        Sub New(ByVal session As Session, ByVal target As User)
+            MyBase.New(session, "revisions", "deletedrevs", "dr",
+                New QueryString("druser", target), Msg("listdesc-deletedcontribs", target.Name))
+        End Sub
 
-            Sub New(ByVal session As Session, ByVal page As Page)
-                MyBase.New(session, "revisions", "deletedrevs", "dr", _
-                    New QueryString("titles", page), Msg("listdesc-deletedhistory", page.Title))
-            End Sub
+    End Class
 
-        End Class
 
-        Friend Class ExternalLinkUsageQuery : Inherits ListQuery
+    Friend Class DeletedHistoryQuery : Inherits ListQuery
 
-            'Get pages that use an external link
+        'Get deleted history for page
 
-            Sub New(ByVal session As Session, ByVal link As String)
-                MyBase.New(session, "list", "exturlusage", "eu", _
-                    New QueryString("euquery", link), Msg("listdesc-externallinkusage", link))
-            End Sub
+        Sub New(ByVal session As Session, ByVal page As Page)
+            MyBase.New(session, "revisions", "deletedrevs", "dr",
+                New QueryString("titles", page), Msg("listdesc-deletedhistory", page.Title))
+        End Sub
 
-            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
-                Select Case name
-                    Case "protocol"
-                        If value IsNot Nothing Then Query.Add("euprotocol", value)
-                End Select
-            End Sub
+    End Class
 
-        End Class
 
-        Friend Class FileQuery : Inherits ListQuery
+    Friend Class ExternalLinkUsageQuery : Inherits ListQuery
 
-            'Read list from a file
+        'Get pages that use an external link
 
-            Private Filename As String
+        Sub New(ByVal session As Session, ByVal link As String)
+            MyBase.New(session, "list", "exturlusage", "eu",
+                New QueryString("euquery", link), Msg("listdesc-externallinkusage", link))
+        End Sub
 
-            Public Sub New(ByVal session As Session, ByVal filename As String)
-                MyBase.New(session, "", "", "", Nothing, Msg("listdesc-file"))
-                Me.Filename = filename
-            End Sub
+        Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
+            Select Case name
+                Case "protocol"
+                    If value IsNot Nothing Then Query.Add("euprotocol", value)
+            End Select
+        End Sub
 
-            Public Overrides Sub Start()
-                Dim data As String()
+    End Class
 
-                Try
-                    data = IO.File.ReadAllLines(Filename)
 
-                Catch ex As SystemException
-                    OnFail(New Result(ex.Message, "ioerror")) : Return
-                End Try
+    Friend Class FileQuery : Inherits ListQuery
 
-                Items.Clear()
+        'Read list from a file
 
-                For Each title As String In IO.File.ReadAllLines(Filename)
-                    If title.StartsWithI("*[[") OrElse title.StartsWithI("* [[") Then title = title.Substring(1)
-                    title = Wiki.Pages.SanitizeTitle(title)
-                    If title IsNot Nothing Then Items.Add(Wiki.Pages(title))
-                Next title
+        Private Filename As String
 
-                OnSuccess()
-            End Sub
+        Public Sub New(ByVal session As Session, ByVal filename As String)
+            MyBase.New(session, "", "", "", Nothing, Msg("listdesc-file"))
+            Me.Filename = filename
+        End Sub
 
-            Public Overrides Sub DoOne()
-                Start()
-            End Sub
+        Public Overrides Sub Start()
+            Dim data As String()
 
-        End Class
+            Try
+                data = IO.File.ReadAllLines(Filename)
 
-        Friend Class GlobalBlocksQuery : Inherits ListQuery
+            Catch ex As SystemException
+                OnFail(New Result(ex.Message, "ioerror")) : Return
+            End Try
 
-            'Get global blocks
+            Items.Clear()
 
-            Sub New(ByVal session As Session, ByVal target As User)
-                MyBase.New(session, "list", "globalblocks", "bg", _
-                    New QueryString("bgdir", "older", "bgprop", "id|address|by|timestamp|expiry|reason|range"), _
-                    Msg("listdesc-globalblocks", target.Name))
-            End Sub
-        End Class
+            For Each title As String In IO.File.ReadAllLines(Filename)
+                If title.StartsWithI("*[[") OrElse title.StartsWithI("* [[") Then title = title.Substring(1)
+                title = Wiki.Pages.SanitizeTitle(title)
+                If title IsNot Nothing Then Items.Add(Wiki.Pages(title))
+            Next title
 
-        Friend Class GlobalMediaUsageQuery : Inherits ListQuery
+            OnSuccess()
+        End Sub
 
-            'Get global media usage
+        Public Overrides Sub DoOne()
+            Start()
+        End Sub
 
-            Sub New(ByVal session As Session, ByVal media As File)
-                MyBase.New(session, "prop", "globalusage", "gu", Nothing, Msg("listdesc-globalmediausage", media.Name))
-            End Sub
+    End Class
 
-            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
-                Select Case name
-                    Case "filterlocal" : Query.Add("gufilterlocal", CBool(value))
-                End Select
-            End Sub
 
-        End Class
+    Friend Class GlobalBlocksQuery : Inherits ListQuery
 
-        Friend Class HistoryQuery : Inherits ListQuery
+        'Get global blocks
 
-            'Get history of a page
+        Sub New(ByVal session As Session, ByVal target As User)
+            MyBase.New(session, "list", "globalblocks", "bg",
+                New QueryString("bgdir", "older", "bgprop", "id|address|by|timestamp|expiry|reason|range"),
+                Msg("listdesc-globalblocks", target.Name))
+        End Sub
+    End Class
 
-            Sub New(ByVal session As Session, ByVal page As Page)
-                MyBase.New(session, "revisions", "revisions", "rv", _
-                    New QueryString("rvprop", "ids|flags|timestamp|user|size|comment", "titles", page), _
-                    Msg("listdesc-history", page.Title))
-            End Sub
 
-            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
-                Select Case name
-                    Case "direction" : Query.Add("rvdir", value)
-                    Case "excludeuser" : Query.Add("rvexcludeuser", value)
-                    Case "user" : Query.Add("rvuser", value)
-                End Select
-            End Sub
+    Friend Class GlobalMediaUsageQuery : Inherits ListQuery
 
-        End Class
+        'Get global media usage
 
-        Friend Class LinksQuery : Inherits ListQuery
+        Sub New(ByVal session As Session, ByVal media As File)
+            MyBase.New(session, "prop", "globalusage", "gu", Nothing, Msg("listdesc-globalmediausage", media.Name))
+        End Sub
 
-            'Get links on a page
+        Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
+            Select Case name
+                Case "filterlocal" : Query.Add("gufilterlocal", CBool(value))
+            End Select
+        End Sub
 
-            Sub New(ByVal session As Session, ByVal page As Page)
-                MyBase.New(session, "prop", "links", "pl", _
-                    New QueryString("titles", page), Msg("listdesc-links", page.Title))
-            End Sub
+    End Class
 
-        End Class
 
-        Friend Class LogsQuery : Inherits ListQuery
+    Friend Class HistoryQuery : Inherits ListQuery
 
-            Sub New(ByVal session As Session)
-                MyBase.New(session, "list", "logevents", "le", Nothing, Msg("listdesc-logs"))
-            End Sub
+        'Get history of a page
 
-            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
-                Select Case name
-                    Case "logtype"
-                        If value IsNot Nothing Then
-                            Query.Add("letype", value)
-                            Description &= Msg("listdesc-logtype", value)
-                        End If
+        Sub New(ByVal session As Session, ByVal page As Page)
+            MyBase.New(session, "revisions", "revisions", "rv",
+                New QueryString("rvprop", "ids|flags|timestamp|user|size|comment", "titles", page),
+                Msg("listdesc-history", page.Title))
+        End Sub
 
-                    Case "page"
-                        Dim page As Page = Wiki.Pages.FromString(value)
+        Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
+            Select Case name
+                Case "direction" : Query.Add("rvdir", value)
+                Case "excludeuser" : Query.Add("rvexcludeuser", value)
+                Case "user" : Query.Add("rvuser", value)
+            End Select
+        End Sub
 
-                        If page IsNot Nothing Then
-                            Query.Add("letitle", page)
-                            Description &= Msg("listdesc-logpage", page.Title)
-                        End If
+    End Class
 
-                    Case "user"
-                        Dim target As User = Wiki.Users.FromString(value)
 
-                        If target IsNot Nothing Then
-                            Query.Add("leuser", target)
-                            Description &= Msg("listdesc-loguser", target.Name)
-                        End If
-                End Select
-            End Sub
+    Friend Class LinksQuery : Inherits ListQuery
 
-        End Class
+        'Get links on a page
 
-        Friend Class ManualQuery : Inherits ListQuery
+        Sub New(ByVal session As Session, ByVal page As Page)
+            MyBase.New(session, "prop", "links", "pl",
+                New QueryString("titles", page), Msg("listdesc-links", page.Title))
+        End Sub
 
-            'Request that just echoes an input list of titles
+    End Class
 
-            Private Titles As List(Of String)
 
-            Public Sub New(ByVal session As Session, ByVal titles As List(Of String))
-                MyBase.New(session, "", "", "", Nothing, Msg("listdesc-manual"))
-                Me.Titles = titles
-            End Sub
+    Friend Class LogsQuery : Inherits ListQuery
 
-            Public Overrides Sub Start()
-                For Each title As String In Titles
-                    title = Wiki.Pages.SanitizeTitle(title)
-                    If title IsNot Nothing Then Items.Add(Wiki.Pages(title))
-                Next title
+        Sub New(ByVal session As Session)
+            MyBase.New(session, "list", "logevents", "le", Nothing, Msg("listdesc-logs"))
+        End Sub
 
-                OnSuccess()
-            End Sub
+        Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
+            Select Case name
+                Case "logtype"
+                    If value IsNot Nothing Then
+                        Query.Add("letype", value)
+                        Description &= Msg("listdesc-logtype", value)
+                    End If
 
-            Public Overrides Sub DoOne()
-                Start()
-            End Sub
+                Case "page"
+                    Dim page As Page = Wiki.Pages.FromString(value)
 
-        End Class
+                    If page IsNot Nothing Then
+                        Query.Add("letitle", page)
+                        Description &= Msg("listdesc-logpage", page.Title)
+                    End If
 
-        Friend Class MediaQuery : Inherits ListQuery
+                Case "user"
+                    Dim target As User = Wiki.Users.FromString(value)
 
-            'Get files on a page
+                    If target IsNot Nothing Then
+                        Query.Add("leuser", target)
+                        Description &= Msg("listdesc-loguser", target.Name)
+                    End If
+            End Select
+        End Sub
 
-            Sub New(ByVal session As Session, ByVal page As Page)
-                MyBase.New(session, "prop", "images", "im", _
-                    New QueryString("titles", page), Msg("listdesc-media", page.Title))
-            End Sub
+    End Class
 
-        End Class
 
-        Friend Class MediaUsageQuery : Inherits ListQuery
+    Friend Class ManualQuery : Inherits ListQuery
 
-            'Get pages that include a file
+        'Request that just echoes an input list of titles
 
-            Sub New(ByVal session As Session, ByVal media As File)
-                MyBase.New(session, "list", "imageusage", "iu", _
-                    New QueryString("iutitle", media), Msg("listdesc-mediausage", media.Name))
-            End Sub
+        Private Titles As List(Of String)
 
-            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
-                Select Case name
-                    Case "redirects" : If value.ToBoolean Then Query.Add("iufilterredir", "redirects") _
-                        Else Query.Add("iuifilterredir", "nonredirects")
-                End Select
-            End Sub
+        Public Sub New(ByVal session As Session, ByVal titles As List(Of String))
+            MyBase.New(session, "", "", "", Nothing, Msg("listdesc-manual"))
+            Me.Titles = titles
+        End Sub
 
-        End Class
+        Public Overrides Sub Start()
+            For Each title As String In Titles
+                title = Wiki.Pages.SanitizeTitle(title)
+                If title IsNot Nothing Then Items.Add(Wiki.Pages(title))
+            Next title
 
-        Friend Class PrefixQuery : Inherits ListQuery
+            OnSuccess()
+        End Sub
 
-            Sub New(ByVal session As Session, ByVal space As Space, ByVal prefix As String)
-                MyBase.New(session, "list", "allpages", "ap", _
-                    New QueryString("apfilterredir", "nonredirects", "apprefix", prefix, "apnamespace", space.Number), _
-                    Msg("listdesc-prefix", prefix, space))
-            End Sub
+        Public Overrides Sub DoOne()
+            Start()
+        End Sub
 
-        End Class
+    End Class
 
-        Friend Class ProtectedPagesRequest : Inherits ListQuery
 
-            Sub New(ByVal session As Session, ByVal space As Space)
-                MyBase.New(session, "list", "allpages", "ap", _
-                    New QueryString("apprtype", "edit|move", "apfilterredir", "nonredirects", "apnamespace", space.Number), _
-                    Msg("listdesc-protectedpages", space))
-            End Sub
+    Friend Class MediaQuery : Inherits ListQuery
 
-            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
-                Select Case name
-                    Case "cascade" : If CBool(value) Then Query.Add("apprfiltercascade", "cascading") _
-                        Else Query.Add("apprfiltercascade", "noncascading")
-                    Case "level" : Query.Add("apprlevel", value)
-                    Case "protectiontype" : Query.Add("apprtype", value)
-                    Case "redirects" : If CBool(value) Then Query.Add("apfilterredir", "redirects") _
-                        Else Query.Add("apfilterredir", "nonredirects")
-                End Select
-            End Sub
+        'Get files on a page
 
-        End Class
+        Sub New(ByVal session As Session, ByVal page As Page)
+            MyBase.New(session, "prop", "images", "im",
+                New QueryString("titles", page), Msg("listdesc-media", page.Title))
+        End Sub
 
-        Friend Class ProtectedTitlesRequest : Inherits ListQuery
+    End Class
 
-            Sub New(ByVal session As Session)
-                MyBase.New(session, "list", "protectedtitles", "pt", _
-                    New QueryString("ptprop", "timestamp|user|comment|expiry|level"), Msg("listdesc-protectedtitles"))
-            End Sub
 
-            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
-                Select Case name
-                    Case "level" : Query.Add("ptlevel", value)
-                End Select
-            End Sub
+    Friend Class MediaUsageQuery : Inherits ListQuery
 
-        End Class
+        'Get pages that include a file
 
-        Friend Class RandomQuery : Inherits ListQuery
+        Sub New(ByVal session As Session, ByVal media As File)
+            MyBase.New(session, "list", "imageusage", "iu",
+                New QueryString("iutitle", media), Msg("listdesc-mediausage", media.Name))
+        End Sub
 
-            'Get random pages
+        Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
+            Select Case name
+                Case "redirects" : If value.ToBoolean Then Query.Add("iufilterredir", "redirects") _
+                    Else Query.Add("iuifilterredir", "nonredirects")
+            End Select
+        End Sub
 
-            Sub New(ByVal session As Session)
-                MyBase.New(session, "list", "random", "rn", Nothing, Msg("listdesc-random"))
-            End Sub
+    End Class
 
-            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
-                Select Case name
-                    Case "redirects" : If CBool(value) Then Query.Add("rnredirect", "redirects")
-                End Select
-            End Sub
 
-        End Class
+    Friend Class PrefixQuery : Inherits ListQuery
 
-        Friend Class RedirectsQuery : Inherits ListQuery
+        Sub New(ByVal session As Session, ByVal space As Space, ByVal prefix As String)
+            MyBase.New(session, "list", "allpages", "ap",
+                New QueryString("apfilterredir", "nonredirects", "apprefix", prefix, "apnamespace", space.Number),
+                Msg("listdesc-prefix", prefix, space))
+        End Sub
 
-            'Get redirects to a page
+    End Class
 
-            Sub New(ByVal session As Session, ByVal page As Page)
-                MyBase.New(session, "list", "backlinks", "bl", _
-                    New QueryString("bltitle", page, "blfilterredir", "redirects"), Msg("listdesc-redirects", page))
-            End Sub
 
-        End Class
+    Friend Class ProtectedPagesRequest : Inherits ListQuery
 
-        Friend Class SearchQuery : Inherits ListQuery
+        Sub New(ByVal session As Session, ByVal space As Space)
+            MyBase.New(session, "list", "allpages", "ap",
+                New QueryString("apprtype", "edit|move", "apfilterredir", "nonredirects", "apnamespace", space.Number),
+                Msg("listdesc-protectedpages", space))
+        End Sub
 
-            'Get search results
+        Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
+            Select Case name
+                Case "cascade" : If CBool(value) Then Query.Add("apprfiltercascade", "cascading") _
+                    Else Query.Add("apprfiltercascade", "noncascading")
+                Case "level" : Query.Add("apprlevel", value)
+                Case "protectiontype" : Query.Add("apprtype", value)
+                Case "redirects" : If CBool(value) Then Query.Add("apfilterredir", "redirects") _
+                    Else Query.Add("apfilterredir", "nonredirects")
+            End Select
+        End Sub
 
-            Sub New(ByVal session As Session, ByVal search As String)
-                MyBase.New(session, "list", "search", "sr", New QueryString("srsearch", search, "srwhat", "text", _
-                    "srinfo", "totalhits|suggestion", "srprop", "size|wordcount|timestamp|snippet"), Msg("listdesc-search"))
-            End Sub
+    End Class
 
-            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
-                Select Case name
-                    Case "redirects" : If CBool(value) Then Query.Add("srredirects", "")
-                    Case "searchtype" : Query.Add("srwhat", value)
-                End Select
-            End Sub
 
-        End Class
+    Friend Class ProtectedTitlesRequest : Inherits ListQuery
 
-        Friend Class SubcatsQuery : Inherits ListQuery
+        Sub New(ByVal session As Session)
+            MyBase.New(session, "list", "protectedtitles", "pt",
+                New QueryString("ptprop", "timestamp|user|comment|expiry|level"), Msg("listdesc-protectedtitles"))
+        End Sub
 
-            Sub New(ByVal session As Session, ByVal category As Category)
-                MyBase.New(session, "list", "categorymembers", "cm", _
-                    New QueryString("cmtitle", category, "cmnamespace", 14), Msg("listdesc-subcats", category))
-            End Sub
+        Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
+            Select Case name
+                Case "level" : Query.Add("ptlevel", value)
+            End Select
+        End Sub
 
-        End Class
+    End Class
 
-        Class TemplatesQuery : Inherits ListQuery
 
-            'Get templates on a page
+    Friend Class RandomQuery : Inherits ListQuery
 
-            Sub New(ByVal session As Session, ByVal page As Page)
-                MyBase.New(session, "prop", "templates", "tl", _
-                    New QueryString("titles", page), Msg("listdesc-templates", page))
-            End Sub
+        'Get random pages
 
-        End Class
+        Sub New(ByVal session As Session)
+            MyBase.New(session, "list", "random", "rn", Nothing, Msg("listdesc-random"))
+        End Sub
 
-        Friend Class TransclusionsQuery : Inherits ListQuery
+        Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
+            Select Case name
+                Case "redirects" : If CBool(value) Then Query.Add("rnredirect", "redirects")
+            End Select
+        End Sub
 
-            'Get pages that transclude another page
+    End Class
 
-            Sub New(ByVal session As Session, ByVal page As Page)
-                MyBase.New(session, "list", "embeddedin", "ei", _
-                    New QueryString("eititle", page), Msg("listdesc-transclusions"))
-            End Sub
 
-            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
-                Select Case name
-                    Case "redirects" : If CBool(value) Then Query.Add("eifilterredir", "redirects") _
-                        Else Query.Add("eifilterredir", "nonredirects")
-                End Select
-            End Sub
+    Friend Class RedirectsQuery : Inherits ListQuery
 
-        End Class
+        'Get redirects to a page
 
-        Friend Class UnreviewedQuery : Inherits ListQuery
+        Sub New(ByVal session As Session, ByVal page As Page)
+            MyBase.New(session, "list", "backlinks", "bl",
+                New QueryString("bltitle", page, "blfilterredir", "redirects"), Msg("listdesc-redirects", page))
+        End Sub
 
-            'Get pages with unreviewed revisions
+    End Class
 
-            Sub New(ByVal session As Session)
-                MyBase.New(session, "list", "oldreviewedpages", "or", Nothing, Msg("listdesc-unreviewed"))
-            End Sub
 
-        End Class
+    Friend Class SearchQuery : Inherits ListQuery
 
-        Friend Class UserGroupQuery : Inherits ListQuery
+        'Get search results
 
-            'Get members of a user group
+        Sub New(ByVal session As Session, ByVal search As String)
+            MyBase.New(session, "list", "search", "sr", New QueryString("srsearch", search, "srwhat", "text",
+                "srinfo", "totalhits|suggestion", "srprop", "size|wordcount|timestamp|snippet"), Msg("listdesc-search"))
+        End Sub
 
-            Sub New(ByVal session As Session, ByVal group As String)
-                MyBase.New(session, "list", "allusers", "au", New QueryString("auprop", "blockinfo|editcount|registration", _
-                    "augroup", group), Msg("listdesc-usergroup", group))
-            End Sub
+        Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
+            Select Case name
+                Case "redirects" : If CBool(value) Then Query.Add("srredirects", "")
+                Case "searchtype" : Query.Add("srwhat", value)
+            End Select
+        End Sub
 
-            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
-                Select Case name
-                    Case "edits" : Query.Add("auwitheditsonly", "")
-                End Select
-            End Sub
+    End Class
 
-        End Class
 
-        Friend Class UsersQuery : Inherits ListQuery
+    Friend Class SubcatsQuery : Inherits ListQuery
 
-            'Get all users
+        Sub New(ByVal session As Session, ByVal category As Category)
+            MyBase.New(session, "list", "categorymembers", "cm",
+                New QueryString("cmtitle", category, "cmnamespace", 14), Msg("listdesc-subcats", category))
+        End Sub
 
-            Sub New(ByVal session As Session)
-                MyBase.New(session, "list", "allusers", "au", Nothing, Msg("listdesc-allusers"))
-            End Sub
+    End Class
 
-            Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
-                Select Case name
-                    Case "edits" : Query.Add("auwitheditsonly", "")
-                End Select
-            End Sub
 
-        End Class
+    Friend Class TemplatesQuery : Inherits ListQuery
 
-        Friend Class WatchlistQuery : Inherits ListQuery
+        'Get templates on a page
 
-            'Get contents of user's watchlist
+        Sub New(ByVal session As Session, ByVal page As Page)
+            MyBase.New(session, "prop", "templates", "tl",
+                New QueryString("titles", page), Msg("listdesc-templates", page))
+        End Sub
 
-            Sub New(ByVal session As Session, ByVal user As User, Optional ByVal token As String = Nothing)
-                MyBase.New(session, "list", "watchlistraw", "wr",
-                    New QueryString("wlowner", user.Name, "wltoken", token), Msg("listdesc-watchlist", user))
-            End Sub
+    End Class
 
-        End Class
 
-    End Namespace
+    Friend Class TransclusionsQuery : Inherits ListQuery
+
+        'Get pages that transclude another page
+
+        Sub New(ByVal session As Session, ByVal page As Page)
+            MyBase.New(session, "list", "embeddedin", "ei",
+                New QueryString("eititle", page), Msg("listdesc-transclusions"))
+        End Sub
+
+        Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
+            Select Case name
+                Case "redirects" : If CBool(value) Then Query.Add("eifilterredir", "redirects") _
+                    Else Query.Add("eifilterredir", "nonredirects")
+            End Select
+        End Sub
+
+    End Class
+
+
+    Friend Class UnreviewedQuery : Inherits ListQuery
+
+        'Get pages with unreviewed revisions
+
+        Sub New(ByVal session As Session)
+            MyBase.New(session, "list", "oldreviewedpages", "or", Nothing, Msg("listdesc-unreviewed"))
+        End Sub
+
+    End Class
+
+
+    Friend Class UserGroupQuery : Inherits ListQuery
+
+        'Get members of a user group
+
+        Sub New(ByVal session As Session, ByVal group As String)
+            MyBase.New(session, "list", "allusers", "au", New QueryString("auprop", "blockinfo|editcount|registration", _
+                "augroup", group), Msg("listdesc-usergroup", group))
+        End Sub
+
+        Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
+            Select Case name
+                Case "edits" : Query.Add("auwitheditsonly", "")
+            End Select
+        End Sub
+
+    End Class
+
+
+    Friend Class UsersQuery : Inherits ListQuery
+
+        'Get all users
+
+        Sub New(ByVal session As Session)
+            MyBase.New(session, "list", "allusers", "au", Nothing, Msg("listdesc-allusers"))
+        End Sub
+
+        Protected Overrides Sub CustomOption(ByVal name As String, ByVal value As String)
+            Select Case name
+                Case "edits" : Query.Add("auwitheditsonly", "")
+            End Select
+        End Sub
+
+    End Class
+
+
+    Friend Class WatchlistQuery : Inherits ListQuery
+
+        'Get contents of user's watchlist
+
+        Sub New(ByVal session As Session, ByVal user As User, Optional ByVal token As String = Nothing)
+            MyBase.New(session, "list", "watchlistraw", "wr",
+                New QueryString("wlowner", user.Name, "wltoken", token), Msg("listdesc-watchlist", user))
+        End Sub
+
+    End Class
 
 End Namespace

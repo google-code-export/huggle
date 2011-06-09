@@ -20,14 +20,13 @@ Namespace Huggle
         Private _Change As Integer
         Private _Id As Integer
         Private _InHistory As Boolean
-        Private _IsReviewed As Boolean
-        Private _IsSanctioned As Boolean
+        Private _IsReviewed As Ternary
+        Private _IsUserHidden As Ternary
         Private WithEvents _Page As Page
         Private _Review As Review
         Private _Tags As List(Of ChangeTag)
         Private _Text As String
         Private WithEvents _User As User
-        Private _UserHidden As Boolean
         Private _Wiki As Wiki
 
         Private Shared ReadOnly InfoboxPattern As New Regex(
@@ -106,7 +105,7 @@ Namespace Huggle
 
         Public Property DetailsKnown() As Boolean
 
-        Public Property Exists() As TS
+        Public Property Exists() As Ternary
 
         Public Property Html() As String
 
@@ -168,101 +167,115 @@ Namespace Huggle
             End Get
         End Property
 
-        Public ReadOnly Property IsAbusive() As Boolean
+        Public ReadOnly Property IsAbusive() As Ternary
             Get
-                If Abuse Is Nothing Then Return False
+                If Abuse Is Nothing Then Return Ternary.Undefined
                 Return Wiki.Config.AbuseFilters.Contains(Abuse.Id)
             End Get
         End Property
 
-        Public ReadOnly Property IsAssisted() As Boolean
+        Public ReadOnly Property IsAssisted() As Ternary
             Get
-                Return (Tool IsNot Nothing)
+                If Tool Is Nothing Then Return Undefined
+                Return (Tool IsNot Tool.None)
             End Get
         End Property
 
-        Public ReadOnly Property IsBlank() As Boolean
+        Public ReadOnly Property IsBlank() As Ternary
             Get
+                If Bytes < 0 Then Return Undefined
                 Return (Bytes = 0)
             End Get
         End Property
 
-        Public Property IsBot() As Boolean
+        Public Property IsBot() As Ternary
 
-        Public Property IsCreation() As Boolean
+        Public Property IsCreation() As Ternary
             Get
+                If _Prev Is Nothing Then Return Undefined
                 Return (_Prev Is Null)
             End Get
-            Private Set(ByVal value As Boolean)
+            Private Set(ByVal value As Ternary)
                 If value Then _Prev = Null Else _Prev = Nothing
             End Set
         End Property
 
-        Public Property IsDeleted() As Boolean
+        Public Property IsDeleted() As Ternary
 
-        Public ReadOnly Property IsHidden() As Boolean
+        Public Property IsMinor() As Ternary
+
+        Public ReadOnly Property IsOwnUserspace() As Ternary
             Get
-                Return (SummaryHidden OrElse UserHidden OrElse TextHidden)
-            End Get
-        End Property
-
-        Public Property IsMinor() As Boolean
-
-        Public ReadOnly Property IsOwnUserspace() As Boolean
-            Get
+                If _Page Is Nothing OrElse _User Is Nothing Then Return Undefined
                 Return (_Page.Owner Is _User)
             End Get
         End Property
 
-        Public Property IsReplace() As Boolean
+        Public Property IsReplace() As Ternary
 
-        Public Property IsReport() As Boolean
+        Public Property IsReport() As Ternary
 
-        Public Property IsRevert() As Boolean
+        Public Property IsRevert() As Ternary
 
-        Public ReadOnly Property IsReverted() As Boolean
+        Public ReadOnly Property IsReverted() As Ternary
             Get
                 Return (RevertedBy IsNot Nothing)
             End Get
         End Property
 
-        Public Property IsReviewable() As Boolean
+        Public Property IsReviewable() As Ternary
 
-        Public Property IsReviewed() As Boolean
+        Public Property IsReviewed() As Ternary
             Get
                 Return _IsReviewed
             End Get
-            Set(ByVal value As Boolean)
+            Set(ByVal value As Ternary)
                 _IsReviewed = value
                 If IsReviewed Then IsReviewable = False
             End Set
         End Property
 
-        Public Property IsRedirect() As Boolean
+        Public Property IsRedirect() As Ternary
 
-        Public Property IsSanction() As Boolean
+        Public Property IsSanction() As Ternary
 
-        Public ReadOnly Property IsSanctioned() As Boolean
+        Public ReadOnly Property IsSanctioned() As Ternary
             Get
                 Return (WarnedForBy IsNot Nothing)
             End Get
         End Property
 
-        Public ReadOnly Property IsSection() As Boolean
+        Public ReadOnly Property IsSection() As Ternary
             Get
+                If Summary Is Nothing Then Return Nothing
                 Return (Section IsNot Nothing)
             End Get
         End Property
 
-        Public Property IsTag() As Boolean
+        Public Property IsSummaryHidden() As Ternary
 
-        Public ReadOnly Property IsTop() As Boolean
+        Public Property IsTag() As Ternary
+
+        Public Property IsTextHidden() As Ternary
+
+        Public ReadOnly Property IsTop() As Ternary
             Get
-                Return (Page IsNot Nothing AndAlso Page.LastRev Is Me)
+                If Page Is Nothing OrElse Page.LastRev Is Nothing Then Return Nothing
+                Return (Page.LastRev Is Me)
             End Get
         End Property
 
-        Public ReadOnly Property IsWarnedFor() As Boolean
+        Public Property IsUserHidden() As Ternary
+            Get
+                Return _IsUserHidden
+            End Get
+            Set(ByVal value As Ternary)
+                _IsUserHidden = value
+                If User Is Nothing Then User = Wiki.Users.Hidden
+            End Set
+        End Property
+
+        Public ReadOnly Property IsWarnedFor() As Ternary
             Get
                 Return (WarnedForBy IsNot Nothing)
             End Get
@@ -343,8 +356,6 @@ Namespace Huggle
 
         Public Property Summary() As String
 
-        Public Property SummaryHidden() As Boolean
-
         Public ReadOnly Property Tags() As List(Of ChangeTag)
             Get
                 Return _Tags
@@ -364,8 +375,6 @@ Namespace Huggle
 
         Public Property TextCacheState() As CacheState
 
-        Public Property TextHidden() As Boolean
-
         Public Property Time() As Date
 
         Public Property Tool() As Tool
@@ -376,16 +385,6 @@ Namespace Huggle
             End Get
             Set(ByVal value As User)
                 _User = value
-            End Set
-        End Property
-
-        Public Property UserHidden() As Boolean
-            Get
-                Return _UserHidden
-            End Get
-            Set(ByVal value As Boolean)
-                _UserHidden = value
-                If User Is Nothing Then User = Wiki.Users.Hidden
             End Set
         End Property
 

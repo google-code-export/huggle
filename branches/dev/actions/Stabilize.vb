@@ -1,90 +1,42 @@
-﻿Namespace Huggle.Actions
+﻿Namespace Huggle.Queries
 
     Friend Class Stabilize : Inherits Query
-
-        Private _AutoReview As Boolean
-        Private _Page As Page
-        Private _RestrictAutoReview As Boolean
-        Private _StableFlag As StableFlag
-        Private _Summary As String
-        Private _Watch As Boolean
 
         Public Sub New(ByVal session As Session, ByVal page As Page)
             MyBase.New(session, Msg("stabilize-desc", page))
             _Page = page
         End Sub
 
-        Public Property AutoReview() As Boolean
-            Get
-                Return _AutoReview
-            End Get
-            Set(ByVal value As Boolean)
-                _AutoReview = value
-            End Set
-        End Property
+        Public Property AutoReview As Boolean
 
-        Public Property Page() As Page
-            Get
-                Return _Page
-            End Get
-            Set(ByVal value As Page)
-                _Page = value
-            End Set
-        End Property
+        Public Property Page As Page
 
-        Public Property RestrictAutoReview() As Boolean
-            Get
-                Return _RestrictAutoReview
-            End Get
-            Set(ByVal value As Boolean)
-                _RestrictAutoReview = value
-            End Set
-        End Property
+        Public Property RestrictAutoReview As Boolean
 
-        Public Property StableFlag() As StableFlag
-            Get
-                Return _StableFlag
-            End Get
-            Set(ByVal value As StableFlag)
-                _StableFlag = value
-            End Set
-        End Property
+        Public Property StableFlag As StableFlag
 
-        Public Property Summary() As String
-            Get
-                Return _Summary
-            End Get
-            Set(ByVal value As String)
-                _Summary = value
-            End Set
-        End Property
+        Public Property Summary As String
 
-        Public Property Watch() As Boolean
-            Get
-                Return _Watch
-            End Get
-            Set(ByVal value As Boolean)
-                _Watch = value
-            End Set
-        End Property
+        Public Property Watch As Boolean
 
         Public Overrides Sub Start()
             OnProgress(Msg("stabilize-progress", Page.Title))
             OnStarted()
 
             'Get token
-            If Session.EditToken Is Nothing Then
+            If Not Session.HasTokens Then
                 Dim tokenQuery As New TokenQuery(Session)
                 tokenQuery.Start()
                 If tokenQuery.IsErrored Then OnFail(tokenQuery.Result) : Return
             End If
 
-            Dim query As New QueryString( _
-                "action", "stabilize", _
-                "title", Page, _
+            Dim query As New QueryString(
+                "action", "stabilize",
+                "title", Page,
+                "token", Session.Tokens("stabilize"),
                 "reason", Summary)
 
-            If StableFlag = Actions.StableFlag.Latest Then query.Add("default", "latest") Else query.Add("default", "stable")
+            If StableFlag = StableFlag.Latest Then query.Add("default", "latest") Else query.Add("default", "stable")
 
             Select Case StableFlag
                 Case StableFlag.LatestStable : query.Add("precedence", "latest")
@@ -105,7 +57,7 @@
 
     End Class
 
-    Public Enum StableFlag As Integer
+    Friend Enum StableFlag As Integer
         : Latest : LatestStable : LatestQuality : LatestPristine
     End Enum
 

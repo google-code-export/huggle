@@ -1,7 +1,7 @@
 ﻿Imports System
 Imports System.Collections.Generic
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
     'Change user rights
 
@@ -41,22 +41,22 @@ Namespace Huggle.Actions
             OnProgress(Msg("userrights-progress", User))
 
             'Get token
-            If Not Session.RightsTokens.ContainsKey(Target) Then
-                Dim tokenReq As New ApiRequest(Session, Description, New QueryString( _
-                    "action", "query", _
-                    "list", "users", _
-                    "ususers", Target.Name, _
+            If Not Session.RightsToken.ContainsKey(Target) Then
+                Dim tokenReq As New ApiRequest(Session, Description, New QueryString(
+                    "action", "query",
+                    "list", "users",
+                    "ususers", Target.Name,
                     "ustoken", "userrights"))
 
                 If tokenReq.IsFailed Then OnFail(tokenReq.Result) : Return
-                If Not Session.RightsTokens.ContainsKey(User) Then OnFail(Msg("userrights-notoken", Target)) : Return
+                If Not Session.RightsToken.ContainsKey(User) Then OnFail(Msg("userrights-notoken", Target)) : Return
             End If
 
             'Create query string
-            Dim query As New QueryString( _
-                "action", "userrights", _
-                "reason", Comment, _
-                "token", Session.RightsTokens(Target))
+            Dim query As New QueryString(
+                "action", "userrights",
+                "reason", Comment,
+                "token", Session.RightsToken(Target))
 
             If AddGroups IsNot Nothing Then query.Add("add", AddGroups.Join("|"))
             If RemoveGroups IsNot Nothing Then query.Add("remove", RemoveGroups.Join("|"))

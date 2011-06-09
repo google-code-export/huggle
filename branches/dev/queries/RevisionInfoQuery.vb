@@ -1,37 +1,40 @@
-﻿'Imports System.Collections.Generic
+﻿Imports System.Collections.Generic
 
-'Namespace Huggle.Queries
+Namespace Huggle.Queries
 
-'    Class RevisionInfoQuery : Inherits OldQuery
+    Class RevisionInfoQuery : Inherits Query
 
-'        Private Revisions As List(Of Revision)
+        Private Revisions As List(Of Revision)
 
-'        Public Sub New(ByVal Account As User, ByVal ParamArray Revisions() As Revision)
-'            MyBase.New(Account)
-'            Me.Revisions = Revisions.ToList
-'        End Sub
+        Public Sub New(ByVal session As Session, ByVal ParamArray revisions() As Revision)
+            MyBase.New(session, Msg("revisioninfo-desc"))
 
-'        Protected Overrides Function Process() As Result
-'            Dim Revs As String = ""
+            Me.Revisions = revisions.ToList
+        End Sub
 
-'            For Each Item As Revision In Revisions
-'                Revs &= Item.Id.ToString & "|"
-'            Next Item
+        Public Overrides Sub Start()
+            OnStarted()
 
-'            Revs = Revs.Substring(0, Revs.Length - 1)
+            Dim revIds As String = ""
 
-'            Dim Request As New ApiRequest(Session, Description, New QueryString( _
-'                "action", "query", _
-'                "prop", "info|revisions", _
-'                "revids", Revs, _
-'                "rvprop", "ids|flags|timestamp|user|size|comment"))
+            For Each rev As Revision In Revisions
+                revIds &= rev.Id.ToStringI & "|"
+            Next rev
 
-'            Request.Start()
-'            If Request.Result.IsError Then Return Result.FailWith(Msg("revisionsinfo-fail"))
+            revIds = revIds.Substring(0, revIds.Length - 1)
 
-'            Return Result.Success
-'        End Function
+            Dim req As New ApiRequest(Session, Description, New QueryString(
+                "action", "query",
+                "prop", "info|revisions",
+                "revids", revIds,
+                "rvprop", "ids|flags|timestamp|user|size|comment"))
 
-'    End Class
+            req.Start()
+            If req.Result.IsError Then OnFail(req.Result) : Return
 
-'End Namespace
+            OnSuccess()
+        End Sub
+
+    End Class
+
+End Namespace

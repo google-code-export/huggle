@@ -5,7 +5,7 @@ Namespace Huggle
 
     'Represents a revision to an abuse filter
 
-    <Diagnostics.DebuggerDisplay("{AbfRevId}")>
+    <Diagnostics.DebuggerDisplay("{AbuseFilterRevId}")>
     Friend Class AbuseFilterRevision : Inherits LogItem
 
         Private _AbuseFilterRevId As Integer

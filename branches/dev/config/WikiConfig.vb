@@ -1,4 +1,5 @@
-﻿Imports Huggle.Actions
+﻿Imports Huggle.Net
+Imports Huggle.Queries
 Imports System
 Imports System.Collections.Generic
 Imports System.IO
@@ -118,11 +119,13 @@ Namespace Huggle
             End Get
         End Property
 
-        Protected Overrides ReadOnly Property Location() As String
-            Get
-                Return Path.Combine("wiki", GetValidFileName(Wiki.Code))
-            End Get
-        End Property
+        Protected Overrides Function Key() As String
+            Return GetValidFileName(Wiki.Code)
+        End Function
+
+        Protected Overrides Function Location() As String
+            Return "wiki"
+        End Function
 
         Public ReadOnly Property PriorityNeedsUpdate As Boolean
             Get
@@ -341,11 +344,11 @@ Namespace Huggle
                         For Each prop As KVP In ParseConfig(source, key & ":" & item.Key, item.Value)
                             Select Case prop.Key
                                 Case "name" : space.Name = prop.Value
-                                Case "content" : space.IsContent = prop.Value.ToBoolean
+                                Case "content" : space.IsContentSpace = prop.Value.ToBoolean
                                 Case "edit-restricted" : space.IsEditRestricted = prop.Value.ToBoolean
                                 Case "move-restricted" : space.IsMoveRestricted = prop.Value.ToBoolean
                                 Case "movable" : space.IsMovable = prop.Value.ToBoolean
-                                Case "special" : space.IsSpecial = prop.Value.ToBoolean
+                                Case "special" : space.IsSpecialSpace = prop.Value.ToBoolean
                                 Case "subpages" : space.HasSubpages = prop.Value.ToBoolean
                             End Select
                         Next prop
@@ -561,13 +564,13 @@ Namespace Huggle
             For Each space As Space In Wiki.Spaces.All
                 Dim item As New Dictionary(Of String, Object)
 
-                If space.IsContent Then item.Add("content", True)
+                If space.IsContentSpace Then item.Add("content", True)
                 If space.Name IsNot Nothing Then item.Add("name", space.Name)
                 If space.IsEditRestricted Then item.Add("edit-restricted", True)
                 If space.IsMoveRestricted Then item.Add("move-restricted", True)
                 If Not space.IsMovable Then item.Add("movable", False)
-                If space.IsSpecial Then item.Add("special", True)
-                If Not space.IsSpecial AndAlso Not space.HasSubpages Then item.Add("subpages", False)
+                If space.IsSpecialSpace Then item.Add("special", True)
+                If Not space.IsSpecialSpace AndAlso Not space.HasSubpages Then item.Add("subpages", False)
 
                 spaces.Add(If(space.Number < 0, "-", "") & CStr(Math.Abs(space.Number)).PadLeft(4, "0"c), item)
             Next space
@@ -729,6 +732,38 @@ Namespace Huggle
             If Wiki.Message(message) IsNot Nothing Then Wiki.FeedPatterns.Add(
                 action, New Regex(Feed.BasePattern.FormatI(Regex.Escape(action), "", "", MwMessagePattern(
                 Wiki.Message(message), paramPatterns)), RegexOptions.Compiled))
+        End Sub
+
+        Public Shared Sub EnumerateLocal()
+            Dim escapedWikiCodes As New Dictionary(Of String, Wiki)
+
+            For Each wiki As Wiki In App.Wikis.All
+                escapedWikiCodes(GetValidFileName(wiki.Code)) = wiki
+            Next wiki
+
+            Try
+                Dim wikiConfigDir As String = Path.Combine(BaseLocation, "wiki")
+
+                If Directory.Exists(wikiConfigDir) Then
+                    For Each fileName As String In Directory.GetFiles(wikiConfigDir)
+                        Dim escapedWikiCode As String = Path.GetFileNameWithoutExtension(fileName)
+
+                        If escapedWikiCodes.ContainsKey(escapedWikiCode) Then
+                            escapedWikiCodes(escapedWikiCode).Config.ExistsLocally = True
+                        Else
+                            'Config file for an unrecognized (and thus probably deleted) wiki
+                            Try
+                                IO.File.Delete(fileName)
+                            Catch ex As IOException
+                                Log.Write(Result.FromException(ex).Wrap("Error deleting file").LogMessage)
+                            End Try
+                        End If
+                    Next fileName
+                End If
+
+            Catch ex As IOException
+                Log.Write(Result.FromException(ex).Wrap("Error enumerating local wiki configs").LogMessage)
+            End Try
         End Sub
 
     End Class

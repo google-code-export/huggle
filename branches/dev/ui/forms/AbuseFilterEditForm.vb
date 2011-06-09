@@ -1,4 +1,4 @@
-﻿Imports Huggle.Actions
+﻿Imports Huggle.Queries
 Imports System
 
 Namespace Huggle.UI
@@ -9,13 +9,15 @@ Namespace Huggle.UI
         Private Session As Session
 
         Public Sub New(ByVal session As Session, Optional ByVal filter As AbuseFilter = Nothing)
-            InitializeComponent()
-            Me.Filter = If(filter Is Nothing, New AbuseFilter(App.Wikis.Default, 0), filter)
+            ThrowNull(session, "session")
             Me.Session = session
+            Me.Filter = If(filter Is Nothing, New AbuseFilter(App.Wikis.Default, 0), filter)
+
+            InitializeComponent()
         End Sub
 
         Private Sub _Load() Handles Me.Load
-            Dim getter As New Actions.AbuseFilterDetailQuery(Session, Filter)
+            Dim getter As New AbuseFilterDetailQuery(Session, Filter)
             App.UserWaitForProcess(getter)
             If getter.IsCancelled Then Close() : Return
 

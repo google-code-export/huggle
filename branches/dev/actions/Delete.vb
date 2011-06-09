@@ -1,24 +1,18 @@
-﻿Namespace Huggle.Actions
+﻿Namespace Huggle.Queries
 
     'Delete a page
 
-    Class DeleteQuery : Inherits Query
+    Class Delete : Inherits Query
 
-        Private _Comment As String
         Private _Page As Page
-        Private _Watch As WatchAction
 
-        Public Sub New(ByVal session As Session, ByVal page As Page, ByVal comment As String)
+        Public Sub New(ByVal session As Session, ByVal page As Page)
             MyBase.New(session, Msg("delete-desc", page))
-            _Comment = comment
+            _Comment = Comment
             _Page = page
         End Sub
 
-        Public ReadOnly Property Comment() As String
-            Get
-                Return _Comment
-            End Get
-        End Property
+        Public Property Comment() As String
 
         Public ReadOnly Property Page() As Page
             Get
@@ -27,30 +21,23 @@
         End Property
 
         Public Property Watch() As WatchAction
-            Get
-                Return _Watch
-            End Get
-            Set(ByVal value As WatchAction)
-                _Watch = value
-            End Set
-        End Property
 
         Public Overrides Sub Start()
             OnProgress(Msg("delete-progress", Page))
 
             'Get token
-            If Session.EditToken Is Nothing Then
+            If Not Session.HasTokens Then
                 Dim tokenQuery As New TokenQuery(Session)
                 tokenQuery.Start()
                 If tokenQuery.IsErrored Then OnFail(tokenQuery.Result) : Return
             End If
 
             'Create query string
-            Dim query As New QueryString( _
-                "action", "delete", _
-                "title", Page, _
-                "reason", Comment, _
-                "token", Session.EditToken, _
+            Dim query As New QueryString(
+                "action", "delete",
+                "title", Page,
+                "reason", Comment,
+                "token", Session.Tokens("delete"),
                 "watchlist", Watch.ToString.ToLowerI)
 
             'Delete the page

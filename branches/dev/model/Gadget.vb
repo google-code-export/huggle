@@ -3,7 +3,7 @@ Imports System.Collections.Generic
 
 Namespace Huggle
 
-    <Diagnostics.DebuggerDisplay("{Name}")> _
+    <Diagnostics.DebuggerDisplay("{Name}")>
     Friend Class Gadget
 
         Private ReadOnly _Code As String
@@ -22,9 +22,15 @@ Namespace Huggle
         End Property
 
         Public Property Description() As String
+
         Public Property Name() As String
+
+        Public Property Options As List(Of String)
+
         Public Property Pages() As List(Of Page)
+
         Public Property Type() As String
+
         Public Property TypeDesc() As String
 
         Public ReadOnly Property Wiki() As Wiki
@@ -62,9 +68,9 @@ Namespace Huggle
         End Property
 
         Public Function FromName(ByVal name As String) As Gadget
-            For Each item As Gadget In All
-                If item.Code = name OrElse item.Name = name Then Return item
-            Next item
+            For Each gadget As Gadget In All
+                If gadget.Code = name OrElse gadget.Name = name Then Return gadget
+            Next gadget
 
             Return Nothing
         End Function

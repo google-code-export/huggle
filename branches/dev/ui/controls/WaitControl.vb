@@ -1,4 +1,4 @@
-﻿Imports Huggle.Actions
+﻿Imports Huggle.Queries
 Imports System
 Imports System.Collections.Generic
 Imports System.ComponentModel
@@ -153,7 +153,7 @@ Namespace Huggle.UI
             Callback(Me, New EventArgs(Of Process)(AttachedProcess))
         End Sub
 
-        Public Enum WaitTextPosition As Integer
+        Friend Enum WaitTextPosition As Integer
             : None : Horizontal : Vertical
         End Enum
 

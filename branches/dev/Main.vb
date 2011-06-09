@@ -22,9 +22,14 @@ Namespace Huggle
 
     Friend Module Main
 
+        Private _Handle As Form
         Private _Log As LogClass
 
-        Public Property Handle As Form
+        Public ReadOnly Property Handle As Form
+            Get
+                Return _Handle
+            End Get
+        End Property
 
         Public ReadOnly Property Log As LogClass
             Get
@@ -35,9 +40,18 @@ Namespace Huggle
         Public Sub Main()
             Try
                 AddHandler AppDomain.CurrentDomain.UnhandledException, AddressOf UnhandledException
-                AddHandler Windows.Forms.Application.ThreadException, AddressOf ThreadException
+                AddHandler Application.ThreadException, AddressOf ThreadException
 
                 Thread.CurrentThread.Name = "Main"
+
+                'Must call these before creating a form
+                Application.EnableVisualStyles()
+                Application.SetCompatibleTextRenderingDefault(False)
+
+                'Create a dummy form we can call Invoke on from other threads to manipulate the UI
+                'Access window handle to force creation without actually displaying the form
+                _Handle = New Form
+                Dim ptr As IntPtr = Handle.Handle
 
                 _Log = New LogClass
                 Log.Initialize()
@@ -55,6 +69,9 @@ Namespace Huggle
             Finally
                 If Handle IsNot Nothing Then Handle.Dispose()
                 If Log IsNot Nothing Then Log.Dispose()
+
+                RemoveHandler AppDomain.CurrentDomain.UnhandledException, AddressOf UnhandledException
+                RemoveHandler Application.ThreadException, AddressOf ThreadException
                 End
             End Try
         End Sub
@@ -74,12 +91,13 @@ Namespace Huggle
         End Sub
 
         Public Sub CallOnMainThread(ByVal method As Action)
-            If Handle Is Nothing OrElse Not Handle.InvokeRequired Then method.Invoke() Else Handle.BeginInvoke(method)
+            If Handle Is Nothing Then Throw New HuggleException("Cross-thread call failed: handle not initialized")
+            If Not Handle.InvokeRequired Then method.Invoke() Else Handle.BeginInvoke(method)
         End Sub
 
         Public Sub CallOnMainThread(Of T)(ByVal method As Action(Of T), ByVal param As T)
-            If Handle Is Nothing OrElse Not Handle.InvokeRequired _
-                Then method.Invoke(param) Else Handle.BeginInvoke(method, param)
+            If Handle Is Nothing Then Throw New HuggleException("Cross-thread call failed: handle not initialized")
+            If Not Handle.InvokeRequired Then method.Invoke(param) Else Handle.BeginInvoke(method, param)
         End Sub
 
         Public Sub CreateThread(ByVal method As Action, Optional ByVal callback As Action = Nothing)

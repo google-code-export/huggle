@@ -1,4 +1,4 @@
-﻿Imports Huggle.Actions
+﻿Imports Huggle.Queries
 Imports System
 Imports System.Collections.Generic
 Imports System.Net
@@ -7,56 +7,73 @@ Namespace Huggle
 
     'Represents a login session
 
-    <Diagnostics.DebuggerDisplay("{Description}")> _
+    <Diagnostics.DebuggerDisplay("{Description}")>
     Friend Class Session
 
-        Private _RightsTokens As New Dictionary(Of User, String)
-        Private _RollbackTokens As New Dictionary(Of Revision, String)
+        Private _RightsToken As New Dictionary(Of User, String)
+        Private _RollbackToken As New Dictionary(Of Revision, String)
+        Private _Tokens As New Dictionary(Of String, String)
         Private _User As User
 
         Public Sub New(ByVal user As User)
             _User = user
+
+            For Each tokenType As String In
+                {"edit", "delete", "protect", "move", "block", "unblock", "email", "import", "watch"}
+
+                Tokens.Add(tokenType, Nothing)
+            Next tokenType
         End Sub
 
-        Public Property Cookies() As New CookieContainer
+        Public Property Cookies As New CookieContainer
 
-        Public ReadOnly Property Description() As String
+        Public ReadOnly Property Description As String
             Get
-                Return User.FullName & If(IsSecure, " (Secure)", "")
+                Return User.FullDisplayName & If(IsSecure, " (Secure)", "")
             End Get
         End Property
 
-        Public Property EditToken() As String
+        Public Property HasTokens As Boolean
 
-        Public Property IsActive() As Boolean
+        Public Property IsActive As Boolean
 
         Public Property IsAutoconfirmed As Boolean
 
-        Public Property IsSecure() As Boolean
+        Public Property IsSecure As Boolean
 
-        Public ReadOnly Property RightsTokens() As Dictionary(Of User, String)
+        Public ReadOnly Property RightsToken As Dictionary(Of User, String)
             Get
-                Return _RightsTokens
+                Return _RightsToken
             End Get
         End Property
 
-        Public ReadOnly Property RollbackTokens() As Dictionary(Of Revision, String)
+        Public ReadOnly Property RollbackToken As Dictionary(Of Revision, String)
             Get
-                Return _RollbackTokens
+                Return _RollbackToken
             End Get
         End Property
 
-        Public ReadOnly Property User() As User
+        Public ReadOnly Property Tokens As Dictionary(Of String, String)
+            Get
+                Return _Tokens
+            End Get
+        End Property
+
+        Public ReadOnly Property User As User
             Get
                 Return _User
             End Get
         End Property
 
-        Public ReadOnly Property Wiki() As Wiki
+        Public ReadOnly Property Wiki As Wiki
             Get
                 Return _User.Wiki
             End Get
         End Property
+
+        Public Overrides Function ToString() As String
+            Return Description
+        End Function
 
         Public Sub Discard()
             App.Sessions.Discard(Me)

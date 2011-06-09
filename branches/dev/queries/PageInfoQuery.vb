@@ -1,23 +1,37 @@
 ﻿Imports System.Collections.Generic
-Imports System.Web.HttpUtility
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
     'Retrieve page info
 
-    Class PageInfoQuery : Inherits Query
+    Friend Class PageInfoQuery : Inherits Query
 
         Private _Pages As List(Of Page)
 
-        Private Categories, Diffs, Externals, LangLinks, Links As Boolean
-        Private Media, OldRevision, Revision, Transclusions As Boolean
-
         Public Sub New(ByVal session As Session)
-            MyBase.New(session, Msg("pageinfo-desc"))
-            _Pages = New List(Of Page)
+            Me.New(session, New List(Of Page))
         End Sub
 
+        Public Sub New(ByVal session As Session, ByVal pages As List(Of Page))
+            MyBase.New(session, Msg("pageinfo-desc"))
+            _Pages = pages
+        End Sub
+
+        Public Property Categories As Boolean
+
         Public Property Content As Boolean
+
+        Public Property Diffs As Boolean
+
+        Public Property Externals As Boolean
+
+        Public Property LangLinks As Boolean
+
+        Public Property Links As Boolean
+
+        Public Property Media As Boolean
+
+        Public Property OldRevision As Boolean
 
         Public ReadOnly Property Pages As List(Of Page)
             Get
@@ -25,26 +39,9 @@ Namespace Huggle.Actions
             End Get
         End Property
 
-        Public Sub New(ByVal session As Session, ByVal Pages As List(Of Page), _
-            Optional ByVal Categories As Boolean = False, Optional ByVal Content As Boolean = False, _
-            Optional ByVal Diffs As Boolean = False, Optional ByVal Externals As Boolean = False, _
-            Optional ByVal LangLinks As Boolean = False, Optional ByVal Links As Boolean = False, _
-            Optional ByVal Media As Boolean = False, Optional ByVal Revision As Boolean = False, _
-            Optional ByVal Transclusions As Boolean = False)
+        Public Property Revision As Boolean
 
-            MyBase.New(session, Msg("pageinfo-desc", Pages(0)))
-            Me.Categories = Categories
-            Me.Diffs = Diffs
-            Me.Externals = Externals
-            Me.LangLinks = LangLinks
-            Me.Links = Links
-            Me.Media = Media
-            _Pages = Pages
-            Me.Transclusions = Transclusions
-            Me.OldRevision = OldRevision
-            Me.Revision = Revision
-            Me.Content = Content
-        End Sub
+        Public Property Transclusions As Boolean
 
         Public Overrides Sub Start()
 
@@ -56,12 +53,14 @@ Namespace Huggle.Actions
             Prop.Add("info")
 
             For Each page As Page In Pages
-                If page.Space Is page.Wiki.Spaces.Category Then Prop.Merge("categoryinfo")
+                If page IsNot Nothing Then
+                    If page.Space Is page.Wiki.Spaces.Category Then Prop.Merge("categoryinfo")
 
-                If page.Space Is page.Wiki.Spaces.File Then
-                    Prop.Merge("imageinfo")
-                    query.Add("iiprop", "timestamp|user|comment|url|size|sha1|mime|metadata|archivename|bitdepth")
-                    query.Add("iilimit", "max")
+                    If page.Space Is page.Wiki.Spaces.File Then
+                        Prop.Merge("imageinfo")
+                        query.Add("iiprop", "timestamp|user|comment|url|size|sha1|mime|metadata|archivename|bitdepth")
+                        query.Add("iilimit", "max")
+                    End If
                 End If
             Next page
 

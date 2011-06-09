@@ -2,7 +2,7 @@
 Imports System.Collections.Generic
 Imports System.Globalization
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
     Friend Class Warning : Inherits Query
 
@@ -51,7 +51,8 @@ Namespace Huggle.Actions
                                     Nothing, 1, Msg("warn-block"), Msg("cancel")) = 2 Then Return
                             End If
 
-                            Dim block As New Block(Session, Rev.User, Rev.Wiki.Config.BlockSummary)
+                            Dim block As New BlockUser(Session, Rev.User)
+                            block.Summary = Rev.Wiki.Config.BlockSummary
                             block.Start()
                         End If
 
@@ -91,7 +92,7 @@ Namespace Huggle.Actions
                             'report.Start()
 
                         Case Msg("warn-block")
-                            Dim block As New Block(Session, Rev.User)
+                            Dim block As New BlockUser(Session, Rev.User)
                             block.Start()
                     End Select
                 End If

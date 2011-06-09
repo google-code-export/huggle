@@ -4,7 +4,7 @@ Imports System.Net
 Imports System.Text
 Imports System.Xml
 
-Namespace Huggle
+Namespace Huggle.Net
 
     'Represents a file request
 

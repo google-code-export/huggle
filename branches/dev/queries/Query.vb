@@ -1,8 +1,11 @@
-﻿Namespace Huggle.Actions
+﻿Namespace Huggle.Queries
 
     Friend MustInherit Class Query : Inherits Process
 
         Protected Sub New(ByVal session As Session, ByVal description As String)
+            ThrowNull(session, "session")
+            ThrowNull(description, "description")
+
             _Description = description
             _Session = session
         End Sub

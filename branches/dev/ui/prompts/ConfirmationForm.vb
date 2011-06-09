@@ -9,8 +9,10 @@ Namespace Huggle.UI
         Private _Confirmation As Confirmation
 
         Public Sub New(ByVal confirmation As Confirmation)
-            InitializeComponent()
+            ThrowNull(confirmation, "confirmation")
             _Confirmation = confirmation
+
+            InitializeComponent()
         End Sub
 
         Private Sub _Load() Handles Me.Load

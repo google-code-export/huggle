@@ -1,10 +1,11 @@
-﻿Imports System
+﻿Imports Huggle.Net
+Imports System
 Imports System.Collections.Generic
 Imports System.IO
 Imports System.Text
 Imports System.Text.RegularExpressions
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
     Friend Class AddWiki : Inherits Process
 
@@ -14,11 +15,6 @@ Namespace Huggle.Actions
         Private Password As String
         Private Url As Uri
         Private Username As String
-
-        Private Shared ReadOnly oldUrlRegex As New Regex _
-            ("< *script[^>]*>.*wgScriptPath *= *""([^""]*)""", RegexOptions.Compiled Or RegexOptions.Singleline)
-        Private Shared ReadOnly newUrlRegex As New Regex _
-            ("< *script[^>]*src *= *""([^""]*)/load.php", RegexOptions.Compiled Or RegexOptions.Singleline)
 
         Public Sub New(ByVal url As Uri)
             Me.New(url, Nothing, Nothing)
@@ -50,23 +46,48 @@ Namespace Huggle.Actions
             req.Start()
             If req.IsFailed Then OnFail(Msg("addwiki-connection")) : Return
 
-            Dim oldMatch As Match = oldUrlRegex.Match(req.Response)
-            Dim newMatch As Match = newUrlRegex.Match(req.Response)
+            'No single method of determining wiki URL works for all MediaWiki installations
+            'These two should work in most cases
+            Static urlPattern1 As New Regex("< *script[^>]*>.*wgScriptPath *= *""([^""]*)"".*wgServer *= *""([^""]*)""",
+                RegexOptions.Compiled Or RegexOptions.Singleline)
+            Static urlPattern2 As New Regex("href=""([^>]+)/api\.php\?action=rsd"" +/>",
+                RegexOptions.Compiled Or RegexOptions.Singleline)
+
+            Dim match1 As Match = urlPattern1.Match(req.Response)
+            Dim match2 As Match = urlPattern2.Match(req.Response)
             Dim siteUrl As Uri
 
-            If oldMatch.Success Then
-                siteUrl = New Uri(Url.Scheme & "://" & Url.Host & oldMatch.Groups(1).Value & "/")
+            If match1.Success Then
+                siteUrl = New Uri(match1.Groups(1).Value & match1.Groups(2).Value & "/")
 
-            ElseIf newMatch.Success Then
-                siteUrl = New Uri(Url.Scheme & "://" & Url.Host & newMatch.Groups(1).Value & "/")
+            ElseIf match2.Success Then
+                siteUrl = New Uri(match2.Groups(1).Value & "/")
+
             Else
-                OnFail(Msg("addwiki-badurl")) : Return
+                'Maybe the entered URL redirects elsewhere via a meta-refresh tag
+                'Find the URL redirected to and try again
+                Static metaRefreshPattern As New Regex("<meta +http-equiv=""refresh"" +content=""\d+;url=([^""]+)"">",
+                    RegexOptions.Compiled Or RegexOptions.Singleline)
+
+                Dim metaRefreshMatch As Match = metaRefreshPattern.Match(req.Response)
+
+                If metaRefreshMatch.Success Then
+                    Url = New Uri(metaRefreshMatch.Groups(1).Value)
+                    Start()
+                    Return
+                Else
+                    OnFail(Msg("addwiki-badurl")) : Return
+                End If
             End If
 
             'Check if the wiki is already in the list
             For Each wiki As Wiki In App.Wikis.All
-                If wiki.Url = siteUrl OrElse wiki.SecureUrl = siteUrl _
-                    Then OnFail(Msg("addwiki-alreadyadded", wiki.Name)) : Return
+                If wiki.Url = siteUrl OrElse wiki.SecureUrl = siteUrl Then
+                    If wiki.IsHidden OrElse Not wiki.IsPublicReadable OrElse Not wiki.IsPublicEditable _
+                        Then OnFail(Msg("addwiki-privatewmwiki", wiki.Name)) _
+                        Else OnFail(Msg("addwiki-alreadyadded", wiki.Name))
+                    Return
+                End If
             Next wiki
 
             _Wiki = App.Wikis(siteUrl.Host & siteUrl.AbsolutePath.TrimEnd("/"c))
@@ -90,7 +111,7 @@ Namespace Huggle.Actions
                 New QueryString("action", "query", "meta", "siteinfo"))
 
             apiReq.Start()
-            If apiReq.Result.IsError Then OnFail(apiReq.Result.Message) : Return
+            If apiReq.Result.IsError Then OnFail(apiReq.Result) : Return
 
             OnSuccess()
         End Sub

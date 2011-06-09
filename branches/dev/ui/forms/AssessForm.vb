@@ -1,4 +1,4 @@
-﻿Imports Huggle.Actions
+﻿Imports Huggle.Queries
 Imports System.Collections.Generic
 Imports System.Windows.Forms
 
@@ -11,7 +11,9 @@ Namespace Huggle.UI
         Private Session As Session
 
         Public Sub New(ByVal session As Session)
+            ThrowNull(session, "session")
             Me.Session = session
+
             InitializeComponent()
         End Sub
 
@@ -28,7 +30,7 @@ Namespace Huggle.UI
         Private Sub OK_Click() Handles OK.Click
             Dim ratings As New List(Of String)({Rating1.Text, Rating2.Text, Rating3.Text, Rating4.Text})
 
-            Dim action As New Assess(Session, Page, ratings)
+            Dim action As New Feedback(Session, Page, ratings)
             App.UserWaitForProcess(action)
 
             DialogResult = DialogResult.OK

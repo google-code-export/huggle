@@ -1,4 +1,6 @@
-﻿Namespace Huggle.Actions
+﻿Imports Huggle.Actions
+
+Namespace Huggle.Queries
 
     Friend Class SaveConfig : Inherits Query
 

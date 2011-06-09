@@ -1,6 +1,6 @@
 ﻿Imports System
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
     Friend Class RevertAndWarn
 

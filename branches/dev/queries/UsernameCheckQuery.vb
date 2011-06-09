@@ -1,6 +1,6 @@
 ﻿Imports System.Xml
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
     Friend Class UsernameCheckQuery : Inherits Query
 
@@ -69,7 +69,7 @@ Namespace Huggle.Actions
 
     End Class
 
-    Public Enum CheckStatus As Integer
+    Friend Enum CheckStatus As Integer
         : None : Checking : GlobalBlacklisted : Invalid : LocalBlacklisted : Used : OK : [Error]
     End Enum
 

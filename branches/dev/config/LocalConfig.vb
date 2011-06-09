@@ -34,11 +34,9 @@ Namespace Huggle
         Public Property WindowMaximized As Boolean = True
         Public Property WindowSize As Size
 
-        Protected Overrides ReadOnly Property Location() As String
-            Get
-                Return "config"
-            End Get
-        End Property
+        Protected Overrides Function Key() As String
+            Return "local"
+        End Function
 
         Protected Overrides Sub ReadConfig(ByVal text As String)
             If Config.Global.IsLoaded Then LoadAfterGlobal(text) Else LoadBeforeGlobal(text)
@@ -86,7 +84,7 @@ Namespace Huggle
                                 For Each userCode As String In wikiCode.Value.ToList("|")
                                     If App.Wikis.Contains(wikiCode.Key) Then
                                         Dim user As User = App.Wikis(wikiCode.Key).Users.FromString(userCode)
-                                        If user IsNot Nothing Then user.IsUsed = True
+                                        If user IsNot Nothing Then user.Wiki.Users.Used.Merge(user)
                                     End If
                                 Next userCode
                             Next wikiCode
@@ -137,8 +135,8 @@ Namespace Huggle
             For Each wiki As Wiki In App.Wikis.All
                 Dim wikiAccounts As New List(Of String)
 
-                For Each user As User In wiki.Users.All
-                    If Not user.IsAnonymous AndAlso user.IsUsed Then wikiAccounts.Add(user.Name)
+                For Each user As User In wiki.Users.Used
+                    If Not user.IsAnonymous Then wikiAccounts.Add(user.Name)
                 Next user
 
                 If wikiAccounts.Count > 0 Then accounts.Add(wiki.Code, wikiAccounts.Join("|"))

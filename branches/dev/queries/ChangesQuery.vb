@@ -1,4 +1,4 @@
-﻿Namespace Huggle.Actions
+﻿Namespace Huggle.Queries
 
     'Get recent changes
 
@@ -26,12 +26,12 @@
 
             'Don't ask for patrolled status unless user has permission to view
             'TODO: figure out why MediaWiki insists on concealing this information from those who can't patrol
-            Dim query As New QueryString( _
-                "action", "query", _
-                "list", "recentchanges", _
-                "rclimit", "max", _
-                "rcprop", "user|comment|flags|timestamp|title|ids|sizes|redirect|loginfo" _
-                    & If(User.HasRight("patrol"), "|patrolled", ""))
+            Dim query As New QueryString(
+                "action", "query",
+                "list", "recentchanges",
+                "rclimit", "max",
+                "rcprop", "user|comment|flags|timestamp|title|ids|sizes|redirect|loginfo" &
+                    If(User.HasRight("patrol"), "|patrolled", ""))
 
             'Abuse filter has its own module, can't get it through standard logs
             If User.HasRight("abuselog") Then

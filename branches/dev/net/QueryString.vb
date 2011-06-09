@@ -3,7 +3,7 @@ Imports System.Collections.Generic
 Imports System.Text
 Imports System.Web.HttpUtility
 
-Namespace Huggle
+Namespace Huggle.Queries
 
     <Diagnostics.DebuggerDisplay("{ToString()}")>
     Friend Class QueryString
@@ -40,14 +40,8 @@ Namespace Huggle
             If value IsNot Nothing Then Values.Merge(name, value)
         End Sub
 
-        Public Sub Merge(ByVal ParamArray items As Object())
-            Merge(items.ToDictionary(Of String, Object))
-        End Sub
-
-        Public Sub Merge(ByVal items As Dictionary(Of String, Object))
-            For Each item As KeyValuePair(Of String, Object) In items
-                Values.Merge(item.Key, item.Value)
-            Next item
+        Public Sub Merge(ByVal ParamArray items As Object())        
+            Values.Merge(items.ToDictionary(Of String, Object))
         End Sub
 
         Public Sub Remove(ByVal name As String)
@@ -68,7 +62,7 @@ Namespace Huggle
 
                 'Hide passwords/tokens in debug log
                 If key.ToLowerI.EndsWithI("password") OrElse key.ToLowerI.EndsWithI("retype") _
-                    OrElse key.ToLowerI.EndsWithI("token") Then value = "******"
+                    OrElse key.ToLowerI.EndsWithI("token") Then value = "********"
 
                 If value.ToString = "" Then items.Add(key) Else items.Add(key & "=" & value.ToString)
             Next key
@@ -102,8 +96,8 @@ Namespace Huggle
                 If TypeOf item.Value Is Byte() Then
                     fileparam = item.Key
                 Else
-                    header &= "--" & boundary & CRLF & "Content-Disposition: form-data; name=""" &
-                        item.Key & """" & CRLF & CRLF & item.Value.ToString & CRLF
+                    header &= "--" & boundary & CRLF & "Content-Disposition: form-data; name=""{0}""" _
+                        .FormatI(item.Key) & CRLF & CRLF & item.Value.ToString & CRLF
                 End If
             Next item
 
@@ -111,8 +105,8 @@ Namespace Huggle
 
             If fileparam IsNot Nothing Then
                 header &= "--" & boundary & CRLF
-                header &= "Content-Disposition: form-data; name=""" & fileparam & """; filename=""" &
-                    filename & """" & CRLF
+                header &= "Content-Disposition: form-data; name=""{0}""; filename=""{1}""" _
+                    .FormatI(fileparam, filename) & CRLF
                 header &= "Content-Type: " & MimeType(filename) & CRLF
                 header &= CRLF
                 file = CType(Values(fileparam), Byte())

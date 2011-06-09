@@ -1,4 +1,4 @@
-﻿Imports Huggle.Actions
+﻿Imports Huggle.Queries
 Imports Huggle.Wikitext
 Imports System
 Imports System.Collections
@@ -185,7 +185,7 @@ Namespace Huggle.Scripting
                 Case "categories"
                     If arg(0).AsPage.Exists AndAlso Not arg(0).AsPage.CategoriesKnown Then
                         If Immediate Then
-                            Dim req As New PageInfoQuery(Session, List(arg(0).AsPage), Categories:=True)
+                            Dim req As New PageInfoQuery(Session, List(arg(0).AsPage)) With {.Categories = True}
                             req.Start()
                             If req.Result.IsError Then Throw New ScriptException(req.Result.Message)
                             Return New Token(New ArrayList(arg(0).AsPage.Categories))
@@ -426,9 +426,6 @@ Namespace Huggle.Scripting
                 Case "watchlist" : Return ListQuery(context, New Lists.WatchlistQuery(Session, Wiki.Users.FromString(arg(0).AsString)), original)
 
                     'Other
-                Case "revs_allknown" : Return New Token(New ArrayList(Wiki.Revisions.All.Values))
-                Case "users_allknown" : Return New Token(New ArrayList(Wiki.Users.All.ToArray))
-                Case "pages_allknown" : Return New Token(New ArrayList(Wiki.Pages.All.Values))
                 Case "ignoredusers" : Return New Token(New ArrayList(Wiki.Users.Ignored))
 
                 Case "pagecount"

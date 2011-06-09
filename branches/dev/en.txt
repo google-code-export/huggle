@@ -1,10 +1,15 @@
-﻿log-block/block:                 {0}: {1} blocked by {2} for {3}
+﻿analysis-page                    Retrieving details of page {0}
+analysis-progress                Applying rule {0} of {1}
+
+log-block/block:                 {0}: {1} blocked by {2} for {3}
 log-abusefilter:                 Filter {0}
 log-indefinite:                  indefinite
 
 query-resetprefs-anon:           Cannot reset preferences for anonymous user
 query-resetprefs-desc:           Reset preferences for {0}
 query-resetprefs-progress:       Resetting preferences
+
+form-error-copy:                 Copy message
 
 form-firstrun-language:          Language:
 form-firstrun-translate:         If your native language is not listed or only partially translated, you can {0}.
@@ -285,6 +290,7 @@ addwiki-connection:         Could not load the URL specified. The URL is incorre
 addwiki-fail:               Failed to add the wiki
 addwiki-alreadyadded:       The specified wiki is already in the wiki list as '{0}'
 addwiki-progress:           Retrieving wiki details
+addwiki-privatewmwiki:      The wiki '{0}' does not allow public editing
 
 == Review form ==
 
@@ -329,7 +335,6 @@ a-cancel:                   Cancel
 a-clear:                    Clear
 a-close:                    Close
 a-continue:                 Continue
-a-copy:                     Copy
 a-count:                    {0} items
 a-default:                  default
 a-delete:                   Delete
@@ -361,7 +366,8 @@ error-account:             Your account is not allowed to do this
 error-alreadydone:         The requested action was already carried out by {0}
 error-apidisabled:         The MediaWiki API is disabled on this wiki
 error-apiformat:           Ignored unrecognized API node '{0}', expected '{1}'
-error-apimoduledisabled:   The MediaWiki API '{0}' module is disabled on this wiki
+error-apimoduledisabled:   The MediaWiki API module '{0}' is disabled on this wiki
+error-apimodulenotimpl:    The MediaWiki API module '{0}' is not available on this wiki
 error-apiresponse:         Unable to parse MediaWiki API response 
 error-apiunrecognized:     Ignored unrecognized API {0} type '{1}'
 error-badurl:              The URL is not valid
@@ -369,10 +375,10 @@ error-blocked:             The account is blocked. The reason given was '{0}'
 error-cancelled:           Cancelled by user
 error-config:              Error parsing {1} configuration file
 error-configvalue:         Error parsing value for '{0}' in {1} configuration file
-error-connection:          Cannot connect to server
-error-connectionhelp:       - The website may be busy or temporarily unavailable.
-							- Check your computer's Internet connection.
-							- Ensure your firewall allows Huggle access to the Internet.
+error-connection:          Cannot connect to server '{0}'
+error-connectionhelp:      \n- The website may be busy or temporarily unavailable.
+							 - Check your computer's Internet connection.
+							 - Ensure your firewall allows Huggle access to the Internet.
 error-exception:           An unexpected error occured.
 error-http:                HTTP error {0} {1}
 error-info:                If reporting this error, please include the following information:

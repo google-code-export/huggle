@@ -1,7 +1,8 @@
-﻿Imports System.Collections.Generic
+﻿Imports Huggle.Net
+Imports System.Collections.Generic
 Imports System.IO
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
     Friend Class ChangePassword : Inherits Query
 
@@ -18,19 +19,19 @@ Namespace Huggle.Actions
             OnProgress(Msg("changepassword-progress", User.FullName))
 
             'Get token
-            If Session.EditToken Is Nothing Then
+            If Not Session.HasTokens Then
                 Dim tokenQuery As New TokenQuery(Session)
                 tokenQuery.Start()
                 If tokenQuery.IsFailed Then OnFail(tokenQuery.Result) : Return
             End If
 
             'Reset preferences, must use UI for this
-            Dim req As New UIRequest(Session, Description, New QueryString("title", "Special:Preferences/reset"), _
-                New QueryString( _
-                    "token", Session.EditToken, _
-                    "wpName", User.Name, _
-                    "wpPassword", User.Password, _
-                    "wpNewPassword", NewPassword, _
+            Dim req As New UIRequest(Session, Description, New QueryString("title", "Special:Preferences/reset"),
+                New QueryString(
+                    "token", Session.Tokens("preferences"),
+                    "wpName", User.Name,
+                    "wpPassword", User.Password,
+                    "wpNewPassword", NewPassword,
                     "wpRetype", NewPassword))
 
             req.Start()

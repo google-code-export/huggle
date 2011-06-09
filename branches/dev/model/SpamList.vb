@@ -192,7 +192,7 @@ Namespace Huggle
 
     End Class
 
-    Public Enum SpamListAction As Integer
+    Friend Enum SpamListAction As Integer
         : Deny : Permit
     End Enum
 

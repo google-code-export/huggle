@@ -96,8 +96,11 @@ Namespace Huggle
         End Sub
 
         Public Property CanAdd As Boolean
+
         Public Property CanAddSelf As Boolean
+
         Public Property CanRemove As Boolean
+
         Public Property CanRemoveSelf As Boolean
 
         Public ReadOnly Property Group() As UserGroup

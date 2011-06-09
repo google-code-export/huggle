@@ -1,4 +1,4 @@
-﻿Imports Huggle.Actions
+﻿Imports Huggle.Queries
 Imports System
 Imports System.Collections
 Imports System.Collections.Generic
@@ -10,7 +10,7 @@ Imports System.Text.RegularExpressions
 Imports System.Threading
 Imports System.Web.HttpUtility
 
-Namespace Huggle
+Namespace Huggle.Net
 
     'Represents an HTTP request
 
@@ -25,9 +25,9 @@ Namespace Huggle
 
         Public Property Boundary() As String
 
-        Public Property Cookies() As CookieContainer
+        Protected Property Cookies() As CookieContainer
 
-        Public Property Data() As Byte()
+        Protected Property Data() As Byte()
 
         Public Property IsMultipart() As Boolean
 
@@ -78,30 +78,76 @@ Namespace Huggle
 
                     Dim startTime As Date = Date.Now
 
-                    If Data Is Nothing Then
-                        request.Method = "GET"
-                    Else
-                        request.Method = "POST"
-                        If IsMultipart Then request.ContentType = "multipart/form-data boundary=" & Boundary _
-                            Else request.ContentType = "application/x-www-form-urlencoded"
+                    Try
+                        If Data Is Nothing Then
+                            request.Method = "GET"
+                        Else
+                            request.Method = "POST"
+                            If IsMultipart Then request.ContentType = "multipart/form-data boundary=" & Boundary _
+                                Else request.ContentType = "application/x-www-form-urlencoded"
 
-                        request.ContentLength = Data.Length
-                        Dim requestStream As Stream = request.GetRequestStream
-                        requestStream.Write(Data, 0, Data.Length)
-                        requestStream.Close()
-                    End If
+                            request.ContentLength = Data.Length
+                            Dim requestStream As Stream = request.GetRequestStream
+                            requestStream.Write(Data, 0, Data.Length)
+                            requestStream.Close()
+                        End If
 
-                    Dim webResponse As WebResponse = request.GetResponse
+                        Using webResponse As WebResponse = request.GetResponse
+                            Using responseStream As Stream = webResponse.GetResponseStream
+                                Dim buffer(255) As Byte, size As Integer
+                                _Response = New MemoryStream
 
-                    Using responseStream As Stream = webResponse.GetResponseStream
-                        Dim buffer(255) As Byte, size As Integer
-                        _Response = New MemoryStream
+                                Do
+                                    size = responseStream.Read(buffer, 0, buffer.Length)
+                                    _Response.Write(buffer, 0, size)
+                                Loop While size > 0
+                            End Using
+                        End Using
 
-                        Do
-                            size = responseStream.Read(buffer, 0, buffer.Length)
-                            Response.Write(buffer, 0, size)
-                        Loop While size > 0
-                    End Using
+                    Catch ex As WebException
+                        Select Case ex.Status
+                            Case WebExceptionStatus.NameResolutionFailure, WebExceptionStatus.ConnectFailure
+                                'Either site is down or user has no internet connection
+                                Result = New Result({Msg("error-connection", Url.Host), Msg("error-connectionhelp")}, "connection")
+
+                            Case WebExceptionStatus.ProtocolError
+                                'HTTP error code
+                                Dim statusCode As HttpStatusCode = CType(ex.Response, HttpWebResponse).StatusCode
+
+                                Select Case statusCode
+                                    Case HttpStatusCode.BadGateway
+                                        'Wikimedia servers intermittently return 502 Bad Gateway for no obvious reason
+                                        Log.Debug("Recieved 502 Bad Gateway, retrying...")
+
+                                    Case Else
+                                        'Get error code description from enum, break it into words
+                                        Result = New Result(Msg("error-http", CInt(statusCode),
+                                            Regex.Replace(statusCode.ToString, "([A-Z])", " $1").Trim),
+                                            "httperror-" & statusCode)
+                                End Select
+
+                                'Try to get the response anyway
+                                Using webResponse As WebResponse = ex.Response
+                                    Using responseStream As Stream = webResponse.GetResponseStream
+                                        Dim buffer(255) As Byte, size As Integer
+                                        _Response = New MemoryStream
+
+                                        Do
+                                            size = responseStream.Read(buffer, 0, buffer.Length)
+                                            _Response.Write(buffer, 0, size)
+                                        Loop While size > 0
+                                    End Using
+                                End Using
+
+                            Case WebExceptionStatus.Timeout
+                                'Add connection help in case that is the cause of timeout
+                                Result = New Result({Msg("error-timeout"), Msg("error-connectionhelp")}, "timeout")
+
+                            Case Else
+                                'Some other web exception
+                                Result = New Result(Msg("error-webexception", ex.Status.ToString), "webexception")
+                        End Select
+                    End Try
 
                     _ResponseTime = (Date.Now - startTime)
                     If Not App.IsMono AndAlso Cookies IsNot Nothing Then FixCookieContainer(Cookies, Url)
@@ -110,37 +156,6 @@ Namespace Huggle
 
                 Catch ex As IOException
                     Result = Result.FromException(ex)
-
-                Catch ex As WebException
-                    Select Case ex.Status
-                        Case WebExceptionStatus.NameResolutionFailure, WebExceptionStatus.ConnectFailure
-                            'Either site is down or user has no internet connection
-                            Result = New Result({Msg("error-connection"), Msg("error-connectionhelp")}, "connection")
-
-                        Case WebExceptionStatus.ProtocolError
-                            'HTTP error code
-                            Dim statusCode As HttpStatusCode = CType(ex.Response, HttpWebResponse).StatusCode
-
-                            Select Case statusCode
-                                Case HttpStatusCode.BadGateway
-                                    'Wikimedia servers intermittently return 502 Bad Gateway for no obvious reason
-                                    Log.Debug("Recieved 502 Bad Gateway, retrying...")
-
-                                Case Else
-                                    'Get error code description from enum, break it into words
-                                    Result = New Result(Msg("error-http", CInt(statusCode),
-                                        Regex.Replace(statusCode.ToString, "([A-Z])", " $1").Trim),
-                                        "httperror-" & statusCode)
-                            End Select
-
-                        Case WebExceptionStatus.Timeout
-                            'Add connection help in case that is the cause of timeout
-                            Result = New Result({Msg("error-timeout"), Msg("error-connectionhelp")}, "timeout")
-
-                        Case Else
-                            'Some other web exception
-                            Result = New Result(Msg("error-webexception", ex.Status.ToString), "webexception")
-                    End Select
                 End Try
 
                 'Maximum retries exceeded

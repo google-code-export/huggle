@@ -1,8 +1,8 @@
 ﻿Imports System.IO
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
-    Friend Class Upload : Inherits Query
+    Friend Class UploadFile : Inherits Query
 
         Private _File As MemoryStream
         Private _Name As String
@@ -49,18 +49,18 @@ Namespace Huggle.Actions
             OnStarted()
 
             'Get token
-            If Session.EditToken Is Nothing Then
+            If Not Session.HasTokens Then
                 Dim tokenQuery As New TokenQuery(Session)
                 tokenQuery.Start()
                 If tokenQuery.IsErrored Then OnFail(tokenQuery.Result) : Return
             End If
 
             'Create query string
-            Dim query As New QueryString( _
-                "action", "upload", _
-                "comment", Summary, _
-                "file", File, _
-                "token", Session.EditToken, _
+            Dim query As New QueryString(
+                "action", "upload",
+                "comment", Summary,
+                "file", File,
+                "token", Session.Tokens("upload"),
                 "watchlist", Watch)
 
             'Upload file

@@ -1,5 +1,4 @@
-﻿Imports Huggle.Scripting
-Imports Huggle.Wikitext
+﻿Imports Huggle.Wikitext
 Imports System
 Imports System.Collections
 Imports System.Collections.Generic
@@ -36,11 +35,19 @@ Namespace Huggle
         Public ReadOnly RangePattern As New Regex(
             "\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/\d{2}", RegexOptions.Compiled)
 
+        Public Sub ThrowOutOfRange(ByVal condition As Boolean, ByVal name As String)
+            If condition Then Throw New ArgumentOutOfRangeException("name")
+        End Sub
+
+        Public Sub ThrowNull(ByVal var As Object, ByVal name As String)
+            If var Is Nothing Then Throw New ArgumentNullException("name")
+        End Sub
+
         'Get a formatted message string localized to the user's language
         Public Function Msg(ByVal name As String, ByVal ParamArray params As Object()) As String
             If App.Languages.Current Is Nothing Then Return "[" & name & "] "
             If Not name.Contains("-") Then name = "a-" & name
-            Return App.Languages.Current.Message(name, params)
+            Return App.Languages.Current.Message(name.ToLowerI, params)
         End Function
 
         Public Function MD5Hash(ByVal data As Byte()) As Byte()
@@ -59,27 +66,33 @@ Namespace Huggle
             End Using
         End Function
 
-        Public Function Uncompress(ByVal data As Byte()) As Byte()
+        Public Function Uncompress(ByVal input As MemoryStream) As Byte()
             Try
-                Using input As New MemoryStream(data)
-                    Dim decompressStream As New GZipStream(input, CompressionMode.Decompress)
-                    Dim output() As Byte
-                    Dim total As Integer = 0
-                    Dim read As Integer = 0
+                Dim decompressStream As New GZipStream(input, CompressionMode.Decompress)
+                Dim output() As Byte
+                Dim total As Integer = 0
+                Dim read As Integer = 0
 
-                    Do
-                        ReDim Preserve output(total + 256)
-                        read = decompressStream.Read(output, total, 256)
-                        total += read
-                    Loop Until read = 0
+                Do
+                    ReDim Preserve output(total + 256)
+                    read = decompressStream.Read(output, total, 256)
+                    total += read
+                Loop Until read = 0
 
-                    ReDim Preserve output(total)
-                    Return output
-                End Using
+                ReDim Preserve output(total)
+                Return output
 
             Catch ex As InvalidDataException
                 Return Nothing
             End Try
+        End Function
+
+        Public Function HexString(ByVal bytes As Byte()) As String
+            Return BitConverter.ToString(bytes).Remove("-").ToLowerI
+        End Function
+
+        Public Function UTF8Encode(ByVal str As String) As Byte()
+            Return Encoding.UTF8.GetBytes(str)
         End Function
 
         Public Function PathCombine(ByVal ParamArray components As String()) As String
@@ -160,10 +173,6 @@ Namespace Huggle
         Public Function CeilingToSigFigs(ByVal number As Double, ByVal digits As Integer) As Double
             Dim scale As Double = Math.Pow(10, Math.Ceiling(Math.Log10(number)) - digits)
             Return scale * Math.Ceiling(number / scale)
-        End Function
-
-        Public Function Dictionary(ByVal ParamArray items() As Object) As Dictionary(Of String, String)
-            Return items.ToDictionary
         End Function
 
         Public Function FuzzyAge(ByVal time As Date, ByVal now As Date) As String
@@ -351,7 +360,7 @@ Namespace Huggle
             If text Is Nothing Then Return Nothing
 
             While text.Contains("<") AndAlso text.FromFirst("<").Contains(">")
-                text = text.ToFirst("<") & text.FromFirst("<").FromFirst(">")
+                text = text.ToFirst("<") & " " & text.FromFirst("<").FromFirst(">")
             End While
 
             Return text
@@ -369,17 +378,6 @@ Namespace Huggle
             End While
 
             Return text
-        End Function
-
-        Public Function LcFirst(ByVal str As String) As String
-            If str Is Nothing Then Return Nothing
-            Return str.Substring(0, 1).ToLowerI & str.Substring(1)
-        End Function
-
-        Public Function UcFirst(ByVal str As String) As String
-            If str Is Nothing Then Return Nothing
-            If str.Length = 1 Then Return str.ToUpperI
-            Return str.Substring(0, 1).ToUpperI & str.Substring(1)
         End Function
 
         Public Function ValueListToRegex(ByVal list As List(Of String)) As Regex
@@ -414,7 +412,23 @@ Namespace Huggle
             Return Nothing
         End Function
 
-        Function MakeString(ByVal item As Object) As String
+        Public Function Pair(Of TKey, TValue)(ByVal key As TKey, ByVal value As TValue) As KeyValuePair(Of TKey, TValue)
+            Return New KeyValuePair(Of TKey, TValue)(key, value)
+        End Function
+
+        Public Function Dictionary(Of TKey, TValue)(ByVal ParamArray items() As KeyValuePair(Of TKey, TValue)) _
+            As Dictionary(Of TKey, TValue)
+
+            Dim result As New Dictionary(Of TKey, TValue)
+
+            For Each item As KeyValuePair(Of TKey, TValue) In items
+                result.Add(item.Key, item.Value)
+            Next item
+
+            Return result
+        End Function
+
+        Public Function MakeString(ByVal item As Object) As String
             If item Is Nothing Then Return String.Empty
 
             If TypeOf item Is ArrayList Then
@@ -444,42 +458,23 @@ Namespace Huggle
             Return item.ToString
         End Function
 
-        Public Enum CacheState As Integer
+        Friend Enum CacheState As Integer
             : NotCached : Loading : Cached : NewPage
         End Enum
 
-        Public Enum Filters As Integer
+        Friend Enum Filters As Integer
             : Exclude : Require : None
         End Enum
 
-        Public Enum MultiFilters As Integer
+        Friend Enum MultiFilters As Integer
             : None : All : Any
         End Enum
-
-        Public Function ComparePairs(ByVal x As Pair, ByVal y As Pair) As Integer
-            If TypeOf x.First Is Integer AndAlso TypeOf y.First Is Integer Then Return CInt(y.First) - CInt(x.First)
-            If TypeOf x.First Is String AndAlso TypeOf y.First Is String _
-                Then Return String.Compare(CStr(x.First), CStr(y.First), StringComparison.Ordinal)
-            Return 0
-        End Function
 
         Public Structure CustomRevert
 
             Public Summary As String
             Public Rev As Revision
             Public Target As Revision
-
-        End Structure
-
-        Public Structure Pair
-
-            Public Sub New(ByVal first As Object, ByVal second As Object)
-                Me.First = first
-                Me.Second = second
-            End Sub
-
-            Dim First As Object
-            Dim Second As Object
 
         End Structure
 
@@ -592,11 +587,11 @@ Namespace Huggle
 
         End Structure
 
-        Public Enum ConflictAction As Integer
+        Friend Enum ConflictAction As Integer
             : Ignore : Retry : Abort : Prompt
         End Enum
 
-        Public Enum WatchAction As Integer
+        Friend Enum WatchAction As Integer
             : NoChange : Watch : Unwatch : Preferences
         End Enum
 
@@ -652,94 +647,5 @@ Namespace Huggle
         End Property
 
     End Class
-
-    <Diagnostics.DebuggerDisplay("{ToString()}")> _
-    Public Structure TS
-
-        Private State As Integer
-
-        Private Shared ReadOnly _False As New TS With {.State = 1}
-        Private Shared ReadOnly _True As New TS With {.State = 2}
-        Private Shared ReadOnly _Undefined As New TS With {.State = 0}
-
-        Public Shared ReadOnly Property [False]() As TS
-            Get
-                Return _False
-            End Get
-        End Property
-
-        Public Shared ReadOnly Property [True]() As TS
-            Get
-                Return _True
-            End Get
-        End Property
-
-        Public Shared ReadOnly Property Undefined() As TS
-            Get
-                Return _Undefined
-            End Get
-        End Property
-
-        Public Shared Operator =(ByVal a As TS, ByVal b As TS) As Boolean
-            Return a.State = b.State
-        End Operator
-
-        Public Shared Operator <>(ByVal a As TS, ByVal b As TS) As Boolean
-            Return a.State <> b.State
-        End Operator
-
-        Public Shared Operator IsFalse(ByVal item As TS) As Boolean
-            Return item.State = 1
-        End Operator
-
-        Public Shared Operator IsTrue(ByVal item As TS) As Boolean
-            Return item.State = 2
-        End Operator
-
-        Public ReadOnly Property IsFalse() As Boolean
-            Get
-                Return State = 1
-            End Get
-        End Property
-
-        Public ReadOnly Property IsTrue() As Boolean
-            Get
-                Return State = 2
-            End Get
-        End Property
-
-        Public ReadOnly Property IsUndefined() As Boolean
-            Get
-                Return State = 0
-            End Get
-        End Property
-
-        Public Overrides Function Equals(ByVal obj As Object) As Boolean
-            Return (TypeOf obj Is TS AndAlso CType(obj, TS).State = State)
-        End Function
-
-        Public Overrides Function GetHashCode() As Integer
-            Return State.GetHashCode
-        End Function
-
-        Public Overrides Function ToString() As String
-            Select Case State
-                Case 1 : Return Boolean.FalseString
-                Case 2 : Return Boolean.TrueString
-                Case Else : Return "Undefined"
-            End Select
-        End Function
-
-        Public Shared Widening Operator CType(ByVal x As Boolean) As TS
-            Return If(x, TS.True, TS.False)
-        End Operator
-
-        Public Shared Narrowing Operator CType(ByVal x As TS) As Boolean
-            If x.IsTrue Then Return False
-            If x.IsFalse Then Return True
-            Throw New ArgumentException
-        End Operator
-
-    End Structure
 
 End Namespace

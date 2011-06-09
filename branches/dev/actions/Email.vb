@@ -1,4 +1,4 @@
-﻿Namespace Huggle.Actions
+﻿Namespace Huggle.Queries
 
     'E-mail a user
 
@@ -51,19 +51,19 @@
             OnStarted()
 
             'Get token
-            If Session.EditToken Is Nothing Then
+            If Not Session.HasTokens Then
                 Dim tokenQuery As New TokenQuery(Session)
                 tokenQuery.Start()
                 If tokenQuery.IsFailed Then OnFail(tokenQuery.Result) : Return
             End If
 
             'Create query string
-            Dim query As New QueryString( _
-                "action", "emailuser", _
-                "target", User.Name, _
-                "subject", Subject, _
-                "text", Text, _
-                "token", Session.EditToken)
+            Dim query As New QueryString(
+                "action", "emailuser",
+                "target", User.Name,
+                "subject", Subject,
+                "text", Text,
+                "token", Session.Tokens("email"))
 
             If CopyMe Then query.Add("ccme")
 

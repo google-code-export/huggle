@@ -1,4 +1,4 @@
-﻿Imports Huggle.Actions
+﻿Imports Huggle.Net
 Imports System
 Imports System.Collections.Generic
 Imports System.Globalization
@@ -15,16 +15,20 @@ Namespace Huggle
         Private Shared _Global As GlobalConfig
         Private Shared _Local As LocalConfig
 
-        Private _IsLoaded As Boolean
-
-        Private LocalMissing As Boolean
-
         Private Shared ReadOnly UpdateInterval As New TimeSpan(12, 0, 0)
 
-        Protected MustOverride ReadOnly Property Location() As String
+        Protected MustOverride Function Key() As String
+
+        Protected Overridable Function Location() As String
+            Return ""
+        End Function
+
         Protected MustOverride Sub ReadConfig(ByVal text As String)
         Public MustOverride Function WriteConfig(ByVal target As ConfigTarget) As Dictionary(Of String, Object)
 
+        Private _IsLoaded As Boolean
+
+        Protected Property ExistsLocally As Boolean
         Public Property Updated As Date
 
         Public Shared ReadOnly Property [Global] As GlobalConfig
@@ -47,16 +51,6 @@ Namespace Huggle
                 Return _BaseLocation
             End Get
         End Property
-
-        Private Shared Function GetValidCloudKey(ByVal str As String) As String
-            Const validKeyChars As String = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_"
-
-            For i As Integer = 0 To str.Length - 1
-                If Not validKeyChars.Contains(str(i)) Then str = str.Replace(str(i), "_")
-            Next i
-
-            Return str
-        End Function
 
         Public ReadOnly Property IsCurrent() As Boolean
             Get
@@ -219,24 +213,22 @@ Namespace Huggle
         End Function
 
         Public Sub LoadCloud()
-            Dim cloudQuery As New CloudQuery(Config.GetValidCloudKey(Location))
-            cloudQuery.Start()
+            Dim req As KeyValueRequest = SharedStorage.GetProvider.LoadData(Key)
+            req.Start()
 
-            If cloudQuery.IsFailed Then
-                Log.Write(cloudQuery.Result.LogMessage)
+            If req.IsFailed Then
+                Log.Write(req.Result.LogMessage)
+            ElseIf req.Value Is Nothing Then
+                Log.Debug("Not found in cloud: {0}".FormatI(Location))
             Else
-                If cloudQuery.Value Is Nothing Then
-                    Log.Debug("Not found in cloud: {0}".FormatI(Location))
-                Else
-                    Log.Debug("Load from cloud: {0}".FormatI(Location))
-                    Load(cloudQuery.Value)
-                End If
+                Log.Debug("Load from cloud: {0}".FormatI(Location))
+                Load(req.Value)
             End If
         End Sub
 
         Public Overridable Sub LoadLocal()
-            If Not LocalMissing Then Load(LoadFile(Location))
-            If Not IsLoaded Then LocalMissing = True
+            If ExistsLocally Then Load(LoadFile(Location))
+            If Not IsLoaded Then ExistsLocally = False
         End Sub
 
         Public Overridable Sub Load(ByVal text As String)
@@ -268,11 +260,11 @@ Namespace Huggle
         End Function
 
         Public Sub SaveCloud()
-            Dim cloudQuery As New CloudStore(Config.GetValidCloudKey(Location), Save(ConfigTarget.Cloud))
-            cloudQuery.Start()
+            Dim req As Request = SharedStorage.GetProvider.SaveData(Location, Save(ConfigTarget.Cloud))
+            req.Start()
 
-            If cloudQuery.IsFailed Then
-                Log.Write(cloudQuery.Result.LogMessage)
+            If req.IsFailed Then
+                Log.Write(req.Result.LogMessage)
             Else
                 Log.Debug("Save to cloud: {0}".FormatI(Location))
             End If
@@ -280,27 +272,46 @@ Namespace Huggle
 
         Public Overridable Sub SaveLocal()
             Config.SaveFile(Location, Save(ConfigTarget.Local))
-            LocalMissing = False
+            ExistsLocally = True
         End Sub
 
         Protected Function Save(ByVal target As ConfigTarget) As String
             Return MakeConfig(WriteConfig(target))
         End Function
 
-        Protected Shared Sub SaveFile(ByVal location As String, ByVal contents As String)
+        Protected Shared Function SaveFile(ByVal location As String, ByVal contents As String) As Boolean
             Try
-                Dim filePath As String = PathCombine(Config.BaseLocation, location & ".txt")
+                Dim filePath As String = PathCombine(BaseLocation, location & ".txt")
 
                 If Not Directory.Exists(Path.GetDirectoryName(filePath)) _
                     Then Directory.CreateDirectory(Path.GetDirectoryName(filePath))
 
                 IO.File.WriteAllText(filePath, contents, Encoding.UTF8)
                 Log.Debug("Save to local: {0}".FormatI(location))
+                Return True
 
             Catch ex As SystemException
                 Log.Write(Result.FromException(ex).Wrap(Msg("config-localsaveerror", location)).LogMessage)
+                Return False
             End Try
-        End Sub
+        End Function
+
+        Protected Shared Function DeleteFile(ByVal location As String) As Boolean
+            Try
+                Dim filePath As String = PathCombine(Config.BaseLocation, location & ".txt")
+
+                If IO.File.Exists(filePath) Then
+                    IO.File.Delete(filePath)
+                    Log.Debug("Delete from local: {0}".FormatI(location))
+                End If
+                
+                Return True
+
+            Catch ex As SystemException
+                Log.Debug(Result.FromException(ex).Wrap(Msg("Unable to delete file")).LogMessage)
+                Return False
+            End Try
+        End Function
 
     End Class
 
@@ -317,7 +328,7 @@ Namespace Huggle
 
     End Class
 
-    Public Enum ConfigTarget As Integer
+    Friend Enum ConfigTarget As Integer
         : Local : Cloud : Wiki
     End Enum
 

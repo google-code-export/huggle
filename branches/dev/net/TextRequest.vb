@@ -1,7 +1,7 @@
 ﻿Imports System
 Imports System.Text
 
-Namespace Huggle
+Namespace Huggle.Net
 
     'Represents a request for a text document
 

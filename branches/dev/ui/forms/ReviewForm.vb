@@ -11,9 +11,12 @@ Namespace Huggle.UI
         Private Session As Session
 
         Public Sub New(ByVal session As Session, ByVal revision As Revision)
-            InitializeComponent()
+            ThrowNull(session, "session")
+            ThrowNull(revision, "revision")
             Me.Session = session
             _Revision = revision
+
+            InitializeComponent()
         End Sub
 
         Public ReadOnly Property Comment() As String

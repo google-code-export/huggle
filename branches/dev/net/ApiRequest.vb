@@ -1,11 +1,12 @@
-﻿Imports System
+﻿Imports Huggle.Net
+Imports System
 Imports System.Collections.Generic
 Imports System.Net
 Imports System.Text
 Imports System.Web.HttpUtility
 Imports System.Xml
 
-Namespace Huggle
+Namespace Huggle.Queries
 
     'Represents a read or write request made to MediaWiki's API (api.php)
 
@@ -18,6 +19,7 @@ Namespace Huggle
         Private _LoginToken As String
         Private _Query As QueryString
         Private _ResponseXml As XmlDocument
+        Private _Server As String
         Private _Strings As New List(Of String)
         Private _Warnings As New List(Of String)
 
@@ -83,6 +85,12 @@ Namespace Huggle
             End Get
         End Property
 
+        Public ReadOnly Property Server As String
+            Get
+                Return _Server
+            End Get
+        End Property
+
         Public ReadOnly Property Strings() As List(Of String)
             Get
                 Return _Strings
@@ -96,12 +104,32 @@ Namespace Huggle
         End Property
 
         Public Overrides Sub Start()
-            Url = If(Session.IsSecure, Wiki.SecureUrl, Wiki.Url)
-            If Url Is Nothing Then OnFail(Msg("error-wikibadurl", Wiki)) : Return
-            Url = New Uri(Url.ToString & "api.php")
+            If Wiki.ApiModules.Checked Then
+                If Query("action") IsNot Nothing Then
+                    Dim m As ApiModule = Wiki.ApiModules(Query("action").ToString)
 
-            Query.Merge(Continues)
+                    If Not m.IsImplemented Then OnFail(Msg("error-apimodulenotimpl", m.Name), "apimodulenotimpl") : Return
+                    If Not m.IsEnabled Then OnFail(Msg("error-apimoduledisabled", m.Name), "apimoduledisabled") : Return
+                End If
+
+                If Query("list") IsNot Nothing Then
+                    Dim m As ApiModule = Wiki.ApiModules(Query("list").ToString)
+                    If Not m.IsImplemented Then OnFail(Msg("error-apimodulenotimpl", m.Name), "apimodulenotimpl") : Return
+                    If Not m.IsEnabled Then OnFail(Msg("error-apimoduledisabled", m.Name), "apimoduledisabled") : Return
+                End If
+
+                If Query("meta") IsNot Nothing Then
+                    Dim m As ApiModule = Wiki.ApiModules(Query("meta").ToString)
+                    If Not m.IsImplemented Then OnFail(Msg("error-apimodulenotimpl", m.Name), "apimodulenotimpl") : Return
+                    If Not m.IsEnabled Then OnFail(Msg("error-apimoduledisabled", m.Name), "apimoduledisabled") : Return
+                End If
+            End If
+
+            Url = New Uri(If(Session.IsSecure, Wiki.SecureUrl, Wiki.Url), "api.php")
+            If Url Is Nothing Then OnFail(Msg("error-wikibadurl", Wiki)) : Return
+
             Query.Add("format", "xml")
+            Query.Merge(Continues)
 
             For Each item As Object In Query.Values.Values
                 If TypeOf item Is Byte() Then IsMultipart = True

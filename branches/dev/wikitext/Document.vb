@@ -13,6 +13,7 @@ Namespace Huggle.Wikitext
     <Diagnostics.DebuggerDisplay("{Text}")>
     Friend Class Document
 
+        Private _BodyText As String
         Private _Page As Page
         Private _ParseableText As String
         Private _Text As String
@@ -27,6 +28,8 @@ Namespace Huggle.Wikitext
         Private _Threads As CommentCollection
         Private _Transclusions As TransclusionCollection
 
+        Private Shared ReadOnly NULL As Char = Convert.ToChar(0)
+
         Public Sub New(ByVal page As Page, Optional ByVal text As String = Nothing)
             _Page = page
             _Text = If(text, If(page.Text, ""))
@@ -38,13 +41,38 @@ Namespace Huggle.Wikitext
             _Wiki = wiki
         End Sub
 
+        Public ReadOnly Property BodyText As String
+            Get
+                If _BodyText IsNot Nothing Then Return _BodyText
+
+                Dim result As String = Text
+
+                For Each link As CategoryLink In CategoryLinks.All
+                    result = result.Replace(link.Selection, NULL.Duplicate(link.Selection.Length))
+                Next link
+
+                For Each transclusion As Transclusion In Transclusions.All
+                    result = result.Replace(transclusion.Selection, NULL.Duplicate(transclusion.Selection.Length))
+                Next transclusion
+
+                For Each link As Link In Links.All
+
+                Next link
+
+                result = result.TrimEnd(CR, LF, " "c)
+
+                _BodyText = result
+                Return _BodyText
+            End Get
+        End Property
+
         Public ReadOnly Property Bytes() As Integer
             Get
                 Return Encoding.UTF8.GetBytes(Text).GetLength(0)
             End Get
         End Property
 
-        Public ReadOnly Property Categories() As CategoryLinkCollection
+        Public ReadOnly Property CategoryLinks() As CategoryLinkCollection
             Get
                 If _CategoryLinks Is Nothing Then _CategoryLinks = New CategoryLinkCollection(Me)
                 Return _CategoryLinks
@@ -140,6 +168,7 @@ Namespace Huggle.Wikitext
             Set(ByVal value As String)
                 _Text = value
 
+                _BodyText = Nothing
                 _ParseableText = Nothing
                 _Sections = Nothing
                 _Tables = Nothing
@@ -180,7 +209,7 @@ Namespace Huggle.Wikitext
                 Dim epos As Integer = _ParseableText.IndexOfI("</nowiki>", Math.Max(spos, 0))
 
                 While spos > -1 AndAlso epos > spos
-                    _ParseableText = _ParseableText.Remove(spos, epos - spos).Insert(spos, _
+                    _ParseableText = _ParseableText.Remove(spos, epos - spos).Insert(spos,
                         (New StringBuilder).Append(Convert.ToChar(0), epos - spos).ToString)
                 End While
 

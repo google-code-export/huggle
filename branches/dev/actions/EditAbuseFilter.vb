@@ -1,4 +1,6 @@
-﻿Namespace Huggle.Actions
+﻿Imports Huggle.Net
+
+Namespace Huggle.Queries
 
     'Edit an abuse filter
     'TODO: Convert this to use the API if it ever supports editing abuse filters
@@ -24,7 +26,7 @@
             OnStarted()
 
             'Get token
-            If Session.EditToken Is Nothing Then
+            If Not Session.HasTokens Then
                 Dim tokenQuery As New TokenQuery(Session)
                 tokenQuery.Start()
                 If tokenQuery.IsErrored Then OnFail(tokenQuery.Result.Wrap(Msg("error-notoken"))) : Return
@@ -55,7 +57,7 @@
                 "wpFilterThrottleGroups", Filter.RateLimit.Groups.Join(LF),
                 "wpFilterWarnMessage", Filter.WarningMessage,
                 "wpFilterWarnMessageOther", Filter.WarningMessage,
-                "wpToken", Session.EditToken)
+                "wpToken", Session.Tokens("abusefilter"))
 
             Dim req As New UIRequest(Session, Description, query, data)
             req.Start()

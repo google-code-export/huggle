@@ -1,11 +1,10 @@
-﻿Namespace Huggle.Actions
+﻿Namespace Huggle.Queries
 
     'Retrieve abuse log entries
 
     Class AbuseInfoQuery : Inherits Query
 
         Private _Filter As AbuseFilter
-        Private _Limit As Integer
         Private _Page As Page
         Private _Target As User
 
@@ -35,13 +34,6 @@
         End Property
 
         Public Property Limit() As Integer
-            Get
-                Return _Limit
-            End Get
-            Set(ByVal value As Integer)
-                _Limit = value
-            End Set
-        End Property
 
         Public ReadOnly Property Page() As Page
             Get
@@ -59,13 +51,13 @@
             OnProgress(Msg("abuseinfo-progress"))
             OnStarted()
 
-            Dim query As New QueryString( _
-                "action", "query", _
-                "list", "abuselog", _
-                "afllimit", "max", _
-                "afltitle", Page, _
-                "afluser", User, _
-                "aflfilter", Filter, _
+            Dim query As New QueryString(
+                "action", "query",
+                "list", "abuselog",
+                "afllimit", "max",
+                "afltitle", Page,
+                "afluser", User,
+                "aflfilter", Filter,
                 "aflprop", "ids|filter|user|ip|title|action|result|timestamp")
 
             Dim req As New ApiRequest(Session, Description, query)

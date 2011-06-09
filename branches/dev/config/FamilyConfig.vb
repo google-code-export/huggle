@@ -1,4 +1,5 @@
-﻿Imports System
+﻿Imports Huggle.Net
+Imports System
 Imports System.Collections.Generic
 Imports System.IO
 Imports System.Text
@@ -17,11 +18,13 @@ Namespace Huggle
             Me.Family = family
         End Sub
 
-        Protected Overrides ReadOnly Property Location() As String
-            Get
-                Return PathCombine("family", GetValidFileName(Family.Code))
-            End Get
-        End Property
+        Protected Overrides Function Key() As String
+            Return GetValidFileName(Family.Code)
+        End Function
+
+        Protected Overrides Function Location() As String
+            Return "family"
+        End Function
 
         Protected Overrides Sub ReadConfig(ByVal text As String)
             For Each item As KVP In Config.ParseConfig("family", Nothing, text)

@@ -1,25 +1,25 @@
 ﻿Imports System.Collections.Generic
 Imports System.Web.HttpUtility
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
     Class ExpandTemplatesQuery : Inherits Query
 
         Private Items As List(Of String), Page As Page
 
-        Public Sub New(ByVal session As Session, ByVal Items As List(Of String), Optional ByVal Page As Page = Nothing)
+        Public Sub New(ByVal session As Session, ByVal items As List(Of String), Optional ByVal page As Page = Nothing)
             MyBase.New(session, Msg("expandtemplates-desc"))
-            Me.Items = Items
-            Me.Page = Page
+            Me.Items = items
+            Me.Page = page
         End Sub
 
         Public Overrides Sub Start()
             OnProgress(Msg("expandtemplates-progress"))
             OnStarted()
 
-            Dim Request As New ApiRequest(Session, Description, New QueryString( _
-                "action", "expandtemplates", _
-                "text", Items.Join(Separator), _
+            Dim Request As New ApiRequest(Session, Description, New QueryString(
+                "action", "expandtemplates",
+                "text", Items.Join(Separator),
                 "title", Page))
 
             Request.Start()

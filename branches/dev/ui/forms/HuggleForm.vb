@@ -11,6 +11,8 @@ Namespace Huggle.UI
 
         Private _IsAvailable As Boolean
 
+        Public Shadows Event Load As EventHandler
+
         Public Sub New()
 
         End Sub
@@ -69,6 +71,26 @@ Namespace Huggle.UI
             For Each child As Control In control.Controls
                 DoResizeEnd(child)
             Next child
+        End Sub
+
+        Private Sub _Load() Handles MyBase.Load
+            'Exceptions thrown in Load event handlers are silently swallowed by the framework
+            'Initialization is wrapped in try block to avoid this
+            Try
+                RaiseEvent Load(Me, EventArgs.Empty)
+
+            Catch ex As Exception
+                Try
+                    App.ShowError(Result.FromException(ex))
+
+                Catch ex2 As Exception
+                    'Error showing the error form. Better give up...
+                    Log.Write("Error showing error form: " & Result.FromException(ex2).LogMessage)
+                End Try
+
+                DialogResult = DialogResult.Abort
+                Close()
+            End Try
         End Sub
 
     End Class

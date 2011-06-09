@@ -1,6 +1,6 @@
 ﻿Imports System
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
     'Load non-essential global user configuration
 
@@ -17,10 +17,10 @@ Namespace Huggle.Actions
             OnStarted()
             OnProgress(Msg("globaluserconfig-progress", GlobalUser.FullName))
 
-            Dim globalUsers As New ApiRequest(Session, Description, New QueryString( _
-                "action", "query", _
-                "meta", "globaluserinfo", _
-                "guiprop", "groups|rights|merged|unattached", _
+            Dim globalUsers As New ApiRequest(Session, Description, New QueryString(
+                "action", "query",
+                "meta", "globaluserinfo",
+                "guiprop", "groups|rights|merged|unattached",
                 "guiuser", GlobalUser.Name))
 
             globalUsers.Timeout = New TimeSpan(0, 0, 30)

@@ -1,4 +1,4 @@
-﻿Imports Huggle.Actions
+﻿Imports Huggle.Queries
 Imports System
 Imports System.Collections.Generic
 Imports System.Windows.Forms
@@ -33,7 +33,7 @@ Namespace Huggle.UI
 
         Private Sub GroupList_SelectedIndexChanged() Handles GroupList.SelectedIndexChanged
             SubSplitter.Visible = (GroupList.HasSelectedItems)
-            If GroupList.HasSelectedItems Then Return
+            If Not GroupList.HasSelectedItems Then Return
 
             Dim selectedGroup As GlobalGroup = Family.GlobalGroups(GroupList.Items(GroupList.SelectedIndices(0)).Text)
             GroupName.Text = selectedGroup.DisplayName

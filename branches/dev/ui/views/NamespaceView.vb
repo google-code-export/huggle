@@ -17,8 +17,8 @@ Namespace Huggle.UI
 
             For Each space As Space In Wiki.Spaces.All
                 Dim props As New List(Of String)
-                If space.IsSpecial Then props.Add(Msg("view-namespace-special"))
-                If space.IsContent Then props.Add(Msg("view-namespace-content"))
+                If space.IsSpecialSpace Then props.Add(Msg("view-namespace-special"))
+                If space.IsContentSpace Then props.Add(Msg("view-namespace-content"))
                 If space.IsCustom Then props.Add(Msg("view-namespace-custom"))
                 If space.IsEditRestricted Then props.Add(Msg("view-namespace-restricted"))
                 If space.IsMoveRestricted Then props.Add(Msg("view-namespace-moverestricted"))

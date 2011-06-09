@@ -8,8 +8,10 @@ Namespace Huggle.UI
         Private Session As Session
 
         Public Sub New(ByVal session As Session)
-            InitializeComponent()
+            ThrowNull(session, "session")
             Me.Session = session
+
+            InitializeComponent()
         End Sub
 
         Private ReadOnly Property User() As User
@@ -25,22 +27,15 @@ Namespace Huggle.UI
         End Property
 
         Private Sub _Load() Handles Me.Load
-            Try
-                'Finish loading extra config
-                If Not Wiki.Config.ExtraConfigLoaded Then
-                    App.UserWaitForProcess(User.Wiki.Config.ExtraLoader)
-                    If Wiki.Config.ExtraLoader.IsFailed Then App.ShowError(Wiki.Config.ExtraLoader.Result) : Close() : Return
-                End If
+            'Finish loading extra config
+            If Not Wiki.Config.ExtraConfigLoaded Then
+                App.UserWaitForProcess(User.Wiki.Config.ExtraLoader)
+                If Wiki.Config.ExtraLoader.IsFailed Then App.ShowError(Wiki.Config.ExtraLoader.Result) : Close() : Return
+            End If
 
-                Icon = Resources.Icon
-                Text = Msg("accountprop-title", User.Name)
-                LoadData()
-
-            Catch ex As SystemException
-                App.ShowError(Result.FromException(ex))
-                DialogResult = DialogResult.Abort
-                Close()
-            End Try
+            Icon = Resources.Icon
+            Text = Msg("accountprop-title", User.Name)
+            LoadData()
         End Sub
 
         Private Shared Function FuzzyContribCount(ByVal contribs As Integer) As String

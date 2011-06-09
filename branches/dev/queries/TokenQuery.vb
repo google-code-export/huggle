@@ -1,4 +1,4 @@
-﻿Namespace Huggle.Actions
+﻿Namespace Huggle.Queries
 
     'Retrieve edit token
 
@@ -12,18 +12,19 @@
             OnProgress(Msg("token-progress"))
             OnStarted()
 
-            Dim req As New ApiRequest(Session, Description, New QueryString( _
-                "action", "query", _
-                "prop", "info", _
-                "titles", "-", _
-                "intoken", "edit"))
+            Dim req As New ApiRequest(Session, Description, New QueryString(
+                "action", "query",
+                "prop", "info",
+                "titles", "-",
+                "intoken", "edit|delete|protect|move|block|unblock|email|import|watch"))
 
             req.Start()
             If req.IsErrored Then OnFail(req.Result.Wrap(Msg("error-notoken"))) : Return
 
             'If the request succeeds but no token was extracted, the response is broken or its format has changed
-            If Session.EditToken Is Nothing Then OnFail(Msg("error-notoken")) : Return
+            If Session.Tokens("edit") Is Nothing Then OnFail(Msg("error-notoken")) : Return
 
+            Session.HasTokens = True
             OnSuccess()
         End Sub
 

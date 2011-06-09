@@ -1,4 +1,4 @@
-﻿Imports Huggle.Actions
+﻿Imports Huggle.Queries
 Imports System
 Imports System.Collections.Generic
 Imports System.IO
@@ -21,11 +21,13 @@ Namespace Huggle
             Me.GlobalUser = globalUser
         End Sub
 
-        Protected Overrides ReadOnly Property Location() As String
-            Get
-                Return PathCombine("globaluser", GetValidFileName(GlobalUser.FullName))
-            End Get
-        End Property
+        Protected Overrides Function Key() As String
+            Return GetValidFileName(GlobalUser.FullName)
+        End Function
+
+        Protected Overrides Function Location() As String
+            Return "globaluser"
+        End Function
 
         Protected Overrides Sub ReadConfig(ByVal text As String)
             For Each item As KVP In Config.ParseConfig("globaluser", Nothing, text)

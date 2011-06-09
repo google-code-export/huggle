@@ -1,13 +1,12 @@
 ﻿Imports System.Collections.Generic
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
     'Purge one or more pages
 
     Friend Class Purge : Inherits Query
 
         Private _Pages As List(Of Page)
-        Private _Watch As WatchAction
 
         Public Sub New(ByVal session As Session, ByVal page As Page)
             MyBase.New(session, Msg("purge-desc"))
@@ -26,13 +25,6 @@ Namespace Huggle.Actions
         End Property
 
         Public Property Watch() As WatchAction
-            Get
-                Return _Watch
-            End Get
-            Set(ByVal value As WatchAction)
-                _Watch = value
-            End Set
-        End Property
 
         Public Overrides Sub Start()
             OnStarted()
@@ -41,8 +33,8 @@ Namespace Huggle.Actions
                 Else OnProgress(Msg("purge-progress-multi", Pages.Count))
 
             'Create query string
-            Dim query As New QueryString( _
-                "action", "purge", _
+            Dim query As New QueryString(
+                "action", "purge",
                 "titles", Pages.ToStringArray.Join("|"))
 
             'Purge the page(s)

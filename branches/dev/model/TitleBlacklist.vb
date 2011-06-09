@@ -213,11 +213,11 @@ Namespace Huggle
 
     End Class
 
-    Public Enum TitleListOption As Integer
+    Friend Enum TitleListOption As Integer
         : AutoConfirmed : CaseSensitive : MoveOnly : NoEdit : NewAccountOnly : ReUpload
     End Enum
 
-    Public Enum TitleListAction As Integer
+    Friend Enum TitleListAction As Integer
         : Edit : Create : CreateAccount : Move : ReUpload : Upload
     End Enum
 

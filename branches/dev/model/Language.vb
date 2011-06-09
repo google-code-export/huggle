@@ -90,10 +90,17 @@ Namespace Huggle
 
         Private Sub LocalizeListView(ByVal listView As EnhancedListView, ByVal prefix As String)
             For Each column As ColumnHeader In listView.Columns
-                Dim columnName As String = column.Text.ToLowerI.Remove(" ")
-                If Messages.ContainsKey("view-misc-column-" & columnName) _
-                    Then column.Text = Msg("view-misc-column-" & columnName) _
-                    Else column.Text = Msg(prefix & "-column-" & column.Text.ToLowerI.Remove(" "))
+                'ColumnHeader has a Name property which can be set at design time
+                'but it is always empty at run time
+                Dim columnName As String = column.Text.Remove(" ").ToLowerI
+
+                If Messages.ContainsKey("view-misc-column-" & columnName) Then
+                    column.Text = Msg("view-misc-column-" & columnName)
+                ElseIf Messages.ContainsKey(prefix & "-column-" & columnName) Then
+                    column.Text = Msg(prefix & "-column-" & columnName)
+                Else
+                    column.Text = "[" & columnName & "]"
+                End If
             Next column
         End Sub
 

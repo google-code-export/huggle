@@ -1,26 +1,27 @@
-﻿Imports System
-Imports System.Drawing
-Imports System.IO
+﻿Imports Huggle.Net
+Imports System
 Imports System.Net
-Imports System.Security
 Imports System.Text
 Imports System.Text.RegularExpressions
 Imports System.Windows.Forms
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
     Friend Class CreateAccount : Inherits Query
 
-        Private Confirmation As Confirmation
         Private NewUser As User
 
-        Public Sub New(ByVal session As Session, ByVal newUser As User, ByVal confirmation As Confirmation)
+        Public Sub New(ByVal session As Session, ByVal newUser As User)
             MyBase.New(session, Msg("createaccount-desc", session.Wiki, newUser))
             Interactive = True
 
-            Me.Confirmation = confirmation
+            ThrowNull(newUser, "newUser")
             Me.NewUser = newUser
         End Sub
+
+        Public Property Confirmation As Confirmation
+
+        Public Property Reason As String
 
         Public Overrides Sub Start()
             OnProgress(Msg("createaccount-progress", NewUser.FullName))
@@ -32,7 +33,7 @@ Namespace Huggle.Actions
             tokenReq.Start()
             If tokenReq.IsFailed Then OnFail(tokenReq.Result) : Return
 
-            Dim tokenMatch As Match = Regex.Match(tokenReq.Response, _
+            Dim tokenMatch As Match = Regex.Match(tokenReq.Response,
                 "<[^>]+name=""wpCreateaccountToken"" value=""([^""]+)""[^>]+>", RegexOptions.Compiled)
             Dim token As String = Nothing
 
@@ -40,19 +41,21 @@ Namespace Huggle.Actions
 
             'Construct query string
             Dim query As New QueryString(
-                "title", "Special:UserLogin", "action", "submitlogin", "type", "signup")
+                "title", "Special:UserLogin",
+                "action", "submitlogin",
+                "type", "signup")
 
             Dim data As New QueryString(
                 "wpName", NewUser.Name,
                 "wpPassword", Unscramble(NewUser.FullName, NewUser.Password, Hash(NewUser)),
                 "wpRetype", Unscramble(NewUser.FullName, NewUser.Password, Hash(NewUser)),
                 "wpRemember", 1,
-                "wpCreateaccount", "Create account")
+                "wpReason", Reason,
+                "wpCreateaccount", "Create account",
+                "wpCreateaccountToken", token)
 
             If Confirmation IsNot Nothing _
                 Then data.Merge("wpCaptchaId", Confirmation.Id, "wpCaptchaWord", Confirmation.Answer)
-
-            If token IsNot Nothing Then data.Merge("wpCreateaccountToken", token)
 
             'No API for account creation, must use Special:CreateAccount
             Dim createreq As New UIRequest(Session, Description, query, data)
@@ -75,7 +78,7 @@ Namespace Huggle.Actions
                 User.IsLoaded = False
             End If
 
-            NewUser.IsUsed = True
+            Wiki.Users.Used.Merge(NewUser)
             Config.Local.SaveLocal()
             OnSuccess()
         End Sub

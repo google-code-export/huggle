@@ -9,9 +9,11 @@ Namespace Huggle.UI
         Private User As User
 
         Public Sub New(ByVal user As User, ByVal requester As String)
-            InitializeComponent()
+            ThrowNull(user, "user")
             Me.Requester = requester
             Me.User = user
+
+            InitializeComponent()
         End Sub
 
         Private Sub _FormClosing() Handles Me.FormClosing

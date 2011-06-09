@@ -4,7 +4,7 @@ Imports System.Windows.Forms
 
 Namespace Huggle
 
-    Public NotInheritable Class InternalConfig
+    Friend NotInheritable Class InternalConfig
 
         Private Sub New()
             '
@@ -20,6 +20,8 @@ Namespace Huggle
         Public Shared Property GlobalExtensions As New List(Of String) _
             ({"Central Auth", "Global Usage", "MergeAccount", "CentralNotice", "GlobalBlocking"})
 
+        Public Shared Property GlobalTitleBlacklistLocation As String = "Title blacklist"
+
         Public Shared Property ManualUrl As New Uri("http://en.wikipedia.org/wiki/Wikipedia:Huggle/Manual")
         Public Shared Property MediaWikiUrl As New Uri("http://www.mediawiki.org/")
         Public Shared Property PrivilegedRights As New List(Of String) _
@@ -31,7 +33,6 @@ Namespace Huggle
         Public Shared Property UserAgent As String = "Huggle/" & Windows.Forms.Application.ProductVersion
         Public Shared Property WMFilePath As String = "http://upload.wikimedia.org/"
         Public Shared Property WMSecurePath As String = "https://secure.wikimedia.org/"
-        Public Shared Property WMClosedWikisUrl As New Uri("http://noc.wikimedia.org/conf/closed.dblist")
         Public Shared Property WMGlobalGroupsUrl As New Uri("http://toolserver.org/~pathoschild/globalgroups/")
 
         Public Shared Property MessageGroups As List(Of String)

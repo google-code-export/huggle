@@ -1,13 +1,15 @@
-﻿Namespace Huggle.Actions
+﻿Namespace Huggle.Queries
 
     Friend Class Unblock : Inherits Query
 
         Private _Summary As String
         Private _Target As User
-        Private _Watch As WatchAction
 
         Public Sub New(ByVal session As Session, ByVal target As User, ByVal summary As String)
             MyBase.New(session, Msg("unblock-desc", target))
+
+            ThrowNull(target, "target")
+
             _Summary = summary
             _Target = target
         End Sub
@@ -24,30 +26,24 @@
             End Get
         End Property
 
-        Public Property Watch() As WatchAction
-            Get
-                Return _Watch
-            End Get
-            Set(ByVal value As WatchAction)
-                _Watch = value
-            End Set
-        End Property
+        Public Property Watch As WatchAction
 
         Public Overrides Sub Start()
             OnProgress(Msg("unblock-progress", Target))
             OnStarted()
 
             'Get token
-            If Session.EditToken Is Nothing Then
+            If Not Session.HasTokens Then
                 Dim tokenQuery As New TokenQuery(Session)
                 tokenQuery.Start()
                 If tokenQuery.IsErrored Then OnFail(tokenQuery.Result) : Return
             End If
 
             'Create query string
-            Dim query As New QueryString( _
-                "action", "unblock", _
-                "reason", Summary, _
+            Dim query As New QueryString(
+                "action", "unblock",
+                "reason", Summary,
+                "token", Session.Tokens("unblock"),
                 "user", User)
 
             'Unblock the user

@@ -59,7 +59,7 @@ Namespace Huggle
 
     End Class
 
-    Public Enum GlobalGroupApplicability As Integer
+    Friend Enum GlobalGroupApplicability As Integer
         : All : Exclusive : Inclusive
     End Enum
 

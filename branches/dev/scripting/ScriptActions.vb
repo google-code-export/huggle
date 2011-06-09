@@ -1,4 +1,4 @@
-﻿Imports Huggle.Actions
+﻿Imports Huggle.Queries
 Imports System.Collections.Generic
 
 Namespace Huggle.Scripting
