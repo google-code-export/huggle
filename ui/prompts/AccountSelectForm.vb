@@ -6,25 +6,15 @@ Namespace Huggle.UI
 
         Private _User As User
 
+        Private Requester As String
         Private Wiki As Wiki
 
         Public Sub New(ByVal requester As String, ByVal wiki As Wiki)
-            InitializeComponent()
-            If wiki Is Nothing Then Throw New ArgumentNullException("wiki")
+            ThrowNull(wiki, "wiki")
+            Me.Requester = requester
             Me.Wiki = wiki
 
-            App.Languages.Current.Localize(Me)
-            Request.Text = Msg("secondarylogin-request", requester)
-            Anonymous.Visible = Config.Global.AnonymousLogin
-
-            If wiki.Family IsNot Nothing AndAlso wiki.Family.ActiveGlobalUser IsNot Nothing Then
-                Unified.Visible = False
-                RememberUnified.Visible = False
-            Else
-                Unified.Text = Msg("secondarylogin-unified", wiki.Family.ActiveGlobalUser.Name)
-                Unified.Visible = True
-                RememberUnified.Visible = True
-            End If
+            InitializeComponent()
         End Sub
 
         Public ReadOnly Property User() As User
@@ -32,6 +22,21 @@ Namespace Huggle.UI
                 Return _User
             End Get
         End Property
+
+        Private Sub _Load() Handles Me.Load
+            App.Languages.Current.Localize(Me)
+            Request.Text = Msg("secondarylogin-request", Requester)
+            Anonymous.Visible = Config.Global.AnonymousLogin
+
+            If Wiki.Family IsNot Nothing AndAlso Wiki.Family.ActiveGlobalUser IsNot Nothing Then
+                Unified.Visible = False
+                RememberUnified.Visible = False
+            Else
+                Unified.Text = Msg("secondarylogin-unified", Wiki.Family.ActiveGlobalUser.Name)
+                Unified.Visible = True
+                RememberUnified.Visible = True
+            End If
+        End Sub
 
         Private Sub OK_Click() Handles OK.Click
             If Unified.Checked Then

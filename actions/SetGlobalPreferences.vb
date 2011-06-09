@@ -1,6 +1,6 @@
 ﻿Imports System.Collections.Generic
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
     Friend Class SetGlobalPreferences : Inherits Process
 

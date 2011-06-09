@@ -1,4 +1,4 @@
-﻿Imports Huggle.Actions
+﻿Imports Huggle.Queries
 Imports System.Windows.Forms
 
 Namespace Huggle.UI
@@ -8,8 +8,10 @@ Namespace Huggle.UI
         Private Session As Session
 
         Public Sub New(ByVal session As Session)
-            InitializeComponent()
+            ThrowNull(session, "session")
             Me.Session = session
+
+            InitializeComponent()
         End Sub
 
         Private Sub _Load() Handles Me.Load

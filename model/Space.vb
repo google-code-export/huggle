@@ -17,7 +17,7 @@ Namespace Huggle
             _Wiki = wiki
             _Number = number
             _IsMovable = True
-            _IsSpecial = (number < 0)
+            _IsSpecialSpace = (number < 0)
             _HasSubpages = True
         End Sub
 
@@ -36,7 +36,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Public Property IsContent() As Boolean
+        Public Property IsContentSpace() As Boolean
 
         Public ReadOnly Property IsCustom() As Boolean
             Get
@@ -47,17 +47,17 @@ Namespace Huggle
         Public Property IsEditRestricted() As Boolean
         Public Property IsMovable() As Boolean
         Public Property IsMoveRestricted() As Boolean
-        Public Property IsSpecial() As Boolean
+        Public Property IsSpecialSpace() As Boolean
 
         Public ReadOnly Property IsSubjectSpace() As Boolean
             Get
-                Return (Number Mod 2 = 0) AndAlso Not IsSpecial
+                Return (Number Mod 2 = 0) AndAlso Not IsSpecialSpace
             End Get
         End Property
 
         Public ReadOnly Property IsTalkSpace() As Boolean
             Get
-                Return (Number Mod 2 = 1) AndAlso Not IsSpecial
+                Return (Number Mod 2 = 1) AndAlso Not IsSpecialSpace
             End Get
         End Property
 
@@ -84,14 +84,14 @@ Namespace Huggle
 
         Public ReadOnly Property SubjectSpace() As Space
             Get
-                If IsSpecial Then Return Nothing
+                If IsSpecialSpace Then Return Nothing
                 If IsTalkSpace Then Return Wiki.Spaces(Number - 1) Else Return Me
             End Get
         End Property
 
         Public ReadOnly Property TalkSpace() As Space
             Get
-                If IsSpecial Then Return Nothing
+                If IsSpecialSpace Then Return Nothing
                 If IsTalkSpace Then Return Me Else Return Wiki.Spaces(Number + 1)
             End Get
         End Property

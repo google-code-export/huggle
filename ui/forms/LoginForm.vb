@@ -1,4 +1,4 @@
-﻿Imports Huggle.Actions
+﻿Imports Huggle.Queries
 Imports System
 Imports System.Collections.Generic
 Imports System.ComponentModel
@@ -12,7 +12,7 @@ Namespace Huggle.UI
         Private _Session As Session
 
         Private LastSelectedWiki As Wiki
-        Private WikiTypes As New Dictionary(Of String, List(Of Wiki))
+        Private WikisByFamily As New Dictionary(Of String, List(Of Wiki))
         Private User As User
         Private Wiki As Wiki
 
@@ -23,48 +23,41 @@ Namespace Huggle.UI
         End Property
 
         Private Sub _Load() Handles Me.Load
-            Try
-                App.Languages.Current.Localize(Me)
-                Logo.Image = Resources.HuggleLogo
-                Icon = Resources.Icon
-                Text = "{0} {1}".FormatForUser(App.Name, App.VersionString)
+            App.Languages.Current.Localize(Me)
+            Logo.Image = Resources.HuggleLogo
+            Icon = Resources.Icon
+            Text = "{0} {1}".FormatForUser(App.Name, App.VersionString)
 
-                Dim selectedWiki As Wiki = App.Wikis.Global
-                If Config.Global.TopWiki IsNot Nothing AndAlso IsShown(Config.Global.TopWiki) _
-                    Then selectedWiki = Config.Global.TopWiki
-                If Config.Local.LastLogin IsNot Nothing AndAlso IsShown(Config.Local.LastLogin.Wiki) _
-                    Then selectedWiki = Config.Local.LastLogin.Wiki
+            Dim selectedWiki As Wiki = App.Wikis.Global
+            If Config.Global.TopWiki IsNot Nothing AndAlso IsShown(Config.Global.TopWiki) _
+                Then selectedWiki = Config.Global.TopWiki
+            If Config.Local.LastLogin IsNot Nothing AndAlso IsShown(Config.Local.LastLogin.Wiki) _
+                Then selectedWiki = Config.Local.LastLogin.Wiki
 
-                PopulateSelectors()
+            PopulateSelectors()
 
-                FamilySelector.SelectedItem = WikiTypeName(selectedWiki)
-                WikiSelector.SelectedItem = selectedWiki
+            FamilySelector.SelectedItem = WikiTypeName(selectedWiki)
+            WikiSelector.SelectedItem = selectedWiki
 
-                If Config.Local.LastLogin IsNot Nothing Then
-                    If Config.Local.LastLogin.IsAnonymous Then
-                        If Wiki.AnonymousLogin Then Account.SelectedItem = Msg("form-login-anonymous")
-                    Else
-                        If Not Account.Items.Contains(Config.Local.LastLogin) _
-                            Then Account.Items.Add(Config.Local.LastLogin)
-                        Account.SelectedItem = Config.Local.LastLogin
-                    End If
+            If Config.Local.LastLogin IsNot Nothing Then
+                If Config.Local.LastLogin.IsAnonymous Then
+                    If Wiki.AnonymousLogin Then Account.SelectedItem = Msg("form-login-anonymous")
+                Else
+                    If Not Account.Items.Contains(Config.Local.LastLogin) _
+                        Then Account.Items.Add(Config.Local.LastLogin)
+                    Account.SelectedItem = Config.Local.LastLogin
                 End If
+            End If
 
-                RememberMe.Checked = Config.Local.AutoLogin
-                Secure.Checked = Config.Local.SecureLogin
-
-            Catch ex As SystemException
-                App.ShowError(Result.FromException(ex))
-                DialogResult = DialogResult.Abort
-                Close()
-            End Try
+            RememberMe.Checked = Config.Local.AutoLogin
+            Secure.Checked = Config.Local.SecureLogin
         End Sub
 
         Private Shared Function WikiTypeName(ByVal wiki As Wiki) As String
             If wiki.Family Is Nothing Then Return Msg("wikitype-other")
             If wiki.Type Is Nothing Then Return wiki.Family.Name
             If App.Languages.Current.Messages.ContainsKey("wikitype-" & wiki.Type) Then Return Msg("wikitype-" & wiki.Type)
-            Return UcFirst(wiki.Type)
+            Return wiki.Type.ToUpperFirstI
         End Function
 
         Private Shared Function IsShown(ByVal wiki As Wiki) As Boolean
@@ -161,7 +154,7 @@ Namespace Huggle.UI
             WikiSelector.Items.Clear()
 
             If FamilySelector.SelectedItem IsNot Nothing Then
-                For Each wiki As Wiki In WikiTypes(FamilySelector.SelectedItem.ToString)
+                For Each wiki As Wiki In WikisByFamily(FamilySelector.SelectedItem.ToString)
                     If IsShown(wiki) Then WikiSelector.Items.Add(wiki)
                 Next wiki
 
@@ -184,7 +177,7 @@ Namespace Huggle.UI
                 Account.BeginUpdate()
                 Account.Items.Clear()
 
-                For Each user As User In Wiki.Users.All
+                For Each user As User In Wiki.Users.Used
                     If Not user.IsAnonymous AndAlso Not user.IsDefault Then
                         user.Config.LoadLocal()
                         If user.Config.IsLoaded Then Account.Items.Add(user)
@@ -213,13 +206,6 @@ Namespace Huggle.UI
             Secure.Enabled = (Wiki IsNot Nothing AndAlso Wiki.SecureUrl IsNot Nothing)
         End Sub
 
-        Private Function CompareWikis(ByVal x As Wiki, ByVal y As Wiki) As Integer
-            If x.Type <> y.Type Then Return String.Compare(x.Type, y.Type, StringComparison.Ordinal)
-            If x.Language IsNot Nothing AndAlso y.Language IsNot Nothing _
-                Then Return String.Compare(x.Language.Code, y.Language.Code, StringComparison.Ordinal)
-            Return String.Compare(x.Name, y.Name, StringComparison.Ordinal)
-        End Function
-
         Private Function DoLogin(ByVal user As User) As Session
             If user Is Nothing Then App.ShowError _
                 (New Result(Msg("login-fail", Msg("login-error-badusername")))) : Return Nothing
@@ -245,23 +231,33 @@ Namespace Huggle.UI
         Private Sub PopulateSelectors()
             For Each wiki As Wiki In App.Wikis.All
                 Dim familyName As String = WikiTypeName(wiki)
-                If Not WikiTypes.ContainsKey(familyName) Then WikiTypes.Add(familyName, New List(Of Wiki))
-                WikiTypes(familyName).Merge(wiki)
+
+                If Not WikisByFamily.ContainsKey(familyName) Then WikisByFamily.Add(familyName, New List(Of Wiki))
+                WikisByFamily(familyName).Add(wiki)
             Next wiki
 
-            For Each subFamily As List(Of Wiki) In WikiTypes.Values
-                subFamily.Sort(AddressOf CompareWikis)
-            Next subFamily
+            For Each family As List(Of Wiki) In WikisByFamily.Values
+                family.Sort(AddressOf CompareWikis)
+            Next family
 
-            Dim subFamilyNames As List(Of String) = WikiTypes.Keys.ToList
-            subFamilyNames.Sort()
+            Dim familyNames As List(Of String) = WikisByFamily.Keys.ToList
+            familyNames.Sort()
+            familyNames.Unmerge(Msg("wikitype-other"))
 
             FamilySelector.BeginUpdate()
             FamilySelector.Items.Clear()
-            FamilySelector.Items.AddRange(subFamilyNames.ToArray)
+            FamilySelector.Items.AddRange(familyNames.ToArray)
+            If WikisByFamily.ContainsKey(Msg("wikitype-other")) Then FamilySelector.Items.Add(Msg("wikitype-other"))
             FamilySelector.ResizeDropDown()
             FamilySelector.EndUpdate()
         End Sub
+
+        Private Function CompareWikis(ByVal x As Wiki, ByVal y As Wiki) As Integer
+            If x.Type <> y.Type Then Return String.Compare(x.Type, y.Type, StringComparison.Ordinal)
+            If x.Language IsNot Nothing AndAlso y.Language IsNot Nothing _
+                Then Return String.Compare(x.Language.Code, y.Language.Code, StringComparison.Ordinal)
+            Return String.Compare(x.Name, y.Name, StringComparison.Ordinal)
+        End Function
 
         Private Sub AddWiki_LinkClicked() Handles AddWiki.LinkClicked
             Using form As New WikiAddForm()

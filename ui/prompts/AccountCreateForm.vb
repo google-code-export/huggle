@@ -1,4 +1,4 @@
-﻿Imports Huggle.Actions
+﻿Imports Huggle.Queries
 Imports System
 Imports System.Collections.Generic
 Imports System.Windows.Forms
@@ -18,8 +18,10 @@ Namespace Huggle.UI
         Private WithEvents CheckTimer As New Timer With {.Interval = 800}
 
         Public Sub New(ByVal session As Session)
-            InitializeComponent()
+            ThrowNull(session, "session")        
             _Session = session
+
+            InitializeComponent()
         End Sub
 
         Public ReadOnly Property NewUser() As User
@@ -35,16 +37,20 @@ Namespace Huggle.UI
         End Property
 
         Private Sub _Load() Handles Me.Load
-            Try
-                Icon = Resources.Icon
-                WikiDisplay.Text = Session.Wiki.Name
-                GetConfirmation()
+            Icon = Resources.Icon
+            WikiDisplay.Text = Session.Wiki.Name
 
-            Catch ex As SystemException
-                App.ShowError(Result.FromException(ex))
-                DialogResult = DialogResult.Abort
-                Close()
-            End Try
+            GetConfirmation()
+
+            If Session.User.IsAnonymous Then
+                'Reason is only available if creating an account while logged in
+                Reason.Visible = False
+                ReasonLabel.Visible = False
+
+                Dim delta As Integer = (Reason.Bottom - RetypePassword.Bottom)
+                Height -= delta
+                Top += delta \ 2
+            End If
         End Sub
 
         Private Sub ConfirmRefresh_LinkClicked() Handles ConfirmRefresh.LinkClicked
@@ -59,7 +65,8 @@ Namespace Huggle.UI
             If Confirmation IsNot Nothing Then Confirmation.Answer = ConfirmInput.Text
             Session.Wiki.CurrentConfirmation = Nothing
 
-            Dim create As New CreateAccount(Session, NewUser, Confirmation)
+            Dim create As New CreateAccount(Session, NewUser)
+            create.Confirmation = Confirmation
 
             App.UserWaitForProcess(create)
             If create.IsErrored Then App.ShowError(create.Result)
@@ -74,24 +81,26 @@ Namespace Huggle.UI
             Status = CheckStatus.None
 
             If Username.Text.Length > 0 Then
-                Dim name As String = UserCollection.SanitizeName(Username.Text)
+                Dim name As String = Session.Wiki.Users.SanitizeName(Username.Text)
 
                 If name Is Nothing Then
                     Status = CheckStatus.Invalid
                 ElseIf CheckResults.ContainsKey(name) Then
                     Status = CheckResults(name)
                 Else
-                    'Check title blacklists
+                    'Check global and local blacklists
                     If Session.Wiki.Family IsNot Nothing AndAlso Session.Wiki.Family.GlobalTitleBlacklist IsNot Nothing _
                         AndAlso Session.Wiki.Family.GlobalTitleBlacklist.IsMatch _
                         (Session, name, TitleListAction.CreateAccount) Then
 
+                        CheckResults.Merge(name, CheckStatus.GlobalBlacklisted)
                         Status = CheckStatus.GlobalBlacklisted
 
                     ElseIf Session.Wiki.TitleList IsNot Nothing _
                         AndAlso Session.Wiki.TitleList.IsMatch _
                         (Session, name, TitleListAction.CreateAccount) Then
 
+                        CheckResults.Merge(name, CheckStatus.LocalBlacklisted)
                         Status = CheckStatus.LocalBlacklisted
                     End If
 
@@ -104,7 +113,7 @@ Namespace Huggle.UI
 
         Private Sub Username_LostFocus() Handles Username.LostFocus
             If Username.Text.Length > 0 Then
-                Dim name As String = UserCollection.SanitizeName(Username.Text)
+                Dim name As String = Session.Wiki.Users.SanitizeName(Username.Text)
 
                 If name Is Nothing Then
                     Status = CheckStatus.Invalid
@@ -132,7 +141,7 @@ Namespace Huggle.UI
             If e.Value Is CurrentQuery Then
                 Status = CType(e.Value, UsernameCheckQuery).Status
                 UpdateStatus()
-                If Status <> CheckStatus.Error Then CheckResults.Merge(UserCollection.SanitizeName(Username.Text), Status)
+                If Status <> CheckStatus.Error Then CheckResults.Merge(Session.Wiki.Users.SanitizeName(Username.Text), Status)
                 InputChanged()
             End If
         End Sub
@@ -187,7 +196,7 @@ Namespace Huggle.UI
                 If Session.Wiki.CurrentConfirmation Is Nothing Then
                     Dim creationCheck As New PreCreateAccount(Session.Wiki)
 
-                    App.UserWaitForProcess(creationCheck)
+                    App.UserWaitForProcess(creationCheck, Nothing, True)
 
                     If creationCheck.IsFailed Then
                         DialogResult = DialogResult.Cancel
@@ -197,27 +206,28 @@ Namespace Huggle.UI
 
                     Session.Wiki.CurrentConfirmation = creationCheck.Confirmation
                 End If
+
+                Confirmation = Session.Wiki.CurrentConfirmation
+
+                If Confirmation IsNot Nothing Then
+                    'Fit confirmation code to form
+                    ConfirmImage.Image = Confirmation.Image
+                    Width = 300 + Math.Max(0, ConfirmImage.Image.Width - ConfirmImage.Width)
+                    ConfirmRefresh.Left = ConfirmImage.Left + (ConfirmImage.Width \ 2) _
+                        + (ConfirmImage.Image.Width \ 2) - ConfirmRefresh.Width
+                End If
             End If
 
-            Confirmation = Session.Wiki.CurrentConfirmation
-
-            If Confirmation Is Nothing OrElse Confirmation.Answer IsNot Nothing Then
+            If Not Session.Wiki.AccountConfirmation Then
                 'Hide confirmation controls and resize/reposition form
                 ConfirmImage.Visible = False
                 ConfirmInput.Visible = False
                 ConfirmLabel.Visible = False
                 ConfirmRefresh.Visible = False
 
-                Dim delta As Integer = (OK.Top - CheckStatusDisplay.Bottom - 6)
+                Dim delta As Integer = (OK.Top - Reason.Bottom - 6)
                 Height -= delta
                 Top += delta \ 2
-
-            Else
-                'Fit confirmation code to form
-                ConfirmImage.Image = Confirmation.Image
-                Width = 300 + Math.Max(0, ConfirmImage.Image.Width - ConfirmImage.Width)
-                ConfirmRefresh.Left = ConfirmImage.Left + (ConfirmImage.Width \ 2) _
-                    + (ConfirmImage.Image.Width \ 2) - ConfirmRefresh.Width
             End If
         End Sub
 

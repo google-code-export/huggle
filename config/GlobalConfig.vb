@@ -1,4 +1,4 @@
-﻿Imports Huggle.Actions
+﻿Imports Huggle.Queries
 Imports System
 Imports System.Collections.Generic
 Imports System.IO
@@ -41,11 +41,9 @@ Namespace Huggle
             End Get
         End Property
 
-        Protected Overrides ReadOnly Property Location() As String
-            Get
-                Return "global"
-            End Get
-        End Property
+        Protected Overrides Function Key() As String
+            Return "global"
+        End Function
 
         Public Shared ReadOnly Property PageTitle() As String
             Get
@@ -131,7 +129,7 @@ Namespace Huggle
                         wiki.Url = New Uri("http://" & wiki.Name & ".org/w/")
                     Else
                         wiki.Channel = "#" & wiki.Code & ".wikimedia"
-                        wiki.Name = UcFirst(wiki.Code)
+                        wiki.Name = wiki.Code.ToUpperFirstI
                         wiki.Type = "special"
                         wiki.FileUrl = New Uri(InternalConfig.WMFilePath & "wikipedia/" & wiki.Code & "/")
                         wiki.SecureUrl = New Uri(InternalConfig.WMSecurePath & "wikipedia/" & wiki.Code & "/w/")

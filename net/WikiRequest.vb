@@ -1,7 +1,9 @@
 ﻿Imports System
 Imports System.Text
 
-Namespace Huggle
+Namespace Huggle.Net
+
+    'Represents a request made to a MediaWiki wiki
 
     Friend MustInherit Class WikiRequest : Inherits Request
 
@@ -38,11 +40,14 @@ Namespace Huggle
         End Property
 
         Public Overrides Sub Start()
+            Cookies = Session.Cookies
             MyBase.Start()
             If IsCancelled Then Result = New Result(Msg("error-cancelled"))
 
-            _Response = Encoding.UTF8.GetString(MyBase.Response.ToArray)
-            MyBase.Response.Dispose()
+            If MyBase.Response IsNot Nothing Then
+                _Response = Encoding.UTF8.GetString(MyBase.Response.ToArray)
+                MyBase.Response.Dispose()
+            End If
 
             If Result.IsError Then
                 'When the URL is at fault, make it clear which wiki the URL is for

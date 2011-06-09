@@ -8,7 +8,7 @@ Imports System.Text.RegularExpressions
 
 Namespace Huggle
 
-    <Diagnostics.DebuggerDisplay("{Name}")>
+    <Diagnostics.DebuggerDisplay("{FullDisplayName}")>
     Friend Class User : Inherits QueueItem
 
         'Represents a user account or anonymous user
@@ -19,7 +19,7 @@ Namespace Huggle
         Private _FirstEdit As Revision
         Private _GroupChanges As UserGroupChangeCollection
         Private _Groups As List(Of UserGroup)
-        Private _IsAnonymous As Boolean
+        Private _Id As Integer
         Private _IsBot As Boolean
         Private _IsIgnored As Boolean
         Private _Logs As List(Of LogItem)
@@ -40,10 +40,19 @@ Namespace Huggle
         Public Event StateChanged As SimpleEventHandler(Of User)
         Public Event ContribsChanged As SimpleEventHandler(Of User)
 
+        Public Sub New(ByVal wiki As Wiki, ByVal id As Integer)
+            ThrowNull(wiki, "wiki")
+
+            _DisplayName = "[" & id.ToString & "]"
+            _Id = id
+            _Wiki = wiki
+        End Sub
+
         Public Sub New(ByVal wiki As Wiki, ByVal name As String)
+            ThrowNull(name, "name")
+            ThrowNull(wiki, "wiki")
+
             _DisplayName = name
-            _Contributions = -1
-            If name = "[anonymous]" Then _IsAnonymous = True
             _Name = name
             _Wiki = wiki
         End Sub
@@ -115,9 +124,8 @@ Namespace Huggle
         End Property
 
         Public Property Created As Date
-        Public Property DeletedEditsKnown As Boolean
-        Public Property DisplayName As String
-        Public Property Contributions As Integer
+
+        Public Property Contributions As Integer = -1
 
         Public ReadOnly Property CurrentBlock() As Block
             Get
@@ -130,6 +138,10 @@ Namespace Huggle
                 Return result
             End Get
         End Property
+
+        Public Property DeletedEditsKnown As Boolean
+
+        Public Property DisplayName As String
 
         Public ReadOnly Property Edits() As List(Of Revision)
             Get
@@ -156,6 +168,12 @@ Namespace Huggle
                 _FirstEdit = value
                 If FirstEdit IsNot Nothing Then FirstEdit.PrevByUser = Revision.Null
             End Set
+        End Property
+
+        Public ReadOnly Property FullDisplayName() As String
+            Get
+                Return DisplayName & "@" & Wiki.Name
+            End Get
         End Property
 
         Public ReadOnly Property FullName() As String
@@ -190,6 +208,15 @@ Namespace Huggle
         End Property
 
         Public Property Id() As Integer
+            Get
+                Return _Id
+            End Get
+            Set(ByVal value As Integer)
+                _Id = value
+                Wiki.Users.UpdateId(Me)
+            End Set
+        End Property
+
         Public Property IgnoreCount() As Integer
 
         Public ReadOnly Property IsAbusive() As Boolean
@@ -205,12 +232,7 @@ Namespace Huggle
             End Get
         End Property
 
-        Public ReadOnly Property IsAnonymous() As Boolean
-            Get
-                If Not Processed Then Process()
-                Return _IsAnonymous
-            End Get
-        End Property
+        Public Property IsAnonymous() As Boolean
 
         Public ReadOnly Property IsAutoconfirmed() As Boolean
             Get
@@ -296,7 +318,11 @@ Namespace Huggle
             End Get
         End Property
 
-        Public Property IsUsed As Boolean
+        Public ReadOnly Property IsUsed As Boolean
+            Get
+                Return Wiki.Users.Used.Contains(Me)
+            End Get
+        End Property
 
         Public ReadOnly Property IsWarned() As Boolean
             Get
@@ -333,10 +359,16 @@ Namespace Huggle
 
         Public Property LogsKnown As Boolean
 
-        Public ReadOnly Property Name() As String
+        Public Property Name() As String
             Get
                 Return _Name
             End Get
+            Set(ByVal value As String)
+                Dim oldName As String = _Name
+                _Name = value
+                Wiki.Users.UpdateName(Me, oldName)
+                If oldName IsNot Nothing Then RaiseEvent Renamed(Me, New UserRenamedEventArgs(Me, oldName))
+            End Set
         End Property
 
         Public Property Password As Byte()
@@ -429,8 +461,10 @@ Namespace Huggle
 
         Public Sub Process()
             If Not Processed Then
-                If AnonymousRegex.IsMatch(Name) Then _IsAnonymous = True
-                _IsIgnored = Wiki.Users.Ignored.Contains(Me)
+                If Name IsNot Nothing Then
+                    If AnonymousRegex.IsMatch(Name) Then _IsAnonymous = True
+                    _IsIgnored = Wiki.Users.Ignored.Contains(Me)
+                End If
             End If
 
             Processed = True
@@ -443,13 +477,6 @@ Namespace Huggle
 
         Public Sub RefreshState()
             RaiseEvent StateChanged(Me, New EventArgs(Of User)(Me))
-        End Sub
-
-        Public Sub Rename(ByVal newName As String)
-            Dim oldName As String = Name
-            _Name = newName
-            Wiki.Users.Rename(oldName, newName)
-            RaiseEvent Renamed(Me, New UserRenamedEventArgs(Me, oldName))
         End Sub
 
         Public Function Can(ByVal featureName As String) As Boolean
@@ -501,27 +528,35 @@ Namespace Huggle
 
     Friend Class UserCollection
 
-        Private _All As New Dictionary(Of String, User)
+        Private AllById As New Dictionary(Of Integer, User)
+        Private AllByName As New Dictionary(Of String, User)
+
+        Private _Anonymous As User
         Private _Default As User
         Private _Hidden As User
         Private _Ignored As New List(Of User)
         Private _NewUsers As New List(Of User)
+        Private _Used As New List(Of User)
 
         Private Wiki As Wiki
 
         Public Sub New(ByVal wiki As Wiki)
+            ThrowNull(wiki, "wiki")
             Me.Wiki = wiki
         End Sub
 
-        Public ReadOnly Property All() As IList(Of User)
-            Get
-                Return _All.Values.ToList.AsReadOnly
-            End Get
-        End Property
-
         Public ReadOnly Property Anonymous() As User
             Get
-                Return FromName(Nothing)
+                'Represents the user in an anonymous session
+                'Revisions from anonymous users are represented by a user with an IP address as a name
+                If _Anonymous Is Nothing Then
+                    _Anonymous = New User(Wiki, 0)
+                    _Anonymous.DisplayName = "[anonymous]"
+                    _Anonymous.IsAnonymous = True
+                    _Anonymous.IsHidden = True
+                End If
+
+                Return _Anonymous
             End Get
         End Property
 
@@ -531,7 +566,8 @@ Namespace Huggle
             Get
                 'Default user for config purposes
                 If _Default Is Nothing Then
-                    _Default = New User(Wiki, "[default]")
+                    _Default = New User(Wiki, 0)
+                    _Default.DisplayName = "[default]"
                     _Default.IsHidden = True
                 End If
 
@@ -539,19 +575,12 @@ Namespace Huggle
             End Get
         End Property
 
-        Default Public ReadOnly Property FromName(ByVal name As String) As User
-            Get
-                If name Is Nothing Then name = "[anonymous]"
-                If Not _All.ContainsKey(name) Then _All.Add(name, New User(Wiki, name))
-                Return _All(name)
-            End Get
-        End Property
-
         Public ReadOnly Property Hidden() As User
             Get
-                'Representats the author of actions for which the actual author is hidden
+                'Represents the author of actions for which the actual author is hidden
                 If _Hidden Is Nothing Then
-                    _Hidden = New User(Wiki, "[hidden]")
+                    _Hidden = New User(Wiki, 0)
+                    _Hidden.DisplayName = "[hidden]"
                     _Hidden.IsHidden = True
                 End If
 
@@ -565,11 +594,36 @@ Namespace Huggle
             End Get
         End Property
 
+        Default Public ReadOnly Property Item(ByVal name As String) As User
+            Get
+                Return FromName(name)
+            End Get
+        End Property
+
         Public ReadOnly Property NewUsers() As List(Of User)
             Get
                 Return _NewUsers
             End Get
         End Property
+
+        Public ReadOnly Property Used As List(Of User)
+            Get
+                Return _Used
+            End Get
+        End Property
+
+        Public Function FromId(ByVal id As Integer) As User
+            ThrowOutOfRange(id <= 0, "id")
+            If Not AllById.ContainsKey(id) Then AllById.Add(id, New User(Wiki, id))
+            Return AllById(id)
+        End Function
+
+        Public Function FromName(ByVal name As String) As User
+            ThrowNull(name, "name")
+
+            If Not AllByName.ContainsKey(name) Then AllByName.Add(name, New User(Wiki, name))
+            Return AllByName(name)
+        End Function
 
         Public Function FromString(ByVal name As String) As User
             name = SanitizeName(name)
@@ -577,46 +631,59 @@ Namespace Huggle
             Return FromName(name)
         End Function
 
-        Public Sub Rename(ByVal oldName As String, ByVal newName As String)
-            If _All.ContainsKey(oldName) Then
-                Dim user As User = _All(oldName)
-                _All.Remove(oldName)
-                _All.Add(newName, user)
-            End If
+        Public Sub UpdateName(ByVal user As User, ByVal oldName As String)
+            ThrowNull(user, "user")
+
+            AllByName.Unmerge(oldName)
+            AllByName.Merge(user.Name, user)
         End Sub
 
-        Public Shared Function SanitizeName(ByVal name As String) As String
-            If String.IsNullOrEmpty(name) Then Return Nothing
+        Public Sub UpdateId(ByVal user As User)
+            ThrowNull(user, "user")
+
+            AllById.Merge(user.Id, user)
+        End Sub
+
+        Public Function SanitizeName(ByVal name As String) As String
+            If name Is Nothing Then Return Nothing
 
             'Remove navigation fragment
             If name.Contains("#") Then name = name.ToFirst("#")
 
-            name = name.Remove(Tab, CR, LF).Replace("_", " ").Trim
+            'Convert underscores to spaces
+            name = name.Replace("_", " ")
 
-            If String.IsNullOrEmpty(name) Then Return Nothing
+            'Remove excess whitespace
+            Static multipleSpacePattern As New Regex("  +", RegexOptions.Compiled)
+            name = multipleSpacePattern.Replace(name, " ").Trim
 
-            While name.Contains("  ")
-                name = name.Replace("  ", " ")
-            End While
+            If name.Length = 0 Then Return Nothing
 
-            For Each badchar As Char In "[]{}|<>#/\".ToCharArray
-                If name.Contains(badchar) Then Return Nothing
-            Next badchar
+            'Disallow invalid characters and control codes
+            Static badChars As String = "[]{}|<>#/\"
+
+            For Each c As Char In name
+                If badChars.Contains(c) OrElse Convert.ToInt32(c) < 32 OrElse Convert.ToInt32(c) = 127 Then Return Nothing
+            Next c
+
+            'Diallow name beginning with a colon
+            If name.StartsWithI(":") Then Return Nothing
 
             'Disallow path syntax
             If name = "." OrElse name = ".." Then Return Nothing
-            If name.StartsWithI(":") OrElse name.StartsWithI("./") OrElse name.StartsWithI("../") Then Return Nothing
+            If name.StartsWithI("./") OrElse name.StartsWithI("../") Then Return Nothing
             If name.Contains("/./") OrElse name.Contains("/../") Then Return Nothing
             If name.EndsWithI("/.") OrElse name.EndsWithI("/..") Then Return Nothing
 
             'Disallow HTML entities
-            Static HtmlEntityPattern As New Regex("&[a-zA-z0-9];", RegexOptions.Compiled)
-            If HtmlEntityPattern.IsMatch(name) Then Return Nothing
+            Static htmlEntityPattern As New Regex("&[a-zA-Z0-9];", RegexOptions.Compiled)
+            If htmlEntityPattern.IsMatch(name) Then Return Nothing
 
+            'Disallow names that are too long
             If Encoding.UTF8.GetBytes(name).Length > 255 Then Return Nothing
 
-            'Capitalize
-            name = UcFirst(name)
+            'Capitalize first letter
+            name = name.ToUpperFirstI
 
             Return name
         End Function

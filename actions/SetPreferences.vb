@@ -1,6 +1,7 @@
-﻿Imports System.Collections.Generic
+﻿Imports Huggle.Net
+Imports System.Collections.Generic
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
     Friend Class SetPreferences : Inherits Query
 
@@ -23,13 +24,13 @@ Namespace Huggle.Actions
             OnProgress(Msg("setprefs-progress", User.FullName))
 
             'Get token
-            If Session.EditToken Is Nothing Then
+            If Not Session.HasTokens Then
                 Dim tokenQuery As New TokenQuery(Session)
                 tokenQuery.Start()
                 If tokenQuery.IsFailed Then OnFail(tokenQuery.Result) : Return
             End If
 
-            Dim query As New QueryString("wpEditToken", Session.EditToken)
+            Dim query As New QueryString("wpEditToken", Session.Tokens("preferences"))
 
             For Each item As KeyValuePair(Of String, String) In NewPrefs.ToMwFormat
                 query.Add("wp" & item.Key, item.Value)

@@ -57,11 +57,13 @@ Namespace Huggle
         Public Property SemiIgnoreAfter As Integer
         Public Property Watch As New List(Of String)
 
-        Protected Overrides ReadOnly Property Location() As String
-            Get
-                Return PathCombine("user", GetValidFileName(User.FullName))
-            End Get
-        End Property
+        Protected Overrides Function Key() As String
+            Return GetValidFileName(User.FullName)
+        End Function
+
+        Protected Overrides Function Location() As String
+            Return "user"
+        End Function
 
         Public ReadOnly Property IsWatch(ByVal key As String) As Boolean
             Get
@@ -168,7 +170,7 @@ Namespace Huggle
             Dim items As New Dictionary(Of String, Object)
 
             If target = ConfigTarget.Local Then
-                If User.DisplayName <> User.Name Then items.Add("display-name", User.DisplayName)
+                If Not User.IsHidden AndAlso User.DisplayName <> User.Name Then items.Add("display-name", User.DisplayName)
 
                 If Config.Local.SavePasswords AndAlso Not User.IsAnonymous AndAlso User.Password IsNot Nothing _
                     Then items.Add("password", Convert.ToBase64String(User.Password.ToArray))

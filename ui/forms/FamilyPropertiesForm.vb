@@ -11,9 +11,11 @@ Namespace Huggle.UI
         Private Session As Session
 
         Public Sub New(ByVal session As Session)
+            ThrowNull(session, "session")
+            Me.Session = session
+
             InitializeComponent()
             Size = New Size(720, 480)
-            Me.Session = session
         End Sub
 
         Private ReadOnly Property Family As Family
@@ -23,22 +25,16 @@ Namespace Huggle.UI
         End Property
 
         Private Sub _Load() Handles Me.Load
-            Try
-                Icon = Resources.Icon
-                Text = Msg("view-family-title", Family.Name)
-                App.Languages.Current.Localize(Me)
+            Icon = Resources.Icon
+            Text = Msg("view-family-title", Family.Name)
+            App.Languages.Current.Localize(Me)
 
-                'Core MediaWiki views
-                Views.Items.AddRange({
-                    Msg("view-familygeneral-title"),
-                    Msg("view-globalgroup-title")})
+            'Core MediaWiki views
+            Views.Items.AddRange({
+                Msg("view-familygeneral-title"),
+                Msg("view-globalgroup-title")})
 
-                Views.SelectedIndex = 0
-
-            Catch ex As SystemException
-                App.ShowError(Result.FromException(ex))
-                Close()
-            End Try
+            Views.SelectedIndex = 0
         End Sub
 
         Private Sub Views_SelectedIndexChanged() Handles Views.SelectedIndexChanged

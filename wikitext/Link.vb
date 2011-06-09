@@ -1,4 +1,5 @@
 ﻿Imports System
+Imports System.Collections.Generic
 
 Namespace Huggle.Wikitext
 
@@ -45,11 +46,19 @@ Namespace Huggle.Wikitext
 
     Friend Class LinkCollection
 
+        Private _All As New List(Of Link)
+
         Private Document As Document
 
         Public Sub New(ByVal document As Document)
             Me.Document = document
         End Sub
+
+        Public ReadOnly Property All As List(Of Link)
+            Get
+                Return _All
+            End Get
+        End Property
 
     End Class
 

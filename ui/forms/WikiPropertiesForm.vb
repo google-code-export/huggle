@@ -1,4 +1,4 @@
-﻿Imports Huggle.Actions
+﻿Imports Huggle.Queries
 Imports System
 Imports System.Collections.Generic
 Imports System.Drawing
@@ -25,9 +25,11 @@ Namespace Huggle.UI
         Private WithEvents UserRightView As UserRightView
 
         Public Sub New(ByVal session As Session)
+            ThrowNull(session, "session")
+            Me.Session = session
+
             InitializeComponent()
             Size = New Size(720, 480)
-            Me.Session = session
         End Sub
 
         Private ReadOnly Property Wiki As Wiki
@@ -37,42 +39,36 @@ Namespace Huggle.UI
         End Property
 
         Private Sub _Load() Handles Me.Load
-            Try
-                'Finish loading extra config
-                If Not Wiki.Config.ExtraConfigLoaded Then
-                    App.UserWaitForProcess(Wiki.Config.ExtraLoader)
-                    If Wiki.Config.ExtraLoader.IsFailed Then Close() : Return
-                End If
+            'Finish loading extra config
+            If Not Wiki.Config.ExtraConfigLoaded Then
+                App.UserWaitForProcess(Wiki.Config.ExtraLoader)
+                If Wiki.Config.ExtraLoader.IsFailed Then Close() : Return
+            End If
 
-                Icon = Resources.Icon
-                Text = Msg("wikiprop-title", Wiki.Name)
-                App.Languages.Current.Localize(Me)
+            Icon = Resources.Icon
+            Text = Msg("wikiprop-title", Wiki.Name)
+            App.Languages.Current.Localize(Me)
 
-                'Core MediaWiki views
-                Views.Items.AddRange({
-                    Msg("view-wikigeneral-title"),
-                    Msg("view-namespace-title"),
-                    Msg("view-usergroup-title"),
-                    Msg("view-userright-title"),
-                    Msg("view-extension-title")})
+            'Core MediaWiki views
+            Views.Items.AddRange({
+                Msg("view-wikigeneral-title"),
+                Msg("view-namespace-title"),
+                Msg("view-usergroup-title"),
+                Msg("view-userright-title"),
+                Msg("view-extension-title")})
 
-                Views.SelectedIndex = 0
+            Views.SelectedIndex = 0
 
-                'Extension views
-                If Wiki.Extensions.Contains(Extension.Moderation) Then Views.Items.Add(Msg("view-moderation-title"))
-                If Wiki.Extensions.Contains(Extension.Gadgets) Then Views.Items.Add(Msg("view-gadget-title"))
-                If Wiki.Extensions.Contains(Extension.SpamList) Then Views.Items.Add(Msg("view-spamlist-title"))
-                If Wiki.Extensions.Contains(Extension.TitleList) Then Views.Items.Add(Msg("view-titlelist-title"))
+            'Extension views
+            If Wiki.Extensions.Contains(CommonExtension.Moderation) Then Views.Items.Add(Msg("view-moderation-title"))
+            If Wiki.Extensions.Contains(CommonExtension.Gadgets) Then Views.Items.Add(Msg("view-gadget-title"))
+            If Wiki.Extensions.Contains(CommonExtension.SpamList) Then Views.Items.Add(Msg("view-spamlist-title"))
+            If Wiki.Extensions.Contains(CommonExtension.TitleList) Then Views.Items.Add(Msg("view-titlelist-title"))
 
-                If Wiki.Extensions.Contains(Extension.AbuseFilter) Then
-                    Views.Items.Add(Msg("view-abusefilter-title"))
-                    Views.Items.Add(Msg("view-changetag-title"))
-                End If
-
-            Catch ex As Exception
-                App.ShowError(Result.FromException(ex))
-                Close()
-            End Try
+            If Wiki.Extensions.Contains(CommonExtension.AbuseFilter) Then
+                Views.Items.Add(Msg("view-abusefilter-title"))
+                Views.Items.Add(Msg("view-changetag-title"))
+            End If
         End Sub
 
         Private Sub Views_SelectedIndexChanged() Handles Views.SelectedIndexChanged

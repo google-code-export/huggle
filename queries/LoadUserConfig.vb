@@ -2,7 +2,7 @@
 Imports System.Collections.Generic
 Imports System.Web.HttpUtility
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
     'Load essential wiki and user configuration only --
     'non-essential configuration is loaded later by ExtraWikiConfig
@@ -75,7 +75,7 @@ Namespace Huggle.Actions
 
                 lists.Add("tags")
                 meta.Add("siteinfo", "allmessages")
-                query.Add("amlang", Wiki.Language.Code)
+                If Wiki.Language IsNot Nothing Then query.Add("amlang", Wiki.Language.Code)
                 query.Add("ammessages", "*")
                 query.Add("siprop",
                     "general|namespaces|namespacealiases|extensions|fileextensions|rightsinfo|statistics|usergroups")
@@ -84,7 +84,7 @@ Namespace Huggle.Actions
                 query.Add("tglimit", "max")
                 titles.Add(Config.Global.WikiConfigPageTitle)
 
-                If Wiki.Extensions.All.Count = 0 OrElse Wiki.Extensions.Contains(Extension.AbuseFilter) Then
+                If Wiki.Extensions.All.Count = 0 OrElse Wiki.Extensions.Contains(CommonExtension.AbuseFilter) Then
                     lists.Add("abusefilters")
                     query.Add("abflimit", "max")
                     query.Add("abfprop", "id|description|pattern|actions|hits|comments|lasteditor|lastedittime|status|private")
@@ -108,16 +108,19 @@ Namespace Huggle.Actions
             Dim mainReq As New ApiRequest(Session, Description, query)
             processes.Add(mainReq)
 
-            If Not Wiki.Config.IsCurrent Then
-                Dim moduleReq As New ApiModuleQuery(Session)
-                processes.Add(moduleReq)
-            End If
-
             App.DoParallel(processes)
 
             For Each process As Process In processes
                 If process.IsFailed Then OnFail(process.Result) : Return
             Next process
+
+            'Check for presence of API modules
+            'Must be done after remainder of config requests in order to know which extension modules to ask about
+            If Not Wiki.Config.IsCurrent Then
+                Dim moduleReq As New ApiModuleQuery(Session)
+                moduleReq.Start()
+                If moduleReq.IsFailed Then OnFail(moduleReq.Result) : Return
+            End If
 
             'Load wiki config
             Wiki.Config.Load(Wiki.Pages(Config.Global.WikiConfigPageTitle).Text)

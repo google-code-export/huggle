@@ -16,6 +16,10 @@ Namespace Huggle.Wikitext
         Public Sub New(ByVal document As Document, ByVal category As Category,
             ByVal selection As Selection, ByVal sortkey As String)
 
+            ThrowNull(document, "document")
+            ThrowNull(category, "category")
+            ThrowNull(selection, "selection")
+
             Me.Document = document
             _Category = category
             _Selection = selection
@@ -25,6 +29,12 @@ Namespace Huggle.Wikitext
         Public ReadOnly Property Category() As Category
             Get
                 Return _Category
+            End Get
+        End Property
+
+        Public ReadOnly Property OriginalText As String
+            Get
+                Return Document.Text.Substring(Selection)
             End Get
         End Property
 
@@ -99,16 +109,19 @@ Namespace Huggle.Wikitext
         End Sub
 
         Public Sub Remove(ByVal category As Category)
+            If Not Contains(category) Then Return
 
         End Sub
 
         Public Sub Parse()
-            For Each Match As Match In Regex.Matches _
+            Dim s As String = Parsing.BaseCatPattern(Document.Wiki)
+
+            For Each match As Match In Regex.Matches _
                 (Document.ParseableText, Parsing.BaseCatPattern(Document.Wiki), RegexOptions.Compiled)
 
-                Items.Add(New CategoryLink(Document, Document.Wiki.Categories(Match.Groups(1).Value),
-                     New Selection(Match.Index, Match.Length), Match.Groups(2).Value))
-            Next Match
+                Items.Add(New CategoryLink(Document, Document.Wiki.Categories(match.Groups(1).Value),
+                     New Selection(match.Index, match.Length), match.Groups(2).Value))
+            Next match
         End Sub
 
     End Class

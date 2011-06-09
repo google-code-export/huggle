@@ -2,7 +2,6 @@
 Imports System.Collections
 Imports System.Collections.Generic
 Imports System.Drawing
-Imports System.Globalization
 Imports System.Runtime.CompilerServices
 Imports System.Web.HttpUtility
 Imports System.Text.RegularExpressions
@@ -48,37 +47,6 @@ Namespace System
 
 End Namespace
 
-Namespace System.Windows.Forms
-
-    <Diagnostics.DebuggerStepThrough()>
-    Friend Module Extensions
-
-        <Extension()>
-        Public Function ToList(Of T)(ByVal items As ListView.ListViewItemCollection) As List(Of T)
-            Dim result As New List(Of T)
-
-            For Each item As Object In items
-                result.Add(CType(item, T))
-            Next item
-
-            Return result
-        End Function
-
-        <Extension()>
-        Public Function ToList(ByVal items As Control.ControlCollection) As List(Of Control)
-            Dim result As New List(Of Control)
-
-            For Each item As Control In items
-                result.Add(item)
-            Next item
-
-            Return result
-        End Function
-
-    End Module
-
-End Namespace
-
 Namespace Huggle
 
     Friend Module Extensions
@@ -119,6 +87,11 @@ Namespace Huggle
         End Function
 
         <Extension()>
+        Public Function Duplicate(ByVal this As Char, ByVal count As Integer) As String
+            Return "".PadRight(count, this)
+        End Function
+
+        <Extension()>
         Public Function FirstWhere(Of T)(ByVal this As List(Of T), ByVal predicate As Predicate(Of T)) As T
             For Each item As T In this
                 If predicate(item) Then Return item
@@ -144,23 +117,34 @@ Namespace Huggle
         End Sub
 
         <Extension()>
-        Public Function FromFirst(ByVal this As String, ByVal value As String,
-            Optional ByVal include As Boolean = False) As String
+        Public Function FromFirst(ByVal this As String, ByVal value As String) As String
 
             If this Is Nothing OrElse value Is Nothing Then Return Nothing
             If Not this.Contains(value) Then Return Nothing
-            If include Then Return this.Substring(this.IndexOfI(value)) _
-                Else Return this.Substring(this.IndexOfI(value) + value.Length)
+            Return this.Substring(this.IndexOfI(value) + value.Length)
         End Function
 
         <Extension()>
-        Public Function FromLast(ByVal this As String, ByVal value As String,
-            Optional ByVal include As Boolean = False) As String
+        Public Function FromFirstInclusive(ByVal this As String, ByVal value As String) As String
+            If this Is Nothing OrElse value Is Nothing Then Return Nothing
+            If Not this.Contains(value) Then Return Nothing
+            Return this.Substring(this.IndexOfI(value))
+        End Function
+
+        <Extension()>
+        Public Function FromLast(ByVal this As String, ByVal value As String) As String
 
             If this Is Nothing OrElse value Is Nothing Then Return Nothing
             If Not this.Contains(value) Then Return Nothing
-            If include Then Return this.Substring(this.LastIndexOfI(value)) _
-                Else Return this.Substring(this.LastIndexOfI(value) + value.Length)
+            Return this.Substring(this.LastIndexOfI(value) + value.Length)
+        End Function
+
+        <Extension()>
+        Public Function FromLastInclusive(ByVal this As String, ByVal value As String) As String
+
+            If this Is Nothing OrElse value Is Nothing Then Return Nothing
+            If Not this.Contains(value) Then Return Nothing
+            Return this.Substring(this.LastIndexOfI(value))
         End Function
 
         <Extension()>
@@ -327,7 +311,7 @@ Namespace Huggle
             'Also handle MediaWiki's internal timestamp format
             If this.Length = 14 AndAlso Long.TryParse(this, New Long) Then Return FromWikiTimestamp(this)
 
-            Throw New ArgumentException("this")
+            Throw New ArgumentException("Could not parse string as date", "this")
         End Function
 
         <Extension()>
@@ -391,23 +375,35 @@ Namespace Huggle
         End Function
 
         <Extension()>
-        Public Function ToFirst(ByVal this As String, ByVal value As String,
-            Optional ByVal include As Boolean = False) As String
-
+        Public Function ToFirst(ByVal this As String, ByVal value As String) As String
             If this Is Nothing OrElse value Is Nothing Then Return Nothing
             If Not this.Contains(value) Then Return this
-            If include Then Return this.Substring(0, this.IndexOfI(value) + value.Length) _
-                Else Return this.Substring(0, this.IndexOfI(value))
+
+            Return this.Substring(0, this.IndexOfI(value))
         End Function
 
         <Extension()>
-        Public Function ToLast(ByVal this As String, ByVal value As String,
-            Optional ByVal include As Boolean = False) As String
-
+        Public Function ToFirstInclusive(ByVal this As String, ByVal value As String) As String
             If this Is Nothing OrElse value Is Nothing Then Return Nothing
             If Not this.Contains(value) Then Return this
-            If include Then Return this.Substring(0, this.LastIndexOfI(value) + value.Length) _
-                Else Return this.Substring(0, this.LastIndexOfI(value))
+
+            Return this.Substring(0, this.IndexOfI(value) + value.Length)
+        End Function
+
+        <Extension()>
+        Public Function ToLast(ByVal this As String, ByVal value As String) As String
+            If this Is Nothing OrElse value Is Nothing Then Return Nothing
+            If Not this.Contains(value) Then Return this
+
+            Return this.Substring(0, this.LastIndexOfI(value))
+        End Function
+
+        <Extension()>
+        Public Function ToLastInclusive(ByVal this As String, ByVal value As String) As String
+            If this Is Nothing OrElse value Is Nothing Then Return Nothing
+            If Not this.Contains(value) Then Return this
+
+            Return this.Substring(0, this.LastIndexOfI(value) + value.Length)
         End Function
 
         <Extension()>
@@ -510,92 +506,6 @@ Namespace Huggle
         Public Sub Unmerge(Of TKey, TValue)(ByVal this As Dictionary(Of TKey, TValue), ByVal item As TKey)
             If this.ContainsKey(item) Then this.Remove(item)
         End Sub
-
-    End Module
-
-    Public Module StringExtensions
-
-        'Basic string manipulating functions using invariant casing rules
-        'because typing out System.Globalization.CultureInfo.InvariantCulture every time is a pain
-
-        <Extension()>
-        Public Function EndsWithI(ByVal this As String, ByVal value As String) As Boolean
-            Return this.EndsWith(value, StringComparison.Ordinal)
-        End Function
-
-        <Extension()>
-        Public Function EqualsI(ByVal this As String, ByVal value As String) As Boolean
-            Return this.Equals(value, StringComparison.Ordinal)
-        End Function
-
-        <Extension()>
-        Public Function EqualsIgnoreCase(ByVal this As String, ByVal value As String) As Boolean
-            Return this.Equals(value, StringComparison.OrdinalIgnoreCase)
-        End Function
-
-        <Extension()>
-        Public Function FormatForUser(ByVal format As String, ByVal ParamArray args As Object()) As String
-            Try
-                Return String.Format(CultureInfo.CurrentCulture, format, args)
-            Catch ex As FormatException
-                Return format
-            End Try
-        End Function
-
-        <Extension()>
-        Public Function FormatI(ByVal format As String, ByVal ParamArray args As Object()) As String
-            Return String.Format(CultureInfo.InvariantCulture, format, args)
-        End Function
-
-        <Extension()>
-        Public Function IndexOfI(ByVal this As String, ByVal value As String) As Integer
-            Return this.IndexOf(value, StringComparison.Ordinal)
-        End Function
-
-        <Extension()>
-        Public Function IndexOfI(ByVal this As String, ByVal value As String, ByVal startIndex As Integer) As Integer
-            Return this.IndexOf(value, startIndex, StringComparison.Ordinal)
-        End Function
-
-        <Extension()>
-        Public Function IndexOfIgnoreCase(ByVal this As String, ByVal value As String) As Integer
-            Return this.IndexOf(value, StringComparison.OrdinalIgnoreCase)
-        End Function
-
-        <Extension()>
-        Public Function StartsWithI(ByVal this As String, ByVal value As String) As Boolean
-            Return this.StartsWith(value, StringComparison.Ordinal)
-        End Function
-
-        <Extension()>
-        Public Function StartsWithIgnoreCase(ByVal this As String, ByVal value As String) As Boolean
-            Return this.StartsWith(value, StringComparison.OrdinalIgnoreCase)
-        End Function
-
-        <Extension()>
-        Public Function LastIndexOfI(ByVal this As String, ByVal value As String) As Integer
-            Return this.LastIndexOf(value, StringComparison.Ordinal)
-        End Function
-
-        <Extension()>
-        Public Function ToLowerI(ByVal this As String) As String
-            Return this.ToLower(CultureInfo.InvariantCulture)
-        End Function
-
-        <Extension()>
-        Public Function ToUpperI(ByVal this As String) As String
-            Return this.ToUpper(CultureInfo.InvariantCulture)
-        End Function
-
-        <Extension()>
-        Public Function ToStringI(ByVal this As IFormattable) As String
-            Return this.ToString(Nothing, CultureInfo.InvariantCulture)
-        End Function
-
-        <Extension()>
-        Public Function ToStringForUser(ByVal this As IFormattable) As String
-            Return this.ToString(Nothing, CultureInfo.CurrentCulture)
-        End Function
 
     End Module
 

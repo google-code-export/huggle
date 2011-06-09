@@ -7,28 +7,21 @@ Namespace Huggle.UI
     Friend Class FirstRunForm : Inherits HuggleForm
 
         Private Sub _Load() Handles Me.Load
-            Try
-                Icon = Resources.Icon
-                Text = Windows.Forms.Application.ProductName
+            Icon = Resources.Icon
+            Text = Windows.Forms.Application.ProductName
 
-                LanguageSelector.BeginUpdate()
+            LanguageSelector.BeginUpdate()
 
-                For Each language As Language In App.Languages.All
-                    If Not language.IsIgnored Then LanguageSelector.Items.Add(language)
-                Next language
+            For Each language As Language In App.Languages.All
+                If Not language.IsIgnored Then LanguageSelector.Items.Add(language)
+            Next language
 
-                LanguageSelector.ResizeDropDown()
-                LanguageSelector.SelectedItem = App.Languages.Default
-                LanguageSelector.EndUpdate()
+            LanguageSelector.ResizeDropDown()
+            LanguageSelector.SelectedItem = App.Languages.Default
+            LanguageSelector.EndUpdate()
 
-                DoLayout()
-                CenterToScreen()
-
-            Catch ex As SystemException
-                App.ShowError(Result.FromException(ex))
-                DialogResult = DialogResult.Abort
-                Close()
-            End Try
+            DoLayout()
+            CenterToScreen()
         End Sub
 
         Private Sub ContinueButton_Click() Handles ContinueButton.Click

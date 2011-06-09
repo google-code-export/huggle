@@ -1,4 +1,4 @@
-﻿Namespace Huggle.Actions
+﻿Namespace Huggle.Queries
 
     'Get a list of abuse filters
 

@@ -1,4 +1,5 @@
-﻿Imports System.Collections.Generic
+﻿Imports Huggle.Queries
+Imports System.Collections.Generic
 
 Namespace Huggle.Actions
 
@@ -44,7 +45,7 @@ Namespace Huggle.Actions
             OnStarted()
 
             'Get token
-            If Session.EditToken Is Nothing Then
+            If Not Session.HasTokens Then
                 Dim tokenQuery As New TokenQuery(Session)
                 tokenQuery.Start()
                 If tokenQuery.IsErrored Then OnFail(tokenQuery.Result) : Return
@@ -65,7 +66,7 @@ Namespace Huggle.Actions
                 "reason", Summary,
                 "protections", level.Join("|"),
                 "expiry", expiry.Join("|"),
-                "token", Session.EditToken)
+                "token", Session.Tokens("protect"))
 
             If Cascade Then query.Add("cascade")
 

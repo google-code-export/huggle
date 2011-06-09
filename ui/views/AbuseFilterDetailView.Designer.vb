@@ -38,13 +38,13 @@
             Me.TagDetail = New System.Windows.Forms.Label()
             Me.ViewPanel = New System.Windows.Forms.Panel()
             Me.HistoryList = New System.Windows.Forms.EnhancedListView()
+            Me.IDColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.TimeColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.UserColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.Pattern = New System.Windows.Forms.TextBox()
             Me.Splitter = New System.Windows.Forms.SplitContainer()
             Me.PrivateFilter = New System.Windows.Forms.Label()
             Me.Wait = New Huggle.UI.WaitControl()
-            Me.IDColumn = CType(New System.Windows.Forms.ColumnHeader(), System.Windows.Forms.ColumnHeader)
             Me.DescriptionPanel.SuspendLayout()
             Me.TagsPanel.SuspendLayout()
             Me.ViewPanel.SuspendLayout()
@@ -73,7 +73,7 @@
             Me.Views.ItemHeight = 20
             Me.Views.Location = New System.Drawing.Point(0, 22)
             Me.Views.Name = "Views"
-            Me.Views.Size = New System.Drawing.Size(81, 84)
+            Me.Views.Size = New System.Drawing.Size(81, 104)
             Me.Views.TabIndex = 1
             '
             'DescriptionPanel
@@ -242,6 +242,11 @@
             Me.HistoryList.View = System.Windows.Forms.View.Details
             Me.HistoryList.VirtualMode = True
             '
+            'IDColumn
+            '
+            Me.IDColumn.Text = "ID"
+            Me.IDColumn.Width = 44
+            '
             'TimeColumn
             '
             Me.TimeColumn.Text = "Time"
@@ -311,11 +316,6 @@
             Me.Wait.TabIndex = 0
             Me.Wait.TabStop = False
             Me.Wait.TextPosition = Huggle.UI.WaitControl.WaitTextPosition.Horizontal
-            '
-            'IDColumn
-            '
-            Me.IDColumn.Text = "ID"
-            Me.IDColumn.Width = 44
             '
             'AbuseFilterDetailView
             '

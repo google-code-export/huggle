@@ -1,9 +1,8 @@
-﻿Imports Huggle.Actions
-Imports System
+﻿Imports System
 Imports System.Collections.Generic
 Imports System.Xml
 
-Namespace Huggle
+Namespace Huggle.Queries
 
     Partial Friend Class ApiRequest
 
@@ -13,6 +12,8 @@ Namespace Huggle
         Private Sub ProcessApi(ByVal rootNode As XmlNode)
             Try
                 If rootNode.Name <> "api" Then OnFail(Msg("error-apiresponse"), "badroot")
+
+                If rootNode.HasAttribute("server") Then _Server = rootNode.Attribute("server")
 
                 For Each node As XmlNode In rootNode.ChildNodes
                     Select Case node.Name
@@ -192,6 +193,9 @@ Namespace Huggle
                             End If
                         Next c
 
+                    Case "allimages"
+                        '''
+
                     Case "alllinks"
                         '''
 
@@ -231,6 +235,9 @@ Namespace Huggle
                     Case "articleassessment"
                         '''
 
+                    Case "articlefeedback"
+                        '''
+
                     Case "backlinks"
                         Dim sourcePage As Page = Wiki.Pages.FromString(CStr(Query("bltitle")))
 
@@ -257,7 +264,7 @@ Namespace Huggle
 
                             If id > 0 Then
                                 Dim rev As Revision = Wiki.Revisions(id)
-                                rev.Exists = TS.False
+                                rev.Exists = False
                             End If
                         Next revNode
 
@@ -361,7 +368,7 @@ Namespace Huggle
                             If block.HasAttribute("id") AndAlso block.HasAttribute("bywiki") _
                                 AndAlso block.HasAttribute("address") Then
 
-                                Dim sourceWiki As Wiki = App.Wikis.FromCode(block.Attribute("bywiki"))
+                                Dim sourceWiki As Wiki = App.Wikis.FromString(block.Attribute("bywiki"))
 
                                 If sourceWiki IsNot Nothing Then
                                     Dim id As Integer = CInt(block.Attribute("id"))
@@ -399,6 +406,12 @@ Namespace Huggle
                             AssertApi(iw.Name, "iw")
                             'ignore
                         Next iw
+
+                    Case "iwbacklinks"
+                        '''
+
+                    Case "langbacklinks"
+                        '''
 
                     Case "languages"
                         '''
@@ -439,7 +452,7 @@ Namespace Huggle
                             Dim space As Space = Wiki.Spaces(CInt(ns.Attribute("id")))
                             space.Name = If(ns.FirstChild Is Nothing, "", ns.FirstChild.Value)
                             If ns.HasAttribute("canonical") Then space.CanonicalName = ns.Attribute("canonical")
-                            space.IsContent = ns.HasAttribute("content")
+                            space.IsContentSpace = ns.HasAttribute("content")
                             space.HasSubpages = ns.HasAttribute("subpages")
                             space.Aliases.Merge(space.CanonicalName)
                         Next ns
@@ -485,6 +498,21 @@ Namespace Huggle
                             page.Exists = False
                             page.IsProtected = True
                         Next pt
+
+                    Case "querypage"
+                        If node.HasAttribute("name") Then
+                            Dim queryPageName As String = node.Attribute("name")
+
+                            For Each result As XmlNode In node.ChildNodes
+                                AssertApi(result.Name, "result")
+
+                                For Each page As XmlNode In result.ChildNodes
+                                    AssertApi(page.Name, "page")
+
+                                    Items.Add(Wiki.Pages(page.Attribute("title")))
+                                Next page
+                            Next result
+                        End If
 
                     Case "random"
                         '''
@@ -957,7 +985,7 @@ Namespace Huggle
                         globalUserStatusChange.IsAccountHidden = node.FirstChild.InnerText.Contains("hidden")
                         globalUserStatusChange.IsAccountLocked = node.FirstChild.InnerText.Contains("locked")
                     End If
-                        
+
 
                 Case "review/approve",
                      "review/approve-a",
@@ -1025,7 +1053,20 @@ Namespace Huggle
                     If Query.Contains("prop") AndAlso Query("prop").ToString.Contains("categories") _
                         Then page.CategoriesKnown = True
                     page.Exists = Not node.HasAttribute("missing")
-                    If node.HasAttribute("edittoken") Then Session.EditToken = node.Attribute("edittoken")
+
+                    'Tokens
+                    If node.HasAttribute("edittoken") Then
+                        For Each tokenType As String In {"edit", "abusefilter", "preferences", "review", "stabilize", "upload"}
+                            Session.Tokens(tokenType) = node.Attribute("edittoken")
+                        Next tokenType
+                    End If
+
+                    For Each tokenType As String In
+                        {"delete", "protect", "move", "block", "unblock", "email", "import", "watch"}
+
+                        If node.HasAttribute(tokenType & "token") _
+                            Then Session.Tokens(tokenType) = node.Attribute(tokenType & "token")
+                    Next tokenType
 
                     If page.Exists Then
                         Items.Add(page)
@@ -1142,16 +1183,24 @@ Namespace Huggle
                 Select Case node.Name
                     Case "modules", "querymodules"
                         For Each moduleNode As XmlNode In node.ChildNodes
-                            If moduleNode.Name <> "module" Then Continue For
+                            AssertApi(moduleNode.Name, "module")
 
-                            Dim apiModule As ApiModule = Wiki.ApiModules(moduleNode.Attribute("name"))
+                            If moduleNode.HasAttribute("name") Then
+                                Dim apiModule As ApiModule = Wiki.ApiModules(moduleNode.Attribute("name"))
 
-                            apiModule.IsImplemented = Not moduleNode.HasAttribute("missing")
-                            apiModule.IsDisabled = {"ApiDisabled", "ApiQueryDisabled"}.Contains(moduleNode.Attribute("classname"))
+                                If moduleNode.HasAttribute("description") Then apiModule.Description = "description"
+                                apiModule.IsEnabled = Not {"ApiDisabled", "ApiQueryDisabled"}.Contains(moduleNode.Attribute("classname"))
+                                apiModule.IsImplemented = Not moduleNode.HasAttribute("missing")
+                            End If
                         Next moduleNode
 
-                    Case "mainmodule" 'Assume this is always enabled, wouldn't even get this far if it wasn't
+                    Case "mainmodule"
+                        'Assume this is always enabled, wouldn't even get this far if it wasn't
+                        
                     Case "pagesetmodule"
+                        Dim apiModule As ApiModule = Wiki.ApiModules("pageset")
+                        apiModule.IsEnabled = True
+                        apiModule.IsImplemented = True
 
                     Case Else : Log.Write(Msg("error-apiunrecognized", "paraminfo", node.Name))
                 End Select
@@ -1301,7 +1350,7 @@ Namespace Huggle
                             End If
 
                             rev.DetailsKnown = True
-                            rev.Exists = TS.True
+                            rev.Exists = True
 
                             If Processing Then
                                 rev.Page.Process()
@@ -1340,9 +1389,9 @@ Namespace Huggle
                 If node.HasAttribute("comment") Then rev.Summary = node.Attribute("comment") Else rev.Summary = ""
                 If node.HasAttribute("timestamp") Then rev.Time = node.Attribute("timestamp").ToDate
                 If node.HasAttribute("user") Then rev.User = Wiki.Users(node.Attribute("user"))
-                If node.HasAttribute("commenthidden") Then rev.SummaryHidden = True
-                If node.HasAttribute("texthidden") Then rev.TextHidden = True
-                If node.HasAttribute("userhidden") Then rev.UserHidden = True
+                If node.HasAttribute("commenthidden") Then rev.IsSummaryHidden = True
+                If node.HasAttribute("texthidden") Then rev.IsTextHidden = True
+                If node.HasAttribute("userhidden") Then rev.IsUserHidden = True
 
                 If Query("rvprop").ToString.Contains("content") Then rev.Text = If(node.InnerText, "")
 
@@ -1374,7 +1423,7 @@ Namespace Huggle
                 nextRev = rev
 
                 rev.DetailsKnown = True
-                rev.Exists = TS.True
+                rev.Exists = True
 
                 If Processing Then
                     rev.Page.Process()
@@ -1451,7 +1500,7 @@ Namespace Huggle
                             wiki.Family = App.Families.Wikimedia
                             wiki.Type = "special"
 
-                            wiki.Name = UcFirst(wiki.Code)
+                            wiki.Name = wiki.Code.ToUpperFirstI
                             wiki.FileUrl = New Uri(InternalConfig.WMFilePath & "wikipedia/" & wiki.Code & "/")
                             wiki.SecureUrl = New Uri(InternalConfig.WMSecurePath & "wikipedia/" & wiki.Code & "/w/")
                             wiki.Url = New Uri(special.Attribute("url") & "/w/")
@@ -1461,7 +1510,8 @@ Namespace Huggle
                                 wiki.IsPublicReadable = False
                             End If
 
-                            If special.HasAttribute("fishbowl") Then wiki.IsPublicEditable = False
+                            If special.HasAttribute("closed") OrElse special.HasAttribute("fishbowl") _
+                                Then wiki.IsPublicEditable = False
 
                             'Generate friendly names for some Wikimedia wikis
                             If wiki.Code.Contains("-") AndAlso wiki.Code.EndsWithI("labswikimedia") Then
@@ -1546,7 +1596,7 @@ Namespace Huggle
                 Items.Add(user)
 
                 If userNode.HasAttribute("userrightstoken") _
-                    Then Session.RightsTokens.Merge(user, userNode.Attribute("userrightstoken"))
+                    Then Session.RightsToken.Merge(user, userNode.Attribute("userrightstoken"))
                 If userNode.HasAttribute("registration") AndAlso userNode.Attribute("registration").Length > 0 _
                     Then user.Created = userNode.Attribute("registration").ToDate
                 If userNode.HasAttribute("editcount") Then user.Contributions = CInt(userNode.Attribute("editcount"))
@@ -1611,7 +1661,7 @@ Namespace Huggle
                 nextRev = rev
 
                 rev.DetailsKnown = True
-                rev.Exists = TS.True
+                rev.Exists = True
 
                 If Processing Then
                     rev.Page.Process()

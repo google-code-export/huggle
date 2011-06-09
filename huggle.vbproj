@@ -105,7 +105,7 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>huggle.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>dev\huggle.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>false</SignManifests>
@@ -131,10 +131,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="actions\Assess.vb" />
+    <Compile Include="actions\Feedback.vb" />
     <Compile Include="actions\ChangePassword.vb" />
     <Compile Include="actions\ResetPreferences.vb" />
     <Compile Include="actions\Unblock.vb" />
+    <Compile Include="tasks\AnalysisRules.vb" />
     <Compile Include="config\ConfigRead.vb" />
     <Compile Include="model\AbuseFilterRevision.vb" />
     <Compile Include="model\RateLimit.vb" />
@@ -145,6 +146,7 @@
     <Compile Include="model\SpamList.vb" />
     <Compile Include="model\Preferences.vb" />
     <Compile Include="model\TitleBlacklist.vb" />
+    <Compile Include="net\OpenKeyval.vb" />
     <Compile Include="net\TextRequest.vb" />
     <Compile Include="net\WikiRequest.vb" />
     <Compile Include="queries\ApiModuleQuery.vb" />
@@ -159,18 +161,18 @@
     <Compile Include="queries\LoadGlobalConfig.vb" />
     <Compile Include="actions\Logout.vb" />
     <Compile Include="queries\ExtraWikiConfig.vb" />
-    <Compile Include="actions\Review.vb" />
+    <Compile Include="actions\ReviewRevision.vb" />
     <Compile Include="actions\SetGlobalPreferences.vb" />
     <Compile Include="actions\SetPreferences.vb" />
-    <Compile Include="actions\Process.vb" />
+    <Compile Include="Process.vb" />
     <Compile Include="actions\AddWiki.vb" />
-    <Compile Include="actions\Block.vb" />
+    <Compile Include="actions\BlockUser.vb" />
     <Compile Include="actions\CreateAccount.vb" />
     <Compile Include="actions\Edit.vb" />
     <Compile Include="actions\Login.vb" />
     <Compile Include="actions\SaveConfig.vb" />
     <Compile Include="actions\Stabilize.vb" />
-    <Compile Include="actions\Upload.vb" />
+    <Compile Include="actions\UploadFile.vb" />
     <Compile Include="actions\VandalReport.vb" />
     <Compile Include="actions\RevertAndWarn.vb" />
     <Compile Include="actions\Watch.vb" />
@@ -181,10 +183,18 @@
     <Compile Include="config\MessageConfig.vb" />
     <Compile Include="net\FileRequest.vb" />
     <Compile Include="Data.vb" />
+    <Compile Include="queries\QuerypageLists.vb" />
+    <Compile Include="tasks\TestTask.vb" />
     <Compile Include="ui\controls\EnhancedListBox.vb">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ui\forms\ContainerForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\forms\TestForm.Designer.vb">
+      <DependentUpon>TestForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\forms\TestForm.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ui\prompts\CustomFilterForm.Designer.vb">
@@ -217,17 +227,13 @@
     <Compile Include="model\GlobalUser.vb" />
     <Compile Include="model\ReviewFlag.vb" />
     <Compile Include="actions\Revert.vb" />
-    <Compile Include="BatchQuery.vb" />
+    <Compile Include="queries\BatchQuery.vb" />
     <Compile Include="config\GlobalConfig.vb" />
     <Compile Include="config\LocalConfig.vb" />
     <Compile Include="config\WikiConfig.vb" />
     <Compile Include="config\UserConfig.vb" />
     <Compile Include="model\Family.vb" />
     <Compile Include="model\VisibilityChange.vb" />
-    <Compile Include="Application.Designer.vb">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Application.myapp</DependentUpon>
-    </Compile>
     <Compile Include="Resources.Designer.vb">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -240,7 +246,7 @@
     <Compile Include="net\QueryString.vb" />
     <Compile Include="scripting\Model.vb" />
     <Compile Include="scripting\Parser.vb" />
-    <Compile Include="Session.vb" />
+    <Compile Include="model\Session.vb" />
     <Compile Include="ui\controls\EnhancedFlowLayoutPanel.vb">
       <SubType>Component</SubType>
     </Compile>
@@ -418,6 +424,12 @@
     <Compile Include="ui\views\AbuseFilterView.vb">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="ui\views\LogView.Designer.vb">
+      <DependentUpon>LogView.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ui\views\LogView.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="ui\views\VisualRevisionView.Designer.vb">
       <DependentUpon>VisualRevisionView.vb</DependentUpon>
     </Compile>
@@ -523,6 +535,9 @@
     <Compile Include="ui\forms\WikiPropertiesForm.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="util\StringExtensions.vb" />
+    <Compile Include="util\Ternary.vb" />
+    <Compile Include="tasks\Analysis.vb" />
     <Compile Include="wikitext\CategoryLink.vb" />
     <Compile Include="wikitext\FileLink.vb" />
     <Compile Include="wikitext\InterLangLink.vb" />
@@ -531,7 +546,7 @@
     <Compile Include="wikitext\Reference.vb" />
     <Compile Include="wikitext\Section.vb" />
     <Compile Include="Application.vb" />
-    <Compile Include="QueueSources.vb" />
+    <Compile Include="model\QueueSources.vb" />
     <Compile Include="wikitext\Document.vb" />
     <Compile Include="queries\AbuseDetailQuery.vb" />
     <Compile Include="queries\AbuseInfoQuery.vb" />
@@ -575,10 +590,10 @@
     <Compile Include="model\UserCreation.vb" />
     <Compile Include="model\Deletion.vb" />
     <Compile Include="model\Diff.vb" />
-    <Compile Include="Feature.vb" />
-    <Compile Include="Functions.vb" />
+    <Compile Include="model\Feature.vb" />
+    <Compile Include="util\Functions.vb" />
     <Compile Include="net\Feed.vb" />
-    <Compile Include="Language.vb" />
+    <Compile Include="model\Language.vb" />
     <Compile Include="Log.vb" />
     <Compile Include="model\LogItem.vb" />
     <Compile Include="model\RightsChange.vb" />
@@ -593,29 +608,22 @@
     <Compile Include="actions\Email.vb">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="queries\PatrolQuery.vb">
+    <Compile Include="actions\Patrol.vb">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="queries\Protect.vb">
+    <Compile Include="actions\Protect.vb">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="actions\Purge.vb">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="queries\RestoreQuery.vb">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="queries\ReviewQuery.vb">
+    <Compile Include="actions\Undelete.vb">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="actions\UserRights.vb">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="queries\ProtectionReqQuery.vb" />
-    <Compile Include="queries\TagQuery.vb" />
     <Compile Include="queries\TokenQuery.vb" />
-    <Compile Include="queries\UserMessageQuery.vb" />
-    <Compile Include="queries\XfdQuery.vb" />
     <Compile Include="queries\Lists.vb">
       <SubType>Code</SubType>
     </Compile>
@@ -623,7 +631,7 @@
     <Compile Include="model\Queue.vb" />
     <Compile Include="model\QueueItem.vb" />
     <Compile Include="net\ApiRequest.vb" />
-    <Compile Include="Extensions.vb" />
+    <Compile Include="util\Extensions.vb" />
     <Compile Include="model\UserRename.vb" />
     <Compile Include="queries\ListQuery.vb" />
     <Compile Include="Result.vb" />
@@ -640,10 +648,10 @@
     <Compile Include="scripting\ScriptUser.vb" />
     <Compile Include="scripting\ScriptWiki.vb" />
     <Compile Include="Shortcut.vb" />
-    <Compile Include="SortedList.vb" />
+    <Compile Include="util\SortedList.vb" />
     <Compile Include="model\Space.vb" />
     <Compile Include="model\Tool.vb" />
-    <Compile Include="Translation.vb" />
+    <Compile Include="model\Translation.vb" />
     <Compile Include="net\UIRequest.vb" />
     <Compile Include="model\Upload.vb" />
     <Compile Include="model\User.vb" />
@@ -671,12 +679,15 @@
     <Compile Include="ui\forms\TutorialForm.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="WikiFunctions.vb" />
+    <Compile Include="util\WikiFunctions.vb" />
     <Compile Include="wikitext\Table.vb" />
     <Compile Include="model\Comment.vb" />
     <Compile Include="wikitext\Transclusion.vb" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ui\forms\TestForm.resx">
+      <DependentUpon>TestForm.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ui\prompts\CustomFilterForm.resx">
       <DependentUpon>CustomFilterForm.vb</DependentUpon>
     </EmbeddedResource>
@@ -761,6 +772,9 @@
     <EmbeddedResource Include="ui\views\AbuseFilterView.resx">
       <DependentUpon>AbuseFilterView.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ui\views\LogView.resx">
+      <DependentUpon>LogView.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ui\views\VisualRevisionView.resx">
       <DependentUpon>VisualRevisionView.vb</DependentUpon>
     </EmbeddedResource>
@@ -811,17 +825,16 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <CodeAnalysisDictionary Include="analysis\CustomDictionary.xml" />
+    <Content Include="dev\CustomDictionary.xml" />
+    <Content Include="tasks\AnalysisRules.txt" />
     <Content Include="en.txt" />
     <Content Include="resources\languages.txt" />
-    <None Include="analysis\Huggle.psess" />
     <None Include="app.manifest" />
-    <None Include="Application.myapp">
-      <Generator>MyApplicationCodeGenerator</Generator>
-      <LastGenOutput>Application.Designer.vb</LastGenOutput>
-    </None>
-    <None Include="ClassDiagram.cd" />
-    <None Include="huggle.snk" />
+    <None Include="dev\ClassDiagram.cd" />
+    <None Include="dev\analysis.ruleset" />
+    <None Include="dev\fxcop.FxCop" />
+    <None Include="dev\Huggle.psess" />
+    <None Include="dev\huggle.snk" />
     <None Include="resources\BasicHtmlPage.txt" />
     <Content Include="resources\blobs\blob-anon-filter.png" />
     <Content Include="resources\blobs\blob-anon.png" />
@@ -885,6 +898,9 @@
     <None Include="resources\icons\data-wikitext.png" />
     <None Include="resources\icons\data-table.png" />
     <None Include="resources\icons\data-html.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="My Project\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>

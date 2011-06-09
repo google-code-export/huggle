@@ -1,10 +1,11 @@
-﻿Imports System
+﻿Imports Huggle.Net
+Imports System
 Imports System.Collections.Generic
 Imports System.IO
 Imports System.Net
 Imports System.Text
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
     Friend Class LoadGlobalConfig : Inherits Query
 
@@ -36,22 +37,23 @@ Namespace Huggle.Actions
             'Parts to global configuration:
             '* the configuration page itself
             '* action=sitematrix through the API
-            '* closed.dblist because sitematrix extension is broken and doesn't indicate closed wikis
             '* the global title blacklist
             '* global groups from Toolserver because there is no API
 
-            Dim configRequest As New PageInfoQuery(Session, New Page() {configPage, languagePage}.ToList, Content:=True)
+            Dim configRequest As New PageInfoQuery(Session, {configPage, languagePage}.ToList) With {.Content = True}
 
-            If Wiki.Family.GlobalTitleBlacklist IsNot Nothing _
+            If Wiki.Family.GlobalTitleBlacklist Is Nothing _
+                Then Wiki.Family.GlobalTitleBlacklist = New TitleList(App.Wikis.Global.Pages(InternalConfig.GlobalTitleBlacklistLocation))
+
+            If Not Wiki.Family.GlobalTitleBlacklist.IsLoaded _
                 Then configRequest.Pages.Merge(Wiki.Family.GlobalTitleBlacklist.Location)
 
             Dim wikiRequest As New ApiRequest(App.Sessions(App.Wikis.Global.Users.Anonymous),
                 Description, New QueryString("action", "sitematrix"))
 
             Dim groupsRequest As New TextRequest(InternalConfig.WMGlobalGroupsUrl)
-            Dim closedRequest As New TextRequest(InternalConfig.WMClosedWikisUrl)
 
-            App.DoParallel({configRequest, closedRequest, wikiRequest, groupsRequest})
+            App.DoParallel({configRequest, wikiRequest, groupsRequest})
 
             If configRequest.Result.IsError Then OnFail(configRequest.Result) : Return
             If wikiRequest.Result.IsError Then OnFail(wikiRequest.Result) : Return
@@ -107,19 +109,15 @@ Namespace Huggle.Actions
                         wikisTable = wikisTable.FromFirst("<tr").FromFirst("<tr").FromFirst("<td>").ToFirst("</td>")
                         Dim wikis As New List(Of Wiki)
 
-                        For Each wikiItem As String In wikisTable.Split("<br />")
-                            Dim wikiCode As String = wikiItem.Trim
+                        For Each wikiCode As String In wikisTable.Split("<br />").Trim
+                            Dim wiki As Wiki = App.Wikis.FromString(wikiCode)
 
-                            If App.Wikis.Contains(wikiCode) Then
-                                Dim wiki As Wiki = App.Wikis(wikiCode)
-
-                                Dim a As String = App.Wikis.All.Count.ToStringI
-                                If wiki IsNot Nothing AndAlso App.Families.Wikimedia.Wikis.All.Contains(wiki) _
-                                    Then wikis.Merge(wiki)
+                            If wiki IsNot Nothing AndAlso App.Families.Wikimedia.Wikis.Contains(wiki.Code) Then
+                                wikis.Merge(wiki)
                             Else
                                 Log.Debug("Could not locate wiki '{0}' referenced in global groups list".FormatI(wikiCode))
                             End If
-                        Next wikiItem
+                        Next wikiCode
 
                         group.Wikis = wikis
 
@@ -139,20 +137,6 @@ Namespace Huggle.Actions
                 Next groupItem
             Else
                 Log.Write("Error loading global groups list: {0}".FormatI(groupsRequest.Result.LogMessage))
-            End If
-
-            'Closed wikis
-            If closedRequest.IsSuccess Then
-                For Each code As String In groupsRequest.Response.Split(LF)
-                    If App.Wikis.Contains(code) Then
-                        Dim wiki As Wiki = App.Wikis(code)
-
-                        wiki.IsPublicEditable = False
-                        wiki.IsPublicReadable = False
-                    End If
-                Next code
-            Else
-                Log.Write("Error loading closed wiki list: {0}".FormatI(closedRequest.Result.LogMessage))
             End If
 
             'Save configuration

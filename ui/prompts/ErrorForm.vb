@@ -9,9 +9,52 @@ Namespace Huggle.UI
         Private ShowRetry As Boolean
 
         Public Sub New(ByVal message As String, ByVal showRetry As Boolean)
-            InitializeComponent()
-            If message Is Nothing Then Throw New ArgumentNullException("message")
+            ThrowNull(message, "message")
+            Me.Message = FormatMessage(message)
+            Me.ShowRetry = showRetry
 
+            InitializeComponent()
+        End Sub
+
+        Private Sub _KeyDown(ByVal sender As Object, ByVal e As KeyEventArgs) Handles Me.KeyDown
+            If e.Control AndAlso e.KeyCode = Keys.C Then Copy_Click()
+        End Sub
+
+        Private Sub _Load() Handles Me.Load
+            Icon = Resources.Icon
+            Text = Windows.Forms.Application.ProductName
+            Image.Image = Resources.error_icon
+            If App.Languages.Current IsNot Nothing Then App.Languages.Current.Localize(Me)
+            MessageBox.Text = Message
+
+            'Select mode
+            Retry.Visible = ShowRetry
+            OK.Text = If(ShowRetry, Msg("a-cancel"), Msg("a-ok"))
+
+            'Resize to accommodate message
+            Width = Math.Max(280, MessageBox.Width + 80)
+            Height = Math.Max(120, MessageBox.Height + 85)
+
+            'Center on screen
+            Left = Screen.FromControl(Me).Bounds.Width \ 2 - Width \ 2
+            Top = Screen.FromControl(Me).Bounds.Height \ 2 - Height \ 2
+        End Sub
+
+        Private Sub Copy_Click() Handles Copy.Click
+            Clipboard.SetText(Message)
+        End Sub
+
+        Private Sub OK_Click() Handles OK.Click
+            DialogResult = If(Retry.Visible, DialogResult.Cancel, DialogResult.OK)
+            Close()
+        End Sub
+
+        Private Sub Retry_Click() Handles Retry.Click
+            DialogResult = DialogResult.Retry
+            Close()
+        End Sub
+
+        Private Function FormatMessage(ByVal message As String) As String
             Dim maxLength As Integer = 80
             Dim result As String = ""
             Dim startPos As Integer
@@ -51,54 +94,8 @@ Namespace Huggle.UI
                 End If
             End While
 
-            Me.Message = result
-            Me.ShowRetry = showRetry
-        End Sub
-
-        Private Sub _KeyDown(ByVal sender As Object, ByVal e As KeyEventArgs) Handles Me.KeyDown
-            If e.Control AndAlso e.KeyCode = Keys.C Then Copy_Click()
-        End Sub
-
-        Private Sub _Load() Handles Me.Load
-            Try
-                Icon = Resources.Icon
-                Text = Windows.Forms.Application.ProductName
-                Image.Image = Resources.error_icon
-                If App.Languages.Current IsNot Nothing Then App.Languages.Current.Localize(Me)
-                MessageBox.Text = Message
-
-                'Select mode
-                Retry.Visible = ShowRetry
-                OK.Text = If(ShowRetry, Msg("a-cancel"), Msg("a-ok"))
-
-                'Resize to accommodate message
-                Width = Math.Max(280, MessageBox.Width + 80)
-                Height = Math.Max(120, MessageBox.Height + 85)
-
-                'Center on screen
-                Left = Screen.FromControl(Me).Bounds.Width \ 2 - Width \ 2
-                Top = Screen.FromControl(Me).Bounds.Height \ 2 - Height \ 2
-
-            Catch ex As SystemException
-                'Error showing the error form. Better give up...
-                Log.Write("Error showing error form: " & Result.FromException(ex).LogMessage)
-                Close()
-            End Try
-        End Sub
-
-        Private Sub Copy_Click() Handles Copy.Click
-            Clipboard.SetText(Message)
-        End Sub
-
-        Private Sub OK_Click() Handles OK.Click
-            DialogResult = If(Retry.Visible, DialogResult.Cancel, DialogResult.OK)
-            Close()
-        End Sub
-
-        Private Sub Retry_Click() Handles Retry.Click
-            DialogResult = DialogResult.Retry
-            Close()
-        End Sub
+            Return result
+        End Function
 
     End Class
 

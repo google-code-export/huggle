@@ -1,4 +1,4 @@
-﻿Namespace Huggle.Actions
+﻿Namespace Huggle.Queries
 
     'Get details of an abuse log item
     'TODO: Update this to use the API if information is ever made available that way
@@ -22,8 +22,8 @@
             OnProgress(Msg("abusedetail-progress", Abuse))
             OnStarted()
 
-            Dim query As New QueryString( _
-                "title", "Special:AbuseLog", _
+            Dim query As New QueryString(
+                "title", "Special:AbuseLog",
                 "details", Abuse)
 
             Dim req As New UIRequest(Session, Description, query, Nothing)
@@ -33,7 +33,7 @@
             'Extract diff
             If Not (req.Response.Contains("<table class='diff'>") AndAlso req.Response.Contains("</table>")) _
                 Then OnFail(Msg("error-unknown")) : Return
-            Abuse.Diff = req.Response.FromFirst("<table class='diff'>", True).ToFirst("</table>", True)
+            Abuse.Diff = req.Response.FromFirstInclusive("<table class='diff'>").ToFirstInclusive("</table>")
 
             OnSuccess()
         End Sub

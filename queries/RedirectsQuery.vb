@@ -1,7 +1,7 @@
 ﻿Imports System
 Imports System.Collections.Generic
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
     'Get redirect targets
 

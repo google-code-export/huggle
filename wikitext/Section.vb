@@ -72,26 +72,9 @@ Namespace Huggle.Wikitext
         Private Items As New List(Of Section)
 
         Public Sub New(ByVal document As Document)
+            ThrowNull(document, "document")
             Me.Document = document
-
-            Dim matches As MatchCollection = Parsing.SectionPattern.Matches(document.Text)
-
-            'Text before any actual sections is "section 0"
-            Items.Add(New Section(document, Nothing, 0,
-                New Selection(0, If(matches.Count = 0, document.Length, matches(0).Index))))
-
-            For i As Integer = 0 To matches.Count - 2
-                Items.Add(New Section(document, matches(i).Groups(1).Value, matches(i).Groups(2).Value.Length - 1,
-                    New Selection(matches(i).Index, matches(i + 1).Index - matches(i).Index)))
-            Next i
-
-            'Treat last section as extending to the end of the page
-            'even though in articles it often semantically doesn't (categories, interwikis etc.)
-            If matches.Count > 0 Then
-                Dim LastMatch As Match = matches(matches.Count - 1)
-                Items.Add(New Section(document, LastMatch.Groups(1).Value, LastMatch.Groups(2).Value.Length - 1,
-                    New Selection(LastMatch.Index, document.Length - LastMatch.Index)))
-            End If
+            Parse()
         End Sub
 
         Public ReadOnly Property All() As IList(Of Section)
@@ -147,6 +130,27 @@ Namespace Huggle.Wikitext
 
         Public Sub Remove(ByVal index As Integer)
             Document.Text = Document.Text.Remove(All(index).Selection.Start, All(index).Selection.Length)
+        End Sub
+
+        Private Sub Parse()
+            Dim matches As MatchCollection = Parsing.SectionPattern.Matches(Document.Text)
+
+            'Text before any actual sections is "section 0"
+            Items.Add(New Section(document, Nothing, 0,
+                New Selection(0, If(matches.Count = 0, document.Length, matches(0).Index))))
+
+            For i As Integer = 0 To matches.Count - 2
+                Items.Add(New Section(document, matches(i).Groups(1).Value, matches(i).Groups(2).Value.Length - 1,
+                    New Selection(matches(i).Index, matches(i + 1).Index - matches(i).Index)))
+            Next i
+
+            'Treat last section as extending to the end of the page
+            'even though in articles it often semantically doesn't (categories, interwikis etc.)
+            If matches.Count > 0 Then
+                Dim lastMatch As Match = matches(matches.Count - 1)
+                Items.Add(New Section(document, lastMatch.Groups(1).Value, lastMatch.Groups(2).Value.Length - 1,
+                    New Selection(lastMatch.Index, document.Length - lastMatch.Index)))
+            End If
         End Sub
 
     End Class

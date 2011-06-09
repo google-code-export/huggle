@@ -1,4 +1,4 @@
-﻿Imports Huggle.Actions
+﻿Imports Huggle.Queries
 Imports System
 Imports System.Collections.Generic
 
@@ -9,28 +9,24 @@ Namespace Huggle.UI
         Private Session As Session
 
         Public Sub New(ByVal session As Session)
-            InitializeComponent()
+            ThrowNull(session, "session")
             Me.Session = session
+
+            InitializeComponent()
         End Sub
 
         Private Sub _Load() Handles Me.Load
-            Try
-                Icon = Resources.Icon
-                Text = Msg("accountprefs-title", Session.User.FullName)
+            Icon = Resources.Icon
+            Text = Msg("accountprefs-title", Session.User.FullName)
 
-                'Finish loading extra config
-                If Not Session.User.Wiki.Config.ExtraConfigLoaded Then
-                    App.UserWaitForProcess(Session.User.Wiki.Config.ExtraLoader)
-                    If Session.User.Wiki.Config.ExtraLoader.IsFailed _
-                        Then App.ShowError(Session.User.Wiki.Config.ExtraLoader.Result) : Close() : Return
-                End If
+            'Finish loading extra config
+            If Not Session.User.Wiki.Config.ExtraConfigLoaded Then
+                App.UserWaitForProcess(Session.User.Wiki.Config.ExtraLoader)
+                If Session.User.Wiki.Config.ExtraLoader.IsFailed _
+                    Then App.ShowError(Session.User.Wiki.Config.ExtraLoader.Result) : Close() : Return
+            End If
 
-                LoadData(Session.User.Preferences)
-
-            Catch ex As SystemException
-                App.ShowError(Result.FromException(ex))
-                Close()
-            End Try
+            LoadData(Session.User.Preferences)
         End Sub
 
         Private Sub CancelBtn_Click() Handles CancelBtn.Click

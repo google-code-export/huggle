@@ -1,4 +1,4 @@
-﻿Namespace Huggle.Actions
+﻿Namespace Huggle.Queries
 
     Friend Class Edit : Inherits Query
 
@@ -72,7 +72,7 @@
             OnStarted()
 
             'Get token
-            If Session.EditToken Is Nothing Then
+            If Not Session.HasTokens Then
                 Dim tokenQuery As New TokenQuery(Session)
                 tokenQuery.Start()
                 If tokenQuery.IsErrored Then OnFail(tokenQuery.Result) : Return
@@ -94,13 +94,13 @@
             If UseSummaryTag AndAlso Wiki.Config.SummaryTag IsNot Nothing Then Summary &= " " & Wiki.Config.SummaryTag
 
             'Create query string
-            Dim query As New QueryString( _
-                "action", "edit", _
-                "title", Page, _
-                "text", _Text, _
-                "summary", Summary, _
-                "token", Session.EditToken, _
-                "section", Section, _
+            Dim query As New QueryString(
+                "action", "edit",
+                "title", Page,
+                "text", Text,
+                "summary", Summary,
+                "token", Session.Tokens("edit"),
+                "section", Section,
                 "watchlist", Watch.ToString.ToLowerI)
 
             If Bot Then query.Add("bot")
@@ -110,7 +110,8 @@
             If CreateOnly Then query.Add("createonly")
 
             If Conflict <> ConflictAction.Ignore Then
-                If Page.Exists AndAlso Page.LastRev IsNot Nothing Then query.Add("basetimestamp", WikiTimestamp(Page.LastRev.Time))
+                If Page.Exists AndAlso Page.LastRev IsNot Nothing _
+                    Then query.Add("basetimestamp", WikiTimestamp(Page.LastRev.Time))
                 query.Add("starttimestamp", WikiTimestamp(startTime))
             End If
 
@@ -121,7 +122,7 @@
             'If edit token is bad, clear it and retry
             If req.Result.Code = "badtoken" AndAlso Not Retrying Then
                 Log.Debug("Retrying action due to bad token")
-                Session.EditToken = Nothing
+                Session.HasTokens = False
                 Retrying = True
                 Start()
                 Return

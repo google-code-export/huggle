@@ -1,4 +1,4 @@
-﻿Imports Huggle.Actions
+﻿Imports Huggle.Queries
 Imports System
 Imports System.Windows.Forms
 
@@ -11,8 +11,10 @@ Namespace Huggle.UI
         Private Source As User
 
         Public Sub New(ByVal session As Session)
-            InitializeComponent()
+            ThrowNull(session, "session")
             Me.Session = session
+
+            InitializeComponent()
         End Sub
 
         Private ReadOnly Property GlobalUser() As GlobalUser
@@ -22,23 +24,17 @@ Namespace Huggle.UI
         End Property
 
         Private Sub _Load() Handles Me.Load
-            Try
-                Account.Text = GlobalUser.FullName
+            Account.Text = GlobalUser.FullName
 
-                For Each user As User In GlobalUser.Users
-                    CopyFrom.Items.Add(user.Wiki)
-                Next user
+            For Each user As User In GlobalUser.Users
+                CopyFrom.Items.Add(user.Wiki)
+            Next user
 
-                For Each wiki As Wiki In GlobalUser.Family.Wikis.All
-                    If GlobalUser.HasAccountOn(wiki) Then CopyTo.Items.Add(wiki, True)
-                Next wiki
+            For Each wiki As Wiki In GlobalUser.Family.Wikis.All
+                If GlobalUser.HasAccountOn(wiki) Then CopyTo.Items.Add(wiki, True)
+            Next wiki
 
-                CopyFrom.SelectedItem = Session.Wiki
-
-            Catch ex As SystemException
-                App.ShowError(Result.FromException(ex))
-                Close()
-            End Try
+            CopyFrom.SelectedItem = Session.Wiki
         End Sub
 
         Private Sub CopyFrom_SelectedIndexChanged() Handles CopyFrom.SelectedIndexChanged

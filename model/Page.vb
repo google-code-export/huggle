@@ -1,6 +1,7 @@
 ﻿Imports System
 Imports System.Collections.Generic
 Imports System.Drawing
+Imports System.Text
 Imports System.Text.RegularExpressions
 Imports System.Web.HttpUtility
 
@@ -16,11 +17,13 @@ Namespace Huggle
         Private _Assessment As String
         Private _DeletedEdits As New List(Of Revision)
         Private _FirstRev As Revision
+        Private _Id As Integer
         Private _IsIgnored As Boolean
         Private _IsPriorityTalk As Boolean
         Private _IsRedirect As Boolean
         Private _LastRev As Revision
         Private _Logs As New SortedList(Of LogItem)(Function(x As LogItem, y As LogItem) Date.Compare(x.Time, y.Time))
+        Private _Name As String
         Private _Owner As User
         Private _RedirectTo As Page
         Private _Space As Space
@@ -45,11 +48,17 @@ Namespace Huggle
         Public Event StateChanged As SimpleEventHandler(Of Page)
         Public Event HistoryChanged As SimpleEventHandler(Of Page)
 
-        Public Sub New(ByVal wiki As Wiki, ByVal title As String, ByVal space As Space)
+        Friend Sub New(ByVal wiki As Wiki, ByVal id As Integer)
+            _Id = id
+            _Wiki = wiki
+        End Sub
+
+        Friend Sub New(ByVal wiki As Wiki, ByVal space As Space, ByVal name As String)
             _EditCount = -1
             _Exists = True
+            _Name = name
             _Space = space
-            _Title = title
+            _Title = space.Name & ":" & name
             _Wiki = wiki
         End Sub
 
@@ -135,6 +144,14 @@ Namespace Huggle
         Public Property HistoryKnown() As Boolean
 
         Public Property Id() As Integer
+            Get
+                Return _Id
+            End Get
+            Set(ByVal value As Integer)
+                _Id = value
+                Wiki.Pages.UpdateId(Me)
+            End Set
+        End Property
 
         Public ReadOnly Property IsArticle() As Boolean
             Get
@@ -358,7 +375,7 @@ Namespace Huggle
 
         Public ReadOnly Property Name() As String
             Get
-                If IsArticle Then Return Title Else Return Title.FromFirst(":")
+                Return _Name
             End Get
         End Property
 
@@ -474,10 +491,16 @@ Namespace Huggle
             End Get
         End Property
 
-        Public ReadOnly Property Title() As String
+        Public Property Title() As String
             Get
                 Return _Title
             End Get
+            Set(ByVal value As String)
+                Dim oldTitle As String = _Title
+                _Title = value
+                Wiki.Pages.UpdateTitle(Me, oldTitle)
+                If oldTitle IsNot Nothing Then RaiseEvent Moved(Me, New PageMoveEventArgs(Me, oldTitle))
+            End Set
         End Property
 
         Public ReadOnly Property Url() As Uri
@@ -492,15 +515,6 @@ Namespace Huggle
                 Return _Wiki
             End Get
         End Property
-
-        Public Sub MovedTo(ByVal newTitle As String)
-            'Handle a page move
-            Dim oldTitle As String = Title
-            Wiki.Pages.All.Remove(Title)
-            _Title = newTitle
-            Wiki.Pages.All.Merge(newTitle, Me)
-            RaiseEvent Moved(Me, New PageMoveEventArgs(Me, oldTitle))
-        End Sub
 
         Public Sub OnEdit(ByVal rev As Revision)
             RaiseEvent Edited(Me, New EventArgs(Of Revision)(rev))
@@ -619,19 +633,15 @@ Namespace Huggle
 
         Private Wiki As Wiki
 
-        Private ReadOnly _All As New Dictionary(Of String, Page)
+        Private ReadOnly AllById As New Dictionary(Of Integer, Page)
+        Private ReadOnly AllByTitle As New Dictionary(Of String, Page)
+
         Private ReadOnly _Ignored As New List(Of Page)
         Private ReadOnly _Priority As New List(Of String)
 
         Public Sub New(ByVal wiki As Wiki)
             Me.Wiki = wiki
         End Sub
-
-        Public ReadOnly Property All() As Dictionary(Of String, Page)
-            Get
-                Return _All
-            End Get
-        End Property
 
         Public Property Count() As Integer = -1
 
@@ -665,23 +675,40 @@ Namespace Huggle
             End Get
         End Property
 
+        Public Function FromId(ByVal id As Integer) As Page
+            ThrowOutOfRange(id <= 0, "id")
+
+            If Not AllById.ContainsKey(id) Then AllById.Add(id, New Page(Wiki, id))
+            Return AllById(id)
+        End Function
+
         Public Function FromNsAndTitle(ByVal space As Integer, ByVal title As String) As Page
-            If title Is Nothing Then Throw New ArgumentNullException("title")
-            If Not All.ContainsKey(title) Then Return FromNsAndTitle(Wiki.Spaces(space), title)
-            Return All(title)
+            ThrowNull(title, "title")
+
+            If Not AllByTitle.ContainsKey(title) Then Return FromNsAndTitle(Wiki.Spaces(space), title)
+            Return AllByTitle(title)
         End Function
 
         Public Function FromNsAndTitle(ByVal space As Space, ByVal title As String) As Page
-            If title Is Nothing Then Throw New ArgumentNullException("title")
-            If Not All.ContainsKey(title) Then All.Add(title, New Page(Wiki, title, space))
-            Return All(title)
+            ThrowNull(space, "space")
+            ThrowNull(title, "title")
+
+            If Not AllByTitle.ContainsKey(title) Then AllByTitle.Add(title,
+                New Page(Wiki, space, If(space.IsArticleSpace, title, title.FromFirst(":"))))
+
+            Return AllByTitle(title)
         End Function
 
         Public Function FromNsAndName(ByVal space As Integer, ByVal name As String) As Page
+            ThrowNull(name, "name")
+
             Return Item(Wiki.Spaces(space), Wiki.Spaces(space).Name & ":" & name)
         End Function
 
         Public Function FromNsAndName(ByVal space As Space, ByVal name As String) As Page
+            ThrowNull(space, "space")
+            ThrowNull(name, "name")
+
             Return Item(space, space.Name & ":" & name)
         End Function
 
@@ -700,45 +727,86 @@ Namespace Huggle
         End Function
 
         Public Function FromTitle(ByVal title As String) As Page
-            If title Is Nothing Then Throw New ArgumentNullException("title")
-            If Not All.ContainsKey(title) Then Return FromNsAndTitle(Wiki.Spaces.FromTitle(title), title)
-            Return All(title)
+            ThrowNull(title, "title")
+
+            If Not AllByTitle.ContainsKey(title) Then Return FromNsAndTitle(Wiki.Spaces.FromTitle(title), title)
+            Return AllByTitle(title)
         End Function
+
+        Public Sub UpdateId(ByVal page As Page)
+            ThrowNull(page, "page")
+            AllById.Merge(page.Id, page)
+        End Sub
+
+        Public Sub UpdateTitle(ByVal page As Page, ByVal oldTitle As String)
+            ThrowNull(page, "page")
+            AllByTitle.Unmerge(oldTitle)
+            AllByTitle.Merge(page.Title, page)
+        End Sub
 
         Public Function SanitizeTitle(ByVal title As String) As String
             If title Is Nothing Then Return Nothing
 
-            'Remove illegal characters
+            'Remove navigation fragment
             If title.Contains("#") Then title = title.ToFirst("#")
-            title = title.Remove("[", "]", "{", "}", "|", "<", "#", Tab, LF)
-            title = title.TrimStart(New Char() {":"c})
 
-            title = title.Replace("_", " ").Trim()
+            'Convert underscores to spaces
+            title = title.Replace("_", " ")
 
-            If String.IsNullOrEmpty(title) Then Return Nothing
+            'Remove excess whitespace
+            Static multipleSpacePattern As New Regex("  +", RegexOptions.Compiled)
+            title = multipleSpacePattern.Replace(title, " ").Trim
 
-            'Capitalize first letter of title
-            If Not Wiki.Config.FirstLetterCaseSensitive Then title = UcFirst(title)
+            'Disallow invalid characters and control codes
+            Static badChars As String = "[]{}|<>#/\"
 
-            'Handle namespaces
+            For Each c As Char In title
+                If badChars.Contains(c) OrElse Convert.ToInt32(c) < 32 OrElse Convert.ToInt32(c) = 127 Then Return Nothing
+            Next c
+
+            'Disallow titles containing percent-encoding
+            Static percentEncodedPattern As New Regex("%[0-9A-F][0-9A-F]", RegexOptions.Compiled)
+            If percentEncodedPattern.IsMatch(title) Then Return Nothing
+
+            'Disallow HTML entities
+            Static htmlEntityPattern As New Regex("&[a-zA-Z0-9];", RegexOptions.Compiled)
+            If htmlEntityPattern.IsMatch(Name) Then Return Nothing
+
+            'Disallow multiple colons at start of page name
+            If title.StartsWithI("::") Then Return Nothing
+
+            'Ignore first colon in title
+            If title.StartsWithI(":") Then title = title.FromFirst(":")
+
+            'Determine namespace
             Dim space As Space = Wiki.Spaces.FromTitle(title)
 
-            'Handle special namespace
-            If space.IsSpecial Then Return Nothing
+            'Disallow special pages
+            If space.IsSpecialSpace Then Return Nothing
 
-            If Not space.IsArticleSpace Then
-                'Normalize namespace name
-                title = space.Name & ":" & title.FromFirst(":")
+            Dim pageName As String = If(space.IsArticleSpace, title, title.FromFirst(":"))
 
-                'Reject titles that are a namespace name followed by a colon
-                Dim cPos As Integer = title.IndexOfI(":")
-                If cPos = title.Length - 1 Then Return Nothing
+            'Disallow namespace name followed by a colon
+            If pageName.Length = 0 Then Return Nothing
 
-                'Capitalize first letter after namespace
-                If Not Wiki.Config.FirstLetterCaseSensitive AndAlso cPos >= 0 _
-                    Then title = title.Substring(0, cPos + 1) &
-                    title.Substring(cPos + 1, 1).ToUpperI & title.Substring(cPos + 2)
-            End If
+            'Disallow colon after namespace colon
+            If pageName.StartsWithI(":") Then Return Nothing
+
+            'Disallow path syntax
+            If pageName = "." OrElse pageName = ".." Then Return Nothing
+            If pageName.StartsWithI("./") OrElse pageName.StartsWithI("../") Then Return Nothing
+            If pageName.Contains("/./") OrElse pageName.Contains("/../") Then Return Nothing
+            If pageName.EndsWithI("/.") OrElse pageName.EndsWithI("/..") Then Return Nothing
+
+            'Capitalize first letter of title
+            If Not Wiki.Config.FirstLetterCaseSensitive _
+                OrElse space Is Wiki.Spaces.User OrElse space Is Wiki.Spaces.UserTalk Then pageName = pageName.ToUpperFirstI
+
+            'Disallow titles that are too long
+            If Encoding.UTF8.GetBytes(pageName).Length > 255 Then Return Nothing
+
+            'Normalize namespace name
+            title = If(space.IsArticleSpace, pageName, space.Name & ":" & pageName)
 
             Return title
         End Function

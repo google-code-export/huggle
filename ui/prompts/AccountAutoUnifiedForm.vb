@@ -9,9 +9,11 @@ Namespace Huggle.UI
         Private User As User
 
         Public Sub New(ByVal user As User, ByVal requester As String)
-            InitializeComponent()
+            ThrowNull(user, "user")
             Me.Requester = requester
             Me.User = user
+
+            InitializeComponent()
         End Sub
 
         Private Sub _FormClosing() Handles Me.FormClosing
@@ -22,16 +24,10 @@ Namespace Huggle.UI
         End Sub
 
         Private Sub _Load() Handles Me.Load
-            Try
-                Icon = Resources.Icon
-                Request.Text = Request.Text.FormatForUser(Requester, User.FullName, User.GlobalUser.FullName)
-
-            Catch ex As SystemException
-                App.ShowError(Result.FromException(ex))
-                DialogResult = DialogResult.Abort
-                Close()
-            End Try
+            Icon = Resources.Icon
+            Request.Text = Request.Text.FormatForUser(Requester, User.FullName, User.GlobalUser.FullName)
         End Sub
 
     End Class
+
 End Namespace

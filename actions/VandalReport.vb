@@ -4,7 +4,7 @@
 'Imports System.Collections.Generic
 'Imports System.Text.RegularExpressions
 
-'Namespace Huggle.Actions
+'Namespace Huggle.Queries
 
 '    Friend Class VandalReport : Inherits Query
 

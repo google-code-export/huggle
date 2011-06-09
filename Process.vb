@@ -1,7 +1,9 @@
 ﻿Imports System
 Imports System.Collections.Generic
 
-Namespace Huggle.Actions
+Namespace Huggle
+
+    'Represents an asynchronous process
 
     Friend MustInherit Class Process
 
@@ -102,7 +104,7 @@ Namespace Huggle.Actions
 
                 'Use the progress message as the source of the error when available
                 If Message IsNot Nothing Then
-                    Result.Wrap(Msg("error-process", LcFirst(Message.Remove("..."))))
+                    Result.Wrap(Msg("error-process", Message.ToLowerFirstI.Remove("...")))
                     Result.Code = Result.Inner.Code
                 End If
 

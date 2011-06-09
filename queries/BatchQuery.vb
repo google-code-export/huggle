@@ -3,7 +3,7 @@ Imports System
 Imports System.Collections.Generic
 Imports System.Windows.Forms
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
     'Fetch specified information about specified items
     'using as few queries as possible for efficiency
@@ -177,20 +177,20 @@ Namespace Huggle.Actions
             'Make the requests
             Queries.Clear()
 
-            If PageText.Count > 0 Then Queries.Add(New PageInfoQuery(Session, PageText, Content:=True))
+            If PageText.Count > 0 Then Queries.Add(New PageInfoQuery(Session, PageText) With {.Content = True})
 
-            If PageInfo.Count > 0 Then Queries.Add(New PageInfoQuery(Session, PageInfo, _
-                Categories:=Categories, Externals:=Externals, Langlinks:=Langlinks, Links:=Links, Media:=Media, _
-                Revision:=LastRev, Transclusions:=Transclusions))
+            If PageInfo.Count > 0 Then Queries.Add(New PageInfoQuery(Session, PageInfo) With {
+                .Categories = Categories, .Externals = Externals, .LangLinks = Langlinks, .Links = Links,
+                .Media = Media, .Revision = LastRev, .Transclusions = Transclusions})
 
             If PageCreation.Count > 0 Then
                 For Each Page As Page In PageCreation
-                    Queries.Add(New PageDetailQuery(Session, Page, RevType.First))
+                    Queries.Add(New PageDetailQuery(Session, Page) With {.Revs = RevType.First})
                 Next Page
             End If
 
             'If PageDeletedRevs.Count > 0 Then Queries.Add(New DeletedHistoryQuery(Session, PageDeletedRevs))
-            'If UserInfo.Count > 0 Then Queries.Add(New UserInfoQuery(Session, UserInfo))
+            If UserInfo.Count > 0 Then Queries.Add(New UserInfoQuery(Session, UserInfo))
 
             'If UserDeletedRevs.Count > 0 Then
             '    For Each User As User In UserDeletedRevs
@@ -198,22 +198,22 @@ Namespace Huggle.Actions
             '    Next User
             'End If
 
-            'If Diffs.Count > 0 Then
-            '    For Each Diff As Diff In Diffs
-            '        Queries.Add(New DiffQuery(Session, Diff))
-            '    Next Diff
-            'End If
+            If Diffs.Count > 0 Then
+                For Each Diff As Diff In Diffs
+                    Queries.Add(New DiffQuery(Session, Diff))
+                Next Diff
+            End If
 
             'If RevisionChange.Count > 0 Then
             '    For Each rev As Revision In RevisionChange
             '        Queries.Add(New HistoryQuery(Session, rev.Page, 2, False))
             '    Next rev
             'End If
-            'If RevisionInfo.Count > 0 Then Queries.Add(New RevisionInfoQuery(Session, RevisionInfo.ToArray))
-            'If RedirectTarget.Count > 0 Then Queries.Add(New Info.RedirectsQuery(Session, RedirectTarget))
-            'If RevisionText.Count > 0 Then Queries.Add(New RevisionDetailQuery(Session, RevisionText, True))
-            'If Expansion.Count > 0 Then Queries.Add(New ExpandTemplatesQuery(Session, Expansion))
-            'If Stats Then Queries.Add(New WikiInfoQuery(User.Wiki))
+
+            If RevisionInfo.Count > 0 Then Queries.Add(New RevisionInfoQuery(Session, RevisionInfo.ToArray))
+            If RedirectTarget.Count > 0 Then Queries.Add(New RedirectsQuery(Session, RedirectTarget))
+            If RevisionText.Count > 0 Then Queries.Add(New RevisionDetailQuery(Session, RevisionText, True))
+            If Expansion.Count > 0 Then Queries.Add(New ExpandTemplatesQuery(Session, Expansion))
 
             _Items = result
         End Sub

@@ -1,4 +1,5 @@
-﻿Imports System
+﻿Imports Huggle.Queries
+Imports System
 Imports System.Collections.Generic
 Imports System.Windows.Forms
 
@@ -10,42 +11,34 @@ Namespace Huggle.UI
         Private User As User
 
         Public Sub New(ByVal session As Session, ByVal user As User)
-            InitializeComponent()
-
-            If session Is Nothing Then Throw New ArgumentNullException("session")
-            If user Is Nothing Then Throw New ArgumentNullException("user")
-
+            ThrowNull(session, "session")
+            ThrowNull(user, "user")
             Me.Session = session
             Me.User = user
+
+            InitializeComponent()
         End Sub
 
         Private Sub _Load() Handles Me.Load
-            Try
-                Icon = Resources.Icon
-                Text = Msg("usergroups-title", User.FullName)
+            Icon = Resources.Icon
+            Text = Msg("usergroups-title", User.FullName)
 
-                For Each group As UserGroup In User.Wiki.UserGroups.All
-                    If Not User.IsInGroup(group) AndAlso Session.User.GroupChanges(group).CanAdd _
-                        OrElse (User Is Session.User AndAlso Session.User.GroupChanges(group).CanAddSelf) _
-                        Then AvailableGroups.Items.Add(group)
+            For Each group As UserGroup In User.Wiki.UserGroups.All
+                If Not User.IsInGroup(group) AndAlso Session.User.GroupChanges(group).CanAdd _
+                    OrElse (User Is Session.User AndAlso Session.User.GroupChanges(group).CanAddSelf) _
+                    Then AvailableGroups.Items.Add(group)
 
-                    If User.IsInGroup(group) AndAlso Session.User.GroupChanges(group).CanRemove _
-                        OrElse (User Is Session.User AndAlso Session.User.GroupChanges(group).CanRemoveSelf) _
-                        Then SelectedGroups.Items.Add(group)
-                Next group
+                If User.IsInGroup(group) AndAlso Session.User.GroupChanges(group).CanRemove _
+                    OrElse (User Is Session.User AndAlso Session.User.GroupChanges(group).CanRemoveSelf) _
+                    Then SelectedGroups.Items.Add(group)
+            Next group
 
-                SelectedEmptyLabel.Visible = (SelectedGroups.Items.Count = 0)
-                AvailableEmptyLabel.Visible = (AvailableGroups.Items.Count = 0)
-
-            Catch ex As SystemException
-                App.ShowError(Result.FromException(ex))
-                DialogResult = DialogResult.Abort
-                Close()
-            End Try
+            SelectedEmptyLabel.Visible = (SelectedGroups.Items.Count = 0)
+            AvailableEmptyLabel.Visible = (AvailableGroups.Items.Count = 0)
         End Sub
 
         Private Sub OK_Click() Handles OK.Click
-            Dim action As New Actions.UserRights(Session, User, Comment.Text)
+            Dim action As New UserRights(Session, User, Comment.Text)
 
             action.RemoveGroups = New List(Of UserGroup)
             action.AddGroups = New List(Of UserGroup)

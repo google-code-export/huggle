@@ -1,6 +1,6 @@
 ﻿Imports System.Collections.Generic
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
     Friend Class Revert : Inherits Query
 
@@ -21,7 +21,7 @@ Namespace Huggle.Actions
         Private ConfirmMessages As New List(Of String)
         Private ConfirmOptions As New List(Of String)
 
-        Public Sub New(ByVal session As Session, ByVal rev As Revision, Optional ByVal self As Boolean = False, _
+        Public Sub New(ByVal session As Session, ByVal rev As Revision, Optional ByVal self As Boolean = False,
             Optional ByVal undo As Boolean = False, Optional ByVal summary As String = Nothing)
 
             MyBase.New(session, Msg("revert-desc"))
@@ -63,14 +63,14 @@ Namespace Huggle.Actions
             If Not Rev.InHistory OrElse Rev.User Is Nothing OrElse Rev.Page Is Nothing _
                 OrElse Rev.Prev Is Nothing OrElse Rev.Prev.User Is Nothing Then
 
-                Dim request As New ApiRequest(Session, Description, New QueryString( _
-                    "action", "query", _
-                    "prop", "info|revisions", _
-                    "titles", Rev.Page, _
-                    "rvstartid", Rev.Page.LatestKnownRev, _
-                    "rvendid", Rev.Prev, _
-                    "rvdir", "older", _
-                    "rvlimit", "max", _
+                Dim request As New ApiRequest(Session, Description, New QueryString(
+                    "action", "query",
+                    "prop", "info|revisions",
+                    "titles", Rev.Page,
+                    "rvstartid", Rev.Page.LatestKnownRev,
+                    "rvendid", Rev.Prev,
+                    "rvdir", "older",
+                    "rvlimit", "max",
                     "rvprop", "ids|flags|timestamp|user|size|comment"))
 
                 request.Start()
@@ -284,14 +284,14 @@ Namespace Huggle.Actions
             Dim prop As String = "ids|user"
 
             'Need the most recent revision not by the same user
-            Dim request As New ApiRequest(Session, Description, New QueryString( _
-                "action", "query", _
-                "prop", "revisions", _
-                "titles", Rev.Page, _
-                "rvdir", "older", _
-                "rvexcludeuser", Rev.User, _
-                "rvlimit", 1, _
-                "rvprop", prop, _
+            Dim request As New ApiRequest(Session, Description, New QueryString(
+                "action", "query",
+                "prop", "revisions",
+                "titles", Rev.Page,
+                "rvdir", "older",
+                "rvexcludeuser", Rev.User,
+                "rvlimit", 1,
+                "rvprop", prop,
                 "rvstartid", Rev))
 
             request.Start()
@@ -458,20 +458,20 @@ Namespace Huggle.Actions
 
             If IsRollbackStyle AndAlso CanRollback Then
                 'Rollback
-                If Not Session.RollbackTokens.ContainsKey(Rev) Then
+                If Not Session.RollbackToken.ContainsKey(Rev) Then
 
                     'Get rollback token
-                    Dim tokenreq As New ApiRequest(Session, Description, New QueryString( _
-                        "action", "query", _
-                        "prop", "revisions", _
-                        "titles", Rev.Page, _
-                        "rvlimit", 1, _
+                    Dim tokenreq As New ApiRequest(Session, Description, New QueryString(
+                        "action", "query",
+                        "prop", "revisions",
+                        "titles", Rev.Page,
+                        "rvlimit", 1,
                         "rvtoken", "rollback"))
 
                     tokenreq.Start()
                     If tokenreq.Result.IsError Then OnFail(tokenreq.Result.Message)
 
-                    If Not Session.RollbackTokens.ContainsKey(Rev) Then
+                    If Not Session.RollbackToken.ContainsKey(Rev) Then
                         'No rollback token could be found. Revert manually instead
                         'This may require fetching the target revision, so start method from the top
                         IsFailedRollback = True
@@ -486,11 +486,11 @@ Namespace Huggle.Actions
                 If IsFailed Then Return
 
                 'Rollback the page
-                Dim req As New ApiRequest(Session, Description, New QueryString( _
-                    "action", "rollback", _
-                    "title", Rev.Page, _
-                    "from", Rev.User, _
-                    "token", Session.RollbackTokens(Rev), _
+                Dim req As New ApiRequest(Session, Description, New QueryString(
+                    "action", "rollback",
+                    "title", Rev.Page,
+                    "from", Rev.User,
+                    "token", Session.RollbackToken(Rev),
                     "summary", Summary))
 
                 req.Start()
@@ -507,7 +507,7 @@ Namespace Huggle.Actions
 
             If IsUndo Then
                 'Undo
-                If Session.EditToken Is Nothing Then
+                If Not Session.HasTokens Then
                     'Get token
                     Dim query As New TokenQuery(Session)
                     query.Start()
@@ -517,12 +517,12 @@ Namespace Huggle.Actions
                 CheckAlreadyDone()
                 If IsFailed Then Return
 
-                Dim req As New ApiRequest(Session, Description, New QueryString( _
-                    "action", "edit", _
-                    "title", Rev.Page, _
-                    "summary", Summary, _
-                    "undo", Rev.Id, _
-                    "token", Session.EditToken, _
+                Dim req As New ApiRequest(Session, Description, New QueryString(
+                    "action", "edit",
+                    "title", Rev.Page,
+                    "summary", Summary,
+                    "undo", Rev.Id,
+                    "token", Session.Tokens("edit"),
                     "watch", User.Config.IsWatch("revert")))
 
                 If Target IsNot Rev.Prev Then req.Query.Add("undoafter", Target.Next)
@@ -554,7 +554,7 @@ Namespace Huggle.Actions
             End If
 
             'Cannot revert to a revision we aren't allowed to see
-            If Target.TextHidden Then OnFail(Msg("revert-texthidden")) : Return
+            If Target.IsTextHidden Then OnFail(Msg("revert-texthidden")) : Return
 
             'Edit the page and overwrite with the target revision's content
             Dim edit As New Edit(Session, Target.Page, Target.Text, Summary)

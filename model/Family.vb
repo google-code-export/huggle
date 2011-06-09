@@ -1,4 +1,5 @@
-﻿Imports System
+﻿Imports Huggle.Net
+Imports System
 Imports System.Collections.Generic
 
 Namespace Huggle

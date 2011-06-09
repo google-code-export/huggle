@@ -1,41 +1,50 @@
-﻿'Imports System.Collections.Generic
+﻿Imports System.Collections.Generic
 
-'Namespace Huggle.Queries
+Namespace Huggle.Queries
 
-'    'Retrieves user info
+    'Retrieves user info
 
-'    Class UserDetailQuery : Inherits OldQuery
+    Class UserDetailQuery : Inherits Query
 
-'        Private Target As User
+        Private _Target As User
 
-'        Public Sub New(ByVal Account As User, ByVal User As User)
-'            MyBase.New(Account)
-'            Me.User = User
-'        End Sub
+        Public Sub New(ByVal session As Session, ByVal target As User)
+            MyBase.New(session, Msg("userdetail-desc", target))
 
-'        Protected Overrides Function Process() As Result
+            ThrowNull(target, "user")
+            _Target = target
+        End Sub
 
-'            Dim Query As New QueryString( _
-'                "action", "query", _
-'                "titles", User.Talkpage, _
-'                "list", "logevents|users", _
-'                "prop", "categories|info|revisions|templates", _
-'                "cllimit", 500, _
-'                "lelimit", 500, _
-'                "leprop", "ids|title|type|user|timestamp|comment|details", _
-'                "letitle", User.Userpage, _
-'                "rvprop", "ids|flags|timestamp|user|size|comment|content", _
-'                "tllimit", 500, _
-'                "usprop", "blockinfo|groups|editcount|registration", _
-'                "ususers", User)
+        Public ReadOnly Property Target As User
+            Get
+                Return _Target
+            End Get
+        End Property
 
-'            Dim request As New ApiRequest(User, Query)
-'            request.Start()
-'            If request.Result.IsError Then Return Result.FailWith(Msg("userinfo-failed"))
+        Public Overrides Sub Start()
+            OnStarted()
 
-'            Return Result.Success
-'        End Function
+            Dim query As New QueryString(
+                "action", "query",
+                "titles", User.Talkpage,
+                "list", "logevents|users",
+                "prop", "categories|info|revisions|templates",
+                "cllimit", "max",
+                "lelimit", "max",
+                "leprop", "ids|title|type|user|timestamp|comment|details",
+                "letitle", User.Userpage,
+                "rvprop", "ids|flags|timestamp|user|size|comment|content",
+                "tllimit", "max",
+                "usprop", "blockinfo|groups|editcount|registration",
+                "ususers", User)
 
-'    End Class
+            Dim req As New ApiRequest(Session, Description, query)
+            req.Start()
+            If req.IsErrored Then OnFail(req.Result) : Return
 
-'End Namespace
+            OnSuccess()
+        End Sub
+
+    End Class
+
+End Namespace

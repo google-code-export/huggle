@@ -3,7 +3,7 @@ Imports System.Collections.Generic
 Imports System.Text.RegularExpressions
 Imports System.Web.HttpUtility
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
     'Abstract class for getting a list of pages through the API
 
@@ -134,11 +134,11 @@ Namespace Huggle.Actions
             If generator Then
                 Dim type As String = If(OutputType = "content", "revisions", OutputType)
 
-                fullQuery.Merge(New Object() { _
-                    "generator", Name, _
-                    "g" & Prefix & "from", From, _
-                    "g" & Prefix & "limit", limitStr, _
-                    "prop", type}.ToDictionary(Of String, Object))
+                fullQuery.Merge(
+                    "generator", Name,
+                    "g" & Prefix & "from", From,
+                    "g" & Prefix & "limit", limitStr,
+                    "prop", type)
 
                 Dim values As New Dictionary(Of String, Object)(Query.Values)
                 Query = New QueryString
@@ -150,9 +150,9 @@ Namespace Huggle.Actions
             Else
                 Dim type As String = If(InputType = "revisions", "list", InputType)
 
-                fullQuery.Merge( _
-                    type, Name, _
-                    Prefix & "from", From, _
+                fullQuery.Merge(
+                    type, Name,
+                    Prefix & "from", From,
                     Prefix & "limit", limitStr)
             End If
 
@@ -293,22 +293,16 @@ Namespace Huggle.Actions
             _Items = items
         End Sub
 
-        Public Property Continues() As Dictionary(Of String, Object)
+        Public ReadOnly Property Continues() As Dictionary(Of String, Object)
             Get
                 Return _Continues
             End Get
-            Private Set(ByVal value As Dictionary(Of String, Object))
-                _Continues = value
-            End Set
         End Property
 
-        Public Property Items() As List(Of QueueItem)
+        Public ReadOnly Property Items() As List(Of QueueItem)
             Get
                 Return _Items
             End Get
-            Private Set(ByVal value As List(Of QueueItem))
-                _Items = value
-            End Set
         End Property
 
     End Class

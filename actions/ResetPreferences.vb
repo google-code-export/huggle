@@ -1,6 +1,7 @@
-﻿Imports System.Collections.Generic
+﻿Imports Huggle.Net
+Imports System.Collections.Generic
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
     Friend Class ResetPreferences : Inherits Query
 
@@ -14,7 +15,7 @@ Namespace Huggle.Actions
             OnProgress(Msg("query-resetprefs-progress"))
 
             'Get token
-            If Session.EditToken Is Nothing Then
+            If Not Session.HasTokens Then
                 Dim tokenQuery As New TokenQuery(Session)
                 tokenQuery.Start()
                 If tokenQuery.IsFailed Then OnFail(tokenQuery.Result) : Return
@@ -22,7 +23,7 @@ Namespace Huggle.Actions
 
             'Reset preferences, must use UI for this
             Dim req As New UIRequest(Session, Description, New QueryString("title", "Special:Preferences/reset"),
-                New QueryString("wpEditToken", Session.EditToken))
+                New QueryString("wpEditToken", Session.Tokens("preferences")))
 
             req.Start()
             If req.IsFailed Then OnFail(req.Result) : Return

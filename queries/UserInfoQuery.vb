@@ -1,38 +1,39 @@
-﻿'Imports System.Collections.Generic
+﻿Imports System.Collections.Generic
 
-'Namespace Huggle.Queries.Info
+Namespace Huggle.Queries
 
-'    'Retrieves user info
+    'Retrieves user info
 
-'    Class UserInfoQuery : Inherits OldQuery
+    Class UserInfoQuery : Inherits Query
 
-'        Private Users As List(Of User)
+        Private Users As List(Of User)
 
-'        Public Sub New(ByVal Account As User, ByVal Users As List(Of User))
-'            MyBase.New(Account)
-'            Me.Users = Users
-'        End Sub
+        Public Sub New(ByVal session As Session, ByVal users As List(Of User))
+            MyBase.New(session, Msg("userinfo-desc"))
 
-'        Protected Overrides Function Process() As Result
-'            Dim Usernames As New List(Of String)
+            Me.Users = Users
+        End Sub
 
-'            For Each User As User In Users
-'                Usernames.Add(User.Name)
-'            Next User
+        Public Overrides Sub Start()
+            Dim names As New List(Of String)
 
-'            Dim Query As New QueryString( _
-'                "action", "query", _
-'                "list", "users", _
-'                "usprop", "blockinfo|groups|editcount|registration", _
-'                "ususers", Usernames.Join("|"))
+            For Each user As User In Users
+                names.Add(user.Name)
+            Next user
 
-'            Dim request As New ApiRequest(User, Query)
-'            request.Start()
-'            If request.Result.IsError Then Return Result.FailWith(Msg("userinfo-failed"))
+            Dim query As New QueryString(
+                "action", "query",
+                "list", "users",
+                "usprop", "blockinfo|groups|editcount|registration",
+                "ususers", names.Join("|"))
 
-'            Return Result.Success
-'        End Function
+            Dim req As New ApiRequest(Session, Description, query)
+            req.Start()
+            If req.IsErrored Then OnFail(req.Result) : Return
 
-'    End Class
+            OnSuccess()
+        End Sub
 
-'End Namespace
+    End Class
+
+End Namespace

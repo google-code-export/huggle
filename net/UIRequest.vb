@@ -1,10 +1,11 @@
-﻿Imports System
+﻿Imports Huggle.Net
+Imports System
 Imports System.Collections.Generic
 Imports System.Net
 Imports System.Text
 Imports System.Xml
 
-Namespace Huggle
+Namespace Huggle.Queries
 
     'Represents a request made through MediaWiki's UI (index.php)
     'Used only when there is no adequate API equivalent
@@ -22,6 +23,7 @@ Namespace Huggle
             Me.GetQuery = getQuery
             Me.GetQuery.Add("uselang", "en")
             Me.GetQuery.Add("useskin", "myskin")
+            Me.PostQuery = postQuery
         End Sub
 
         Public Overrides Sub Start()

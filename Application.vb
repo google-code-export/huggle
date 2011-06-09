@@ -1,4 +1,4 @@
-﻿Imports Huggle.Actions
+﻿Imports Huggle.Queries
 Imports Huggle.UI
 Imports System
 Imports System.Collections.Generic
@@ -19,14 +19,6 @@ Namespace Huggle
         Private _Wikis As WikiCollection
 
         Public Sub Run()
-            Windows.Forms.Application.EnableVisualStyles()
-            Windows.Forms.Application.SetCompatibleTextRenderingDefault(False)
-
-            'Create a dummy form we can call Invoke on from other threads to manipulate the UI
-            'Access window handle to force creation without actually displaying the form
-            Handle = New Form
-            Dim ptr As IntPtr = Handle.Handle
-
             ServicePointManager.Expect100Continue = False
             ServicePointManager.DefaultConnectionLimit = 4
 
@@ -72,6 +64,7 @@ Namespace Huggle
             'Wikimedia wiki, and try to make the feed available as soon as possible
             If Config.Local.RcFeeds AndAlso Families.Wikimedia.Feed IsNot Nothing Then Families.Wikimedia.Feed.Connect()
             Config.Local.SaveLocal()
+            WikiConfig.EnumerateLocal()
 
             Dim mainSession As Session = Nothing
 
@@ -289,7 +282,7 @@ Namespace Huggle
     End Class
 
     <Serializable()>
-    Friend Class HuggleException : Inherits Exception
+    Public Class HuggleException : Inherits Exception
 
         Public Sub New(ByVal message As String)
             MyBase.New(message)

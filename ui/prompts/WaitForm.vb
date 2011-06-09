@@ -1,5 +1,5 @@
 ﻿Imports Huggle
-Imports Huggle.Actions
+Imports Huggle.Queries
 Imports System
 Imports System.Windows.Forms
 
@@ -12,15 +12,17 @@ Namespace Huggle.UI
         Private Message As String
 
         Public Sub New(ByVal message As String)
-            InitializeComponent()
+            ThrowNull(message, "message")
             Me.Message = message
+
+            InitializeComponent()
         End Sub
 
         Private Sub _Load() Handles Me.Load
             Icon = Resources.Icon
             Text = Msg("wait-title")
             App.Languages.Current.Localize(Me)
-            If Message IsNot Nothing Then SetMessage(Message)
+            SetMessage(Message)
             Indicator.Start()
         End Sub
 

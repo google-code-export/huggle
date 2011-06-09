@@ -14,14 +14,17 @@ Namespace Huggle
             _Wiki = wiki
         End Sub
 
+        Public Property Description As String
+
         Public ReadOnly Property IsAvailable As Boolean
             Get
-                Return (IsImplemented AndAlso Not IsDisabled)
+                Return (IsImplemented AndAlso IsEnabled)
             End Get
         End Property
 
-        Public Property IsDisabled As Boolean = False
-        Public Property IsImplemented As Boolean = True
+        Public Property IsEnabled As Boolean
+
+        Public Property IsImplemented As Boolean
 
         Public ReadOnly Property Name As String
             Get
@@ -55,6 +58,8 @@ Namespace Huggle
                 Return _All.Values.ToList.AsReadOnly
             End Get
         End Property
+
+        Public Property Checked As Boolean
 
         Default Public ReadOnly Property FromString(ByVal name As String) As ApiModule
             Get

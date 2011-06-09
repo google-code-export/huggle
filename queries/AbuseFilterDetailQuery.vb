@@ -1,7 +1,8 @@
-﻿Imports System
+﻿Imports Huggle.Net
+Imports System
 Imports System.Collections.Generic
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
     'Retrieve details of an abuse filter
     'This includes information that is not currently available through the MediaWiki API
@@ -65,7 +66,7 @@ Namespace Huggle.Actions
             For Each action As String In
                 {"blockautopromote", "block", "degroup", "disallow", "tag", "throttle", "warn", "rangeblock"}
 
-                If detailReq.Response.Contains("wpFilterAction" & UcFirst(action)) Then allowedActions.Merge(action)
+                If detailReq.Response.Contains("wpFilterAction" & action.ToUpperFirstI) Then allowedActions.Merge(action)
             Next action
 
             Wiki.Config.AbuseFilterActions = allowedActions

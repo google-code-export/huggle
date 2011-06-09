@@ -6,8 +6,8 @@ Namespace Huggle.Wikitext
 
         'Contains various regular expressions for what approximates to parsing of wikitext documents
 
-        Private Const LinkSpace As String = "( |_|%20)*"
-        Private Const TransclusionSpace As String = "(\n| |_)*"
+        Private Const LinkSpace As String = "(?: |_|%20)*"
+        Private Const TransclusionSpace As String = "(?:\n| |_)*"
 
         Public Shared ReadOnly SectionPattern As New Regex("(?:\n|^)=+ *(.+?) *(=+) *(?:\n|$)", RegexOptions.Compiled)
         Public Shared ReadOnly SortkeyPattern As New Regex(
@@ -21,8 +21,8 @@ Namespace Huggle.Wikitext
         End Function
 
         Public Shared Function BaseCatPattern(ByVal wiki As Wiki) As String
-            Return "\[\[" & LinkSpace & NamePattern(wiki.Spaces.Category.Name & ":") &
-                "[^\|\]]+" & LinkSpace & "(\|[^\]]*?)?\]\]"
+            Return "\[\[" & LinkSpace & NamePattern(wiki.Spaces.Category.Name) & LinkSpace & ":" & LinkSpace &
+                "([^\|\]]+?)" & LinkSpace & "(?:\|([^\]]*?))?\]\]"
         End Function
 
         Public Shared Function BaseInterlangPattern() As String

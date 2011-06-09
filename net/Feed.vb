@@ -5,7 +5,7 @@ Imports System.Net.Sockets
 Imports System.Text.RegularExpressions
 Imports System.Threading
 
-Namespace Huggle
+Namespace Huggle.Net
 
     <Diagnostics.DebuggerDisplay("{Server}")>
     Friend Class Feed : Implements IDisposable
@@ -240,66 +240,7 @@ Namespace Huggle
                 Dim wiki As Wiki = WikiCodes(AllMatch.Match(message).Groups(1).Value)
                 If wiki.FeedPatterns.Count = 0 Then Continue While
 
-                'Revisions
-                If wiki.FeedPatterns("edit").IsMatch(message) Then
-                    Dim groups As GroupCollection = wiki.FeedPatterns("edit").Match(message).Groups
-                    Dim rev As Revision = wiki.Revisions(CInt(groups(6).Value))
-
-                    rev.Page = wiki.Pages(groups(2).Value)
-                    rev.IsReviewed = String.IsNullOrEmpty(groups(3).Value)
-                    rev.IsMinor = Not String.IsNullOrEmpty(groups(4).Value)
-                    rev.IsBot = Not String.IsNullOrEmpty(groups(5).Value)
-                    rev.Prev = wiki.Revisions(CInt(groups(7).Value))
-                    If Not String.IsNullOrEmpty(groups(8).Value) Then rev.Rcid = CInt(groups(8).Value)
-                    rev.User = wiki.Users(groups(9).Value)
-                    rev.Change = CInt(groups(10).Value)
-                    rev.Summary = groups(11).Value
-                    rev.ApproxTime = wiki.ServerTime
-                    rev.Exists = TS.True
-                    rev.DetailsKnown = True
-                    rev.Page.Process()
-                    rev.User.Process()
-                    rev.Process()
-                    rev.ProcessNew()
-                    result.Add(rev)
-
-                ElseIf wiki.FeedPatterns("new").IsMatch(message) Then
-                    Dim groups As GroupCollection = wiki.FeedPatterns("new").Match(message).Groups
-                    Dim rev As Revision = wiki.Revisions(CInt(groups(6).Value))
-
-                    rev.Page = wiki.Pages(groups(2).Value)
-                    rev.IsReviewed = String.IsNullOrEmpty(groups(3).Value)
-                    rev.IsMinor = Not String.IsNullOrEmpty(groups(4).Value)
-                    rev.IsBot = Not String.IsNullOrEmpty(groups(5).Value)
-                    If Not String.IsNullOrEmpty(groups(6).Value) Then rev.Rcid = CInt(groups(7).Value)
-                    rev.User = wiki.Users(groups(8).Value)
-                    rev.Change = CInt(groups(9).Value)
-                    rev.Summary = groups(10).Value
-                    rev.ApproxTime = wiki.ServerTime
-                    rev.Prev = Revision.Null
-                    rev.Exists = TS.True
-                    rev.DetailsKnown = True
-                    rev.Page.Process()
-                    rev.User.Process()
-                    rev.Process()
-                    rev.ProcessNew()
-                    result.Add(rev)
-
-                    If rev.IsReviewed Then
-                        Dim review As New Review(0, wiki)
-                        review.IsAutomatic = True
-                        review.Comment = Nothing
-                        review.Revision = rev
-                        review.Time = wiki.ServerTime
-                        review.Type = "newpage-patrol"
-                        review.User = rev.User
-
-                        rev.Review = review
-                        result.Add(review)
-                    End If
-
-                Else
-                    'Logs
+                If Not ProcessRevision(wiki, message, result) Then
                     Dim action As String = AllMatch.Match(message).Groups(3).Value
 
                     If Not wiki.FeedPatterns.ContainsKey(action) Then
@@ -314,190 +255,7 @@ Namespace Huggle
                         Continue While
                     End If
 
-                    Dim groups As GroupCollection = wiki.FeedPatterns(action).Match(message).Groups
-                    Dim logItem As LogItem = Nothing
-
-                    Select Case action
-                        Case "delete", "restore"
-                            Dim deletion As New Deletion(0, wiki)
-                            logItem = deletion
-
-                            deletion.Comment = groups(5).Value
-                            deletion.Page = wiki.Pages(groups(4).Value)
-                            deletion.User = wiki.Users(groups(3).Value)
-
-
-                        Case "block"
-                            'Ignore autoblocks
-                            If groups(3).Value.StartsWithI("#") Then Exit Select
-
-                            Dim block As New Block(0, wiki)
-                            logItem = block
-
-                            block.Comment = groups(6).Value
-                            block.Duration = groups(5).Value
-                            block.Expires = Date.MinValue
-                            block.IsAccountCreationBlocked = groups(4).Value.Contains("account creation disabled")
-                            block.IsAnonymousOnly = groups(4).Value.Contains("anon. only")
-                            block.IsAutoblockEnabled = Not groups(4).Value.Contains("autoblock disabled")
-                            block.IsAutomatic = MwMessageIsMatch(wiki, "autoblocker", groups(6).Value)
-                            block.IsEmailBlocked = Not groups(4).Value.Contains("e-mail blocked")
-                            block.IsTalkBlocked = groups(4).Value.Contains("cannot edit own talk page")
-                            block.Page = wiki.Pages.FromNsAndName(wiki.Spaces.User, groups(3).Value)
-                            block.User = wiki.Users.FromName(groups(2).Value)
-
-
-                        Case "reblock"
-                            Dim block As New Block(0, wiki)
-                            logItem = block
-
-                            block.IsAccountCreationBlocked = groups(6).Value.Contains("account creation disabled")
-                            block.IsAnonymousOnly = groups(6).Value.Contains("anon. only")
-                            block.IsAutoblockEnabled = Not groups(6).Value.Contains("autoblock disabled")
-                            block.IsAutomatic = MwMessageIsMatch(wiki, "autoblocker", groups(6).Value)
-                            block.IsEmailBlocked = Not groups(6).Value.Contains("e-mail blocked")
-                            block.IsTalkBlocked = groups(6).Value.Contains("cannot edit own talk page")
-                            block.Comment = groups(7).Value
-                            block.Expires = If(groups(5).Value = "indefinite", Date.MaxValue, CDate(groups(5).Value))
-                            block.Page = wiki.Pages.FromNsAndName(wiki.Spaces.User, groups(4).Value)
-                            block.User = wiki.Users.FromName(groups(3).Value)
-
-
-                        Case "move"
-                            Dim move As New Move(0, wiki)
-                            logItem = move
-
-                            move.Comment = groups(6).Value
-                            move.DestinationTitle = groups(4).Value
-                            move.SourceTitle = groups(3).Value
-                            move.User = wiki.Users.FromName(groups(2).Value)
-
-
-                        Case "unblock"
-                            Dim block As New Block(0, wiki)
-                            logItem = block
-
-                            block.Comment = groups(6).Value
-                            block.Page = wiki.Pages.FromNsAndName(wiki.Spaces.User, groups(3).Value)
-                            block.User = wiki.Users.FromName(groups(2).Value)
-
-
-                        Case "upload", "overwrite"
-                            Dim upload As New Upload(0, wiki)
-                            logItem = upload
-
-                            upload.Comment = groups(5).Value
-                            upload.Page = wiki.Pages.FromTitle(groups(4).Value)
-                            upload.User = wiki.Users(groups(3).Value)
-
-
-                        Case "protect", "modify"
-                            Dim protection As New Protection(0, wiki)
-                            logItem = protection
-
-                            protection.Comment = groups(11).Value
-                            protection.Create = ProtectionPart.FromComment(groups(5).Value, "create")
-                            protection.Edit = ProtectionPart.FromComment(groups(5).Value, "edit")
-                            protection.IsCascading = (groups(5).Value.Contains("[cascading]"))
-                            protection.Move = ProtectionPart.FromComment(groups(5).Value, "move")
-                            protection.Page = wiki.Pages.FromTitle(groups(4).Value)
-                            protection.User = wiki.Users.FromName(groups(3).Value)
-
-
-                        Case "unprotect"
-                            Dim protection As New Protection(0, wiki)
-                            logItem = protection
-
-                            protection.Comment = groups(4).Value
-                            protection.Page = wiki.Pages.FromTitle(groups(3).Value)
-                            protection.User = wiki.Users.FromName(groups(2).Value)
-
-
-                        Case "create", "autocreate"
-                            Dim userCreation As New UserCreation(0, wiki)
-                            logItem = userCreation
-
-                            userCreation.IsAutomatic = (action = "autocreate")
-                            userCreation.TargetUser = wiki.Users.FromName(groups(2).Value)
-                            userCreation.User = wiki.Users.FromName(groups(2).Value)
-
-
-                        Case "create2"
-                            Dim userCreation As New UserCreation(0, wiki)
-                            logItem = userCreation
-
-                            userCreation.TargetUser = wiki.Users.FromName(groups(3).Value)
-                            userCreation.User = wiki.Users(groups(2).Value)
-
-
-                        Case "renameuser"
-                            Dim userRename As New UserRename(0, wiki)
-                            logItem = userRename
-
-                            userRename.Comment = groups(6).Value
-                            userRename.Page = wiki.Pages.FromNsAndName(wiki.Spaces.User, groups(3).Value)
-                            userRename.TargetUser = wiki.Users.FromName(groups(4).Value)
-                            userRename.User = wiki.Users.FromName(groups(2).Value)
-
-
-                        Case "rights"
-                            Dim rightsChange As New RightsChange(0, wiki)
-                            logItem = rightsChange
-
-                            rightsChange.Comment = groups(6).Value
-                            rightsChange.Rights = groups(5).Value.ToList.Trim
-                            rightsChange.TargetUser = wiki.Users.FromName(groups(3).Value)
-                            rightsChange.User = wiki.Users.FromName(groups(2).Value)
-
-
-                        Case "patrol"
-                            If groups(4).Value = "" Then
-                                'New page patrol
-                                Dim review As New Review(0, wiki)
-                                logItem = review
-
-                                review.Comment = ""
-                                review.Page = wiki.Pages.FromTitle(groups(5).Value)
-                                review.Revision = review.Page.FirstRev
-                                review.Type = "newpage-patrol"
-                                review.User = wiki.Users.FromName(groups(3).Value)
-
-                            Else
-                                'Revision patrol
-                                Dim review As New Review(0, wiki)
-                                logItem = review
-
-                                review.Comment = ""
-                                review.Page = wiki.Pages.FromTitle(groups(2).Value)
-                                review.Revision = wiki.Revisions.FromID(CInt(groups(2).Value))
-                                review.Type = "patrol"
-                                review.User = wiki.Users.FromName(groups(3).Value)
-
-                                review.Revision.Page = review.Page
-                            End If
-
-                        Case "review"
-                            Dim review As New Review(0, wiki)
-                            logItem = review
-
-                            review.IsAutomatic = (action.EndsWithI("a"))
-                            review.Comment = groups(6).Value
-                            review.Page = wiki.Pages.FromTitle(groups(5).Value)
-                            review.Revision = wiki.Revisions(CInt(groups(4).Value))
-                            review.Type = groups(2).Value
-                            review.User = wiki.Users.FromName(groups(3).Value)
-
-                            review.Revision.Page = review.Page
-
-                        Case Else
-                            Log.Write(Msg("feed-badaction", action))
-                    End Select
-
-                    If logItem IsNot Nothing Then
-                        logItem.Action = action
-                        logItem.Time = wiki.ServerTime
-                        result.Add(logItem)
-                    End If
+                    If Not ProcessLogItem(action, wiki, message, result) Then Log.Write(Msg("feed-badaction", action))
                 End If
 
                 For Each item As QueueItem In result
@@ -505,6 +263,264 @@ Namespace Huggle
                 Next item
             End While
         End Sub
+
+        Private Function ProcessRevision(
+            ByVal wiki As Wiki, ByVal message As String, ByVal result As List(Of QueueItem)) As Boolean
+
+            If wiki.FeedPatterns("edit").IsMatch(message) Then
+                Dim groups As GroupCollection = wiki.FeedPatterns("edit").Match(message).Groups
+                Dim rev As Revision = wiki.Revisions(CInt(groups(6).Value))
+
+                rev.Page = wiki.Pages(groups(2).Value)
+                rev.IsReviewed = String.IsNullOrEmpty(groups(3).Value)
+                rev.IsMinor = Not String.IsNullOrEmpty(groups(4).Value)
+                rev.IsBot = Not String.IsNullOrEmpty(groups(5).Value)
+                rev.Prev = wiki.Revisions(CInt(groups(7).Value))
+                If Not String.IsNullOrEmpty(groups(8).Value) Then rev.Rcid = CInt(groups(8).Value)
+                rev.User = wiki.Users(groups(9).Value)
+                rev.Change = CInt(groups(10).Value)
+                rev.Summary = groups(11).Value
+                rev.ApproxTime = wiki.ServerTime
+                rev.Exists = True
+                rev.DetailsKnown = True
+                rev.Page.Process()
+                rev.User.Process()
+                rev.Process()
+                rev.ProcessNew()
+                result.Add(rev)
+                Return True
+            End If
+
+            If wiki.FeedPatterns("new").IsMatch(message) Then
+
+                Dim groups As GroupCollection = wiki.FeedPatterns("new").Match(message).Groups
+                Dim rev As Revision = wiki.Revisions(CInt(groups(6).Value))
+
+                rev.Page = wiki.Pages(groups(2).Value)
+                rev.IsReviewed = String.IsNullOrEmpty(groups(3).Value)
+                rev.IsMinor = Not String.IsNullOrEmpty(groups(4).Value)
+                rev.IsBot = Not String.IsNullOrEmpty(groups(5).Value)
+                If Not String.IsNullOrEmpty(groups(6).Value) Then rev.Rcid = CInt(groups(7).Value)
+                rev.User = wiki.Users(groups(8).Value)
+                rev.Change = CInt(groups(9).Value)
+                rev.Summary = groups(10).Value
+                rev.ApproxTime = wiki.ServerTime
+                rev.Prev = Revision.Null
+                rev.Exists = True
+                rev.DetailsKnown = True
+                rev.Page.Process()
+                rev.User.Process()
+                rev.Process()
+                rev.ProcessNew()
+                result.Add(rev)
+
+                If rev.IsReviewed Then
+                    Dim review As New Review(0, wiki)
+                    review.IsAutomatic = True
+                    review.Comment = Nothing
+                    review.Revision = rev
+                    review.Time = wiki.ServerTime
+                    review.Type = "newpage-patrol"
+                    review.User = rev.User
+
+                    rev.Review = review
+                    result.Add(review)
+                End If
+
+                Return True
+            End If
+
+            Return False
+        End Function
+
+        Private Function ProcessLogItem(ByVal action As String, ByVal wiki As Wiki,
+            ByVal message As String, ByVal result As List(Of QueueItem)) As Boolean
+
+            Dim groups As GroupCollection = wiki.FeedPatterns(action).Match(message).Groups
+            Dim logItem As LogItem = Nothing
+
+            Select Case action
+                Case "delete", "restore"
+                    Dim deletion As New Deletion(0, wiki)
+                    logItem = deletion
+
+                    deletion.Comment = groups(5).Value
+                    deletion.Page = wiki.Pages(groups(4).Value)
+                    deletion.User = wiki.Users(groups(3).Value)
+
+
+                Case "block"
+                    'Ignore autoblocks
+                    If groups(3).Value.StartsWithI("#") Then Exit Select
+
+                    Dim block As New Block(0, wiki)
+                    logItem = block
+
+                    block.Comment = groups(6).Value
+                    block.Duration = groups(5).Value
+                    block.Expires = Date.MinValue
+                    block.IsAccountCreationBlocked = groups(4).Value.Contains("account creation disabled")
+                    block.IsAnonymousOnly = groups(4).Value.Contains("anon. only")
+                    block.IsAutoblockEnabled = Not groups(4).Value.Contains("autoblock disabled")
+                    block.IsAutomatic = MwMessageIsMatch(wiki, "autoblocker", groups(6).Value)
+                    block.IsEmailBlocked = Not groups(4).Value.Contains("e-mail blocked")
+                    block.IsTalkBlocked = groups(4).Value.Contains("cannot edit own talk page")
+                    block.Page = wiki.Pages.FromNsAndName(wiki.Spaces.User, groups(3).Value)
+                    block.User = wiki.Users.FromName(groups(2).Value)
+
+
+                Case "reblock"
+                    Dim block As New Block(0, wiki)
+                    logItem = block
+
+                    block.IsAccountCreationBlocked = groups(6).Value.Contains("account creation disabled")
+                    block.IsAnonymousOnly = groups(6).Value.Contains("anon. only")
+                    block.IsAutoblockEnabled = Not groups(6).Value.Contains("autoblock disabled")
+                    block.IsAutomatic = MwMessageIsMatch(wiki, "autoblocker", groups(6).Value)
+                    block.IsEmailBlocked = Not groups(6).Value.Contains("e-mail blocked")
+                    block.IsTalkBlocked = groups(6).Value.Contains("cannot edit own talk page")
+                    block.Comment = groups(7).Value
+                    block.Expires = If(groups(5).Value = "indefinite", Date.MaxValue, CDate(groups(5).Value))
+                    block.Page = wiki.Pages.FromNsAndName(wiki.Spaces.User, groups(4).Value)
+                    block.User = wiki.Users.FromName(groups(3).Value)
+
+
+                Case "move"
+                    Dim move As New Move(0, wiki)
+                    logItem = move
+
+                    move.Comment = groups(6).Value
+                    move.DestinationTitle = groups(4).Value
+                    move.SourceTitle = groups(3).Value
+                    move.User = wiki.Users.FromName(groups(2).Value)
+
+
+                Case "unblock"
+                    Dim block As New Block(0, wiki)
+                    logItem = block
+
+                    block.Comment = groups(6).Value
+                    block.Page = wiki.Pages.FromNsAndName(wiki.Spaces.User, groups(3).Value)
+                    block.User = wiki.Users.FromName(groups(2).Value)
+
+
+                Case "upload", "overwrite"
+                    Dim upload As New Upload(0, wiki)
+                    logItem = upload
+
+                    upload.Comment = groups(5).Value
+                    upload.Page = wiki.Pages.FromTitle(groups(4).Value)
+                    upload.User = wiki.Users(groups(3).Value)
+
+
+                Case "protect", "modify"
+                    Dim protection As New Protection(0, wiki)
+                    logItem = protection
+
+                    protection.Comment = groups(11).Value
+                    protection.Create = ProtectionPart.FromComment(groups(5).Value, "create")
+                    protection.Edit = ProtectionPart.FromComment(groups(5).Value, "edit")
+                    protection.IsCascading = (groups(5).Value.Contains("[cascading]"))
+                    protection.Move = ProtectionPart.FromComment(groups(5).Value, "move")
+                    protection.Page = wiki.Pages.FromTitle(groups(4).Value)
+                    protection.User = wiki.Users.FromName(groups(3).Value)
+
+
+                Case "unprotect"
+                    Dim protection As New Protection(0, wiki)
+                    logItem = protection
+
+                    protection.Comment = groups(4).Value
+                    protection.Page = wiki.Pages.FromTitle(groups(3).Value)
+                    protection.User = wiki.Users.FromName(groups(2).Value)
+
+
+                Case "create", "autocreate"
+                    Dim userCreation As New UserCreation(0, wiki)
+                    logItem = userCreation
+
+                    userCreation.IsAutomatic = (action = "autocreate")
+                    userCreation.TargetUser = wiki.Users.FromName(groups(2).Value)
+                    userCreation.User = wiki.Users.FromName(groups(2).Value)
+
+
+                Case "create2"
+                    Dim userCreation As New UserCreation(0, wiki)
+                    logItem = userCreation
+
+                    userCreation.TargetUser = wiki.Users.FromName(groups(3).Value)
+                    userCreation.User = wiki.Users(groups(2).Value)
+
+
+                Case "renameuser"
+                    Dim userRename As New UserRename(0, wiki)
+                    logItem = userRename
+
+                    userRename.Comment = groups(6).Value
+                    userRename.Page = wiki.Pages.FromNsAndName(wiki.Spaces.User, groups(3).Value)
+                    userRename.TargetUser = wiki.Users.FromName(groups(4).Value)
+                    userRename.User = wiki.Users.FromName(groups(2).Value)
+
+
+                Case "rights"
+                    Dim rightsChange As New RightsChange(0, wiki)
+                    logItem = rightsChange
+
+                    rightsChange.Comment = groups(6).Value
+                    rightsChange.Rights = groups(5).Value.ToList.Trim
+                    rightsChange.TargetUser = wiki.Users.FromName(groups(3).Value)
+                    rightsChange.User = wiki.Users.FromName(groups(2).Value)
+
+
+                Case "patrol"
+                    If groups(4).Value = "" Then
+                        'New page patrol
+                        Dim review As New Review(0, wiki)
+                        logItem = review
+
+                        review.Comment = ""
+                        review.Page = wiki.Pages.FromTitle(groups(5).Value)
+                        review.Revision = review.Page.FirstRev
+                        review.Type = "newpage-patrol"
+                        review.User = wiki.Users.FromName(groups(3).Value)
+
+                    Else
+                        'Revision patrol
+                        Dim review As New Review(0, wiki)
+                        logItem = review
+
+                        review.Comment = ""
+                        review.Page = wiki.Pages.FromTitle(groups(2).Value)
+                        review.Revision = wiki.Revisions.FromID(CInt(groups(2).Value))
+                        review.Type = "patrol"
+                        review.User = wiki.Users.FromName(groups(3).Value)
+
+                        review.Revision.Page = review.Page
+                    End If
+
+
+                Case "review"
+                    Dim review As New Review(0, wiki)
+                    logItem = review
+
+                    review.IsAutomatic = (action.EndsWithI("a"))
+                    review.Comment = groups(6).Value
+                    review.Page = wiki.Pages.FromTitle(groups(5).Value)
+                    review.Revision = wiki.Revisions(CInt(groups(4).Value))
+                    review.Type = groups(2).Value
+                    review.User = wiki.Users.FromName(groups(3).Value)
+
+                    review.Revision.Page = review.Page
+
+                Case Else
+                    Return False
+            End Select
+
+            logItem.Action = action
+            logItem.Time = wiki.ServerTime
+            result.Add(logItem)
+            Return True
+        End Function
 
         Public Overrides Function ToString() As String
             Return _Server

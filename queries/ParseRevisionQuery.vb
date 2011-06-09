@@ -1,6 +1,6 @@
 ﻿Imports System.Collections.Generic
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
     'Parse wikitext of a specified page or revision
 
@@ -35,9 +35,9 @@ Namespace Huggle.Actions
             OnProgress(Msg("parse-progress"))
             OnStarted()
 
-            Dim req As New ApiRequest(Session, Description, New QueryString( _
-                "action", "parse", _
-                "page", Page, _
+            Dim req As New ApiRequest(Session, Description, New QueryString(
+                "action", "parse",
+                "page", Page,
                 "oldid", Rev))
 
             req.Start()

@@ -1,7 +1,7 @@
 ﻿Imports Huggle.UI
 Imports System.Windows.Forms
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
     Friend Class Import : Inherits Process
 
@@ -40,7 +40,7 @@ Namespace Huggle.Actions
             End If
 
             If Not DestWiki.IsLoaded Then
-                Login = New Login(DestWiki, Msg("action-import"))
+                Login = New Login(App.Sessions(DestWiki.Users.Anonymous), Msg("action-import"))
                 Login.Start()
                 Return
             End If

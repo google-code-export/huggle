@@ -1,4 +1,4 @@
-﻿Imports Huggle.Actions
+﻿Imports Huggle.Queries
 Imports System
 Imports System.Collections.Generic
 Imports System.Text.RegularExpressions
@@ -194,10 +194,15 @@ Namespace Huggle
         End Property
 
         Public Property IsCustom As Boolean
+
         Public Property IsDefault As Boolean
+
         Public Property IsHidden As Boolean
+
         Public Property IsLoaded As Boolean
+
         Public Property IsPublicEditable As Boolean = True
+
         Public Property IsPublicReadable As Boolean = True
 
         Public ReadOnly Property IsWikimedia() As Boolean
@@ -380,7 +385,7 @@ Namespace Huggle
         Public Function FindUserWithRight(ByVal right As String) As User
             If Users.Anonymous.HasRight(right) Then Return Users.Anonymous
 
-            For Each user As User In Users.All
+            For Each user As User In Users.Used
                 If user.HasRight(right) Then Return user
             Next user
 
@@ -460,10 +465,20 @@ Namespace Huggle
             End Get
         End Property
 
-        Public Function FromCode(ByVal code As String) As Wiki
+        Public Function FromString(ByVal code As String) As Wiki
             If _All.ContainsKey(code) Then Return _All(code)
-            'Wikimedia configuration oddity
+
+            'Various other ways the code might be represented. Wikimedia is not that good at consistency
+            code = code.Remove(".").Replace("_", "-")
             If _All.ContainsKey(code & "wiki") Then Return _All(code & "wiki")
+            If _All.ContainsKey(code.Replace("wikipedia", "wiki")) Then Return _All(code.Replace("wikipedia", "wiki"))
+            If _All.ContainsKey(code.Remove("wikipedia")) Then Return _All(code.Remove("wikipedia"))
+
+            'Try the name
+            For Each wiki As Wiki In All
+                If wiki.Name = code Then Return wiki
+            Next wiki
+
             Return Nothing
         End Function
 

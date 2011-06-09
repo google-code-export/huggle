@@ -1,10 +1,11 @@
-﻿Imports Huggle.Wikitext
+﻿Imports Huggle.Net
+Imports Huggle.Wikitext
 Imports System
 Imports System.Collections.Generic
 Imports System.Text.RegularExpressions
 Imports System.Web.HttpUtility
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
     'Load non-essential wiki configuration
 
@@ -23,21 +24,21 @@ Namespace Huggle.Actions
             If Wiki.Extensions.Contains("Flagged Revisions") _
                 Then reqs.Add(New ApiRequest(Session, Description, New QueryString("action", "flagconfig")))
 
-            If Wiki.Extensions.Contains("Gadgets") Then reqs.Add(New ApiRequest(Session, Description, New QueryString( _
-                "action", "query", _
-                "titles", "MediaWiki:Gadgets-definition", _
-                "prop", "revisions", _
+            If Wiki.Extensions.Contains("Gadgets") Then reqs.Add(New ApiRequest(Session, Description, New QueryString(
+                "action", "query",
+                "titles", "MediaWiki:Gadgets-definition",
+                "prop", "revisions",
                 "rvprop", "ids|content")))
 
             Dim pageReq As New PageInfoQuery(Session)
             pageReq.Content = True
 
-            If Wiki.Extensions.Contains(Extension.SpamList) Then
+            If Wiki.Extensions.Contains(CommonExtension.SpamList) Then
                 Dim list As SpamList = Wiki.SpamLists.FromPage(Wiki.Pages("MediaWiki:Spam-blacklist"))
                 If Not list.IsLoaded Then pageReq.Pages.Add(list.Page)
             End If
 
-            If Wiki.Extensions.Contains(Extension.TitleList) Then
+            If Wiki.Extensions.Contains(CommonExtension.TitleList) Then
                 If Wiki.TitleList Is Nothing _
                     Then Wiki.TitleList = New TitleList(Wiki.Pages("MediaWiki:Titleblacklist"))
                 If Not Wiki.TitleList.IsLoaded Then pageReq.Pages.Add(Wiki.TitleList.Location)
@@ -114,27 +115,36 @@ Namespace Huggle.Actions
                 For Each section As Section In doc.Sections.All
                     If section.Title IsNot Nothing Then
                         Dim type As String = section.Title
-                        descPages.Merge(Wiki.Pages("MediaWiki:Gadget-section-" & type))
+                        descPages.Merge(Wiki.Pages.FromString("MediaWiki:Gadget-section-" & type))
+
+                        Static gadgetPattern As New Regex("\* +([^\[\|]+)(?:\[([^\]]+)\])?\|(.+)", RegexOptions.Compiled)
 
                         For Each line As String In section.Text.Split(LF)
-                            If line.StartsWithI("*") Then
-                                Dim gadget As Gadget = Wiki.Gadgets(line.FromFirst("*").ToFirst("|").Trim)
+                            Dim match As Match = gadgetPattern.Match(line)
+
+                            If match.Success Then
+                                Dim gadget As Gadget = Wiki.Gadgets(match.Groups(1).Value)
+
+                                gadget.Options = match.Groups(2).Value.Split("|").ToList
                                 gadget.Type = type
 
-                                Dim pages As New List(Of String)(line.FromFirst("|").Split("|"))
-                                gadget.Pages = New List(Of Page)
+                                Dim pages As New List(Of Page)
 
-                                For Each pageName As String In pages
-                                    gadget.Pages.Merge(Wiki.Pages("MediaWiki:Gadget-" & pageName))
-                                Next pageName
+                                For Each pageTitle As String In New List(Of String)(match.Groups(3).Value.Split("|"))
+                                    Dim page As Page = Wiki.Pages.FromString(pageTitle)
+                                    If page IsNot Nothing Then pages.Merge(page)
+                                Next pageTitle
 
-                                descPages.Merge(Wiki.Pages.FromString("MediaWiki:Gadget-" & gadget.Code))
+                                gadget.Pages = pages
+
+                                Dim descPage As Page = Wiki.Pages.FromString("MediaWiki:Gadget-" & gadget.Code)
+                                If descPage IsNot Nothing Then descPages.Merge(descPage)
                             End If
                         Next line
                     End If
                 Next section
 
-                Dim query As New PageInfoQuery(Session, descPages, Content:=True)
+                Dim query As New PageInfoQuery(Session, descPages) With {.Content = True}
                 query.Start()
 
                 If Not query.IsFailed Then
@@ -150,7 +160,7 @@ Namespace Huggle.Actions
                             gadget.Description = gadget.Description.Substring(match.Groups(0).Length)
                         End If
 
-                        gadget.Name = UcFirst(name).Replace("_", " ").Replace("-", " ")
+                        gadget.Name = name.ToUpperFirstI.Replace("_", " ").Replace("-", " ")
                     Next gadget
                 End If
             End If

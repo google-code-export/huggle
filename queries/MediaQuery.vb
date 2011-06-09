@@ -1,7 +1,8 @@
-﻿Imports System
+﻿Imports Huggle.Net
+Imports System
 Imports System.Text
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
     Friend Class MediaQuery : Inherits Query
 
@@ -37,8 +38,7 @@ Namespace Huggle.Actions
 
             If Wiki.FileUrl IsNot Nothing Then
                 'Upload location is determined by MD5 hash of file name
-                Dim hash As String = BitConverter.ToString(MD5Hash(
-                    Encoding.UTF8.GetBytes(Media.Name))).Remove("-").ToLowerI
+                Dim hash As String = HexString(MD5Hash(UTF8Encode(Media.Name)))
                 Dim url As Uri
 
                 If ThumbSize > 0 Then url = New Uri(Wiki.FileUrl.ToString & "thumb/" & hash(0) & "/" & _

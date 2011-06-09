@@ -4,7 +4,7 @@ Imports System.Collections.Generic
 Imports System.Net
 Imports System.Windows.Forms
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
     Friend Class Login : Inherits Query
 
@@ -18,13 +18,11 @@ Namespace Huggle.Actions
 
         Public Sub New(ByVal session As Session, ByVal requester As String)
             MyBase.New(session, Msg("login-desc"))
-            Anonymous = session.User.IsAnonymous
-            Me.Requester = requester
-        End Sub
 
-        Public Sub New(ByVal wiki As Wiki, ByVal requester As String)
-            MyBase.New(App.Sessions(wiki.Users.Anonymous), Msg("login-desc"))
+            ThrowNull(requester, "requester")
             Me.Requester = requester
+
+            Anonymous = session.User.IsAnonymous
         End Sub
 
         Public Overrides Sub Start()
@@ -59,8 +57,8 @@ Namespace Huggle.Actions
             If Not User.Config.IsLoaded Then User.Config.LoadLocal()
 
             'Automatically select a unified account where possible
-            If Not Session.User.IsAnonymous AndAlso Session.User.GlobalUser IsNot Nothing _
-                AndAlso Session.User.GlobalUser.IsActive Then
+            If Not User.IsAnonymous AndAlso User.GlobalUser IsNot Nothing _
+                AndAlso User.GlobalUser.IsActive Then
 
                 'Prompt the user for permission to use a unified account
                 If Not Interactive AndAlso Not User.GlobalUser.Config.AutoUnifiedLogin Then
@@ -69,10 +67,10 @@ Namespace Huggle.Actions
                     End Using
                 End If
 
-                Session.Cookies.Add(Session.User.GlobalUser.Cookies)
+                Session.Cookies.Add(User.GlobalUser.Cookies)
                 Session.IsActive = True
 
-            ElseIf Not Session.User.IsAnonymous AndAlso Session.User.Password Is Nothing Then
+            ElseIf Not User.IsAnonymous AndAlso User.Password Is Nothing Then
                 'Prompt for account password
                 Using form As New AccountLoginForm(User, Requester)
                     If form.ShowDialog = DialogResult.Cancel Then OnFail(Msg("error-cancelled")) : Return
@@ -90,7 +88,7 @@ Namespace Huggle.Actions
 
             'Load config from wiki if necessary
             If Not Wiki.Config.IsCurrent OrElse Not User.Config.IsCurrent Then
-                OnProgress(Msg("userconfig-progress", Session.User.FullName))
+                OnProgress(Msg("userconfig-progress", User.FullDisplayName))
                 Dim process As New LoadUserConfig(Session)
                 process.Start()
                 If process.IsFailed Then OnFail(process.Result.Inner) : Return
@@ -101,13 +99,14 @@ Namespace Huggle.Actions
         End Sub
 
         Private Sub DoLogin()
-            OnProgress(Msg("login-progress", User.FullName))
+            OnProgress(Msg("login-progress", User.FullDisplayName))
 
             'Construct query
             Dim req As New ApiRequest(Session, Description, New QueryString(
                 "action", "login",
                 "lgname", User.Name,
-                "lgpassword", Unscramble(User.FullName, User.Password, Hash(User))))
+                "lgpassword", Unscramble(User.FullName, User.Password, Hash(User)),
+                "lgrememberme", True))
 
             If Response IsNot Nothing Then req.Query.Add("lgtoken", Response.Token)
 
@@ -171,15 +170,14 @@ Namespace Huggle.Actions
             If IsFailed Then Return
 
             If Not User.IsUsed Then
-                User.IsUsed = True
+                Wiki.Users.Used.Merge(User)
 
                 'Prompt to copy settings across from another account
                 If Interactive Then
                     Dim copyable As New List(Of User)
 
-                    For Each otherUser As User In Wiki.Users.All
-                        If otherUser.IsUsed AndAlso Not otherUser.IsAnonymous AndAlso otherUser IsNot User _
-                            Then copyable.Add(otherUser)
+                    For Each otherUser As User In Wiki.Users.Used
+                        If Not otherUser.IsAnonymous AndAlso otherUser IsNot User Then copyable.Add(otherUser)
                     Next otherUser
 
                     If copyable.Count > 0 Then

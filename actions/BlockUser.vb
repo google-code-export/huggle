@@ -1,107 +1,40 @@
-﻿Imports System.Collections.Generic
+﻿Imports Huggle.Net
+Imports System.Collections.Generic
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
     'Handles blocking a user
 
-    Friend Class Block : Inherits Query
+    Friend Class BlockUser : Inherits Query
 
-        Private _AnonOnly As Boolean
-        Private _AutoBlock As Boolean
-        Private _BlockEmail As Boolean
-        Private _BlockCreation As Boolean
-        Private _BlockTalk As Boolean
-        Private _Expiry As String
-        Private _Summary As String
         Private _Target As User
-        Private _Watch As WatchAction
 
-        Public Sub New(ByVal session As Session, ByVal target As User, Optional ByVal summary As String = Nothing)
+        Public Sub New(ByVal session As Session, ByVal target As User)
             MyBase.New(session, Msg("block-desc", target))
-            _Summary = summary
             _Target = target
         End Sub
 
         Public Property AnonOnly() As Boolean
-            Get
-                Return _AnonOnly
-            End Get
-            Set(ByVal value As Boolean)
-                _AnonOnly = value
-            End Set
-        End Property
 
         Public Property AutoBlock() As Boolean
-            Get
-                Return _AutoBlock
-            End Get
-            Set(ByVal value As Boolean)
-                _AutoBlock = value
-            End Set
-        End Property
 
         Public Property BlockCreation() As Boolean
-            Get
-                Return _BlockCreation
-            End Get
-            Set(ByVal value As Boolean)
-                _BlockCreation = value
-            End Set
-        End Property
 
         Public Property BlockEmail() As Boolean
-            Get
-                Return _BlockEmail
-            End Get
-            Set(ByVal value As Boolean)
-                _BlockEmail = value
-            End Set
-        End Property
 
         Public Property BlockTalk() As Boolean
-            Get
-                Return _BlockTalk
-            End Get
-            Set(ByVal value As Boolean)
-                _BlockTalk = value
-            End Set
-        End Property
 
         Public Property Expiry() As String
-            Get
-                Return _Expiry
-            End Get
-            Set(ByVal value As String)
-                _Expiry = value
-            End Set
-        End Property
 
         Public Property Summary() As String
-            Get
-                Return _Summary
-            End Get
-            Set(ByVal value As String)
-                _Summary = value
-            End Set
-        End Property
 
-        Public Property Target() As User
+        Public ReadOnly Property Target() As User
             Get
                 Return _Target
             End Get
-            Set(ByVal value As User)
-                _Target = value
-            End Set
         End Property
 
         Public Property Watch() As WatchAction
-            Get
-                Return _Watch
-            End Get
-            Set(ByVal value As WatchAction)
-                _Watch = value
-            End Set
-        End Property
 
         Public Overrides Sub Start()
             'Check user permissions
@@ -142,7 +75,7 @@ Namespace Huggle.Actions
 
             If confirmMessages.Count > 0 Then
                 'Show prompt to user
-                Select Case App.ShowPrompt(Msg("block-action"), MakeConfirmation(confirmMessages), _
+                Select Case App.ShowPrompt(Msg("block-action"), MakeConfirmation(confirmMessages),
                     Nothing, 1, Msg("block-continue"), Msg("cancel"))
 
                     Case 1 : Exit Select
@@ -177,7 +110,7 @@ Namespace Huggle.Actions
             OnStarted()
 
             'Get token
-            If Session.EditToken Is Nothing Then
+            If Not Session.HasTokens Then
                 Dim tokenQuery As New TokenQuery(Session)
                 tokenQuery.Start()
                 If tokenQuery.IsErrored Then OnFail(tokenQuery.Result) : Return
@@ -186,12 +119,12 @@ Namespace Huggle.Actions
             If Summary Is Nothing Then Summary = Wiki.Config.BlockSummary
 
             'Create query string
-            Dim query As New QueryString( _
-                "action", "block", _
-                "user", User, _
-                "reason", Summary, _
-                "expiry", Expiry, _
-                "token", Session.EditToken)
+            Dim query As New QueryString(
+                "action", "block",
+                "user", User,
+                "reason", Summary,
+                "expiry", Expiry,
+                "token", Session.Tokens("block"))
 
             If AnonOnly Then query.Add("anononly")
             If AutoBlock Then query.Add("autoblock")

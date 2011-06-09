@@ -1,6 +1,7 @@
-﻿Imports System.Web.HttpUtility
+﻿Imports Huggle.Net
+Imports System.Web.HttpUtility
 
-Namespace Huggle.Actions
+Namespace Huggle.Queries
 
     'Retrieve a diff
 
@@ -23,11 +24,11 @@ Namespace Huggle.Actions
             OnProgress(Msg("diff-progress", Diff.Page))
             OnStarted()
 
-            Dim query As New QueryString( _
-                "action", "render", _
-                "title", Diff.Page, _
-                "diff", Diff.NewId, _
-                "oldid", Diff.OldId, _
+            Dim query As New QueryString(
+                "action", "render",
+                "title", Diff.Page,
+                "diff", Diff.NewId,
+                "oldid", Diff.OldId,
                 "diffonly", True)
 
             Dim req As New UIRequest(Session, Description, query, Nothing)

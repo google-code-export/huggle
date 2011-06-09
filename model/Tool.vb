@@ -11,6 +11,8 @@ Namespace Huggle
 
         Private Shared ReadOnly _All As New List(Of Tool)
 
+        Public Shared ReadOnly None As New Tool("")
+
         Private Sub New(ByVal Name As String)
             _Name = Name
             _All.Merge(Me)

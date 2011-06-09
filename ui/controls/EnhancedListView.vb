@@ -1,4 +1,5 @@
-﻿Imports System.Collections.Generic
+﻿Imports Huggle
+Imports System.Collections.Generic
 Imports System.ComponentModel
 
 Namespace System.Windows.Forms
@@ -239,11 +240,13 @@ Namespace System.Windows.Forms
                     ContextMenu = New ContextMenu
 
                     For i As Integer = 0 To Columns.Count - 1
-                        Dim item As New MenuItem(Columns(i).Text) With {.Name = i.ToString}
+                        Dim item As New MenuItem(Columns(i).Text) With {.Name = i.ToStringI}
                         item.Checked = ColumnVisibility(i)
                         AddHandler item.Click, AddressOf ColumnMenuItemClicked
                         ContextMenu.MenuItems.Add(item)
                     Next i
+                Else
+                    ContextMenu = Nothing
                 End If
             End If
 

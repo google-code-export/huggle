@@ -1,8 +1,7 @@
-﻿Namespace Huggle.Actions
+﻿Namespace Huggle.Queries
 
     Friend Class Watch : Inherits Query
 
-        Private _Action As WatchAction
         Private _Page As Page
 
         Public Sub New(ByVal session As Session, ByVal page As Page, ByVal action As WatchAction)
@@ -12,13 +11,6 @@
         End Sub
 
         Public Property Action() As WatchAction
-            Get
-                Return _Action
-            End Get
-            Set(ByVal value As WatchAction)
-                _Action = value
-            End Set
-        End Property
 
         Public ReadOnly Property Page() As Page
             Get
@@ -27,6 +19,13 @@
         End Property
 
         Public Overrides Sub Start()
+
+            'Get token
+            If Not Session.HasTokens Then
+                Dim tokenQuery As New TokenQuery(Session)
+                tokenQuery.Start()
+                If tokenQuery.IsErrored Then OnFail(tokenQuery.Result) : Return
+            End If
 
             If Action = WatchAction.Preferences Then _
                 If User.Preferences.WatchEdits Then Action = WatchAction.Watch _
@@ -39,8 +38,10 @@
             OnProgress(Msg("watch-progress", Page))
 
             'Create query string
-            Dim query As New QueryString("title", Page.Title)
-            If Action = WatchAction.Watch Then query.Add("action", "watch") Else query.Add("action", "unwatch")
+            Dim query As New QueryString(
+                "title", Page.Title,
+                "token", Session.Tokens("watch"),
+                "action", If(Action = WatchAction.Watch, "watch", "unwatch"))
 
             'Watch the page
             Dim req As New ApiRequest(Session, Description, query)

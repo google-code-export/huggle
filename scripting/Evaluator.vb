@@ -1,4 +1,4 @@
-﻿Imports Huggle.Actions
+﻿Imports Huggle.Queries
 Imports System
 Imports System.Collections
 Imports System.Collections.Generic
@@ -8,7 +8,7 @@ Namespace Huggle.Scripting
 
     'Handles evaluation of script expressions
 
-    <Diagnostics.DebuggerDisplay("{Name}")> _
+    <Diagnostics.DebuggerDisplay("{Name}")>
     Friend Class Evaluator : Inherits Query
 
         Private _Cancelled As Boolean

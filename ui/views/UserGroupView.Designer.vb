@@ -42,7 +42,7 @@
             'GroupColumn
             '
             Me.GroupColumn.Text = "Group"
-            Me.GroupColumn.Width = 220
+            Me.GroupColumn.Width = 215
             '
             'CountColumn
             '
@@ -72,12 +72,14 @@
             Me.GroupList.HideSelection = False
             Me.GroupList.Location = New System.Drawing.Point(0, 28)
             Me.GroupList.Name = "GroupList"
+            Me.GroupList.SelectedValue = Nothing
             Me.GroupList.ShowGroups = False
             Me.GroupList.Size = New System.Drawing.Size(301, 297)
             Me.GroupList.SortOnColumnClick = True
             Me.GroupList.TabIndex = 15
             Me.GroupList.UseCompatibleStateImageBehavior = False
             Me.GroupList.View = System.Windows.Forms.View.Details
+            Me.GroupList.VirtualMode = True
             '
             'Title
             '
@@ -99,25 +101,28 @@
             Me.RightsList.FullRowSelect = True
             Me.RightsList.GridLines = True
             Me.RightsList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None
+            Me.RightsList.HideSelection = False
             Me.RightsList.Location = New System.Drawing.Point(0, 52)
             Me.RightsList.Name = "RightsList"
+            Me.RightsList.SelectedValue = Nothing
             Me.RightsList.ShowGroups = False
-            Me.RightsList.Size = New System.Drawing.Size(228, 273)
+            Me.RightsList.Size = New System.Drawing.Size(220, 273)
             Me.RightsList.SortOnColumnClick = True
             Me.RightsList.TabIndex = 24
             Me.RightsList.UseCompatibleStateImageBehavior = False
             Me.RightsList.View = System.Windows.Forms.View.Details
+            Me.RightsList.VirtualMode = True
             '
             'RightColumn
             '
             Me.RightColumn.Text = ""
-            Me.RightColumn.Width = 205
+            Me.RightColumn.Width = 192
             '
             'GroupName
             '
             Me.GroupName.AutoSize = True
             Me.GroupName.Font = New System.Drawing.Font("Segoe UI", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-            Me.GroupName.Location = New System.Drawing.Point(-5, 0)
+            Me.GroupName.Location = New System.Drawing.Point(1, 0)
             Me.GroupName.Name = "GroupName"
             Me.GroupName.Size = New System.Drawing.Size(117, 25)
             Me.GroupName.TabIndex = 25
@@ -145,12 +150,13 @@
             Me.Splitter.Panel2.Controls.Add(Me.GroupName)
             Me.Splitter.Size = New System.Drawing.Size(533, 325)
             Me.Splitter.SplitterDistance = 301
+            Me.Splitter.SplitterWidth = 12
             Me.Splitter.TabIndex = 26
             '
             'RightsLabel
             '
             Me.RightsLabel.AutoSize = True
-            Me.RightsLabel.Location = New System.Drawing.Point(-3, 32)
+            Me.RightsLabel.Location = New System.Drawing.Point(3, 32)
             Me.RightsLabel.Name = "RightsLabel"
             Me.RightsLabel.Size = New System.Drawing.Size(170, 13)
             Me.RightsLabel.TabIndex = 28
@@ -159,7 +165,7 @@
             'RightsCount
             '
             Me.RightsCount.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-            Me.RightsCount.Location = New System.Drawing.Point(168, 32)
+            Me.RightsCount.Location = New System.Drawing.Point(160, 32)
             Me.RightsCount.Name = "RightsCount"
             Me.RightsCount.Size = New System.Drawing.Size(60, 13)
             Me.RightsCount.TabIndex = 27
