@@ -1,0 +1,6 @@
+#summary Insert here all updates
+
+== 3.0.0 ==
+ * Layout
+ * CSD Logging
+ * Scripting
