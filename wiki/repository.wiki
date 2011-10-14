@@ -17,6 +17,7 @@ Every function should have look similar to this:
   Core.History("Class.MyFunction()");
   ...
 }
+
 Every class should look like:
 
 class Class
@@ -28,4 +29,4 @@ class Class
 }
 }</code>
 
-if you see that someone did anything wrong fix it yourself isntead of notifiing them, if you don't understand any function, use '''//comment needed''' anywhere you want
+if you see that someone did anything wrong fix it yourself, if you don't understand any function, use '''//comment needed''' anywhere you want
