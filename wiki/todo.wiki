@@ -1,5 +1,17 @@
 # insert all things which needs to be done here
 
+== High ==
  * Layout of Block Form (assigned to Petrb)
  * Layout of Delete Form (assigned to Petrb)
+ * Layout of Warning Form
+ * Layout of Protect Form
+ * Layout of template form
+ * layout of message form
+ * Layout of Move form
+ * Layout of Prod form
+ * Layout of Queue form
+ * Layout of Request form
  * Queue related code
+
+== Medium ==
+ * Oversighting
