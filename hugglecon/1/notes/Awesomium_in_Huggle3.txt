@@ -1,0 +1,29 @@
+=== WebKit in Huggle 3 (using Awesomium) ===
+
+++ About Awesomium ++
+
+Awesomium is a Web-Browser-Framework which based on Chromium/WebKit.
+The API is available for .NET/Mono and C.
+
+The current version is 1.6.4.
+
+More Informations about Awesomium can be finded on:
+http://awesomium.com/
+http://awesomium.codeplex.com/
+
+++ Why Awesomium/WebKit??? ++
+
+The WebBrowser-Component which we have used in Huggle 2 is only a Wrapper around the IE ActiveX control.
+And how we all know, the IE is slowly...
+Moreover the component isn't available on Mac with Mono.
+
+So I searched for a component, which is platform independent (Mono and .NET) and faster than IE.
+
+++ How will Awesomium implement in Huggle 3? ++
+
+It will implement it into Huggle as a class. The class has only got an function for navigating to an url.
+But theres one problem:
+The component from Awesomium I will implement in the class isn't yet available for Mono.
+The developer of Awesomium will release the component with Awesomium 1.7.
+
+So: What should we do until Awesomium 1.7?
