@@ -1,6 +1,1 @@
-#summary Insert here all updates
-
-== 3.0.0 ==
- * Layout
- * CSD Logging
- * Scripting
+The changelog is [http://meta.wikimedia.org/wiki/Huggle/Changes here].
