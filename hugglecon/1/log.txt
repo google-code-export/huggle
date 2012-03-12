@@ -1,2 +1,975 @@
-Not available yet
-See http://toolserver.org/~mmovchin/hugglecon/
+[18:00:00] <mmovchin>	 So, it's 18:00 UTC now. Welcome here on the first HuggleCon :) I'm verry happy to see you all here :)
+[18:00:15] <mmovchin>	 I just want to make sure who's here
+[18:00:22] <mmovchin>	 Also who's just reading
+[18:00:52] <Krenair>	 mmovchin: I put my name on the list to beta test, so I guess so
+[18:01:24] <mmovchin>	 Please inseret your names herer: http://etherpad.wikimedia.org/HuggleCon-1-participants-list
+[18:01:26] <mmovchin>	 *-r
+[18:01:36] <mmovchin>	 That's the participants list
+[18:01:38] <mmovchin>	 Thank you :)
+[18:02:11] <Slazenger>	 Iworld and I tried to make a really cool name by combining both of our names. :P
+[18:02:21] <IWorld>	 :-)
+[18:02:29] <Elsensee>	 ISlazenger? :D
+[18:03:02] <mmovchin>	 Where are all the other devs?
+[18:03:13] <Slazenger>	 :P
+[18:03:18] <IWorld>	 I don't know..
+[18:03:25] <Elsensee>	 they sleep
+[18:03:26] <Elsensee>	 :D
+[18:03:54] <IWorld>	 That's bad.
+[18:03:56] <mmovchin>	 petan?
+[18:04:09] <mmovchin>	 addshore?
+[18:04:19] <Elsensee>	 petan|wk?
+[18:04:36] <mmovchin>	 ToAruShiroiNeko: ?
+[18:04:55] <IWorld>	 We need petan...
+[18:05:03] <IWorld>	 and addshore.
+[18:05:16] <Inkowik>	 sorry, supper is waiting - back in 20 minutes
+[18:05:30] <IWorld>	 Inkowik: no problem
+[18:05:40] <mmovchin>	 Mh, ??ok, we can not stop because of them (petan and addshore).
+[18:05:44] <mmovchin>	 Inkowik: no problem
+[18:06:00] <mmovchin>	 So:
+[18:06:55] <mmovchin>	 Currently, we have (yet!) is a small problem in the team: We're pretty bad organized.
+[18:07:05] <MRB[ping-me]>	 +1 agreed
+[18:07:35] <mmovchin>	 No one knows on what bug / feature etc. the other one works on
+[18:07:48] <petan>	 hi
+[18:07:52] <petan>	 back
+[18:07:53] <Elsensee>	 hi petan :)
+[18:07:56] <MRB[ping-me]>	 petan: :)
+[18:08:07] <Slazenger>	 :]
+[18:08:11] <Krenair>	 =|:{D
+[18:08:31] <mmovchin>	 So we have a new concept for developing and beta testing, this will be one of the importants points in this meeting
+[18:09:04] <MRB[ping-me]>	 Excellent!  Can we hear it?
+[18:09:57] <petan>	 can we start
+[18:10:01] <mmovchin>	 I will introduce it later.
+[18:10:08] <mmovchin>	 petan: we already did
+[18:10:11] <Elsensee>	 :D
+[18:10:12] <petan>	 ok
+[18:10:14] <petan>	 good
+[18:10:15] <matthewrbowker>	 :)
+[18:10:25] <mmovchin>	 So first I would like to move over to Huggle 3
+[18:10:33] <mmovchin>	 This is our biggest milestone yet
+[18:10:45] <petan>	 ok
+[18:10:59] <petan>	 so I would like to have huggle 2 feature frozen
+[18:11:01] <matthewrbowker>	 What do we need to do before the move?
+[18:11:03] <mmovchin>	 But as I know there is actually no concept or something similar yet
+[18:11:10] <mmovchin>	 petan: +1
+[18:11:25] <petan>	 that mean we shouldn't really implement more functions to huggle 2 and only maintain huggle 3, having said that I drop the development of hg2 at all
+[18:11:26] <mmovchin>	 matthewrbowker: Which move do you mean?
+[18:11:28] <IWorld>	 Sorry, but I'm away for 5-10 mins.
+[18:11:45] <mmovchin>	 IWorld: No problem
+[18:11:48] <matthewrbowker>	 mmovchin: the move to huggle3
+[18:11:50] <petan>	 if you wouldn't know how to fix anything please let me know
+[18:12:00] <petan>	 other than that I am not going to touch huggle 2 more
+[18:12:11] <mmovchin>	 matthewrbowker: We need developers. Many motivated devs. And ideas ;)
+[18:12:33] <mmovchin>	 petan: But we should fix major bugs in HG2, I think?
+[18:12:41] <petan>	 of course
+[18:12:43] <mmovchin>	 Because this is just the stablest version yet
+[18:12:46] <addshore>	 hyeye
+[18:12:48] <petan>	 if you wouldn't know how, tell me and I help you
+[18:12:49] <addshore>	 im here!
+[18:12:52] <mmovchin>	 OK, anyway:
+[18:12:53] <Elsensee>	 hi addshore :)
+[18:12:56] <petan>	 hey Adam!
+[18:12:56] <mmovchin>	 hi addshore
+[18:12:57] <addshore>	 just got back from work
+[18:13:00] <petan>	 yay
+[18:13:04] <matthewrbowker>	 addshore: Hi!
+[18:13:10] <Elsensee>	 okay, i'm away for ca. 15 min - sorry
+[18:13:14] <petan>	 no prob
+[18:13:24] <mmovchin>	 petan and Adam: Please inseret your names here: http://etherpad.wikimedia.org/HuggleCon-1-participants-list
+[18:13:28] <mmovchin>	 Elsensee: No problem
+[18:13:37] <petan>	 so again, huggle 2 is feature frozen, I don't work on it, anyone else can overtake the maintenace if they want
+[18:13:52] <petan>	 mmovchin: what is that list for?
+[18:14:01] <matthewrbowker>	 Stepping out for five minutes, BRB
+[18:14:04] <addshore>	 pretty much i think we sortof need to start from scratch
+[18:14:08] <addshore>	 and I love the idea of a web huggle
+[18:14:18] <addshore>	 and would love to start working on that
+[18:14:23] <mmovchin>	 petan: This is for the public log, it's just a participants list of this meeting
+[18:14:33] <mmovchin>	 addshore: We will come back to this later
+[18:14:37] <addshore>	 :)
+[18:14:41] <addshore>	 how far have we got? :P
+[18:14:47] <mmovchin>	 MRB[away]: No problem
+[18:14:51] <mmovchin>	 Funkruf: Hello
+[18:14:55] <mmovchin>	 ;)
+[18:14:56] <mmovchin>	 So
+[18:14:59] <Funkruf>	 Hello mmovchin
+[18:15:00] <mmovchin>	 let's back to HG3
+[18:15:02] <mmovchin>	 We need IDEAS
+[18:15:14] <Funkruf>	 sorry, i'm late
+[18:15:14] * IWorld  back
+[18:15:15] <mmovchin>	 We need concepts, features, and so on
+[18:15:22] <mmovchin>	 motivated devs and good beta testers
+[18:15:27] <Krenair>	 <mmovchin> matthewrbowker: We need developers. <-- I have almost no experience with .NET but I know Java and I'm willing to learn C# if it will help bring Huggle to Linux
+[18:15:51] <mmovchin>	 I'm sure you all have really good ideas how HG3 could be
+[18:16:17] <IWorld>	 We need a better layout, like Ribbon or Qt.
+[18:16:20] <mmovchin>	 Krenair: Nice to hear. I'm sure you could help us with C# on HG3. 
+[18:16:53] <mmovchin>	 Yes, but please: We don't have so much time today, so please send your ideas to our mailing list
+[18:16:57] <mmovchin>	 We need a concept
+[18:17:07] <IWorld>	 ah
+[18:17:08] <mmovchin>	 We need features. (But useful ones).
+[18:17:13] <mmovchin>	 Realistic ideas
+[18:17:17] <mmovchin>	 Designing concepts
+[18:17:18] <mmovchin>	 and so on
+[18:17:22] <addshore>	 IWorld, any chance you can link me to a screeny of Ribbon or Qt?
+[18:17:48] <mmovchin>	 You can use Paint, Photoshop, Gimp, MS Visio whatever to visialize your ideas, but please write them down, too
+[18:17:58] <mmovchin>	 Or just use a pencil and paper and then scan them :P
+[18:18:12] <IWorld>	 or Inkscape
+[18:18:16] <matthewrbowker>	 Krenair mmovchin: I'm willing to learn to dev, it may take time though...
+[18:18:19] <mmovchin>	 BTW:
+[18:18:21] <mmovchin>	 !mlo
+[18:18:23] <mmovchin>	 !ml
+[18:18:23] <wm-bot>	 https://lists.wikimedia.org/mailman/listinfo/huggle
+[18:18:33] <mmovchin>	 For that who are still not on that list
+[18:19:02] <petan>	 who removed my XO
+[18:19:11] <mmovchin>	 What's XO?
+[18:19:15] <petan>	 nvm
+[18:19:28] <mmovchin>	 ?
+[18:20:25] <mmovchin>	 petan: What do you mean?
+[18:20:29] <petan>	 nothing
+[18:20:31] <petan>	 back to huggle
+[18:20:40] <mmovchin>	 yes
+[18:20:43] <mmovchin>	 So:
+[18:20:46] <Funkruf>	 Sorry, i have overwrite the unamed
+[18:20:48] <addshore>	 well, it will be easier to dev if we start from scratch
+[18:20:59] <addshore>	 the problem with huggle as it is
+[18:21:11] <addshore>	 is it was origionally deved just by gurch
+[18:21:17] <addshore>	 until it was working
+[18:21:27] <petan>	 that mean no one knows how does it work
+[18:21:29] <addshore>	 then gurch went inactive and I tried to maintain and add to as best i could
+[18:21:40] <addshore>	 yes, i still dont know how everything works
+[18:21:48] <petan>	 this doesn't apply for huggle 3
+[18:22:01] <petan>	 we need to set up rules for repo first and coding conventions
+[18:22:07] <mmovchin>	 Also I'm not know how everything is working
+[18:22:09] <petan>	 I would like to create a wiki page and write it there
+[18:22:11] <mmovchin>	 petan: Agree
+[18:22:17] <petan>	 we can start now with rules for repo
+[18:22:21] <petan>	 we use svn on gc now
+[18:22:27] <mmovchin>	 And then we can start to develop a completly new Huggle which is not based on HG2
+[18:22:31] <petan>	 we likely move to wikimedia git when it's working
+[18:22:41] <petan>	 svn is simple
+[18:22:46] <mmovchin>	 IWorld: ^
+[18:22:50] <mmovchin>	 yes
+[18:22:55] <petan>	 we have a trunk where is the devel version
+[18:22:57] <IWorld>	 huh?
+[18:23:01] <petan>	 we should move huggle3 there
+[18:23:05] <Krenair>	 Wikimedia git isn't already working, petan?
+[18:23:09] <petan>	 no it's not
+[18:23:23] <Krenair>	 Oh, what's wrong with it?
+[18:23:27] <Elsensee|away>	 re
+[18:23:28] <petan>	 it's being prepared now
+[18:23:31] <IWorld>	 re Elsensee|away 
+[18:23:35] <petan>	 should be done next 2 months
+[18:23:45] <mmovchin>	 Anyway, there is a fantastic idea with HG3
+[18:23:48] <IWorld>	 I don't like Git.
+[18:23:51] <petan>	 wait please
+[18:23:56] <mmovchin>	 Elsensee: Could you please talk about it? :)
+[18:23:58] <petan>	 we discuss repo now
+[18:23:58] <mmovchin>	 petan: me?
+[18:24:02] <mmovchin>	 ok
+[18:24:04] <mmovchin>	 nP
+[18:24:39] <petan>	 there is a trunk where devel version should be, all devs should commit their changes there as much as they can, it's better to make 4 commits of 4 changes than 1 big
+[18:25:06] <mmovchin>	 It don't makes any difference to me whether we're using wikimedia svn or GC
+[18:25:11] <addshore>	 Also please make sure you comment your commits so that we know whats happened
+[18:25:24] <petan>	 yes true
+[18:25:25] <Elsensee>	 mmovchin?
+[18:25:32] <mmovchin>	 Elsensee: Yes?
+[18:25:33] <petan>	 that apply especially to petan
+[18:25:40] <addshore>	 :P
+[18:25:49] <matthewrbowker>	 XD
+[18:25:50] <mmovchin>	 heh
+[18:25:54] <Elsensee>	 [19:23] <@mmovchin> Elsensee: Could you please talk about it? :)
+[18:26:01] <mmovchin>	 Wait ;)
+[18:26:04] <IWorld>	 So what do we do now?
+[18:26:08] <mmovchin>	 I meant awesomium on HG3
+[18:26:13] <Elsensee>	 oh...
+[18:26:16] <Elsensee>	 yeah, of course
+[18:26:18] <mmovchin>	 but now we're talking about repro
+[18:26:19] <petan>	 if you need to make a change which doesn't work, make a branch for it and commit it once it work
+[18:26:30] <petan>	 you shouldn't commit broken code, eg something what we can't compile etc
+[18:27:04] <petan>	 users with access to repo have unlimited access everywhere and that isn't going to change
+[18:27:07] <Elsensee>	 okay, because the WebBrowser-component isn't available on mac, i had the idea to use another engine/component
+[18:27:16] <petan>	 huggle is small project and there is no reason to make restrictions like on wikimedia svn
+[18:27:24] <Elsensee>	 and i choosed Awesomium
+[18:27:36] <Elsensee>	 it based on WebKit, so its very fast
+[18:27:45] <mmovchin>	 uh two topics at once?
+[18:27:52] <Elsensee>	 what?
+[18:27:58] <Elsensee>	 you said i should read about it
+[18:28:04] <Krenair>	 They were discussing the repos.
+[18:28:09] <Elsensee>	 sorry
+[18:28:11] <mmovchin>	 I tought we're still talking about repos
+[18:28:11] <Elsensee>	 i wait
+[18:28:15] <IWorld>	 ok
+[18:28:17] <mmovchin>	 Thank you, Elsensee ;)
+[18:28:26] <petan>	 right
+[18:28:37] <mmovchin>	 petan: I agree with this rules
+[18:28:47] <IWorld>	 What rules? :D
+[18:28:58] <petan>	 !todo
+[18:28:58] <wm-bot>	 http://etherpad.wikimedia.org/Huggle-dev-pad
+[18:29:03] <petan>	 I move it here
+[18:29:27] <mmovchin>	 ok
+[18:30:55] <IWorld>	 petan: do we change the SVN?
+[18:30:59] <petan>	 not yet
+[18:31:06] <petan>	 I would like to move to git later though
+[18:31:29] <IWorld>	 Git?
+[18:31:32] <petan>	 yes
+[18:31:36] <petan>	 !wiki Git
+[18:31:36] <Petanbot>	 12http://en.wikipedia.org/wiki/Git (Requested by petan)
+[18:31:42] <IWorld>	 Are there any advantages?
+[18:31:43] <mmovchin>	 petan: Could we please work on the new rules after this meeting
+[18:31:44] <mmovchin>	 ?
+[18:31:46] <petan>	 yes there are
+[18:31:53] <petan>	 yes we can
+[18:32:21] <mmovchin>	 Because we don't have so much time yet and I have to go in 45 minutes because of another conference ;)
+[18:32:27] <petan>	 ok
+[18:32:30] <mmovchin>	 So
+[18:32:38] <mmovchin>	 Let's continue
+[18:32:45] <mmovchin>	 Elsensee: Awesomium please :)
+[18:32:48] <Krenair>	 IWorld, any advantages? You've never used git, have you?
+[18:32:56] <mmovchin>	 We're listening.
+[18:32:59] <Elsensee>	 okay...
+[18:33:14] <Elsensee>	 okay, because the WebBrowser-component isn't available on mac, i had the idea to use another engine/component
+[18:33:19] <Elsensee>	 and i choosed Awesomium
+[18:33:22] <Elsensee>	 it based on WebKit, so its very fast
+[18:33:33] <Krenair>	 WebBrowser component is IE at the moment right?
+[18:33:34] <Elsensee>	 and available on different platforms
+[18:33:36] <IWorld>	 Krenair: I don't understand Git.
+[18:33:37] <Elsensee>	 yes
+[18:33:49] <Krenair>	 So it isn't available on anything except windows.
+[18:33:52] <mmovchin>	 Krenair: yes
+[18:33:54] <Inkowik>	 back
+[18:33:55] <Elsensee>	 yes
+[18:33:55] <IWorld>	 We use the Trident engine
+[18:34:20] <mmovchin>	 IWorld: We will continue to talk about Git / SVN later
+[18:34:22] <Krenair>	 (And wine. But very, very poorly.)
+[18:34:27] <IWorld>	 ok
+[18:35:11] <matthewrbowker>	 I think one of the main development goals for HG3 has to be cross-platform.  I don't know if that's been expressed yet... that's just my thought.
+[18:35:27] <mmovchin>	 matthewrbowker: I agree with you
+[18:35:50] <addshore>	 matthewrbowker, and speed
+[18:35:56] <Krenair>	 As a linux user I think my position is pretty obvious :p
+[18:36:01] <Elsensee>	 but there's one problem with awesomium:
+[18:36:01] <addshore>	 the current huggle has got slower and slower as things have been bolted on
+[18:36:08] <mmovchin>	 Krenair: heh :)
+[18:36:21] <Elsensee>	 the component, which i will use isn't yet available
+[18:36:29] <Elsensee>	 so for .net, but not for mono
+[18:36:36] <Elsensee>	 it will release with Awesomium 1.7
+[18:36:41] <petan>	 I would like to make huggle 3 just a simple core which can be extended with plugins
+[18:37:00] <IWorld>	 petan: I aggre with you
+[18:37:03] <Elsensee>	 the current version is 1.6.4
+[18:37:06] <petan>	 each project can have extensions for specific functions like AIV etc
+[18:37:12] <mmovchin>	 petan: Who should develop that plugins?
+[18:37:13] <mmovchin>	 We?
+[18:37:19] <mmovchin>	 Or any others?
+[18:37:24] <Krenair>	 Uhh
+[18:37:25] <petan>	 no project specific code in source of core like now
+[18:37:31] <petan>	 anyone
+[18:37:33] <petan>	 who wants
+[18:37:35] <mmovchin>	 I donnt think there is anyone who would develop plugins
+[18:37:36] <petan>	 it's open source
+[18:37:40] <mmovchin>	 for HG3
+[18:37:41] <Krenair>	 Source code for awesomium is $5,900 (presumably USD)
+[18:37:45] <Elsensee>	 no
+[18:37:47] <Elsensee>	 nooo
+[18:37:48] <Elsensee>	 wait
+[18:37:56] <Elsensee>	 that thought IWorld too
+[18:37:58] <Elsensee>	 its free
+[18:38:02] <mmovchin>	 I think the most one who are interessted in doing this are core devs on HG
+[18:38:21] <Elsensee>	 it's free for non-commercial use
+[18:38:29] <Krenair>	 Use yes
+[18:38:33] <Krenair>	 Closed source though.
+[18:38:35] <Elsensee>	 but not open-source.. is it a problem?
+[18:38:42] <petan>	 all components we are going to use should be licensed under GPL
+[18:38:48] <Elsensee>	 damn
+[18:38:51] <petan>	 if we are going to use it with wikimedia project
+[18:38:54] <petan>	 and we do
+[18:38:58] <mmovchin>	 Elsensee: That's really a problem
+[18:38:58] <Elsensee>	 okay...
+[18:39:02] <Elsensee>	 i search...
+[18:39:11] <petan>	 webkit is fine
+[18:39:11] <mmovchin>	 We cannot take some code and destribute it under GPL :(
+[18:39:17] <Elsensee>	 so we don't use awesomium
+[18:39:27] <mmovchin>	 Petan: Which webkit?
+[18:39:32] <IWorld>	 I write it on the pad.
+[18:39:40] <mmovchin>	 You don't mean the actual one?
+[18:39:49] <petan>	 I don't know
+[18:39:52] <petan>	 it's in pad
+[18:39:54] <mmovchin>	 ok
+[18:40:12] <addshore>	 what are we talking about now?
+[18:40:17] <petan>	 no idea
+[18:40:21] <Elsensee>	 we can compile webkit for every platform
+[18:40:33] <Elsensee>	 but then we must compile huggle for every platform seperatly too
+[18:40:35] <IWorld>	 good
+[18:40:57] <petan>	 there is going to be a configure script for linux
+[18:40:59] <IWorld>	 Elsensee: you can use VMs.
+[18:41:02] <petan>	 + .deb
+[18:41:07] <mmovchin>	 Elsensee: I don't think that's a problem
+[18:41:11] <petan>	 so users of ubuntu should be able to use apt to install it
+[18:41:20] <petan>	 other users can compile it using mono
+[18:41:20] <Elsensee>	 but i have no mac
+[18:41:53] <matthewrbowker>	 I assume we can write a script to automate that... but wouldn't it be better to just do one compile?
+[18:41:54] <addshore>	 are we talking about hg3 or web?
+[18:41:58] <petan>	 hg3
+[18:41:58] <IWorld>	 you can ask a Mac user
+[18:42:00] <petan>	 I think
+[18:42:19] <mmovchin>	 yes, hg3
+[18:42:27] <mmovchin>	 addshore: We will talk later about web
+[18:42:36] <mmovchin>	 FooBarMartijn: Hello ;)
+[18:42:50] <FooBarMartijn>	 ola
+[18:42:58] <Krenair>	 Related to the webbrowser component thing: http://stackoverflow.com/questions/790542/replacing-net-webbrowser-control-with-a-better-browser-like-chrome
+[18:44:08] <addshore>	 we afre meant to be on beat tester talk now ;p
+[18:45:25] <mmovchin>	 Ok, at least there is one big milestone on HG3: Better implementation of other wikis
+[18:45:42] <mmovchin>	 So, now let's move over to the new concept
+[18:45:56] <mmovchin>	 This is also part of the beta testers talk ;)
+[18:46:17] <mmovchin>	 Are all of you already registered on https://bugzilla.wikimedia.org/?
+[18:46:20] <mmovchin>	 https://bugzilla.wikimedia.org/
+[18:46:21] <matthewrbowker>	 heh, but this is important stuff
+[18:46:32] <mmovchin>	 hm
+[18:46:40] <Funkruf>	 Me?
+[18:46:55] <mmovchin>	 Funkruf: You too
+[18:46:56] <addshore>	 i should be
+[18:47:01] <Funkruf>	 OK
+[18:47:05] <addshore>	 is it on SUL?
+[18:47:09] <petan>	 n
+[18:47:10] <mmovchin>	 no
+[18:47:10] <petan>	 no
+[18:47:18] <IWorld>	 no
+[18:47:19] <Krenair>	 I'm registered pretty much everywhere related to mediawiki - labs/gerrit, bz, sul
+[18:47:21] <Krenair>	 no
+[18:47:27] <addshore>	 ;_;
+[18:47:28] <IWorld>	 but it is provided by WMF
+[18:47:38] <addshore>	 i swear i have an account but cant remember :P
+[18:47:52] <Elsensee>	 i have an account ;)
+[18:47:57] <petan>	 account is email
+[18:47:59] <IWorld>	 addshore: create a new account :P
+[18:48:12] <addshore>	 nah i found it :)
+[18:48:14] <mmovchin>	 Everyone who is not registered: Please register and send petan or me (mmovchin@wikipedia.de) your mail + sul so we can give you advanced permissions there
+[18:48:33] <addshore>	 i didnt realise it was my email not my username :P
+[18:48:39] <petan>	 heh
+[18:48:49] <addshore>	 mmovchin, mine is adamshorland@gmail.com
+[18:48:57] <Inkowik>	 is my email my username on bugzilla?
+[18:48:58] <petan>	 this channel is logged guys
+[18:49:02] <mmovchin>	 addshore: Please mail it to me
+[18:49:04] <IWorld>	 Inkowik: yes
+[18:49:11] <Krenair>	 I'm already registered, shall I email you?
+[18:49:11] <mmovchin>	 I don't have time know to do this, sorry.
+[18:49:14] <addshore>	 meh meh meh, gimmie a sec
+[18:49:19] <IWorld>	 Inkowik: but you can add a nick
+[18:49:25] <mmovchin>	 I will look after this some hours after this meeting
+[18:49:32] <mmovchin>	 mmovchin@wikipedia.de
+[18:49:33] <matthewrbowker>	 mmovchin: Related question: do you still want us to file bugs from the feedback page in Bugzilla.  I've been looking at doing that...
+[18:49:42] <addshore>	 {{done}}
+[18:49:48] <petan>	 matthewrbowker: yes
+[18:49:50] <mmovchin>	 addshore: Thanks
+[18:49:51] <IWorld>	 INFO: this channel is logged (public)
+[18:49:59] <petan>	 there is a new gadget on wiki
+[18:50:02] <matthewrbowker>	 petan: OK, I'll continue to do that.
+[18:50:02] <mmovchin>	 matthewrbowker: Yes, this is always good
+[18:50:16] <petan>	 gadget allow you to display status of ticket on wiki
+[18:50:16] <addshore>	 mmovchin, petan > I am looking on creating a task for addbot to generally keep the huggle space on wikipedia tidy
+[18:50:17] <mmovchin>	 IWorld: Everyone is free to spam my mail
+[18:50:24] <petan>	 so we can assign a ticket to thread on feedback page
+[18:50:26] <IWorld>	 hi Timk70 
+[18:50:37] <IWorld>	 ah
+[18:50:38] <petan>	 addshore: cool
+[18:50:38] <matthewrbowker>	 petan: OK. :)
+[18:50:40] <addshore>	 looking after the feedback page, updating version, pasting to bugzill(not looked at that yet)
+[18:50:43] <petan>	 you remember that shared repo we made
+[18:50:46] <mmovchin>	 Timk70: Hello ;)
+[18:50:48] <Timk70>	 hey IWorld 
+[18:50:49] <petan>	 there is core of wikipedia bot
+[18:50:57] <Timk70>	 hey mmovchin 
+[18:50:58] <mmovchin>	 addshore: Good idea! Agreeing.
+[18:50:58] <petan>	 in c#
+[18:50:59] <addshore>	 petan which repo?
+[18:51:05] <addshore>	 mmovchin, its on my todo list
+[18:51:11] <petan>	 http://code.google.com/p/sharp-wikibot/source/browse
+[18:51:14] <mmovchin>	 +1
+[18:51:15] <matthewrbowker>	 addshore: I'm not sure they'll let bots post to bugzilla... a security thing
+[18:51:26] <matthewrbowker>	 (not sure about that though)
+[18:51:42] <IWorld>	 +1
+[18:51:47] <petan>	 +0
+[18:51:57] <petan>	 what's being discussed now
+[18:52:14] <addshore>	 petan, I have phpbots, far easier :)
+[18:52:17] <petan>	 ah
+[18:52:21] <Elsensee>	 petan: i think bugzilla?
+[18:52:22] <petan>	 no longer c#
+[18:52:25] <petan>	 ok
+[18:52:31] <addshore>	 although I did migrate my bots over to use that at one point, but then i lost the source in my HDD fail
+[18:52:37] <Krenair>	 matthewrbowker, they probably wont mind as long as it's not malicious.
+[18:52:47] <mmovchin>	 oh :(
+[18:52:51] <addshore>	 matthewrbowker, Krenair  ill have a look and email some people :)
+[18:53:06] <Krenair>	 There's nothing technical in place against it as someone already managed to pretty much automate vandalising BZ to hell
+[18:53:08] <matthewrbowker>	 addshore: OK, good luck.
+[18:53:21] <matthewrbowker>	 Krenair: My thought came from that might be easy to abuse...
+[18:53:27] <mmovchin>	 Ok so:
+[18:53:31] <mmovchin>	 Let's get back to the new concept
+[18:53:40] <IWorld>	 of HG3?
+[18:53:44] <Elsensee>	 Wait! Should we start with Beta-tester conference?
+[18:53:44] <addshore>	 yes
+[18:53:53] <addshore>	 i say start beta tester conference then come back to dev
+[18:53:56] <matthewrbowker>	 why not?
+[18:53:57] <mmovchin>	 of developing and beta testing
+[18:54:02] <mmovchin>	 yes
+[18:54:10] <addshore>	 All happy with moving to beta testing NOW say I!
+[18:54:10] <mmovchin>	 I think we should start with beta tester conference
+[18:54:14] <mmovchin>	 This includes the new concept
+[18:54:15] <IWorld>	 ok
+[18:54:19] <matthewrbowker>	 ok
+[18:54:21] <petan>	 I!
+[18:54:23] <mmovchin>	 I
+[18:54:24] <Krenair>	 I!
+[18:54:28] <matthewrbowker>	 I!
+[18:54:30] <Slazenger>	 I
+[18:54:30] <addshore>	 Right then, whats first on the list?
+[18:54:33] <Elsensee>	 I?
+[18:54:36] <Inkowik>	 i
+[18:54:40] <mmovchin>	 The new concept
+[18:54:42] <mmovchin>	 look:
+[18:55:15] <mmovchin>	 Last time some users wrote to me, whether they will get the Huggle 3 beta before others, if they will be beta testers. Other asked me after they wrote they name in [[WP:HG/Members]] down, when they will get any "internal" beta. I think many users just don't understand that Huggle is a free project and the svn is open access. Everyone is free to make it's own Huggle build.
+[18:55:21] <mmovchin>	 I think we really should make a such notice on the [[WP:HG/Members]] or in the paragraph "Beta testing".
+[18:55:37] <petan>	 be bold
+[18:55:44] <mmovchin>	 Also: I think we don't really need so much inactive beta testers. Yes, ok, we just don't have a job for our beta testers. Their job is to report bugs. But they're not doing it :P (or really seldom)
+[18:55:49] <matthewrbowker>	 mmovchin: I agree, but caviot: most people have trouble compiling or don't have the software.
+[18:55:59] <matthewrbowker>	 Agreed :)
+[18:56:01] <addshore>	 maybe we shoudl do nightly uilds?
+[18:56:04] <mmovchin>	 petan: me? :o
+[18:56:06] <addshore>	 maybe we shoudl do nightly uilds?
+[18:56:08] <matthewrbowker>	 addshore: +1
+[18:56:11] <addshore>	 maybe we shoudl do nightly bilds?
+[18:56:12] <IWorld>	 +1
+[18:56:15] <addshore>	 maybe we shoudl do nightly builds?
+[18:56:21] <petan>	 maybe addshore needs to know how to type?
+[18:56:24] <addshore>	 shhhhh...
+[18:56:26] <mmovchin>	 addshore: agreed
+[18:56:31] <addshore>	 okay, we will do nightly builds, that is easy
+[18:56:36] <IWorld>	 Who creates the nightlys?
+[18:56:36] <mmovchin>	 yes
+[18:56:43] <mmovchin>	 Who want's to do this?
+[18:56:46] <petan>	 bot
+[18:56:49] <matthewrbowker>	 Wait, is the nightly the beta?  We need to diferentiate that.
+[18:56:51] <addshore>	 ill make a script, can either store on toolserver or on the googlecode
+[18:56:54] <petan>	 ^
+[18:56:55] <matthewrbowker>	 mmovchin: script
+[18:57:01] <petan>	 addshore: we ahve a vm hosted by wmf
+[18:57:06] <petan>	 I can give you shell there
+[18:57:12] <petan>	 we have root on it
+[18:57:15] <IWorld>	 Don't host the nbuilds in google code
+[18:57:15] <addshore>	 petan nice, this is part of the labs thing?
+[18:57:18] <petan>	 yes
+[18:57:21] <petan>	 huggle.wmflabs.org
+[18:57:22] <addshore>	 good :)
+[18:57:29] <addshore>	 im hoping to get a vm there eventually ;p
+[18:57:29] <matthewrbowker>	 Cool :)
+[18:57:36] <addshore>	 toolserver feels overcrowded
+[18:57:39] <petan>	 I already have like 30 vm's
+[18:57:40] <petan>	 :D
+[18:57:48] <matthewrbowker>	 XD
+[18:57:49] <addshore>	 petan pm me about it :)
+[18:58:07] <mmovchin>	 IWorld: why not?
+[18:58:08] <mmovchin>	 oO
+[18:58:14] <mmovchin>	 But wait
+[18:58:25] <mmovchin>	 don't know where to host them
+[18:58:37] <mmovchin>	 It's addshores job now :)
+[18:58:49] <addshore>	 haha
+[18:59:08] <matthewrbowker>	 mmovchin: Can't we host them on labs?
+[18:59:11] <mmovchin>	 Oh, VMs for free? :) :P
+[18:59:14] <addshore>	 if anything ill just copy the build script of AWB pretty much
+[18:59:17] <mmovchin>	 I don't know
+[18:59:20] <mmovchin>	 ask petan
+[18:59:21] * IWorld  for 10 mins
+[18:59:29] * IWorld  is away for 10 mins
+[18:59:37] <matthewrbowker>	 petan: can we host the nightlys on labs?
+[18:59:38] <mmovchin>	 IWorld: No problem
+[18:59:53] <IWorld>	 and then I have an idea
+[19:00:12] <mmovchin>	 Hey, guys, we're back to developer conference now :(
+[19:00:28] <mmovchin>	 Let's move away from this back to the beta testers conference
+[19:00:32] <matthewrbowker>	 LOL, we just can't avoid it... :)
+[19:00:36] <mmovchin>	 heh^^
+[19:01:05] <mmovchin>	 My idea is to assign every bug or feature or whatever which was fixed to a beta tester. Or having a "pool" on the issue tracker where beta testers could assign some bugs to themself. They should really test it and report it, when it is not working correctly, in the same ticket / issue.
+[19:01:19] <mmovchin>	 That's because I added such a field on BZ
+[19:01:55] <mmovchin>	 But what's which all that who're really inactive and don't want to do something with HG?
+[19:02:21] <petan>	 yes we can host all stuff on labs
+[19:02:31] <petan>	 that's what labs are for
+[19:02:51] <mmovchin>	 heh
+[19:03:12] <petan>	 we can't store porn there I think
+[19:03:16] <Krenair>	 :D
+[19:03:17] <petan>	 but huggle yes
+[19:03:18] <Elsensee>	 xD
+[19:03:21] <addshore>	 hah
+[19:03:37] <mmovchin>	 oooh no porn on labs :(
+[19:03:39] <mmovchin>	 :P
+[19:03:40] <addshore>	 Question: Where are the current Userlist and Whitelist stored that are updated by huggle?
+[19:03:45] <petan>	 labs
+[19:03:48] <addshore>	 kk
+[19:03:50] <petan>	 !metaconfig
+[19:03:50] <wm-bot>	 settings http://meta.wikimedia.org/wiki/Huggle/Config
+[19:03:53] <petan>	 it's there
+[19:04:05] <mmovchin>	 http://huggle.wmflabs.org/data/wl.php
+[19:04:14] <addshore>	 Are there any scripts that maintain them? (get rid of mess)?
+[19:04:20] <petan>	 no
+[19:04:23] <addshore>	 kk
+[19:04:28] * addshore  adds to todo list
+[19:04:31] <petan>	 but data are stored in text I think we should use sql
+[19:04:32] <petan>	 for that
+[19:04:39] <addshore>	 Plan!
+[19:04:42] <petan>	 it's a php script which is in svn
+[19:04:47] <petan>	 trunk
+[19:04:57] <addshore>	 can you have sql on the labs vpsss?
+[19:05:01] <petan>	 yes
+[19:05:02] <addshore>	 :0
+[19:05:04] <addshore>	 :)
+[19:05:08] <petan>	 we have root there we can install anything we need
+[19:05:13] <petan>	 we have a wiki there now
+[19:05:18] <IWorld>	 back with an idea
+[19:05:29] <addshore>	 almost seems a bit wastfull the way they run it
+[19:05:45] <petan>	 there is going to be a central sql server in future
+[19:05:49] <petan>	 Ryan work on it
+[19:06:04] <addshore>	 ahh, thats what i thoguht theyed do :P
+[19:06:10] <petan>	 heh
+[19:06:19] <Slazenger>	 Sorry guys, I have to head out now.  The logs will be posted here right: http://toolserver.org/~mmovchin/hugglecon/
+[19:06:54] <mmovchin>	 Slazenger: Yes
+[19:07:05] <Slazenger>	 Alright.  I'll give them a look later tonight!
+[19:07:13] <Slazenger>	 Good luck everyone!
+[19:07:19] <Krenair>	 bye
+[19:07:23] <IWorld>	 bye Slazenger 
+[19:07:24] <Funkruf>	 bye
+[19:07:29] <mmovchin>	 bye
+[19:07:30] <addshore>	 seeya
+[19:08:01] <IWorld>	 Can we create a ~huggle-TS account with a svn for the nightlys and a dev center?
+[19:08:10] <petan>	 IWorld: there is no need to use TS
+[19:08:19] <IWorld>	 ah
+[19:08:24] <petan>	 I would rather use labs
+[19:08:27] <Elsensee>	 IWorld: we use labs for the nightlys
+[19:08:29] <IWorld>	 ok
+[19:08:33] <addshore>	 yee labs would be better for a project
+[19:08:34] <IWorld>	 link?
+[19:08:41] <petan>	 huggle.wmflabs.org
+[19:08:41] <addshore>	 no link yet
+[19:08:44] <addshore>	 oh
+[19:08:47] <addshore>	 that link :P
+[19:08:48] <IWorld>	 Can I get a labs account?
+[19:08:51] <petan>	 yes
+[19:08:54] <matthewrbowker>	 Sorry, client fail
+[19:09:08] <IWorld>	 petan: is it from Testwiki?
+[19:09:13] <petan>	 yes, too
+[19:09:17] <petan>	 testwiki is there
+[19:09:20] <IWorld>	 Testwiki is a bad name.
+[19:09:27] <petan>	 why
+[19:09:31] <petan>	 anyway
+[19:09:32] <Krenair>	 IWorld, go to #wikimedia-labs and use !accountreq then !account-questions
+[19:09:39] <IWorld>	 ok
+[19:09:45] <petan>	 is there anything else we need to discuss with testers
+[19:10:01] <IWorld>	 It isn't meaningful.
+[19:10:03] <mmovchin>	 yes, what to do with inactive beta testers?
+[19:10:14] <petan>	 slap them
+[19:10:18] <mmovchin>	 heh
+[19:10:18] <IWorld>	 :D
+[19:10:20] <mmovchin>	 :(
+[19:10:20] <matthewrbowker>	 mmovchin: Talk page notification, then remove from the list (my thought)
+[19:10:25] <matthewrbowker>	 petan: :D
+[19:10:26] <mmovchin>	 ok
+[19:10:32] <IWorld>	 6 months?
+[19:10:35] <IWorld>	 6 years?
+[19:10:40] <petan>	 I would slap them preventively though
+[19:10:43] <matthewrbowker>	 6 months is good.
+[19:10:56] <Elsensee>	 +1
+[19:11:08] <mmovchin>	 petan: +1
+[19:11:13] <petan>	 what is inactive?
+[19:11:18] <mmovchin>	 6 months inactivity?
+[19:11:19] <IWorld>	 What are the tasks from testers?
+[19:11:20] <mmovchin>	 no
+[19:11:25] <mmovchin>	 that's to long
+[19:11:30] <IWorld>	 no
+[19:11:31] <mmovchin>	 To test bugs
+[19:11:33] <petan>	 how you know they aren't active huh
+[19:11:35] <mmovchin>	 http://etherpad.wikimedia.org/Huggle-IRC-conference
+[19:11:57] <petan>	 my idea is that testers receive an email every time we have a beta version
+[19:12:01] <mmovchin>	 When they're not working on any bugs which are assigned to them to test the bugs on bz
+[19:12:04] <petan>	 if they find a bug they report it to bz
+[19:12:08] <mmovchin>	 Or you just cannot contact them
+[19:12:08] <IWorld>	 mh
+[19:12:14] <petan>	 if they don't want to receive mails they remove themselve
+[19:12:22] <petan>	 no need to make it complicated like this
+[19:12:24] <matthewrbowker>	 petan: Mailing list?
+[19:12:36] <IWorld>	 petan: I want to create a Development Center with all these infos
+[19:12:41] <petan>	 I would prefer mass - talkpage notification because not all of them watch the mailing list
+[19:12:45] <IWorld>	 and rules
+[19:12:53] <matthewrbowker>	 IWorld: +1 great idea
+[19:12:57] <petan>	 ok do that on meta
+[19:13:03] <petan>	 subpages of Huggle
+[19:13:06] <petan>	 like Huggle/Devs
+[19:13:08] <IWorld>	 no, on Toolserver
+[19:13:18] <petan>	 ah
+[19:13:21] <Krenair>	 Why toolserver?
+[19:13:22] <IWorld>	 There we can save the mails from the testers and devs.
+[19:13:24] <Elsensee>	 why toolserver?
+[19:13:27] <petan>	 you know we have only 3 or 4 devs now
+[19:13:36] <IWorld>	 but many testers
+[19:13:53] <petan>	 ok, if you think it can help then do it
+[19:14:02] <IWorld>	 I can create an interface.
+[19:14:03] <addshore>	 do what on ts?
+[19:14:08] <addshore>	 interface for what?
+[19:14:14] <mmovchin>	 So, please elaborate everything what is still needed to be, then you can go over to devs conference :) | And I have to leave you now because of an other conference. Sorry, I haven't tought this meeting will take so long. I'll be back on 22:00 UTC.
+[19:14:18] <petan>	 however I don't think we need a complicated rules for beta testers they are not paid for this
+[19:14:32] <petan>	 like if they aren't active no need to "kick them"
+[19:14:35] <mmovchin>	 No, meta is better for this developer center
+[19:14:40] <IWorld>	 ah
+[19:14:57] <petan>	 I am quite happy that someone is willing to help so I don't want to bother them with extra rules
+[19:14:59] <mmovchin>	 See you all later, sorry guys.
+[19:15:07] <petan>	 bye
+[19:15:08] <IWorld>	 bye
+[19:15:10] <addshore>	 see ya mmovchin 
+[19:15:15] <Krenair>	 bye
+[19:15:29] <IWorld>	 Can anyone move the manual to meta?
+[19:15:33] <petan>	 huggle is small and simple, let's make the stuff around it simple too
+[19:15:43] <matthewrbowker>	 mmovchin: bye
+[19:15:50] <petan>	 IWorld: I think we should keep manual on medawiki, it's a best place for it
+[19:15:54] <mmovchin>	 bye bye
+[19:16:00] <petan>	 all documentation should be there
+[19:16:04] <IWorld>	 ah
+[19:16:07] <addshore>	 IWorld,  can do
+[19:16:07] <petan>	 that's why we have Manual space there
+[19:16:13] <matthewrbowker>	 petan: Didn't we move it there?  
+[19:16:15] <addshore>	 petan, why?
+[19:16:22] * matthewrbowker  doesn't want to deal with moving it and fixing it again
+[19:16:22] <IWorld>	 petan: good Idea
+[19:16:25] <petan>	 addshore: because that's only dev wiki we have on wikimedia
+[19:16:35] <addshore>	 k
+[19:16:45] <petan>	 all other wikis aren't really good for manuals, source codes etc, mww is a dev wiki
+[19:17:01] <petan>	 I think we should move all general info to meta and all dev stuff to mww
+[19:17:18] <IWorld>	 But the home wiki of Huggle is meta.
+[19:17:28] <petan>	 it used to be enwiki afaik
+[19:17:36] <petan>	 I don't know what it is now
+[19:17:42] <Krenair>	 petan, I think that while huggle is restricted to wikipedias it shouldn't be on mediawikiwiki
+[19:17:48] <IWorld>	 Huggle home wiki: enwp -> meta
+[19:17:54] <petan>	 it's not restricted to wikipedia
+[19:17:56] <matthewrbowker>	 petan: meta is a good bet
+[19:17:58] <petan>	 it can run on any wmf wiki
+[19:18:13] <matthewrbowker>	 Krenair: mediawikiwiki makes it easier to localise the docs
+[19:18:27] <addshore>	 right
+[19:18:35] <addshore>	 i thinkn the home of huggle should be meta
+[19:18:41] <petan>	 yes
+[19:18:49] <petan>	 question is where we go with manual then
+[19:18:50] <addshore>	 either rediret pages to meta or have something mirror them
+[19:18:55] <Krenair>	 matthewrbowker, how?
+[19:18:55] <addshore>	 id say meta
+[19:19:08] <addshore>	 the question is do we then also want 1 main feeback page on meta
+[19:19:09] <Inkowik>	 sorry i have to leave.
+[19:19:10] <matthewrbowker>	 Krenair: It has locilization and language templates.
+[19:19:11] <addshore>	 or oen per wiki as is
+[19:19:16] <addshore>	 *oone
+[19:19:18] <addshore>	 **one
+[19:19:21] <Krenair>	 matthewrbowker: Ah. okay.
+[19:19:33] <petan>	 addshore: I think we should have either one central, then local pages in local languages on wikis
+[19:19:42] <petan>	 like now
+[19:19:47] <petan>	 enwiki and meta can be merged together
+[19:19:54] <petan>	 eg, moved to meta
+[19:19:58] <petan>	 or kept on en
+[19:19:59] <IWorld>	 ah
+[19:20:07] <IWorld>	 moved to meta
+[19:20:11] <matthewrbowker>	 petan: +1 to either/or, both is confusing.
+[19:20:30] <petan>	 IWorld: moved what
+[19:20:36] <IWorld>	 the home wiki
+[19:20:48] <IWorld>	 with member list,...
+[19:21:14] <petan>	 ok
+[19:21:24] <petan>	 right there is a point in having all on one wiki
+[19:21:28] <Krenair>	 <petan> it can run on any wmf wiki
+[19:21:31] <addshore>	 butthat would make the bug huting from feedback pages a right bitch
+[19:21:42] <IWorld>	 I want to talk about Huggle WA.
+[19:21:43] <petan>	 no
+[19:21:45] <Krenair>	 Only lets me log into commons, some wikipedias and the test wikis
+[19:22:00] <petan>	 Krenair: that doesn't mean we can't deploy it to other
+[19:22:01] <matthewrbowker>	 addshore: Can't we just make a bot to move all of the stuff to meta?
+[19:22:11] <Elsensee>	 IWorld: :P
+[19:22:12] <petan>	 if someone request it we can install it
+[19:22:23] <petan>	 matthewrbowker: no
+[19:22:29] <petan>	 there are only few pages to move
+[19:22:50] <matthewrbowker>	 petan: Why not (I was talking feedback pages BTW... an ongoing task)
+[19:23:04] <Krenair>	 petan, hm. what has to be changed to get huggle running on another wiki?
+[19:23:17] <petan>	 there are instructions on feedback
+[19:23:34] <addshore>	 matthewrbowker, would be easier to do it manually
+[19:23:38] <matthewrbowker>	 petan: ah...
+[19:23:39] <petan>	 Krenair: just ask here
+[19:23:43] * matthewrbowker  sorry, bad idea.
+[19:23:44] <IWorld>	 petan: can we move these instructions to the manual?
+[19:23:49] <addshore>	 but what are we going to do
+[19:23:54] <addshore>	 just redirect local pages to meta
+[19:23:57] <addshore>	 or mirror them?
+[19:24:03] <petan>	 I would move them
+[19:24:08] <addshore>	 brb phone
+[19:24:18] <Krenair>	 petan, can I have my copy of huggle run on mediawikiwiki please.
+[19:24:45] <petan>	 are you a developer with svn?
+[19:24:53] <petan>	 mediawiki dev
+[19:25:00] <petan>	 I think you should have a consensus for that
+[19:25:19] <Krenair>	 No I'm not
+[19:25:42] <petan>	 if you want to install huggle on mww you should ask on wiki, if people agree with that, I can install it there
+[19:26:46] <petan>	 actually it shouldn't be problem to install it, but I am unsure if we need it there
+[19:27:19] <IWorld>	 Can I talk about HuggleWA?
+[19:27:34] <petan>	 yes
+[19:27:41] <matthewrbowker>	 HuggleWA?
+[19:27:42] <IWorld>	 Hi, I'm IWorld and I develop Huggle WA (web application). Huggle WA is an alternate to Huggle CA (computer app).
+[19:27:57] <IWorld>	 The web app is for mobile devices and users without .NET. HG WA is developed in HTML5 (+CSS3, MediaQueries), JavaScript (+jQuery) and PHP 5.3.
+[19:28:09] <IWorld>	 Now I'm preparing the core, but anyone help me and edit the files. ;-) For example the XML parser must to be revised.
+[19:28:15] <IWorld>	 Huggle WA is in the repository of Huggle. (/trunk/hugglewa)
+[19:28:25] <petan>	 IWorld: where the files are now
+[19:28:30] <petan>	 ah ok
+[19:28:42] <matthewrbowker>	 IWorld: Excellent idea!
+[19:28:55] <IWorld>	 :)
+[19:29:04] <IWorld>	 But WebApps are a bit slow...
+[19:29:05] <Krenair>	 IWorld, what do we need to run it? Just a standard apache + php server?
+[19:29:17] <IWorld>	 yes
+[19:29:29] <petan>	 is it possible to deploy it to wmf wikis?
+[19:29:44] <IWorld>	 yes
+[19:29:49] <IWorld>	 in Summer 2012
+[19:29:50] <Thehelpfulone>	 sounds great
+[19:30:01] <matthewrbowker>	 sounds exciting
+[19:30:04] <petan>	 can you deploy it to huggle test for now?
+[19:30:21] <petan>	 or I can create a new wiki for it
+[19:30:47] <IWorld>	 I test Huggle WA in test wiki.
+[19:30:53] <petan>	 ok
+[19:31:13] <matthewrbowker>	 OK, all. It's about time fo me to log off.  Great conference, see y'all later :)
+[19:31:17] <Krenair>	 bye
+[19:31:29] <IWorld>	 http://huggle.wmflabs.org/wiki/Huggle_WA/TestConf
+[19:31:33] <IWorld>	 bye
+[19:31:53] <petan>	 I think we should use huggle config for configuration
+[19:32:07] <IWorld>	 We need a XML file.
+[19:32:07] <petan>	 so that both pc and WA use the same config
+[19:32:18] <IWorld>	 or XML code
+[19:32:32] <petan>	 isn't it possible to create own parser for it?
+[19:32:51] <IWorld>	 it is possible.
+[19:33:04] <petan>	 I can create a script which can convert it
+[19:33:10] <IWorld>	 super!
+[19:33:18] <petan>	 people would only change 1 config
+[19:33:23] <petan>	 second would be auto created from it
+[19:33:42] <IWorld>	 good idea
+[19:33:51] <petan>	 it should use all templated and localization files from regular huggle
+[19:34:12] <IWorld>	 ok
+[19:34:18] <petan>	 also it should have similar gui
+[19:34:30] <petan>	 so that people who use huggle can easily switch to this or other side
+[19:34:30] <Elsensee>	 so the templates and localization files shouldn't be in the program
+[19:34:39] <petan>	 they aren't
+[19:34:44] <Krenair>	 IWorld, how does a user log into Huggle WA?
+[19:34:46] <petan>	 it's all on wiki
+[19:35:00] <petan>	 I suppose they just use the session of mediawiki
+[19:35:00] <IWorld>	 Krenair: with the MediaWiki-Api.
+[19:35:17] <petan>	 why not to use session like twinkle does
+[19:35:17] <IWorld>	 like at the TS user ~dispenser
+[19:35:20] <addshore>	 sorry, im back
+[19:35:33] <addshore>	 *reads up*
+[19:36:12] <addshore>	 IWorld, you are deving huggleWA?
+[19:36:14] <Krenair>	 IWorld, okay, explain how that works
+[19:36:40] <IWorld>	 addshore: ?
+[19:36:44] <addshore>	 i dont know
+[19:36:46] <addshore>	 i just read up
+[19:36:50] <IWorld>	 ah
+[19:36:51] <addshore>	 think i mised something
+[19:37:03] <IWorld>	 addshore: yes I develop HG wa.
+[19:37:10] <addshore>	 where are you deving it? 
+[19:37:15] <addshore>	 I really love the idea
+[19:37:23] <petan>	 addshore: continue please
+[19:37:26] <petan>	 reading
+[19:37:27] <petan>	 :P
+[19:37:29] <addshore>	 I did
+[19:37:31] <Elsensee>	 i must log off
+[19:37:32] <petan>	 it's all there
+[19:37:36] <IWorld>	 bye Elsensee 
+[19:37:37] <addshore>	 by Elsensee 
+[19:37:46] <petan>	 <@IWorld> Huggle WA is in the repository of Huggle. (/trunk/hugglewa)
+[19:37:48] <Elsensee>	 bye
+[19:37:51] <addshore>	 poh
+[19:37:52] <addshore>	 oh
+[19:37:53] <addshore>	 :P
+[19:37:56] <petan>	 heh
+[19:38:02] <addshore>	 IWorld, do you have a webserver to run it on yet?
+[19:38:12] <IWorld>	 only a local server
+[19:38:19] <petan>	 ] <@IWorld> http://huggle.wmflabs.org/wiki/Huggle_WA/TestConf
+[19:38:21] <addshore>	 IWorld, do you only commit working versions of code?
+[19:38:47] <IWorld>	 I want to search more devs.
+[19:38:54] <addshore>	 ill hapilly help you dev
+[19:39:04] <addshore>	 im currently overloaded by other work but that will be gone in some weeks
+[19:39:08] <petan>	 let's keep the user and global config same
+[19:39:15] <addshore>	 do you only upload/commit working code?
+[19:39:19] <petan>	 so people can switch between versions and keep all as they want
+[19:39:23] <Krenair>	 IWorld, can you please explain how a user logs into Huggle WA
+[19:39:36] <addshore>	 Krenair, i imagine goes to a webpage, enters details, logs in
+[19:39:43] <petan>	 :)
+[19:39:53] <Krenair>	 Without exposing login details to the server running huggle wa
+[19:39:57] <addshore>	 it will be a seperate session on the API i imagine
+[19:40:04] <addshore>	 Krenair, now that is a question
+[19:40:08] <petan>	 OAuth
+[19:40:18] <petan>	 https://www.mediawiki.org/wiki/OAuth
+[19:40:25] <petan>	 everythings possible
+[19:40:33] <addshore>	 and there is the answer ;p
+[19:40:52] <IWorld>	 petan: can we use Oauth?
+[19:40:57] <petan>	 yes
+[19:41:01] <IWorld>	 great
+[19:41:02] <addshore>	 when entereing huggleWA user would be redirected to a wikimedia page to login and then back to huggle wa.. ?
+[19:41:04] <petan>	 but it's not implemented on wmf yet
+[19:41:13] <addshore>	 petan IWorld  it will be soon
+[19:41:18] <IWorld>	 ah
+[19:41:27] <Krenair>	 IWorld, so how does a user log into Huggle WA without exposing login details to the server running huggle wa?
+[19:41:28] <addshore>	 but other than that, that is why it would be important to keep the code open source
+[19:41:31] <IWorld>	 https://en.wikipedia.org/w/api.php?action=query&format=jsonfm&meta=userinfo&uiprop=editcount|preferencestoken&requestid=COPY%20THE%20LINES%20BELOW%20%28Ctrl%2BA%20then%20Ctrl%2BC%29
+[19:41:33] <addshore>	 so people can make sure nothing funny is happening
+[19:41:38] <IWorld>	 See that
+[19:41:44] <petan>	 Krenair: they enter login to wmf server
+[19:41:49] <addshore>	 IWorld, thats nice
+[19:41:51] <petan>	 that server create a session and return id back
+[19:41:56] <petan>	 to WA server
+[19:42:25] <IWorld>	 Where we can host Huggle WA? Toolserver?
+[19:42:36] <petan>	 I would prefer labs since we have more access there
+[19:42:43] <IWorld>	 ok
+[19:42:45] <addshore>	 how many resources do labs have?
+[19:42:50] <petan>	 heh :)
+[19:43:01] <addshore>	 because i can see huggleWA ending up being the main version of huggle
+[19:43:41] <petan>	 I can't
+[19:43:44] <petan>	 because of performance
+[19:43:54] <addshore>	 why would performence be bad..?
+[19:44:02] <petan>	 it will never be so fast as threaded binary
+[19:44:10] <addshore>	 no bugt it wont be far off
+[19:44:11] <IWorld>	 ooh yeah
+[19:44:18] <addshore>	 huggle isnt exactly the most complicated program
+[19:44:19] <petan>	 huggle uses a lot of caching etc
+[19:44:21] <addshore>	 its just currently a mess
+[19:44:24] <petan>	 yes
+[19:44:36] <addshore>	 webaps can still cache locally
+[19:44:45] <addshore>	 brb
+[19:44:47] <petan>	 but it can never be so fast... I guess
+[19:45:03] <petan>	 let's see
+[19:45:03] <IWorld>	 We can use HTML5 :-)
+[19:45:09] <petan>	 we can have both
+[19:45:14] <IWorld>	 with local storage
+[19:45:21] <petan>	 it must be compatible though
+[19:45:59] <IWorld>	 thats right
+[19:46:24] <addshore>	 tbh, everything is moving to the web
+[19:46:33] <addshore>	 programs are overrated
+[19:46:40] <addshore>	 everything can be done in the cloud
+[19:46:46] <addshore>	 we just need the bandwidth to be able to do it
+[19:47:04] <IWorld>	 We can create a Win8 metro app with Huggle WA.
+[19:47:25] <The_Thing>	 >.> hell, missed the conference thing
+[19:47:28] <IWorld>	 Metro apps can use HTML5 + JavaScript
+[19:47:45] <addshore>	 The_Thing, dont worry, we are still going :P
+[19:47:49] <The_Thing>	 oh!
+[19:47:53] * addshore  huggle The_Thing 
+[19:47:59] * addshore  re huggles The_Thing 
+[19:48:09] <IWorld>	 The_Thing: http://bots.wmflabs.org/~petrb/logs/%23huggle/20120304.txt
+[19:48:10] * The_Thing  says "ur doin it wrong"
+[19:48:20] * addshore  knows :<
+[19:48:22] * addshore  fails :/
+[19:49:35] <IWorld>	 My webserver is using XAMPP.
+[19:50:34] <IWorld>	 petan: is .wmflabs.org provided by Wikimedia?
+[19:51:19] <addshore>	 yes
+[19:51:27] <IWorld>	 cool
+[19:51:45] <Krenair>	 info about it is here: https://labsconsole.wikimedia.org/wiki/Main_Page
+[19:51:54] <IWorld>	 But I haven't access there. :-(
+[19:51:59] <addshore>	 right i need to head for dinner now i think
+[19:52:38] <petan>	 IWorld: we can set up an access and bunch of vm's tommorow for this
+[19:52:52] <petan>	 we need to have folks from ops to be there
+[19:52:58] <petan>	 they don't work today ;)
+[19:53:08] <IWorld>	 :-)
+[19:53:24] <addshore>	 why
+[19:53:29] <addshore>	 why do we need so many vms?
+[19:53:30] <petan>	 because they are lazy
+[19:53:33] <addshore>	 why not just 1? :P
+[19:53:49] <petan>	 because I have 5 apache servers on deployment project and they are all overloaded
+[19:54:01] <petan>	 if we are going to let people use this tool, the load will be high
+[19:54:02] <addshore>	 are the vms all a set limited size
+[19:54:20] <petan>	 you can define the parameters of it
+[19:54:27] <petan>	 size of storage / number of cpu's etc
+[19:54:30] <addshore>	 why not make the vms bigger then and have less?
+[19:54:35] <addshore>	 ram..?
+[19:54:37] <IWorld>	 Are the VMs using Ubuntu Server?
+[19:54:39] <petan>	 I think having more small vm's is better
+[19:54:42] <petan>	 IWorld: yes
+[19:54:45] <IWorld>	 good
+[19:54:52] <petan>	 we can reboot one apache server and site is still up
+[19:54:57] <petan>	 patching kernel etc
+[19:55:12] <petan>	 it's likely better to have a separate vm for apache and separate for sql etc
+[19:55:13] <addshore>	 fair
+[19:55:29] <addshore>	 well labs need to amke one global SQl server
+[19:55:33] <petan>	 yes
+[19:55:34] <addshore>	 so much better
+[19:55:38] <petan>	 in future heh
+[19:55:38] <IWorld>	 :-)
+[19:55:44] <addshore>	 right
+[19:55:46] <addshore>	 i need to go
+[19:55:47] <petan>	 Ryan talk about it like 2 months
+[19:55:49] <addshore>	 diner e.t.c
+[19:55:56] <addshore>	 ttyl
+[19:56:01] <petan>	 but we still use our small vm I set up 2 months ago as sql server :D
+[19:56:55] <IWorld>	 First we need good code :P
+[19:57:04] <petan>	 we need to have where to dev it
+[19:57:16] <petan>	 tommorow I set up a bunch of vm's there and we can start
+[19:57:26] <IWorld>	 Thanks!
+[19:57:43] <IWorld>	 start with developing?
+[19:57:47] <petan>	 2 apache servers should be enough
+[19:57:50] <petan>	 for now
+[19:57:52] <petan>	 yes
+[19:58:03] <IWorld>	 Can I get access to the VMs?
+[19:58:09] <petan>	 I can register a domain, hugglewa.wmflabs.org
+[19:58:14] <petan>	 yes
+[19:58:15] <IWorld>	 ok
+[19:58:23] <petan>	 or hg.wmflabs.org
+[19:58:33] <IWorld>	 hm
+[19:58:41] <IWorld>	 hugglewa
+[19:58:47] <Funkruf>	 hugglewa
+[19:58:48] <petan>	 I would rather make a short one
+[19:58:53] <petan>	 we can have both
+[19:58:57] <IWorld>	 :)
+[19:59:14] <petan>	 users won't remember huggle wa
+[19:59:50] <IWorld>	 we can create a redirect from hg.wm... to hugglewa.wm...
+[19:59:51] <petan>	 you should start a discussion related to this on wikitech more devs might join you
+[20:00:01] <petan>	 why redirect
+[20:00:04] <petan>	 both can work
+[20:00:18] <IWorld>	 oh
+[20:00:20] <IWorld>	 good
+[20:00:50] <petan>	 ok, anything else?
+[20:01:45] <petan>	 right I think we can continue tommorow then
+[20:02:01] <IWorld>	 ok
+[20:02:23] <IWorld>	 is that the end of 1st HuggleCon?
+[20:02:36] <IWorld>	 I can close this event.
+[20:03:31] <IWorld>	 PING
+[20:03:39] <petan>	 probably
+[20:03:47] <petan>	 someone?
+[20:03:50] <petan>	 need to add stf
+[20:03:55] <petan>	 *sth
+[20:04:03] <IWorld>	 sth?
+[20:04:06] <petan>	 something
+[20:04:10] <IWorld>	 ah
+[20:04:34] <petan>	 quick one
+[20:04:46] <petan>	 result of docs was to move it or not
+[20:04:48] <petan>	 to meta
+[20:05:08] <petan>	 !docs
+[20:05:08] <wm-bot>	 manual http://mediawiki.org/wiki/Manual:Huggle
+[20:05:11] <petan>	 this one
+[20:05:15] <IWorld>	 hmm
+[20:05:25] <IWorld>	 We can move it.
+[20:05:27] <petan>	 maybe we should ask people on wikitech what is best place
+[20:05:33] <IWorld>	 ok
+[20:05:41] <petan>	 because other sw has docs on mww
+[20:05:49] <petan>	 also mww has some advantages for this
+[20:05:59] <petan>	 multilingual docs
+[20:06:04] <petan>	 space Manual
+[20:06:05] <petan>	 etc
+[20:06:18] <IWorld>	 hmm
+[20:06:35] <IWorld>	 Can we create a central manual on mww?
+[20:06:42] <petan>	 we already have
+[20:07:02] <IWorld>	 in German,... too?
+[20:07:05] <petan>	 no
+[20:07:10] <petan>	 english so far
+[20:07:16] <IWorld>	 ok
+[20:07:20] <petan>	 but if you translate it
+[20:07:26] <Krenair>	 I still think mediawikiwiki is not the right place for Huggle docs if it's only on WMF projects.
+[20:07:37] <IWorld>	 noo
+[20:07:48] <petan>	 problem is that no one knows what is a better place for it
+[20:07:54] <Krenair>	 meta obviously
+[20:08:07] <petan>	 people are trying to move all docs from meta to mww
+[20:08:13] <petan>	 that's what happen now
+[20:08:38] <petan>	 you should start a wider discussion before moving it
+[20:09:04] <petan>	 let's move the other pages for now
+[20:09:10] <petan>	 this can wait
+[20:09:55] <IWorld>	 I want to close this session.
+[20:09:59] <petan>	 ok
+[20:10:05] <petan>	 ./kick *
+[20:10:05] <IWorld>	 :-)
+[20:10:08] <IWorld>	 noooo
+[20:10:20] <IWorld>	 mkick ;)
+[20:10:23] <petan>	 heh
+[20:12:46] <IWorld>	 THAT WAS THE 1ST HUGGLE CON. Have a nice day! Bye!
